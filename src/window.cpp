@@ -7,7 +7,15 @@
    Callback for all keyboard interactions with the GLFW window.
  */
 void Window::glfw_key_callback(GLFWwindow * window, int key, int scancode, int action, int mods) {
-  // TO-DO: Implement key input
+  switch (key) {
+  case GLFW_KEY_ESCAPE:
+    if (action == GLFW_PRESS) {
+      glfwSetWindowShouldClose(window, true);
+    }
+    break;
+  default:
+    break;
+  }
 }
 
 /**
@@ -48,6 +56,6 @@ void Window::swapBuffers() {
   glfwSwapBuffers(this->glfw_window);
 }
 
-bool Window::isCreated() {
-  return this->glfw_window != nullptr;
+bool Window::isRunning() {
+  return !glfwWindowShouldClose(this->glfw_window);
 }

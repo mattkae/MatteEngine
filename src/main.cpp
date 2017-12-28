@@ -21,7 +21,7 @@ Window* main_window = nullptr;
 
 void glfw_error_callback(int error, const char* message) {
   // TO-DO: Log the error
-  logger::LogError(message);
+  logger::log_error(message);
 }
 
 void initialize_glfw_environment(int argc, char** argv) {
@@ -29,10 +29,12 @@ void initialize_glfw_environment(int argc, char** argv) {
     // TO-DO: Add logging
     exit(EXIT_FAILURE);
   }
-
+  
   glfwSetErrorCallback(glfw_error_callback);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
 int main(int argc, char** argv) {

@@ -5,11 +5,11 @@
 using namespace std;
 
 namespace logger {  
-  static void LogError(const char* message) {
+  static void log_error(const char* message) {
     cerr << message << endl;
   }
 
-  static void LogMessage(const char* message) {
+  static void log_message(const char* message) {
     clog << message << endl;
   }
 }

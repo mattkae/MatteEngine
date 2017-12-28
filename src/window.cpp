@@ -15,7 +15,7 @@ Window::Window(int width, int height, const char* title) {
     glfwSetKeyCallback(this->glfw_window, input::glfw_key_callback);
   } else {
     // TO-DO: Log error    
-    logger::LogError("Error while initializing GLFW window");
+    logger::log_error("Error while initializing GLFW window");
   }
 }
 

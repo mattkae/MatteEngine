@@ -1,22 +1,8 @@
 #include "window.h"
 #include "gl_includes.h"
 #include "logger.h"
+#include "input.h"
 #include <iostream>
-
-/**
-   Callback for all keyboard interactions with the GLFW window.
- */
-void Window::glfw_key_callback(GLFWwindow * window, int key, int scancode, int action, int mods) {
-  switch (key) {
-  case GLFW_KEY_ESCAPE:
-    if (action == GLFW_PRESS) {
-      glfwSetWindowShouldClose(window, true);
-    }
-    break;
-  default:
-    break;
-  }
-}
 
 /**
    Constructs a GLFW window with the given width, height,
@@ -26,7 +12,7 @@ Window::Window(int width, int height, const char* title) {
   this->glfw_window = glfwCreateWindow(width, height, title, NULL, NULL);
 
   if (this->glfw_window) {
-    glfwSetKeyCallback(this->glfw_window, Window::glfw_key_callback);
+    glfwSetKeyCallback(this->glfw_window, input::glfw_key_callback);
   } else {
     // TO-DO: Log error    
     logger::LogError("Error while initializing GLFW window");

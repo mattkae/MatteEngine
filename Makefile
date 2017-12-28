@@ -13,4 +13,4 @@ $(EXE): $(obj)
 
 .PHONY: clean
 clean:
-	rm -rf $(obj) fluids
+	rm -rf $(obj) $(EXE)

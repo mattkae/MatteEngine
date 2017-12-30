@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
-//#include "gl_includes.h"
-#include <GL/glew.h>
+#include "gl_includes.h"
+
 class Shader {
  public:
   Shader(const GLchar* vertexPath, const GLchar* fragmentPath);

@@ -8,7 +8,8 @@
 
 #endif
 #elif __APPLE__
-#include <OpenGL/gl.h>
+//#include <OpenGL/gl.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #elif __linux__
 

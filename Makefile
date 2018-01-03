@@ -14,3 +14,6 @@ $(EXE): $(obj)
 .PHONY: clean
 clean:
 	rm -rf $(obj) $(EXE)
+
+run:
+	./$(FILENAME)

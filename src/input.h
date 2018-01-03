@@ -1,6 +1,6 @@
 #include "gl_includes.h"
 
-namespace input {
+namespace Input {
   // Keep track of key state globally
   const int NUM_KEYS = 512;
   static bool keys_pressed[NUM_KEYS];

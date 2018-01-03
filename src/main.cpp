@@ -2,28 +2,24 @@
 #include <iostream>
 #include <string>
 #include "boost/program_options.hpp"
-#include "logger.h"
-#include "window.h"
-#include "input.h"
-#include "application.h"
+#include "Logger.h"
+#include "Window.h"
+#include "Input.h"
+#include "Application.h"
 
 using namespace std;
-
 
 // Window variables
 const char* WINDOW_TITLE = "Fluid Simulator";
 Window* main_window = nullptr;
 
-// Main loop variables
-
 void glfw_error_callback(int error, const char* message) {
-  // TO-DO: Log the error
   logger::log_error(message);
 }
 
 void initialize_glfw_environment(int argc, char** argv) {
   if (!glfwInit()) {
-    // TO-DO: Add logging
+    logger::log_error("Failed to initialize glfw.");
     exit(EXIT_FAILURE);
   }
   
@@ -37,12 +33,12 @@ void initialize_glfw_environment(int argc, char** argv) {
 int main(int argc, char** argv) {
   initialize_glfw_environment(argc, argv);
   main_window = new Window(Application::screenWidth, Application::screenHeight, WINDOW_TITLE);
-  main_window->setContext();
+  main_window->set_context();
   
-  while (main_window->isRunning()) {
+  while (main_window->is_running()) {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    main_window->swapBuffers();
+    main_window->swap_buffers();
 
     glfwPollEvents();
   }

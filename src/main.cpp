@@ -8,8 +8,8 @@
 
 using namespace std;
 
-const int DEFAULT_WIDTH = 640;
-const int DEFAULT_HEIGHT = 480;
+const int DEFAULT_WIDTH = 800;
+const int DEFAULT_HEIGHT = 600;
 
 // Window variables
 int program_width = DEFAULT_WIDTH;

@@ -5,20 +5,24 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-class Mesh {
+struct Vertex {
+  GLfloat position[3];
+  GLfloat normal[3];
+  GLfloat texCoord[2];
+};
 
-  
+class Mesh {
  public:
-  Mesh();
+  Mesh(std::vector<Vertex> vertices, std::vector<GLint> indices, std::vector<Material> materials);
   ~Mesh();
+  void generate();
 
  private:
   GLuint mVao, mVbo, mEbo;
   std::vector<Vertex> mVertices;
   std::vector<GLint> mIndices;
   std::vector<Material> mMaterials;
-  GLfloat shininess;
-}
+  GLfloat mShininess;
+};
 
-
-#endif MESH_H
+#endif

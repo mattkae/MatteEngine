@@ -4,7 +4,6 @@
 #include "boost/program_options.hpp"
 #include "Logger.h"
 #include "Window.h"
-#include "Input.h"
 #include "Application.h"
 
 using namespace std;

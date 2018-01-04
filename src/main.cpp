@@ -5,6 +5,7 @@
 #include "Logger.h"
 #include "Window.h"
 #include "Application.h"
+#include "Shader.h"
 
 using namespace std;
 
@@ -29,11 +30,25 @@ void initialize_glfw_environment(int argc, char** argv) {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
+void initialize_glew() {
+  glewExperimental = GL_TRUE ;
+  GLenum err = glewInit();
+  if (GLEW_OK != err) {
+    logger::log_error((const char*)glewGetErrorString(err));
+    exit(EXIT_FAILURE);
+  }
+}
+
 int main(int argc, char** argv) {
   // Initialization
   initialize_glfw_environment(argc, argv);
+
   mainWindow = new Window(Application::screenWidth, Application::screenHeight, WINDOW_TITLE);
   mainWindow->set_context();
+
+  initialize_glew();
+
+  Shader shader("assets/shader.vert", "assets/shader.frag");
 
   // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;

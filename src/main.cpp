@@ -11,7 +11,7 @@ using namespace std;
 
 // Window variables
 const char* WINDOW_TITLE = "Fluid Simulator";
-Window* main_window = nullptr;
+Window* mainWindow = nullptr;
 
 void glfw_error_callback(int error, const char* message) {
   logger::log_error(message);
@@ -31,20 +31,32 @@ void initialize_glfw_environment(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
+  // Initialization
   initialize_glfw_environment(argc, argv);
-  main_window = new Window(Application::screenWidth, Application::screenHeight, WINDOW_TITLE);
-  main_window->set_context();
+  mainWindow = new Window(Application::screenWidth, Application::screenHeight, WINDOW_TITLE);
+  mainWindow->set_context();
+
+  // Loop variables
+  double currentTime = 0, prevTime = 0, deltaTime;
   
-  while (main_window->is_running()) {
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    main_window->swap_buffers();
-
+  while (mainWindow->is_running()) {
+    // Update timestep
+    currentTime = glfwGetTime();
+    deltaTime = currentTime - prevTime;
+    prevTime = currentTime;
+    
+    // Get Input
     glfwPollEvents();
+
+    // Update
+
+    // Render
+    glClear(GL_COLOR_BUFFER_BIT);
+    mainWindow->swap_buffers();
   }
 
   // Free window memory
-  delete main_window;
+  delete mainWindow;
 
   // Terminate glfw
   glfwTerminate();

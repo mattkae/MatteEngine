@@ -6,6 +6,7 @@
 #include "Window.h"
 #include "Application.h"
 #include "Shader.h"
+#include "Model.h"
 
 using namespace std;
 
@@ -31,7 +32,6 @@ void initialize_glfw_environment(int argc, char** argv) {
 }
 
 void initialize_glew() {
-  glewExperimental = GL_TRUE ;
   GLenum err = glewInit();
   if (GLEW_OK != err) {
     logger::log_error((const char*)glewGetErrorString(err));
@@ -49,7 +49,8 @@ int main(int argc, char** argv) {
   initialize_glew();
 
   Shader shader("assets/shader.vert", "assets/shader.frag");
-
+  Model model("assets/test.obj");
+  
   // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;
   

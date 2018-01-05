@@ -1,9 +1,14 @@
 #include "Mesh.h"
+#include "Logger.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLint> indices, std::vector<Material> materials) {
-  mVertices = vertices;
-  mIndices = indices;
-  mMaterials = materials;
+Mesh::Mesh() {
+  mVao = 0;
+  mVbo = 0;
+  mEbo = 0;
+}
+
+Mesh::~Mesh() {
+  
 }
 
 void Mesh::generate() {
@@ -17,7 +22,7 @@ void Mesh::generate() {
 
   // Put the vertex data into OpenGL
   glBindBuffer(GL_ARRAY_BUFFER, this->mVbo);
-  glBufferData(GL_ARRAY_BUFFER, this->mVertices.size() * sizeof(Vertex), & this->mVertices[0], GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, this->mVertices.size() * sizeof(Vertex), &this->mVertices[0], GL_STATIC_DRAW);
 
   // Put the index data into OpenGL
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->mEbo);
@@ -37,4 +42,22 @@ void Mesh::generate() {
 
   // Unbind the VAO
   glBindVertexArray(0);
+}
+
+void Mesh::render(Shader* shader) {
+  glBindVertexArray(this->mVao);
+  glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);
+  glBindVertexArray(0);
+}
+
+void Mesh::add_vertex(Vertex vertex) {
+  this->mVertices.push_back(vertex);
+}
+
+void Mesh::add_index(GLint index) {
+  this->mIndices.push_back(index);
+}
+
+void Mesh::add_material(Material material) {
+  this->mMaterials.push_back(material);
 }

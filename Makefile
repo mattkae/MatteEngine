@@ -3,7 +3,7 @@ EXE=$(FILENAME)
 
 CXX = clang++
 CXXFLAGS = -std=c++11 -Iinclude
-LINK_FLAGS = -lglfw3 -lglew -framework Cocoa -framework OpenGL -framework CoreVideo -framework IOKit
+LINK_FLAGS = -lglfw3 -lglew -lassimp -framework Cocoa -framework OpenGL -framework CoreVideo -framework IOKit
 
 src = $(wildcard src/*.cpp)
 obj = $(src:.cpp=.o)

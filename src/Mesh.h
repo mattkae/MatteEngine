@@ -5,22 +5,27 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+class Shader;
+
 struct Vertex {
-  GLfloat position[3];
-  GLfloat normal[3];
-  GLfloat texCoord[2];
+  glm::vec3 position;
+  glm::vec3 normal;
+  glm::vec2 texCoord;
 };
 
 class Mesh {
  public:
-  Mesh(std::vector<Vertex> vertices, std::vector<GLint> indices, std::vector<Material> materials);
+   Mesh();
   ~Mesh();
   void generate();
-
+  void render(Shader* shader);
+  void add_vertex(Vertex vertex);
+  void add_index(GLint index);
+  void add_material(Material material);
  private:
   GLuint mVao, mVbo, mEbo;
   std::vector<Vertex> mVertices;
-  std::vector<GLint> mIndices;
+  std::vector<GLint>  mIndices;
   std::vector<Material> mMaterials;
   GLfloat mShininess;
 };

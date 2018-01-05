@@ -6,10 +6,19 @@
 
 class Input {
  public:
-  // Keep track of key state globally
-  static const int NUM_KEYS = 512;
-  static bool keys_pressed[];
+  static Input* getInstance();
+  bool is_down(int key);
+  bool is_up(int key);
+  void set_up(int key);
+  void set_down(int key);
+  
   static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+ private:
+  static Input* mInstance;
+  static const int NUM_KEYS = 512;
+  bool mKeysPressed[NUM_KEYS];
+
+  inline bool is_valid(int key);
 };
 
 #endif

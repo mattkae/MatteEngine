@@ -15,6 +15,8 @@ void CameraController::update(double dt) {
   }
 
   Input* input = Input::getInstance();
+
+  // Move around
   if (input->is_down(GLFW_KEY_W)) {
     mCamera->move_forward(dt);
   }
@@ -27,5 +29,18 @@ void CameraController::update(double dt) {
   if (input->is_down(GLFW_KEY_D)) {
     mCamera->move_right(dt);
   }
-  
+
+  // Look around
+  if (input->is_down(GLFW_KEY_UP)) {
+    mCamera->update_pitch(dt, true);
+  }
+  if (input->is_down(GLFW_KEY_DOWN)) {
+    mCamera->update_pitch(dt, false);
+  }
+  if (input->is_down(GLFW_KEY_LEFT)) {
+    mCamera->update_yaw(dt, false);
+  }
+  if (input->is_down(GLFW_KEY_RIGHT)) {
+    mCamera->update_yaw(dt, true);
+  }
 }

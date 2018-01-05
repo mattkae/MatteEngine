@@ -5,10 +5,15 @@
 
 struct CameraSpec {
   float fov = 45.f;
-  float pitch = 0;
-  float yaw = 0;
   float cameraSpeed = 5.f;
-  float sensitivity = 3.f;
+  float sensitivity = 180.f;
+
+  float defaultPitch = 0.f;
+  float defaultYaw = -90.f;
+  float maxYaw = 90.f;
+  
+  float pitchOffset = 0.f;
+  float yawOffset = 0.f;
 };
 
 class Shader;
@@ -23,16 +28,18 @@ class Camera : public Updateable {
   inline glm::vec3 get_forward() { return mForward; };
   inline glm::mat4 get_projection() { return mProjection; };
   inline glm::mat4 get_view() { return mView; };
+  
   inline CameraSpec get_camera_spec() { return mSpec; };
+  void set_camera_spec(CameraSpec newSpec);
   
   void move_forward(double dt);
   void move_backward(double dt);
   void move_right(double dt);
   void move_left(double dt);
+  void update_pitch(double dt, bool up);
+  void update_yaw(double dt, bool right);
+
   void update(double dt);
-  void update_pitch(bool up);
-  void update_yaw(bool right);
-  void update_camera_spec(CameraSpec newSpec);
   void render(Shader * shader);
  private:
   // Constants
@@ -40,15 +47,15 @@ class Camera : public Updateable {
 
   // Private methods
   void set_projection();
-  void update_camera();
-
+  
   // Orientation of camera
   CameraSpec mSpec;
   glm::vec3 mUp, mRight, mForward, mPos;
   glm::mat4 mProjection;
   glm::mat4 mView;
 
-  bool mViewNeedsUpdate = false;
+  bool mViewNeedsUpdate = true;
+  bool mVectorsNeedUpdate = true;
 };
 
 #endif

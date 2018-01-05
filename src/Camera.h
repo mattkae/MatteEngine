@@ -10,6 +10,8 @@ struct CameraSpec {
   float sensitivity = 3.f;
 };
 
+class Shader;
+
 class Camera {
  public:
   Camera();
@@ -30,6 +32,7 @@ class Camera {
   void update_pitch(bool up);
   void update_yaw(bool right);
   void update_camera_spec(CameraSpec newSpec);
+  void render(Shader * shader);
  private:
   // Constants
   const glm::vec3 mWorldUp = glm::vec3(0.0, 1.0, 0.0);

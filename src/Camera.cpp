@@ -1,12 +1,13 @@
 #include "Camera.h"
-#include "application.h"
+#include "Shader.h"
+#include "Application.h"
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 const glm::vec3 DEFAULT_RIGHT = glm::vec3(1.0, 0.0, 0.0);
 const glm::vec3 DEFAULT_FORWARD = glm::vec3(0.0, 0.0, -1.0);
-const glm::vec3 DEFAULT_POSITION = glm::vec3(0.0, 0.0, 1.0);
+const glm::vec3 DEFAULT_POSITION = glm::vec3(0.0, 0.0, 10.0);
 const float MAX_YAW_ROTATION = 65.0f;
 const float NEAR = 0.1f;
 const float FAR = 100.0f;
@@ -20,7 +21,8 @@ Camera::Camera() {
   mRight = DEFAULT_RIGHT;
   mForward = DEFAULT_FORWARD;
   mPos = DEFAULT_POSITION;
-  
+
+  mViewNeedsUpdate = true;
   set_projection();
   update_view();
 }
@@ -30,7 +32,8 @@ Camera::Camera(glm::vec3 pos) {
   mRight = DEFAULT_RIGHT;
   mForward = DEFAULT_FORWARD;
   mPos = pos;
-  
+
+  mViewNeedsUpdate = true;
   set_projection();
   update_view();
 }
@@ -39,7 +42,8 @@ Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
   mUp = up;
   mRight = right;
   mForward = glm::normalize(glm::cross(up, right));
-  
+
+  mViewNeedsUpdate = true;
   set_projection();
   update_view();
 }
@@ -126,4 +130,9 @@ void Camera::update_view() {
     mView = glm::lookAt(mPos, mPos + mForward, mUp);
     mViewNeedsUpdate = false;
   }
+}
+
+void Camera::render(Shader* shader) {
+  shader->SetUniformMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(mView));
+  shader->SetUniformMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(mProjection));
 }

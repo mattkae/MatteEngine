@@ -45,6 +45,7 @@ void Mesh::generate() {
 }
 
 void Mesh::render(Shader* shader) {
+  
   glBindVertexArray(this->mVao);
   glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);

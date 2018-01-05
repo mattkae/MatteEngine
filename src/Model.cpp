@@ -1,10 +1,13 @@
 #include "gl_includes.h"
 #include "Model.h"
 #include "Logger.h"
+#include "Shader.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 
 Model::Model(const char* path) {
@@ -21,6 +24,9 @@ Model::Model(const char* path) {
 }
 
 void Model::render(Shader* shader) {
+  glm::mat4 model(1.0);
+  shader->SetUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+
   for (int meshIndex = 0; meshIndex < mMeshes.size(); meshIndex++) {
     mMeshes[meshIndex].render(shader);
   }
@@ -42,7 +48,7 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   Mesh result;
   
   // Vertices
-    for (int vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
+  for (int vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
     Vertex vertex;
     glm::vec3 position = glm::vec3(mesh->mVertices[vertexIndex].x,
 			  mesh->mVertices[vertexIndex].y,
@@ -63,7 +69,6 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     vertex.texCoord = texCoords;
     result.add_vertex(vertex);
   }
-
   // Indices
   for (int faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++) {
     aiFace face = mesh->mFaces[faceIndex];

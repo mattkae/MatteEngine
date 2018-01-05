@@ -7,6 +7,7 @@
 #include "Application.h"
 #include "Shader.h"
 #include "Model.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -48,6 +49,7 @@ int main(int argc, char** argv) {
 
   initialize_glew();
 
+  Camera camera;
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Model model("assets/test.obj");
   
@@ -67,6 +69,9 @@ int main(int argc, char** argv) {
 
     // Render
     glClear(GL_COLOR_BUFFER_BIT);
+    shader.Use();
+    camera.render(&shader);
+    model.render(&shader);
     mainWindow->swap_buffers();
   }
 

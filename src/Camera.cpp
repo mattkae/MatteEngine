@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Application.h"
+#include "Logger.h"
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -24,7 +25,7 @@ Camera::Camera() {
 
   mViewNeedsUpdate = true;
   set_projection();
-  update_view();
+  update(0);
 }
 
 Camera::Camera(glm::vec3 pos) {
@@ -35,7 +36,7 @@ Camera::Camera(glm::vec3 pos) {
 
   mViewNeedsUpdate = true;
   set_projection();
-  update_view();
+  update(0);
 }
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
@@ -45,7 +46,7 @@ Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
 
   mViewNeedsUpdate = true;
   set_projection();
-  update_view();
+  update(0);
 }
 
 /**
@@ -70,23 +71,23 @@ void Camera::update_camera() {
   mViewNeedsUpdate = true;  
 }
 
-void Camera::move_forward() {
-  mPos += mSpec.cameraSpeed * mForward;
+void Camera::move_forward(double dt) {
+  mPos += ((float) dt) * mSpec.cameraSpeed * mForward;
   mViewNeedsUpdate = true;
 }
 
-void Camera::move_backward() {
-  mPos -= mSpec.cameraSpeed * mForward;
+void Camera::move_backward(double dt) {
+  mPos -= ((float) dt) * mSpec.cameraSpeed * mForward;
   mViewNeedsUpdate = true;
 }
 
-void Camera::move_right() {
-  mPos += mSpec.cameraSpeed * mRight;
+void Camera::move_right(double dt) {
+  mPos += ((float) dt) * mSpec.cameraSpeed * mRight;
   mViewNeedsUpdate = true;
 }
 
-void Camera::move_left() {
-  mPos -= mSpec.cameraSpeed * mRight;
+void Camera::move_left(double dt) {
+  mPos -= ((float) dt) * mSpec.cameraSpeed * mRight;
   mViewNeedsUpdate = true;
 }
 
@@ -125,7 +126,7 @@ void Camera::update_yaw(bool right) {
    Updates the view matrix at the end of an update if the camera
    changed position, or if the camera rotated.
  */
-void Camera::update_view() {
+void Camera::update(double dt) {
   if (mViewNeedsUpdate) {
     mView = glm::lookAt(mPos, mPos + mForward, mUp);
     mViewNeedsUpdate = false;

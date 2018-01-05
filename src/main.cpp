@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
+#include "CameraController.h"
 
 using namespace std;
 
@@ -50,6 +51,7 @@ int main(int argc, char** argv) {
   initialize_glew();
 
   Camera camera;
+  CameraController camControl(&camera);
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Model model("assets/test.obj");
   
@@ -66,6 +68,8 @@ int main(int argc, char** argv) {
     glfwPollEvents();
 
     // Update
+    camControl.update(deltaTime);
+    camera.update(deltaTime);
 
     // Render
     glClear(GL_COLOR_BUFFER_BIT);

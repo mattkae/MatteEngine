@@ -1,5 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+#include "Updateable.h"
 #include <glm/glm.hpp>
 
 struct CameraSpec {
@@ -12,7 +13,7 @@ struct CameraSpec {
 
 class Shader;
 
-class Camera {
+class Camera : public Updateable {
  public:
   Camera();
   Camera(glm::vec3 pos);
@@ -24,11 +25,11 @@ class Camera {
   inline glm::mat4 get_view() { return mView; };
   inline CameraSpec get_camera_spec() { return mSpec; };
   
-  void move_forward();
-  void move_backward();
-  void move_right();
-  void move_left();
-  void update_view();
+  void move_forward(double dt);
+  void move_backward(double dt);
+  void move_right(double dt);
+  void move_left(double dt);
+  void update(double dt);
   void update_pitch(bool up);
   void update_yaw(bool right);
   void update_camera_spec(CameraSpec newSpec);

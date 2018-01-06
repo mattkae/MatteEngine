@@ -45,6 +45,7 @@ void Mesh::generate() {
 }
 
 void Mesh::render(Shader* shader) {
+  this->mMaterial.render();
   
   glBindVertexArray(this->mVao);
   glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);
@@ -59,6 +60,6 @@ void Mesh::add_index(GLint index) {
   this->mIndices.push_back(index);
 }
 
-void Mesh::add_material(Material material) {
-  this->mMaterials.push_back(material);
+void Mesh::set_material(Material material) {
+  this->mMaterial = material;
 }

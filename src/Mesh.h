@@ -21,12 +21,12 @@ class Mesh {
   void render(Shader* shader);
   void add_vertex(Vertex vertex);
   void add_index(GLint index);
-  void add_material(Material material);
+  void set_material(Material material);
  private:
   GLuint mVao, mVbo, mEbo;
   std::vector<Vertex> mVertices;
   std::vector<GLint>  mIndices;
-  std::vector<Material> mMaterials;
+  Material mMaterial;
   GLfloat mShininess;
 };
 

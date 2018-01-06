@@ -5,7 +5,6 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
@@ -19,13 +18,14 @@ Model::Model(const char* path) {
     return;
   }
   
-  //this->directory = path.substr(0, path.find_last_of('/'));
   process_node(scene->mRootNode, scene);
+
+  // Set Model Matrix
+  mModel = glm::mat4(1.0);
 }
 
 void Model::render(Shader* shader) {
-  glm::mat4 model(1.0);
-  shader->SetUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+  shader->SetUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(this->mModel));
 
   for (int meshIndex = 0; meshIndex < mMeshes.size(); meshIndex++) {
     mMeshes[meshIndex].render(shader);
@@ -36,6 +36,8 @@ void Model::process_node(aiNode* node, const aiScene* scene) {
   for (int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[meshIndex]];
 
+    
+    
     mMeshes.push_back(process_mesh(mesh, scene));
   }
 
@@ -69,6 +71,7 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     vertex.texCoord = texCoords;
     result.add_vertex(vertex);
   }
+  
   // Indices
   for (int faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++) {
     aiFace face = mesh->mFaces[faceIndex];
@@ -79,11 +82,35 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     }
   }
 
+  // Materials
+  result.set_material(process_material(scene->mMaterials[mesh->mMaterialIndex]));
+  
   // Generate vao/vbos and bind
   result.generate();
   return result;
 }
 
-void Model::process_material(aiMaterial* mat) {
-  // TO-DO
+Material Model::process_material(aiMaterial* mat) {
+  Material result;
+
+  aiColor4D diffuse, specular, ambient, emissive;
+  ai_real shininess;
+
+  if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &diffuse) == AI_SUCCESS) {
+      result.set_diffuse(diffuse.r, diffuse.g, diffuse.b, diffuse.a);
+  }
+    
+  if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_SPECULAR, &specular) == AI_SUCCESS) {
+      result.set_specular(specular.r, specular.g, specular.b, specular.a);
+  }
+    
+  if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_AMBIENT, &ambient) == AI_SUCCESS) {
+      result.set_ambient(ambient.r, ambient.g, ambient.b, ambient.a);
+  }
+ 
+  if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_EMISSIVE, &emissive) == AI_SUCCESS) {
+      result.set_emissive(emissive.r, emissive.g, emissive.b, emissive.a);
+  }
+    
+  return result;
 }

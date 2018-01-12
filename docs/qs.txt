@@ -1,0 +1,1 @@
+1. Give each material its own ambient color, or keep a world ambient?

@@ -38,7 +38,20 @@ uniform DirectionalLight directionalLight;
 uniform PointLight pointLight;
 uniform vec3 ambient;
 
+vec3 get_diffuse(vec3 normal, vec3 lightDir, vec3 color) {
+  vec3 diffuseFactor = material.diffuse.rgb
+    * material.diffuseProperty
+    * max(0.f, dot(normal, lightDir));
+   return color * diffuseFactor;
+}
 
+vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color) {
+  vec3 reflection = reflect(-lightDir, normal);
+  vec3 specularFactor = material.specular.rgb
+    * material.specularProperty
+    * pow(max(0.f, dot(viewDir, reflection)), material.shininess);
+  return specularFactor;
+}
 
 vec3 get_directional_light(vec3 normal, vec3 viewDir) {
   vec3 lightDir = normalize(-directionalLight.direction);
@@ -48,20 +61,10 @@ vec3 get_directional_light(vec3 normal, vec3 viewDir) {
     return vec3(0.f);
   }
   
-  // Calculate diffuse
-  vec3 diffuseFactor = material.diffuse.rgb
-    * material.diffuseProperty
-    * max(0.f, dot(normal, lightDir));
-  vec3 diffuse = directionalLight.color * diffuseFactor;
-
-  // Calculate specular
-  vec3 reflection = reflect(-lightDir, normal);
-  vec3 specularFactor = material.specular.rgb
-    * material.specularProperty
-    * pow(max(0.f, dot(viewDir, reflection)), material.shininess);
-  vec3 specular = specularFactor;
+  vec3 diffuse = get_diffuse(normal, lightDir, directionalLight.color);
+  vec3 specular = get_specular(normal, lightDir, viewDir, directionalLight.color);
 		       
-  return min(diffuse + specular, vec3(1.0));;
+  return min(diffuse + specular, vec3(1.0));
 }
 
 
@@ -78,18 +81,9 @@ vec3 get_point_light(vec3 normal, vec3 viewDir) {
 
   vec3 intensity = pointLight.color / (pointLight.constant + delta * pointLight.linear + delta * delta * pointLight.quadratic);
 
-  // Calculate diffuse
-  vec3 diffuseFactor = material.diffuse.rgb
-    * material.diffuseProperty
-    * max(0.f, dot(normal, lightDir));
-  vec3 diffuse = intensity * diffuseFactor;
 
-  // Calculate specular
-  vec3 reflection = reflect(lightDir, normal);
-  vec3 specularFactor = material.specular.rgb
-    * material.specularProperty
-    * pow(max(0.f, dot(viewDir, reflection)), material.shininess);
-  vec3 specular = intensity  * specularFactor;
+  vec3 diffuse = get_diffuse(normal, lightDir, intensity);
+  vec3 specular = get_specular(normal, lightDir, viewDir, intensity);
   
   return min(diffuse + specular, vec3(1.0));
 }

@@ -133,4 +133,5 @@ void Camera::update(double dt) {
 void Camera::render(Shader* shader) {
   shader->SetUniformMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(mView));
   shader->SetUniformMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(mProjection));
+  shader->SetUniform3f("eye", mPos.x, mPos.y, mPos.z);
 }

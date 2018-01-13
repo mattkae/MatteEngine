@@ -93,23 +93,19 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
 Material Model::process_material(aiMaterial* mat) {
   Material result;
 
-  aiColor4D diffuse, specular, ambient, emissive;
+  aiColor4D diffuse, specular, emissive;
   ai_real shininess;
 
   if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_DIFFUSE, &diffuse) == AI_SUCCESS) {
-      result.set_diffuse(diffuse.r, diffuse.g, diffuse.b, diffuse.a);
+    result.diffuse = glm::vec4(diffuse.r, diffuse.g, diffuse.b, diffuse.a);
   }
     
   if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_SPECULAR, &specular) == AI_SUCCESS) {
-      result.set_specular(specular.r, specular.g, specular.b, specular.a);
-  }
-    
-  if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_AMBIENT, &ambient) == AI_SUCCESS) {
-      result.set_ambient(ambient.r, ambient.g, ambient.b, ambient.a);
+    result.specular = glm::vec4(specular.r, specular.g, specular.b, specular.a);
   }
  
   if (aiGetMaterialColor(mat, AI_MATKEY_COLOR_EMISSIVE, &emissive) == AI_SUCCESS) {
-      result.set_emissive(emissive.r, emissive.g, emissive.b, emissive.a);
+    result.emissive = glm::vec4(emissive.r, emissive.g, emissive.b, emissive.a);
   }
     
   return result;

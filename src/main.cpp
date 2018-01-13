@@ -54,9 +54,11 @@ int main(int argc, char** argv) {
   CameraController camControl(&camera);
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Model model("assets/test.obj");
-  
+
   // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;
+
+  glEnable(GL_DEPTH_TEST);
   
   while (mainWindow->is_running()) {
     // Update timestep
@@ -72,8 +74,13 @@ int main(int argc, char** argv) {
     camera.update(deltaTime);
 
     // Render
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shader.Use();
+
+    shader.SetUniform3f("ambient", 0.3, 0.3, 0.3);
+    shader.SetUniform3f("directionalLight.direction", 0.0, 0.0, -1.0);
+    shader.SetUniform3f("directionalLight.color", 1.0, 0.0, 1.0);
+    
     camera.render(&shader);
     model.render(&shader);
     mainWindow->swap_buffers();

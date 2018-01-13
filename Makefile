@@ -2,7 +2,7 @@ FILENAME=flooids
 EXE=$(FILENAME)
 
 CXX = clang++
-CXXFLAGS = -std=c++11 -Iinclude
+CXXFLAGS = -std=c++14 -Iinclude
 LINK_FLAGS = -lglfw3 -lglew -lassimp -framework Cocoa -framework OpenGL -framework CoreVideo -framework IOKit
 
 src = $(wildcard src/*.cpp)

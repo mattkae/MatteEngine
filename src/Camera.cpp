@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Shader.h"
+#include "Input.h"
 #include "Application.h"
 #include "Logger.h"
 #include <cmath>
@@ -134,4 +135,41 @@ void Camera::render(Shader* shader) {
   shader->SetUniformMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(mView));
   shader->SetUniformMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(mProjection));
   shader->SetUniform3f("eye", mPos.x, mPos.y, mPos.z);
+}
+
+void move_camera(double dt, Camera* camera) {
+  if (camera == nullptr) {
+    logger::log_error("Camera does not exist to be moved.");
+    return;
+  }
+
+  Input* input = Input::getInstance();
+
+  // Move around
+  if (input->is_down(GLFW_KEY_W)) {
+    camera->move_forward(dt);
+  }
+  if (input->is_down(GLFW_KEY_S)) {
+    camera->move_backward(dt);
+  }
+  if (input->is_down(GLFW_KEY_A)) {
+    camera->move_left(dt);
+  }
+  if (input->is_down(GLFW_KEY_D)) {
+    camera->move_right(dt);
+  }
+
+  // Look around
+  if (input->is_down(GLFW_KEY_UP)) {
+    camera->update_pitch(dt, true);
+  }
+  if (input->is_down(GLFW_KEY_DOWN)) {
+    camera->update_pitch(dt, false);
+  }
+  if (input->is_down(GLFW_KEY_LEFT)) {
+    camera->update_yaw(dt, false);
+  }
+  if (input->is_down(GLFW_KEY_RIGHT)) {
+    camera->update_yaw(dt, true);
+  }
 }

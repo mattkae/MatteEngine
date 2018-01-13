@@ -58,4 +58,6 @@ class Camera : public Updateable {
   bool mVectorsNeedUpdate = true;
 };
 
+void move_camera(double dt, Camera* camera);
+
 #endif

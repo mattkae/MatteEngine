@@ -84,6 +84,17 @@ int main(int argc, char** argv) {
     shader.SetUniform1f("pointLight.constant", 0.55);
     shader.SetUniform1f("pointLight.linear", 0.25);
     shader.SetUniform1f("pointLight.quadratic", 0.1);
+
+    glm::vec3 spotPos = camera.get_position();
+    glm::vec3 spotDir = camera.get_forward();
+    shader.SetUniform3f("spotLight.position", spotPos.x, spotPos.y, spotPos.z);
+    shader.SetUniform3f("spotLight.direction", spotDir.x, spotDir.y, spotDir.z);
+    shader.SetUniform3f("spotLight.color", 0.0, 1.0, 0.0);
+    shader.SetUniform1f("spotLight.constant", 0.55);
+    shader.SetUniform1f("spotLight.linear", 0.25);
+    shader.SetUniform1f("spotLight.quadratic", 0.1);
+    shader.SetUniform1f("spotLight.cosineCutOff", 0.99);
+    shader.SetUniform1f("spotLight.dropOff", 12);
     
     camera.render(&shader);
     model.render(&shader);

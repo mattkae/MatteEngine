@@ -26,6 +26,7 @@ class Camera : public Updateable {
   inline glm::vec3 get_up() { return mUp; };
   inline glm::vec3 get_right() { return mRight; };
   inline glm::vec3 get_forward() { return mForward; };
+  inline glm::vec3 get_position() { return mPos; };
   inline glm::mat4 get_projection() { return mProjection; };
   inline glm::mat4 get_view() { return mView; };
   

@@ -1,4 +1,4 @@
-1. Implement Phong Lighting
+1. Create data structures in C++ for all phong lights
 2. Add transparency to lighting
 3. Add multiple lights to lighting sheme
 4. Refactor main.cpp (Move to an Application namespace maybe?)

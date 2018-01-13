@@ -53,10 +53,18 @@ vec3 get_directional_light(vec3 normal, vec3 viewDir) {
   return min(diffuse + specular, vec3(1.0));;
 }
 
+vec3 get_point_light(vec3 normal, vec3 viewDir) {
+  return vec3(0.f);
+}
+
 void main() {
   vec3 viewDir = normalize(Eye - FragPos);
   vec3 normal = normalize(Normal);
   
-  vec3 finalColor = ambient + material.emissive.rgb + get_directional_light(normal, viewDir);
+  vec3 finalColor = ambient
+    + material.emissive.rgb
+    + get_directional_light(normal, viewDir)
+    + get_point_light(normal, viewDir);
+  
   Color = vec4(normalize(finalColor), 1.0);
 }

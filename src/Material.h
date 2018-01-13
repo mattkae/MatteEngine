@@ -11,7 +11,7 @@ struct Material {
   glm::vec4 specular = glm::vec4(1.0);
   glm::vec3 diffuseProperty = glm::vec3(1.0);
   glm::vec3 specularProperty = glm::vec3(1.0);
-  GLfloat shininess = 0.5f;
+  GLfloat shininess = 20.f;
 };
 
 void render_material(Material* material, Shader * shader);

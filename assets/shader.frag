@@ -15,6 +15,14 @@ struct DirectionalLight {
   vec3 color;
 };
 
+struct PointLight {
+  vec3 position;
+  vec3 color;
+  float constant;
+  float linear;
+  float quadratic;
+};
+
 // Output color
 out vec4 Color;
 
@@ -27,7 +35,10 @@ in vec3 Eye;
 // Uniform variables
 uniform Material material;
 uniform DirectionalLight directionalLight;
+uniform PointLight pointLight;
 uniform vec3 ambient;
+
+
 
 vec3 get_directional_light(vec3 normal, vec3 viewDir) {
   vec3 lightDir = normalize(-directionalLight.direction);
@@ -53,9 +64,37 @@ vec3 get_directional_light(vec3 normal, vec3 viewDir) {
   return min(diffuse + specular, vec3(1.0));;
 }
 
+
+
 vec3 get_point_light(vec3 normal, vec3 viewDir) {
-  return vec3(0.f);
+  vec3 lightMinusFrag = pointLight.position - FragPos;
+  float delta = length(lightMinusFrag);
+  vec3 lightDir = normalize(lightMinusFrag);
+
+  float normalDotDir = max(0.f, dot(normal, lightDir));
+  if (normalDotDir == 0) {
+    return vec3(0.f);
+  }
+
+  vec3 intensity = pointLight.color / (pointLight.constant + delta * pointLight.linear + delta * delta * pointLight.quadratic);
+
+  // Calculate diffuse
+  vec3 diffuseFactor = material.diffuse.rgb
+    * material.diffuseProperty
+    * max(0.f, dot(normal, lightDir));
+  vec3 diffuse = intensity * diffuseFactor;
+
+  // Calculate specular
+  vec3 reflection = reflect(lightDir, normal);
+  vec3 specularFactor = material.specular.rgb
+    * material.specularProperty
+    * pow(max(0.f, dot(viewDir, reflection)), material.shininess);
+  vec3 specular = intensity  * specularFactor;
+  
+  return min(diffuse + specular, vec3(1.0));
 }
+
+
 
 void main() {
   vec3 viewDir = normalize(Eye - FragPos);

@@ -10,7 +10,7 @@ struct CameraSpec {
 
   float defaultPitch = 0.f;
   float defaultYaw = -90.f;
-  float maxYaw = 15.f;
+  float maxYaw = 75.f;
   
   float pitchOffset = 0.f;
   float yawOffset = 0.f;

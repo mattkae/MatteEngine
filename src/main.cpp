@@ -78,6 +78,12 @@ int main(int argc, char** argv) {
     shader.SetUniform3f("ambient", 0.3, 0.3, 0.3);
     shader.SetUniform3f("directionalLight.direction", 0.0, 0.0, -1.0);
     shader.SetUniform3f("directionalLight.color", 1.0, 0.0, 1.0);
+
+    shader.SetUniform3f("pointLight.position", 0.0, 5.0, 0.0);
+    shader.SetUniform3f("pointLight.color", 0.0, 0.0, 1.0);
+    shader.SetUniform1f("pointLight.constant", 0.55);
+    shader.SetUniform1f("pointLight.linear", 0.25);
+    shader.SetUniform1f("pointLight.quadratic", 0.1);
     
     camera.render(&shader);
     model.render(&shader);

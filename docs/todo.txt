@@ -1,4 +1,4 @@
-1. Investigate and implement multiple lighting
-2. Add transparency to lighting
-3. Refactor main.cpp (Move to an Application namespace maybe?)
-4. Optimize draw calls
+1. Add transparency to lighting
+2. Refactor main.cpp (Move to an Application namespace maybe?)
+3. Optimize draw calls
+4. Optimize lighting (big subject)

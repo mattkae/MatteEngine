@@ -8,6 +8,7 @@ class Shader;
 const unsigned int Directional = 0x00000001u;
 const unsigned int Point       = 0x00000002u;
 const unsigned int Spot        = 0x00000004u;
+const unsigned int Inactive    = 0x00000008u;
 const int MAX_LIGHTS = 16;
 
 struct Light {
@@ -31,6 +32,7 @@ class LightSystem {
   int add_spot(glm::vec3 direction, glm::vec3 position, glm::vec3 color, float constant, float linear, float quadratic, float cosineCutOff, float dropOff);
   void set_ambient(glm::vec3 ambient);
   void render(Shader* shader);
+  void toggle(int id);
 
  private:
   glm::vec3 mAmbient = glm::vec3(1.0);

@@ -48,6 +48,8 @@ void LightSystem::render(Shader* shader) {
 	logger::log_error("Unknown light type.");
 	break;
       }
+    } else {
+      shader->SetUniform1ui(get_location(index, "type").c_str(), Inactive);
     }
   }
 }
@@ -88,4 +90,10 @@ int LightSystem::add_spot(glm::vec3 direction, glm::vec3 position, glm::vec3 col
   mLights[mNumLights].type = Spot;
   
   return mNumLights++;
+}
+
+void LightSystem::toggle(int id) {
+  if (id < mNumLights) {
+    mLights[id].isOn = !mLights[id].isOn;
+  }
 }

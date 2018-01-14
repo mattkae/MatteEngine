@@ -31,7 +31,7 @@ class Camera : public Updateable {
   inline glm::mat4 get_view() { return mView; };
   
   inline CameraSpec get_camera_spec() { return mSpec; };
-  void set_camera_spec(CameraSpec newSpec);
+  inline void set_camera_spec(CameraSpec newSpec) { mSpec = newSpec; };
   
   void move_forward(double dt);
   void move_backward(double dt);

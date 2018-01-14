@@ -1,4 +1,6 @@
 1. Add transparency to lighting
-2. Refactor main.cpp (Move to an Application namespace maybe?)
-3. Optimize draw calls
-4. Optimize lighting (big subject)
+2. Add shadows to lighting
+3. Refactor main.cpp (Move to an Application namespace maybe?)
+4. Optimize draw calls
+5. Optimize lighting (big subject)
+6. Add texture loading

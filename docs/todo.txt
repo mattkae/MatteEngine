@@ -1,4 +1,4 @@
-1. Create data structures in C++ for all phong lights
+1. Investigate and implement multiple lighting
 2. Add transparency to lighting
-3. Add multiple lights to lighting sheme
-4. Refactor main.cpp (Move to an Application namespace maybe?)
+3. Refactor main.cpp (Move to an Application namespace maybe?)
+4. Optimize draw calls

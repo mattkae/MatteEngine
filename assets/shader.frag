@@ -10,29 +10,23 @@ struct Material {
   float shininess;
 };
 
-struct DirectionalLight {
+struct Light {
   vec3 direction;
-  vec3 color;
-};
-
-struct PointLight {
   vec3 position;
-  vec3 color;
-  float constant;
-  float linear;
-  float quadratic;
-};
-
-struct SpotLight {
-  vec3 position;
-  vec3 direction;
   vec3 color;
   float constant;
   float linear;
   float quadratic;
   float cosineCutOff;
   float dropOff;
+  uint type;
 };
+
+// Constants
+const uint Directional = 0x00000001u;
+const uint Point       = 0x00000002u;
+const uint Spot        = 0x00000004u;
+const int MAX_LIGHTS = 16;
 
 // Output color
 out vec4 Color;
@@ -45,33 +39,41 @@ in vec3 Eye;
 
 // Uniform variables
 uniform Material material;
-uniform DirectionalLight directionalLight;
-uniform PointLight pointLight;
-uniform SpotLight spotLight;
+uniform int numLights;
+uniform Light lights[MAX_LIGHTS];
 uniform vec3 ambient;
 
 // Helper functions
-vec3 get_directional_light(vec3 normal, vec3 viewDir);
-vec3 get_point_light(vec3 normal, vec3 viewDir);
-vec3 get_spot_light(vec3 normal, vec3 viewDir);
+vec3 get_directional_light(Light directionalLight, vec3 normal, vec3 viewDir);
+vec3 get_point_light(Light pointLight, vec3 normal, vec3 viewDir);
+vec3 get_spot_light(Light spotLight, vec3 normal, vec3 viewDir);
 vec3 get_diffuse(vec3 normal, vec3 lightDir, vec3 color);
 vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color);
+
 
 void main() {
   vec3 viewDir = normalize(Eye - FragPos);
   vec3 normal = normalize(Normal);
-  
-  vec3 finalColor = ambient
-    + material.emissive.rgb
-    + get_directional_light(normal, viewDir)
-    + get_point_light(normal, viewDir)
-    + get_spot_light(normal, viewDir);
-  
-  Color = vec4(normalize(finalColor), 1.0);
+  vec3 finalColor = ambient + material.emissive.rgb;
+
+  // Iterate over all the lights in the scene
+  for (int lightIndex = 0; lightIndex < numLights; lightIndex++) {
+    Light light = lights[lightIndex];
+
+    if (light.type == Directional) {
+      finalColor += get_directional_light(light, normal, viewDir);
+    } else if (light.type == Point) {
+      finalColor += get_point_light(light, normal, viewDir);
+    } else if (light.type == Spot) {
+      finalColor += get_spot_light(light, normal, viewDir);
+    }
+  }
+
+  Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), 1.0);
 }
 
 
-vec3 get_directional_light(vec3 normal, vec3 viewDir) {
+vec3 get_directional_light(Light directionalLight, vec3 normal, vec3 viewDir) {
   vec3 lightDir = normalize(-directionalLight.direction);
   
   float normalDotDir = max(0.f, dot(normal, lightDir));
@@ -85,7 +87,7 @@ vec3 get_directional_light(vec3 normal, vec3 viewDir) {
   return min(diffuse + specular, vec3(1.0));
 }
 
-vec3 get_point_light(vec3 normal, vec3 viewDir) {
+vec3 get_point_light(Light pointLight, vec3 normal, vec3 viewDir) {
   vec3 lightMinusFrag = pointLight.position - FragPos;
   float delta = length(lightMinusFrag);
   vec3 lightDir = normalize(lightMinusFrag);
@@ -103,7 +105,7 @@ vec3 get_point_light(vec3 normal, vec3 viewDir) {
   return min(diffuse + specular, vec3(1.0));
 }
 
-vec3 get_spot_light(vec3 normal, vec3 viewDir) {
+vec3 get_spot_light(Light spotLight, vec3 normal, vec3 viewDir) {
   vec3 lightMinusFrag = spotLight.position - FragPos;
   float delta = length(lightMinusFrag);
   vec3 lightToPosDir = normalize(lightMinusFrag);

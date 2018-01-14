@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
+#include "LightSystem.h"
 
 using namespace std;
 
@@ -52,7 +53,12 @@ int main(int argc, char** argv) {
   Camera camera;
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Model model("assets/test.obj");
-
+  LightSystem lightSystem;
+  lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
+  lightSystem.add_directional(glm::vec3(0.0, 0.0, -1.0), glm::vec3(1.0, 0.0, 0.0));
+  lightSystem.add_point(glm::vec3(0.0, 5.0, 0.0), glm::vec3(0.0, 1.0, 0.0), 0.55f, 0.2f, 0.11f);
+  lightSystem.add_spot(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -5.0, 0.0), glm::vec3(0.0, 0.0, 1.0), 0.55f, 0.2f, 0.11f, 0.99f, 24.f);
+  
   // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;
 
@@ -74,28 +80,7 @@ int main(int argc, char** argv) {
     // Render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shader.Use();
-
-    shader.SetUniform3f("ambient", 0.3, 0.3, 0.3);
-    shader.SetUniform3f("directionalLight.direction", 0.0, 0.0, -1.0);
-    shader.SetUniform3f("directionalLight.color", 1.0, 0.0, 1.0);
-
-    shader.SetUniform3f("pointLight.position", 0.0, 5.0, 0.0);
-    shader.SetUniform3f("pointLight.color", 0.0, 0.0, 1.0);
-    shader.SetUniform1f("pointLight.constant", 0.55);
-    shader.SetUniform1f("pointLight.linear", 0.25);
-    shader.SetUniform1f("pointLight.quadratic", 0.1);
-
-    glm::vec3 spotPos = camera.get_position();
-    glm::vec3 spotDir = camera.get_forward();
-    shader.SetUniform3f("spotLight.position", spotPos.x, spotPos.y, spotPos.z);
-    shader.SetUniform3f("spotLight.direction", spotDir.x, spotDir.y, spotDir.z);
-    shader.SetUniform3f("spotLight.color", 0.0, 1.0, 0.0);
-    shader.SetUniform1f("spotLight.constant", 0.55);
-    shader.SetUniform1f("spotLight.linear", 0.25);
-    shader.SetUniform1f("spotLight.quadratic", 0.1);
-    shader.SetUniform1f("spotLight.cosineCutOff", 0.99);
-    shader.SetUniform1f("spotLight.dropOff", 12);
-    
+    lightSystem.render(&shader);    
     camera.render(&shader);
     model.render(&shader);
     mainWindow->swap_buffers();

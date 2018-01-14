@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "LightSystem.h"
 #include "Input.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
 
@@ -58,6 +59,9 @@ int main(int argc, char** argv) {
   //  camera.set_camera_spec(cs);
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Model model("assets/test.obj");
+  Model floor("assets/floor.obj");
+  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
+  
   LightSystem lightSystem;
   lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
   lightSystem.add_directional(glm::vec3(0.0, 0.0, -1.0), glm::vec3(1.0, 0.0, 0.0));
@@ -100,6 +104,7 @@ int main(int argc, char** argv) {
     lightSystem.render(&shader);    
     camera.render(&shader);
     model.render(&shader);
+    floor.render(&shader);
     mainWindow->swap_buffers();
   }
 

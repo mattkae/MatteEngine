@@ -22,7 +22,6 @@ Model::Model(const char* path) {
 
   // Set Model Matrix
   mModel = glm::mat4(1.0);
-  mModel = glm::translate(mModel, glm::vec3(0.0f, -1.0f, 1.0f));
 }
 
 void Model::render(Shader* shader) {

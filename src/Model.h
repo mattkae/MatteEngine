@@ -15,6 +15,7 @@ class Model {
  public:
   Model(const char* path);
   void render(Shader * shader);
+  void set_model(glm::mat4 model) { mModel = model; };
  private:
   void process_node(aiNode* node, const aiScene* scene);
   Mesh process_mesh(aiMesh* mesh, const aiScene* scene);

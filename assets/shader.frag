@@ -54,7 +54,7 @@ vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color);
 void main() {
   vec3 viewDir = normalize(Eye - FragPos);
   vec3 normal = normalize(Normal);
-  vec3 finalColor = ambient + material.emissive.rgb;
+  vec3 finalColor = ambient * material.diffuse.rgb + material.emissive.rgb;
 
   // Iterate over all the lights in the scene
   for (int lightIndex = 0; lightIndex < numLights; lightIndex++) {

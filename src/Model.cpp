@@ -36,8 +36,6 @@ void Model::process_node(aiNode* node, const aiScene* scene) {
   for (int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[meshIndex]];
 
-    
-    
     mMeshes.push_back(process_mesh(mesh, scene));
   }
 
@@ -48,6 +46,10 @@ void Model::process_node(aiNode* node, const aiScene* scene) {
 
 Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   Mesh result;
+
+  if (mesh == nullptr) {
+    return result;
+  }
   
   // Vertices
   for (int vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
@@ -56,10 +58,13 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
 			  mesh->mVertices[vertexIndex].y,
 			  mesh->mVertices[vertexIndex].z);
 
-    glm::vec3 normal = glm::vec3(mesh->mNormals[vertexIndex].x,
+    glm::vec3 normal;
+    if (mesh->HasNormals()) {
+      normal = glm::vec3(mesh->mNormals[vertexIndex].x,
 			mesh->mNormals[vertexIndex].y,
 			mesh->mNormals[vertexIndex].z);
-
+    }
+    
     glm::vec2 texCoords;
     if (mesh->HasTextureCoords(vertexIndex)) {
       texCoords = glm::vec2(mesh->mTextureCoords[0][vertexIndex].x,
@@ -82,8 +87,11 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     }
   }
 
+  
   // Materials
-  result.set_material(process_material(scene->mMaterials[mesh->mMaterialIndex]));
+  if (scene != nullptr) {
+    result.set_material(process_material(scene->mMaterials[mesh->mMaterialIndex]));
+  }
   
   // Generate vao/vbos and bind
   result.generate();

@@ -27,6 +27,7 @@ LightSystem::LightSystem() {
   glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
   glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, mDepthTexture, 0);
   glDrawBuffer(GL_NONE);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 static string get_location(int lightIndex, const char* propertyName) {

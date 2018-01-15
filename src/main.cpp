@@ -53,10 +53,6 @@ int main(int argc, char** argv) {
   initialize_glew();
 
   Camera camera;
-  CameraSpec cs{
-    .defaultPitch = 15.f
-  };
-  //  camera.set_camera_spec(cs);
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Model model("assets/test.obj");
   Model floor("assets/floor.obj");

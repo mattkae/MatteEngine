@@ -1,7 +1,6 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Input.h"
-#include "Application.h"
 #include "Logger.h"
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,39 +13,42 @@ const glm::vec3 DEFAULT_POSITION = glm::vec3(0.0, 0.0, 10.0);
 const float NEAR = 0.1f;
 const float FAR = 100.0f;
 
-void Camera::set_projection() {
-  mProjection = glm::perspective(glm::radians(mSpec.fov), (float) Application::screenWidth / (float) Application::screenHeight, NEAR, FAR);
-}
-
 Camera::Camera() {
+  mPos = DEFAULT_POSITION;
   mUp = mWorldUp;
   mRight = DEFAULT_RIGHT;
   mForward = DEFAULT_FORWARD;
-  mPos = DEFAULT_POSITION;
 
   set_projection();
-  update(0);
+  update(-1);
 }
 
 Camera::Camera(glm::vec3 pos) {
+  mPos = pos;
   mUp = mWorldUp;
   mRight = DEFAULT_RIGHT;
   mForward = DEFAULT_FORWARD;
-  mPos = pos;
 
   set_projection();
-  update(0);
+  update(-1);
 }
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
+  mPos = pos;
   mUp = up;
   mRight = right;
   mForward = glm::normalize(glm::cross(up, right));
-
+  
   set_projection();
-  update(0);
+  update(-1);
 }
 
+/**
+   Establishes the projection matrix based off of the camera's spec.
+ */
+void Camera::set_projection() {
+  mProjection = glm::perspective(glm::radians(mSpec.fov), mSpec.width / mSpec.height, mSpec.near, mSpec.far);
+}
 
 /**
    Move the camera in the four directions
@@ -103,11 +105,24 @@ void Camera::update_yaw(double dt, bool right) {
 }
 
 /**
+   Set the view of the camera based off of the given position
+   and forward vector.
+ */
+void Camera::set_lookat(glm::vec3 pos, glm::vec3 forward) {
+  mPos = pos;
+  mForward = forward;
+  mView = glm::lookAt(mPos, mPos + mForward, mUp);
+}
+
+/**
    Updates the view matrix at the end of an update if the camera
    changed position, or if the camera rotated.
+
+   If dt < 0, the camera  will receive a froce update.
  */
 void Camera::update(double dt) {
-  if (mVectorsNeedUpdate) {
+  if (mVectorsNeedUpdate || dt < 0) {
+    // We've rotated around an axis, so update the camera's vectors
     glm::vec3 frontTemp;
 
     float pitch = this->mSpec.defaultPitch + this->mSpec.pitchOffset;
@@ -125,7 +140,8 @@ void Camera::update(double dt) {
     this->mViewNeedsUpdate = true;
   }
   
-  if (mViewNeedsUpdate) {
+  if (mViewNeedsUpdate || dt < 0) {
+    // We've moved, so update the look at matrix
     mView = glm::lookAt(mPos, mPos + mForward, mUp);
     mViewNeedsUpdate = false;
   }

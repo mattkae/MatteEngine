@@ -1,13 +1,32 @@
 #include "LightSystem.h"
 #include "Shader.h"
+#include "Model.h"
+#include "Camera.h"
 #include "Logger.h"
+#include <glm/gtc/matrix_transform.hpp>
 #include <sstream>
 #include <string>
 
 using namespace std;
 
 LightSystem::LightSystem() {
-  
+  // Set up FrameBuffer for shadows
+  glGenTextures(1, &mDepthTexture);
+  glBindTexture(GL_TEXTURE_2D, mDepthTexture);
+  // TO-DO: Don't hardcode values!
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 800, 600, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  glGenFramebuffers(1, &mDepthFbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, mDepthTexture, 0);
+  glDrawBuffer(GL_NONE);
 }
 
 static string get_location(int lightIndex, const char* propertyName) {
@@ -52,6 +71,38 @@ void LightSystem::render(Shader* shader) {
       shader->SetUniform1ui(get_location(index, "type").c_str(), Inactive);
     }
   }
+}
+
+void LightSystem::render_shadows(Shader* shader, Model* model, Camera* camera) {
+  // Remember original position and forward
+  glm::vec3 origPos = camera->get_position();
+  glm::vec3 origForward = camera->get_forward();
+
+  for (int index = 0; index < mNumLights; index++) {
+    const Light& light = mLights[mNumLights];
+
+    if (!light.isOn) continue;
+    
+    CameraSpec spec = camera->get_camera_spec();
+    switch(light.type) {
+    case Directional:
+      camera->set_lookat(-light.direction * spec.far, light.direction);
+      break;
+    case Point:
+      //camera->set_lookat(light.position, model->position - light.position);
+      break;
+    case Spot:
+      //camera->set_lookat(light.position, light.direction);
+      break;
+    default:
+      break;
+    }
+    camera->render(shader);
+    model->render(shader);
+  }
+
+  // Reset the camera's position
+  camera->set_lookat(origPos, origForward);
 }
 
 void LightSystem::set_ambient(glm::vec3 ambient) {

@@ -1,9 +1,12 @@
 #ifndef LIGHTS_H
 #define LIGHTS_H
+#include "gl_includes.h"
 #include <vector>
 #include <glm/glm.hpp>
 
 class Shader;
+class Model;
+class Camera;
 
 const unsigned int Directional = 0x00000001u;
 const unsigned int Point       = 0x00000002u;
@@ -31,13 +34,18 @@ class LightSystem {
   int add_point(glm::vec3 position, glm::vec3 color, float constant, float linear, float quadratic);
   int add_spot(glm::vec3 direction, glm::vec3 position, glm::vec3 color, float constant, float linear, float quadratic, float cosineCutOff, float dropOff);
   void set_ambient(glm::vec3 ambient);
+  void render_shadows(Shader* shader, Model* model, Camera* camera);
   void render(Shader* shader);
   void toggle(int id);
 
  private:
+  // Lights
   glm::vec3 mAmbient = glm::vec3(1.0);
   int mNumLights = 0;
   Light mLights[MAX_LIGHTS];
+
+  // Shadow Variables
+  GLuint mDepthTexture, mDepthFbo;
 };
 
 #endif

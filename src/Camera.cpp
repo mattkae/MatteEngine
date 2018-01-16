@@ -105,16 +105,6 @@ void Camera::update_yaw(double dt, bool right) {
 }
 
 /**
-   Set the view of the camera based off of the given position
-   and forward vector.
- */
-void Camera::set_lookat(glm::vec3 pos, glm::vec3 forward) {
-  mPos = pos;
-  mForward = forward;
-  mView = glm::lookAt(mPos, mPos + mForward, mUp);
-}
-
-/**
    Updates the view matrix at the end of an update if the camera
    changed position, or if the camera rotated.
 

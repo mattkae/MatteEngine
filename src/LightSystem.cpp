@@ -4,19 +4,25 @@
 #include "Camera.h"
 #include "Logger.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <sstream>
 #include <string>
 
 using namespace std;
 
-LightSystem::LightSystem() {
-  // Set up FrameBuffer for shadows
+const glm::mat4 OFFSET_MAT = glm::mat4(
+      glm::vec4(0.5f, 0.0f, 0.0f, 0.0f),
+      glm::vec4(0.0f, 0.5f, 0.0f, 0.0f),
+      glm::vec4(0.0f, 0.0f, 0.5f, 0.0f),
+      glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+    
+
+LightSystem::LightSystem() {  
   glGenTextures(1, &mDepthTexture);
   glBindTexture(GL_TEXTURE_2D, mDepthTexture);
-  // TO-DO: Don't hardcode values!
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 800, 600, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0,GL_DEPTH_COMPONENT24, 800, 600, 0,GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -25,8 +31,41 @@ LightSystem::LightSystem() {
 
   glGenFramebuffers(1, &mDepthFbo);
   glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, mDepthTexture, 0);
   glDrawBuffer(GL_NONE);
+  glReadBuffer(GL_NONE);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthTexture, 0);
+
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    logger::log_error("Shadow framebuffer is not okay.");
+  
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void LightSystem::render_shadows(Shader* shader, std::vector<Model*> models, Camera* camera) {
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
+  glViewport(0, 0, 800, 600);
+  glClearDepth(1.f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(2.0f, 4.0f);
+  
+  shader->Use();
+  for (int lightIndex = 0; lightIndex < mNumLights; lightIndex++) {
+    const Light& light = mLights[lightIndex];
+    if (!light.isOn) continue;
+
+    shader->SetUniformMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(light.view));
+    shader->SetUniformMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(light.projection));
+
+    // Render all of the models
+    for (auto model : models) {      
+      model->render(shader);
+    }
+  }
+
+  glDisable(GL_POLYGON_OFFSET_FILL);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -38,6 +77,11 @@ static string get_location(int lightIndex, const char* propertyName) {
 }
 
 void LightSystem::render(Shader* shader) {
+  //shader->SetUniform1i("depthTexture", 0);
+  //glEnable(GL_TEXTURE_2D);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, mDepthTexture);;
+
   // Ambient
   shader->SetUniform3f("ambient", mAmbient.x, mAmbient.y, mAmbient.z);
 
@@ -49,6 +93,8 @@ void LightSystem::render(Shader* shader) {
     if (light.isOn) {
       shader->SetUniform1ui(get_location(index, "type").c_str(), light.type);
       shader->SetUniform3f(get_location(index, "color").c_str(), light.color.x, light.color.y, light.color.z);
+      shader->SetUniformMatrix4fv("shadowMatrix", 1, GL_FALSE, glm::value_ptr(light.projection * light.view * OFFSET_MAT));
+      //shader->SetUniformMatrix4fv(get_location(index, "view").c_str(), 1, GL_FALSE, glm::value_ptr(light.view));
       
       switch (light.type) {
       case Directional:
@@ -74,38 +120,6 @@ void LightSystem::render(Shader* shader) {
   }
 }
 
-void LightSystem::render_shadows(Shader* shader, Model* model, Camera* camera) {
-  // Remember original position and forward
-  glm::vec3 origPos = camera->get_position();
-  glm::vec3 origForward = camera->get_forward();
-
-  for (int index = 0; index < mNumLights; index++) {
-    const Light& light = mLights[mNumLights];
-
-    if (!light.isOn) continue;
-    
-    CameraSpec spec = camera->get_camera_spec();
-    switch(light.type) {
-    case Directional:
-      camera->set_lookat(-light.direction * spec.far, light.direction);
-      break;
-    case Point:
-      //camera->set_lookat(light.position, model->position - light.position);
-      break;
-    case Spot:
-      //camera->set_lookat(light.position, light.direction);
-      break;
-    default:
-      break;
-    }
-    camera->render(shader);
-    model->render(shader);
-  }
-
-  // Reset the camera's position
-  camera->set_lookat(origPos, origForward);
-}
-
 void LightSystem::set_ambient(glm::vec3 ambient) {
   mAmbient = ambient;
 }
@@ -114,6 +128,8 @@ int LightSystem::add_directional(glm::vec3 direction, glm::vec3 color) {
   mLights[mNumLights].direction = direction;
   mLights[mNumLights].color = color;
   mLights[mNumLights].type = Directional;
+  mLights[mNumLights].view = glm::lookAt(glm::vec3(0, 10, 0), glm::vec3(0, 0, 0), glm::vec3(0,0,1));
+  mLights[mNumLights].projection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 1.f, 100.f);
 
   return mNumLights++;
 }

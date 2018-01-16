@@ -25,6 +25,8 @@ struct Light {
   float dropOff = 0.f;
   unsigned int type = Directional;
   bool isOn = true;
+  glm::mat4 view;
+  glm::mat4 projection;
 };
 
 class LightSystem {
@@ -34,7 +36,7 @@ class LightSystem {
   int add_point(glm::vec3 position, glm::vec3 color, float constant, float linear, float quadratic);
   int add_spot(glm::vec3 direction, glm::vec3 position, glm::vec3 color, float constant, float linear, float quadratic, float cosineCutOff, float dropOff);
   void set_ambient(glm::vec3 ambient);
-  void render_shadows(Shader* shader, Model* model, Camera* camera);
+  void render_shadows(Shader* shader, std::vector<Model*> models, Camera* camera);
   void render(Shader* shader);
   void toggle(int id);
 

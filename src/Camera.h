@@ -44,7 +44,6 @@ class Camera : public Updateable {
   void move_left(double dt);
   void update_pitch(double dt, bool up);
   void update_yaw(double dt, bool right);
-  void set_lookat(glm::vec3 pos, glm::vec3 forward);
   
   void update(double dt);
   void render(Shader * shader);

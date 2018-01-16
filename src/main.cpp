@@ -54,19 +54,23 @@ int main(int argc, char** argv) {
 
   Camera camera;
   Shader shader("assets/shader.vert", "assets/shader.frag");
+  Shader shadowShader("assets/shadows.vert", "assets/shadows.frag");
+  std::vector<Model*> models;
   Model model("assets/test.obj");
   Model floor("assets/floor.obj");
   floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
+
+  models.push_back(&model);
+  models.push_back(&floor);
   
   LightSystem lightSystem;
   lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
-  lightSystem.add_directional(glm::vec3(0.0, 0.0, -1.0), glm::vec3(1.0, 0.0, 0.0));
-  lightSystem.add_point(glm::vec3(0.0, 5.0, 2.0), glm::vec3(1.0, 1.0, 1.0), 0.55f, 0.2f, 0.11f);
-  lightSystem.add_spot(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -5.0, 0.0), glm::vec3(0.0, 0.0, 1.0), 0.55f, 0.2f, 0.11f, 0.99f, 24.f);
+  lightSystem.add_directional(glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 1.0, 1.0));
+  //lightSystem.add_point(glm::vec3(0.0, 5.0, 2.0), glm::vec3(1.0, 1.0, 1.0), 0.55f, 0.2f, 0.11f);
+  //lightSystem.add_spot(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 5.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.55f, 0.2f, 0.11f, 0.99f, 2.f);
   
   // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;
-
   glEnable(GL_DEPTH_TEST);
   
   while (mainWindow->is_running()) {
@@ -94,6 +98,9 @@ int main(int argc, char** argv) {
     move_camera(deltaTime, &camera);
     camera.update(deltaTime);
 
+    // Render shadows
+    lightSystem.render_shadows(&shadowShader, models, &camera);
+    
     // Render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shader.Use();

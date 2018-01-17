@@ -6,13 +6,12 @@
 
 class Shader;
 class Model;
-class Camera;
 
 const unsigned int Directional = 0x00000001u;
 const unsigned int Point       = 0x00000002u;
 const unsigned int Spot        = 0x00000004u;
 const unsigned int Inactive    = 0x00000008u;
-const int MAX_LIGHTS = 16;
+const int MAX_LIGHTS = 4;
 
 struct Light {
   glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
@@ -36,7 +35,7 @@ class LightSystem {
   int add_point(glm::vec3 position, glm::vec3 color, float constant, float linear, float quadratic);
   int add_spot(glm::vec3 direction, glm::vec3 position, glm::vec3 color, float constant, float linear, float quadratic, float cosineCutOff, float dropOff);
   void set_ambient(glm::vec3 ambient);
-  void render_shadows(Shader* shader, std::vector<Model*> models, Camera* camera);
+  void render_shadows(Shader* shader, Model* model, Model* floor);
   void render(Shader* shader);
   void toggle(int id);
 
@@ -47,7 +46,8 @@ class LightSystem {
   Light mLights[MAX_LIGHTS];
 
   // Shadow Variables
-  GLuint mDepthTexture, mDepthFbo;
+  GLuint mDepthTexture = 0;
+  GLuint mDepthFbo = 0;
 };
 
 #endif

@@ -11,7 +11,7 @@ const glm::vec3 DEFAULT_FORWARD = glm::vec3(0.0, 0.0, -1.0);
 const glm::vec3 DEFAULT_POSITION = glm::vec3(0.0, 0.0, 10.0);
 
 const float NEAR = 0.1f;
-const float FAR = 100.0f;
+const float FAR = 1500.0f;
 
 Camera::Camera() {
   mPos = DEFAULT_POSITION;

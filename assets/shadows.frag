@@ -1,7 +1,7 @@
-#version 330 core
+#version 410 core
 
-layout(location = 0) out vec3 fragmentDepth;
+out vec4 FragColor;
 
 void main() {
-  fragmentDepth = vec3(gl_FragCoord.z);
+  FragColor = vec4(1.0);
 }

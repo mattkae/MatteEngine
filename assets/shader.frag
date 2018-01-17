@@ -64,9 +64,6 @@ void main() {
   for (int lightIndex = 0; lightIndex < numLights; lightIndex++) {
     Light light = lights[lightIndex];
 
-    //float f = 1.0;
-    //if (texture(depthTexture, ShadowCoords[lightIndex].xy).z <  ShadowCoords[lightIndex].z)
-    //    f = 0.0;
     float f = textureProj(depthTexture, ShadowCoords[lightIndex]);
     
     if (light.type == Directional) {

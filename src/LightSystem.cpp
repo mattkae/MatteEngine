@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Logger.h"
+#include "DrawTexture.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <sstream>
@@ -22,33 +23,39 @@ LightSystem::LightSystem() {
   // Generate the shadow texture
   glGenTextures(1, &mDepthTexture);
   glBindTexture(GL_TEXTURE_2D, mDepthTexture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);;
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, SHADOW_FACTOR * 800, SHADOW_FACTOR * 600, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
   glBindTexture(GL_TEXTURE_2D, 0);
 
   // Generate the framebuffer for the shadow
   glGenFramebuffers(1, &mDepthFbo);
   glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, mDepthTexture, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthTexture, 0);
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     logger::log_error("Shadow framebuffer is not okay.");
   else
     logger::log_message("Created framebuffer for light depth.");
   
   glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
+  //glReadBuffer(GL_NONE);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+  // ----------DEBUG----------
+  texShader = new Shader("assets/tex.vert", "assets/tex.frag");
+  init();
 }
 
 void LightSystem::render_shadows(Shader* shader, Model* model, Model* floor) {
   glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
   glViewport(0, 0, SHADOW_FACTOR * 800, SHADOW_FACTOR * 600);
-  glColorMask ( GL_FALSE , GL_FALSE , GL_FALSE , GL_FALSE );
+  glClearDepth(1.0);
+  //  glColorMask ( GL_FALSE , GL_FALSE , GL_FALSE , GL_FALSE );
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(2.0f, 4.0f);
   
@@ -68,7 +75,24 @@ void LightSystem::render_shadows(Shader* shader, Model* model, Model* floor) {
   glDisable(GL_POLYGON_OFFSET_FILL);
   glViewport(0, 0, 800, 600);
   glColorMask ( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
+
+  /*
+  for (int mx = 0; mx < 800 * SHADOW_FACTOR; mx++) {
+    for (int my = 0; my < 600 * SHADOW_FACTOR; my++) {
+      GLfloat depth = 0.0f;
+      glReadPixels( mx, my, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth ); 
+      if (depth < 1)  {
+
+	std::cout << depth << " ";
+      }
+    }
+    //  std::cout << std::endl;
+  }
+  */
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  
+  // ----------DEBUG----------
+  drawTexture(texShader, mDepthTexture);
 }
 
 static string get_location(int lightIndex, const char* propertyName) {
@@ -159,8 +183,8 @@ int LightSystem::add_spot(glm::vec3 direction, glm::vec3 position, glm::vec3 col
   mLights[mNumLights].cosineCutOff = cosineCutOff;
   mLights[mNumLights].dropOff = dropOff;
   mLights[mNumLights].type = Spot;
-  mLights[mNumLights].view = glm::lookAt(position, position + direction, glm::vec3(0.0, 0.0, 1.0));
-  mLights[mNumLights].projection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 1.f, 1500.f);
+  mLights[mNumLights].view = glm::lookAt(position, position + direction, glm::vec3(0.0, 1.0, 0.0));
+  mLights[mNumLights].projection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 2.f, 50.f);
   
   return mNumLights++;
 }

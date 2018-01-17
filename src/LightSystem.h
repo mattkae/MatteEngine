@@ -48,9 +48,6 @@ class LightSystem {
   // Shadow Variables
   GLuint mDepthTexture = 0;
   GLuint mDepthFbo = 0;
-
-  // ------------DEBUG----------
-  Shader* texShader;
 };
 
 #endif

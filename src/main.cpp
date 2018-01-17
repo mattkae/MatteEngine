@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "LightSystem.h"
 #include "Input.h"
+#include "Texture.h"
+#include "ImageDrawer.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
@@ -52,22 +54,28 @@ int main(int argc, char** argv) {
 
   initialize_glew();
 
+  /*
   Camera camera;
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Shader shadowShader("assets/shadows.vert", "assets/shadows.frag");
   Model model("assets/cube.obj");
   Model floor("assets/floor.obj");
-  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
+floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
+  */
+  Texture texture("assets/flower.jpg");
+  ImageDrawer imgDrawer(&texture);
+  
+  
 
-  LightSystem lightSystem;
-  lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
+  //  LightSystem lightSystem;
+  //lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
   //lightSystem.add_directional(glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 1.0, 1.0));
   //lightSystem.add_point(glm::vec3(0.0, 5.0, 2.0), glm::vec3(1.0, 1.0, 1.0), 0.55f, 0.2f, 0.11f);
-  lightSystem.add_spot(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 5.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.99f, 0.2f, 0.23f, 0.85f, 2.f);
+  //lightSystem.add_spot(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 5.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.99f, 0.2f, 0.23f, 0.85f, 2.f);
   
   // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;
-  glEnable(GL_DEPTH_TEST);
+  //glEnable(GL_DEPTH_TEST);
   
   while (mainWindow->is_running()) {
     // Update timestep
@@ -78,7 +86,7 @@ int main(int argc, char** argv) {
     // Get Input
     glfwPollEvents();
 
-     // Turn lights on and off
+    /* Turn lights on and off
     Input* i = Input::getInstance();
     if (i->is_just_down(GLFW_KEY_1)) {
       lightSystem.toggle(0);
@@ -88,17 +96,18 @@ int main(int argc, char** argv) {
     }
     if (i->is_just_down(GLFW_KEY_3)) {
       lightSystem.toggle(2);
-    }
+      }*/
 
     // Update
-    move_camera(deltaTime, &camera);
-    camera.update(deltaTime);
+    //move_camera(deltaTime, &camera);
+    //camera.update(deltaTime);
 
     // Render shadows
-    shadowShader.Use();
-    lightSystem.render_shadows(&shadowShader, &model, &floor);
+    // shadowShader.Use();
+    //lightSystem.render_shadows(&shadowShader, &model, &floor);
+
+    imgDrawer.render();
     mainWindow->swap_buffers();
-    // glUseProgram(0);
     
     // Render
     /*

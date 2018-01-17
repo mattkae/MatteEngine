@@ -5,6 +5,10 @@
 #include <sstream>
 #include <iostream>
 
+Shader::Shader() {
+  
+}
+
 /*********************************************
  	Create a shader program from the given shader paths.
 

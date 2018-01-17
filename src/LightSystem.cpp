@@ -3,7 +3,6 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Logger.h"
-#include "DrawTexture.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <sstream>
@@ -44,11 +43,6 @@ LightSystem::LightSystem() {
   glDrawBuffer(GL_NONE);
   //glReadBuffer(GL_NONE);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-  // ----------DEBUG----------
-  texShader = new Shader("assets/tex.vert", "assets/tex.frag");
-  init();
 }
 
 void LightSystem::render_shadows(Shader* shader, Model* model, Model* floor) {
@@ -90,9 +84,6 @@ void LightSystem::render_shadows(Shader* shader, Model* model, Model* floor) {
   }
   */
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  
-  // ----------DEBUG----------
-  drawTexture(texShader, mDepthTexture);
 }
 
 static string get_location(int lightIndex, const char* propertyName) {

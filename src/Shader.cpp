@@ -17,6 +17,14 @@ Shader::Shader() {
 *********************************************/
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 {
+  this->load(vertexPath, fragmentPath);
+}
+
+/*********************************************
+Creates a shader from the given vertex and fragment programs
+ ********************************************/
+void Shader::load(const GLchar* vertexPath, const GLchar* fragmentPath)
+{
   // Read the shader from file path.
   std::string vertexCode;
   std::string fragmentCode;

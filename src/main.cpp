@@ -28,64 +28,20 @@ void glfw_error_callback(int error, const char* message) {
 int main(int argc, char** argv) {
   initialize(argc, argv);
 
-  Camera camera(glm::vec3(0, 3, 10));
-  Shader shader("assets/shader.vert", "assets/shader.frag");
-  Shader shadowShader("assets/shadows.vert", "assets/shadows.frag");
-  Model model("assets/test.obj");
-  model.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, 0.0)));
-  Model floor("assets/floor.obj");
-  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));  
-
-  LightSystem lightSystem;
-  lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
-  //lightSystem.add_directional(glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 1.0, 1.0));
-  //lightSystem.add_point(glm::vec3(0.0, 5.0, 2.0), glm::vec3(1.0, 1.0, 1.0), 0.55f, 0.2f, 0.11f);
-  lightSystem.add_spot(glm::vec3(0.0, -1.0, 0.0),
-		       glm::vec3(0.0, 5.0, 0.0),
-		       glm::vec3(1.0, 1.0, 1.0),
-		       0.55f, 0.001f, 0.0001f, 25.71, 2.f
-		       );
-  
-  // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;
   ImageDrawer imgDrawer;
 
   glEnable(GL_DEPTH_TEST);
   while (!glfwWindowShouldClose(window)) {
-    // Update timestep
     currentTime = glfwGetTime();
     deltaTime = currentTime - prevTime;
     prevTime = currentTime;
     
-    // Get Input
     glfwPollEvents();
 
-    // Turn lights on and off
-    Input* i = Input::getInstance();
-    if (i->is_just_down(GLFW_KEY_1)) {
-      lightSystem.toggle(0);
-    }
-    if (i->is_just_down(GLFW_KEY_2)) {
-      lightSystem.toggle(1);
-    }
-    if (i->is_just_down(GLFW_KEY_3)) {
-      lightSystem.toggle(2);
-    }
-
-    // Update
-    move_camera(deltaTime, &camera);
-    camera.update(deltaTime);
-
-    // Render shadows
-    lightSystem.render_shadows(&shadowShader, &model, &floor);
-
-    // Render
-    shader.Use();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    camera.render(&shader);
-    lightSystem.render(&shader);
-    model.render(&shader);
-    floor.render(&shader);
+    scene.update(deltaTime);
+    scene.render();
+    
     glfwSwapBuffers(window);
   }
 

@@ -1,8 +1,11 @@
-1. Add transparency to lighting
-2. Add shadows to lighting
-3. Refactor main.cpp (Move to an Application namespace maybe?)
-4. Optimize draw calls
-5. Optimize lighting (big subject)
-6. Add texture loading
-7. Come up with scheme for non-static lights
-8. Refactor Camera class (it's fucking ridiculous)
+- Scene class containing:
+  ~ Models
+  ~ Lights
+  ~ A loader? (Kind of big, but worth it)
+
+- Add transparency to lighting
+- Optimize draw calls
+- Optimize lighting (big subject)
+- Add texture loading
+- Come up with scheme for non-static lights
+- Refactor Camera class (it's fucking ridiculous)

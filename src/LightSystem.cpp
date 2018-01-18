@@ -35,7 +35,6 @@ LightSystem::LightSystem() {
     logger::log_message("Created framebuffer for light depth.");
   
   glDrawBuffer(GL_NONE);
-  //glReadBuffer(GL_NONE);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

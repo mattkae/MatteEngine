@@ -3,8 +3,7 @@
 #include <string>
 #include "boost/program_options.hpp"
 #include "Logger.h"
-#include "Window.h"
-#include "Application.h"
+#include "Constants.h"
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
@@ -17,41 +16,17 @@ using namespace std;
 
 // Window variables
 const char* WINDOW_TITLE = "Fluid Simulator";
-Window* mainWindow = nullptr;
+GLFWwindow* window = nullptr;
+
+void initialize(int argc, char** argv);
+void cleanup();
 
 void glfw_error_callback(int error, const char* message) {
-  logger::log_error(message);
-}
-
-void initialize_glfw_environment(int argc, char** argv) {
-  if (!glfwInit()) {
-    logger::log_error("Failed to initialize glfw.");
-    exit(EXIT_FAILURE);
-  }
-  
-  glfwSetErrorCallback(glfw_error_callback);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-}
-
-void initialize_glew() {
-  GLenum err = glewInit();
-  if (GLEW_OK != err) {
-    logger::log_error((const char*)glewGetErrorString(err));
-    exit(EXIT_FAILURE);
-  }
+  cerr << "GLFW error #" << error << ": " << message << endl;
 }
 
 int main(int argc, char** argv) {
-  // Initialization
-  initialize_glfw_environment(argc, argv);
-
-  mainWindow = new Window(Application::screenWidth, Application::screenHeight, WINDOW_TITLE);
-  mainWindow->set_context();
-
-  initialize_glew();
+  initialize(argc, argv);
 
   Camera camera(glm::vec3(0, 3, 10));
   Shader shader("assets/shader.vert", "assets/shader.frag");
@@ -59,9 +34,7 @@ int main(int argc, char** argv) {
   Model model("assets/test.obj");
   model.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, 0.0)));
   Model floor("assets/floor.obj");
-  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
- 
-  
+  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));  
 
   LightSystem lightSystem;
   lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
@@ -78,7 +51,7 @@ int main(int argc, char** argv) {
   ImageDrawer imgDrawer;
 
   glEnable(GL_DEPTH_TEST);
-  while (mainWindow->is_running()) {
+  while (!glfwWindowShouldClose(window)) {
     // Update timestep
     currentTime = glfwGetTime();
     deltaTime = currentTime - prevTime;
@@ -106,7 +79,6 @@ int main(int argc, char** argv) {
     // Render shadows
     lightSystem.render_shadows(&shadowShader, &model, &floor);
 
-
     /*
     glDisable(GL_DEPTH_TEST);
     GLuint t = lightSystem.get_texture(); // Should hold our depth data
@@ -122,13 +94,47 @@ int main(int argc, char** argv) {
     lightSystem.render(&shader);
     model.render(&shader);
     floor.render(&shader);
-    mainWindow->swap_buffers();
+    glfwSwapBuffers(window);
   }
 
-  // Free window memory
-  delete mainWindow;
-
-  // Terminate glfw
-  glfwTerminate();
+  cleanup();
   return 0;
+}
+
+
+void initialize(int argc, char** argv) {
+  if (!glfwInit()) {
+    logger::log_error("Failed to initialize glfw.");
+    exit(EXIT_FAILURE);
+  }
+
+  glfwSetErrorCallback(glfw_error_callback);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+  window = glfwCreateWindow(Constants.width, Constants.height, Constants.title, nullptr, nullptr);
+  if (!window) {
+    cerr << "Error initializing GLFW window" << endl;
+    return;
+  }
+
+  glfwSetKeyCallback(window, Input::glfw_key_callback);
+  glfwMakeContextCurrent(window);
+
+  // GLEW
+  GLenum err = glewInit();
+  if (GLEW_OK != err) {
+    logger::log_error((const char*)glewGetErrorString(err));
+    exit(EXIT_FAILURE);
+  }
+}
+
+void cleanup() {
+  if (window) {
+    glfwDestroyWindow(window);
+  }
+  
+  glfwTerminate();
 }

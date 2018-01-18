@@ -66,7 +66,6 @@ void main() {
     Light light = lights[lightIndex];
 
     float f = texture(depthTexture, lP);
-    //float f = textureProj(depthTexture, vec4(ShadowCoords.xy, ShadowCoords.z - 0.005, 1.0), 0.0);
     
     if (light.type == Directional) {
       finalColor += f * get_directional_light(light, normal, viewDir);

@@ -41,7 +41,6 @@ class LightSystem {
   GLuint get_texture() { return mDepthTexture; };
 
  private:
-  // Lights
   glm::vec3 mAmbient = glm::vec3(1.0);
   int mNumLights = 0;
   Light mLights[MAX_LIGHTS];

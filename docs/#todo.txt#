@@ -4,6 +4,7 @@ Refactors
   ~ Lights
   ~ A loader? (Kind of big, but worth it)
 - Camera
+- Shaders to send less uniforms
 
 Features
 - Add transparency to lighting

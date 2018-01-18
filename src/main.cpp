@@ -79,14 +79,6 @@ int main(int argc, char** argv) {
     // Render shadows
     lightSystem.render_shadows(&shadowShader, &model, &floor);
 
-    /*
-    glDisable(GL_DEPTH_TEST);
-    GLuint t = lightSystem.get_texture(); // Should hold our depth data
-    imgDrawer.render(t);
-    glEnable(GL_DEPTH_TEST);
-    mainWindow->swap_buffers();
-    */
-
     // Render
     shader.Use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

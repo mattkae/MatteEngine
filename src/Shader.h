@@ -6,6 +6,7 @@ class Shader {
  public:
   Shader();
   Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
+  void load(const GLchar* vertexPath, const GLchar* fragmentPath);
   Shader* Use();
   GLuint GetProgram();
 

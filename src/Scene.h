@@ -2,6 +2,7 @@
 #define SCENE_H
 #include "Model.h"
 #include "Light.h"
+#include "Shader.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -16,6 +17,11 @@ class Scene {
   void update(double dt);
   void load(string path);
  private:
+  bool mUseShadows = true;
+
+  Shader mShadowShader;
+  Shader mSceneShader;
+  
   vector<Model> mModels;
   vector<Light> mLights;
 };

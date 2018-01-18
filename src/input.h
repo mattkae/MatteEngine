@@ -1,8 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-
 #include "gl_includes.h"
-#include "Logger.h"
 
 struct KeyState {
   bool hasChanged = false;

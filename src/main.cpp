@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include "boost/program_options.hpp"
-#include "Logger.h"
 #include "Constants.h"
 #include "Shader.h"
 #include "Model.h"
@@ -11,6 +10,7 @@
 #include "Input.h"
 #include "ImageDrawer.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 using namespace std;
 
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
 
 void initialize(int argc, char** argv) {
   if (!glfwInit()) {
-    logger::log_error("Failed to initialize glfw.");
+    cerr << "Failed to initialize glfw." << endl;
     exit(EXIT_FAILURE);
   }
 
@@ -126,7 +126,7 @@ void initialize(int argc, char** argv) {
   // GLEW
   GLenum err = glewInit();
   if (GLEW_OK != err) {
-    logger::log_error((const char*)glewGetErrorString(err));
+    cerr << "Unable to initialize GLEW: " << glewGetErrorString(err) << endl;
     exit(EXIT_FAILURE);
   }
 }

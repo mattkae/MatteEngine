@@ -1,10 +1,12 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Input.h"
-#include "Logger.h"
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+
+using namespace std;
 
 const glm::vec3 DEFAULT_RIGHT = glm::vec3(1.0, 0.0, 0.0);
 const glm::vec3 DEFAULT_FORWARD = glm::vec3(0.0, 0.0, -1.0);
@@ -145,7 +147,7 @@ void Camera::render(Shader* shader) {
 
 void move_camera(double dt, Camera* camera) {
   if (camera == nullptr) {
-    logger::log_error("Camera does not exist to be moved.");
+    cerr << "Camera does not exist to be moved." << endl;
     return;
   }
 

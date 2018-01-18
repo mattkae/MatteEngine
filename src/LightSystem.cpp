@@ -2,9 +2,9 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
-#include "Logger.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -29,10 +29,10 @@ LightSystem::LightSystem() {
   glGenFramebuffers(1, &mDepthFbo);
   glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);  
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthTexture, 0);
-  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    logger::log_error("Shadow framebuffer is not okay.");
-  else
-    logger::log_message("Created framebuffer for light depth.");
+  
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    cout << "Shadow framebuffer is not okay." << endl;
+  }
   
   glDrawBuffer(GL_NONE);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -123,7 +123,7 @@ void LightSystem::render(Shader* shader) {
 	shader->SetUniform1f(get_location(index, "quadratic").c_str(), light.quadratic);
 	break;
       default:
-	logger::log_error("Unknown light type.");
+	cerr << "Unknown light type: " << light.type << "." << endl;
 	break;
       }
     } else {

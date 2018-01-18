@@ -1,5 +1,7 @@
 #include "Input.h"
-#include "Logger.h"
+#include <iostream>
+
+using namespace std;
 
 Input* Input::mInstance = nullptr;
 

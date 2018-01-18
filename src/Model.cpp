@@ -1,6 +1,5 @@
 #include "gl_includes.h"
 #include "Model.h"
-#include "Logger.h"
 #include "Shader.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -8,13 +7,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <iostream>
+
+using namespace std;
 
 Model::Model(const char* path) {
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
   
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-    logger::log_error(importer.GetErrorString());
+    cerr << "Unable to load scene from path " << path << " because: " << importer.GetErrorString() << endl;
     return;
   }
   

@@ -1,5 +1,7 @@
 #include "Mesh.h"
-#include "Logger.h"
+#include <iostream>
+
+using namespace std;
 
 Mesh::Mesh() {
   mVao = 0;

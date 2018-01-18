@@ -4,6 +4,7 @@
 #include "Light.h"
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -12,6 +13,8 @@ class Scene {
   Scene();
   ~Scene();
   void render();
+  void update(double dt);
+  void load(string path);
  private:
   vector<Model> mModels;
   vector<Light> mLights;

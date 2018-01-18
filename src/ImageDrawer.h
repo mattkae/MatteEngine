@@ -11,6 +11,7 @@ class ImageDrawer {
   ImageDrawer();
   ImageDrawer(Texture* texture);
   void render();
+  void render(GLuint id);
  private:
   void gen_buffers();
   

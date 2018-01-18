@@ -38,7 +38,7 @@ in vec4 FragPos;
 in vec3 Normal;
 in vec3 TexCoords;
 in vec3 Eye;
-in vec4 ShadowCoords[MAX_LIGHTS];
+in vec4 ShadowCoords;//[MAX_LIGHTS];
 
 // Uniform variables
 uniform Material material;
@@ -58,13 +58,15 @@ vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color);
 void main() {
   vec3 viewDir = normalize(Eye - FragPos.xyz);
   vec3 normal = normalize(Normal);
-  vec3 finalColor = ambient * material.diffuse.rgb + material.emissive.rgb;
+  vec3 finalColor = material.emissive.rgb + material.emissive.rgb;
 
+  vec3 lP = vec3(ShadowCoords / ShadowCoords.w) * 0.5 + 0.5;
   // Iterate over all the lights in the scene
   for (int lightIndex = 0; lightIndex < numLights; lightIndex++) {
     Light light = lights[lightIndex];
 
-    float f = textureProj(depthTexture, ShadowCoords[lightIndex]);
+    float f = texture(depthTexture, lP);
+    //float f = textureProj(depthTexture, vec4(ShadowCoords.xy, ShadowCoords.z - 0.005, 1.0), 0.0);
     
     if (light.type == Directional) {
       finalColor += f * get_directional_light(light, normal, viewDir);

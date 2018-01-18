@@ -10,7 +10,6 @@
 #include "Camera.h"
 #include "LightSystem.h"
 #include "Input.h"
-#include "Texture.h"
 #include "ImageDrawer.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -54,29 +53,31 @@ int main(int argc, char** argv) {
 
   initialize_glew();
 
-  /*
-  Camera camera;
+  Camera camera(glm::vec3(0, 3, 10));
   Shader shader("assets/shader.vert", "assets/shader.frag");
   Shader shadowShader("assets/shadows.vert", "assets/shadows.frag");
-  Model model("assets/cube.obj");
+  Model model("assets/test.obj");
+  model.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, 0.0)));
   Model floor("assets/floor.obj");
-floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
-  */
-  Texture texture("assets/flower.jpg");
-  ImageDrawer imgDrawer(&texture);
-  
+  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
+ 
   
 
-  //  LightSystem lightSystem;
-  //lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
+  LightSystem lightSystem;
+  lightSystem.set_ambient(glm::vec3(0.1, 0.1, 0.1));
   //lightSystem.add_directional(glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 1.0, 1.0));
   //lightSystem.add_point(glm::vec3(0.0, 5.0, 2.0), glm::vec3(1.0, 1.0, 1.0), 0.55f, 0.2f, 0.11f);
-  //lightSystem.add_spot(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 5.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.99f, 0.2f, 0.23f, 0.85f, 2.f);
+  lightSystem.add_spot(glm::vec3(0.0, -1.0, 0.0),
+		       glm::vec3(0.0, 5.0, 0.0),
+		       glm::vec3(1.0, 1.0, 1.0),
+		       0.55f, 0.001f, 0.0001f, 25.71, 2.f
+		       );
   
   // Loop variables
   double currentTime = 0, prevTime = 0, deltaTime;
-  //glEnable(GL_DEPTH_TEST);
-  
+  ImageDrawer imgDrawer;
+
+  glEnable(GL_DEPTH_TEST);
   while (mainWindow->is_running()) {
     // Update timestep
     currentTime = glfwGetTime();
@@ -86,7 +87,7 @@ floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
     // Get Input
     glfwPollEvents();
 
-    /* Turn lights on and off
+    // Turn lights on and off
     Input* i = Input::getInstance();
     if (i->is_just_down(GLFW_KEY_1)) {
       lightSystem.toggle(0);
@@ -96,29 +97,32 @@ floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
     }
     if (i->is_just_down(GLFW_KEY_3)) {
       lightSystem.toggle(2);
-      }*/
+    }
 
     // Update
-    //move_camera(deltaTime, &camera);
-    //camera.update(deltaTime);
+    move_camera(deltaTime, &camera);
+    camera.update(deltaTime);
 
     // Render shadows
-    // shadowShader.Use();
-    //lightSystem.render_shadows(&shadowShader, &model, &floor);
+    lightSystem.render_shadows(&shadowShader, &model, &floor);
 
-    imgDrawer.render();
-    mainWindow->swap_buffers();
-    
-    // Render
+
     /*
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    GLuint t = lightSystem.get_texture(); // Should hold our depth data
+    imgDrawer.render(t);
+    glEnable(GL_DEPTH_TEST);
+    mainWindow->swap_buffers();
+    */
+
+    // Render
     shader.Use();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     camera.render(&shader);
     lightSystem.render(&shader);
     model.render(&shader);
     floor.render(&shader);
     mainWindow->swap_buffers();
-    glUseProgram(0);*/
   }
 
   // Free window memory

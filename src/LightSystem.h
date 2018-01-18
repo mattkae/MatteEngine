@@ -38,6 +38,7 @@ class LightSystem {
   void render_shadows(Shader* shader, Model* model, Model* floor);
   void render(Shader* shader);
   void toggle(int id);
+  GLuint get_texture() { return mDepthTexture; };
 
  private:
   // Lights

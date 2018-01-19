@@ -1,17 +1,19 @@
 #include "Scene.h"
+#include "Camera.h"
+#include <glm/gtc/type_ptr.hpp>
 
-void Scene::Scene() {
-  mShadowShader.load("assets/shadows.vert", "assets/shadows.frag");
-  mSceneShader.load("assets/model.vert", "assets/model.frag");
+Scene::Scene() {
+  mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
+  mSceneShader.load("src/shaders/assets/model.vert", "src/shaders/model.frag");
 }
 
-void Scene::~Scene() {
+Scene::~Scene() {
   
 }
 
 void Scene::update(double dt) {
-    move_camera(dt, &camera);
-    camera.update(dt);
+    move_camera(dt, &mCamera);
+    mCamera.update(dt);
 }
 
 void Scene::render() {
@@ -22,21 +24,19 @@ void Scene::render() {
 void Scene::render_shadows() {
   if (!mUseShadows) return;
 
-  glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
-  glViewport(0, 0, SHADOW_FACTOR * 800, SHADOW_FACTOR * 600);
-  glClearDepth(1.0);
-  glClear(GL_DEPTH_BUFFER_BIT);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(2.0f, 4.0f);
 
   mShadowShader.Use();
   
   for (auto light : mLights) {
-    if (light.isOn) continue;
+    if (!light.isOn) continue;
     
-    for (auto model :m Models) {
+    gen_shadow_texture(&mShadowShader, light, mShadowWidth, mShadowHeight);
+    
+    for (auto model : mModels) {
       glm::mat4 mvp = light.projection * light.view * model.get_model();
-      mShadowShader.SetUniform4fv("mvp", 1, GL_FALSE, glm::value_ptr(mvp));
+      mShadowShader.SetUniformMatrix4fv("mvp", 1, GL_FALSE, glm::value_ptr(mvp));
       model.render(&mShadowShader);
     }
   }
@@ -50,13 +50,14 @@ void Scene::render_scene() {
   mSceneShader.Use();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  mCamera->render(&mSceneShader);
+  mCamera.render(&mSceneShader);
 
   // Lights
-  shader->SetUniform3f("ambient", 0.1f, 0.1f, 0.1f);
+  mSceneShader.SetUniform3f("ambient", 0.1f, 0.1f, 0.1f);
   mSceneShader.SetUniform1i("numLights", mLights.size());
-  for (auto light : mLights) {
-    light.render(&mSceneShader);
+  for (int lidx = 0; lidx < mLights.size(); lidx++) {
+    Light light = mLights[lidx];
+    render_light(&mSceneShader, light, lidx);
   }
 
   // Models

@@ -3,12 +3,8 @@
 #include <string>
 #include "boost/program_options.hpp"
 #include "Constants.h"
-#include "Shader.h"
-#include "Model.h"
-#include "Camera.h"
-#include "LightSystem.h"
 #include "Input.h"
-#include "ImageDrawer.h"
+#include "Scene.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
@@ -29,7 +25,7 @@ int main(int argc, char** argv) {
   initialize(argc, argv);
 
   double currentTime = 0, prevTime = 0, deltaTime;
-  ImageDrawer imgDrawer;
+  Scene scene;
 
   glEnable(GL_DEPTH_TEST);
   while (!glfwWindowShouldClose(window)) {

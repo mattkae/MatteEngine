@@ -36,7 +36,7 @@ void Scene::render_shadows() {
     
     for (auto model : mModels) {
       glm::mat4 mvp = light.projection * light.view * model.get_model();
-      mShadowShader.SetUniformMatrix4fv("mvp", 1, GL_FALSE, glm::value_ptr(mvp));
+      mShadowShader.SetUniformMatrix4fv("u_mvp", 1, GL_FALSE, glm::value_ptr(mvp));
       model.render(&mShadowShader);
     }
   }

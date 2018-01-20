@@ -40,7 +40,7 @@ uniform Material u_material;
 uniform int u_numLights;
 uniform Light u_lights[MAX_LIGHTS];
 uniform vec3 u_ambient;
-uniform sampler2DShadow u_depthTexture[MAX_LIGHTS];
+uniform sampler2DShadow u_depthTextures[MAX_LIGHTS];
 
 // Helper functions
 vec3 get_light(Light directionalLight, vec3 normal, vec3 viewDir);
@@ -51,7 +51,7 @@ vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color);
 void main() {
   vec3 viewDir = normalize(o_Eye - o_FragPos.xyz);
   vec3 normal = normalize(o_Normal);
-  vec3 finalColor = u_ambient + u_ material.emissive.rgb;
+  vec3 finalColor = u_ambient + u_material.emissive.rgb;
 
   for (int lightIndex = 0; lightIndex < u_numLights; lightIndex++) {
     vec3 lP = vec3(o_ShadowCoords[lightIndex] / o_ShadowCoords[lightIndex].w) * 0.5 + 0.5;
@@ -67,7 +67,7 @@ void main() {
 vec3 get_light(Light light, vec3 normal, vec3 viewDir) {
   // Get vector from the light, to the fragment
   vec3 posToFrag = light.position - o_FragPos.xyz;
-  float distance = length(lightMinusFrag);
+  float delta = length(posToFrag);
   posToFrag = normalize(posToFrag);
 
   // Point lights will have no light direction
@@ -79,19 +79,19 @@ vec3 get_light(Light light, vec3 normal, vec3 viewDir) {
 
   // Check if frag is within spot
   float angleBetween = dot(posToFrag, direction);
-  if (dotProd < light.cosineCutOff) {
+  if (angleBetween < light.cosineCutOff) {
     // Point and Direction have cutoff = 0.0 (so never less)
     return vec3(0.f);
   }
 
   // Calculate intensity of the light (Directional and Point have no drop off)
   float attenuation = (light.constant + delta * light.linear + delta * delta * light.quadratic);
-  vec3 intensity = light.color * pow(angleBetween, light.dropOff) / attenuation; 
+  vec3 intensity = light.color * pow(angleBetween, light.dropOff) / attenuation;
 
   // Calculate diffuse and specular
-  vec3 diffuse = get_diffuse(normal, lightDir, light.color) ;
-  vec3 specular = get_specular(normal, lightDir, viewDir, light.color) ;
-		       
+  vec3 diffuse = get_diffuse(normal, direction, light.color) ;
+  vec3 specular = get_specular(normal, direction, viewDir, light.color) ;
+
   return min(diffuse + specular, vec3(1.0));
 }
 

@@ -11,7 +11,7 @@ const int SHADOW_FACTOR = 2;
 
 static const char* get_location(int lightIndex, const char* propertyName) {
   ostringstream ss;
-  ss << "lights[" << lightIndex << "]." << propertyName;
+  ss << "u_lights[" << lightIndex << "]." << propertyName;
   string uniformName = ss.str();
   return uniformName.c_str();
 }
@@ -57,11 +57,13 @@ void render_light(Shader* shader, Light light, int index) {
   }
   
   shader->SetUniform3f(get_location(index, "color"), light.color.x, light.color.y, light.color.z);
-  shader->SetUniformMatrix4fv(get_location(index, "shadowMatrix"), 1, GL_FALSE, glm::value_ptr(light.projection * light.view));
-      
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-            
+
+  if (light.usesShadows) {
+    shader->SetUniformMatrix4fv(get_location(index, "shadowMatrix"), 1, GL_FALSE, glm::value_ptr(light.projection * light.view));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
+  }
+                
   switch (light.type) {
   case Directional:
     shader->SetUniform3f(get_location(index, "direction"), light.direction.x, light.direction.y, light.direction.z);
@@ -69,6 +71,15 @@ void render_light(Shader* shader, Light light, int index) {
     shader->SetUniform1f(get_location(index, "constant"), 1);
     shader->SetUniform1f(get_location(index, "linear"), 0);	
     shader->SetUniform1f(get_location(index, "quadratic"), 0);
+    shader->SetUniform1f(get_location(index, "cosineCutOff"), 0);
+    shader->SetUniform1f(get_location(index, "dropOff"), 0);
+    break;
+  case Point:
+    shader->SetUniform3f(get_location(index, "direction"), 0, 0, 0);
+    shader->SetUniform3f(get_location(index, "position"), light.position.x, light.position.y, light.position.z);
+    shader->SetUniform1f(get_location(index, "constant"), light.constant);
+    shader->SetUniform1f(get_location(index, "linear"), light.linear);	
+    shader->SetUniform1f(get_location(index, "quadratic"), light.quadratic);
     shader->SetUniform1f(get_location(index, "cosineCutOff"), 0);
     shader->SetUniform1f(get_location(index, "dropOff"), 0);
     break;
@@ -80,15 +91,6 @@ void render_light(Shader* shader, Light light, int index) {
     shader->SetUniform1f(get_location(index, "quadratic"), light.quadratic);
     shader->SetUniform1f(get_location(index, "cosineCutOff"), light.cosineCutOff);
     shader->SetUniform1f(get_location(index, "dropOff"), light.dropOff);
-    break;
-  case Point:
-    shader->SetUniform3f(get_location(index, "direction"), 0, 0, 0);
-    shader->SetUniform3f(get_location(index, "position"), light.position.x, light.position.y, light.position.z);
-    shader->SetUniform1f(get_location(index, "constant"), light.constant);
-    shader->SetUniform1f(get_location(index, "linear"), light.linear);	
-    shader->SetUniform1f(get_location(index, "quadratic"), light.quadratic);
-    shader->SetUniform1f(get_location(index, "cosineCutOff"), 0);
-    shader->SetUniform1f(get_location(index, "dropOff"), 0);
     break;
   default:
     cerr << "Unknown light type: " << light.type << endl;

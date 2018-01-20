@@ -1,10 +1,16 @@
 #include "Scene.h"
 #include "Camera.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 Scene::Scene() {
   mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
-  mSceneShader.load("src/shaders/assets/model.vert", "src/shaders/model.frag");
+  mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
+
+  mModels.push_back(Model("assets/test.obj")); // Sphere
+  Model floor("assets/floor.obj");
+  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
+  mModels.push_back(floor);
 }
 
 Scene::~Scene() {
@@ -17,7 +23,7 @@ void Scene::update(double dt) {
 }
 
 void Scene::render() {
-  render_shadows();
+  //  render_shadows();
   render_scene();
 }
 
@@ -50,11 +56,9 @@ void Scene::render_scene() {
   mSceneShader.Use();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  mCamera.render(&mSceneShader);
-
   // Lights
-  mSceneShader.SetUniform3f("ambient", 0.1f, 0.1f, 0.1f);
-  mSceneShader.SetUniform1i("numLights", mLights.size());
+  mSceneShader.SetUniform3f("u_ambient", 0.1f, 0.1f, 0.1f);
+  mSceneShader.SetUniform1i("u_numLights", mLights.size());
   for (int lidx = 0; lidx < mLights.size(); lidx++) {
     Light light = mLights[lidx];
     render_light(&mSceneShader, light, lidx);
@@ -62,6 +66,8 @@ void Scene::render_scene() {
 
   // Models
   for (auto model : mModels) {
+    glm::mat4 mvp = mCamera.get_projection() * mCamera.get_view() * model.get_model();
+    mSceneShader.SetUniformMatrix4fv("u_mvp", 1, GL_FALSE, glm::value_ptr(mvp));
     model.render(&mSceneShader);
   }
 }

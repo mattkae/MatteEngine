@@ -17,7 +17,7 @@ struct Light {
   LightType type = Directional;
   bool isOn = true;
   glm::vec3 color = glm::vec3(1.0);
-  glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
+  glm::vec3 direction = glm::vec3(0.0, 0.0, 1.0);
   glm::vec3 position = glm::vec3(0.0);
 
   // Attenuation
@@ -37,6 +37,7 @@ struct Light {
   bool usesShadows = false;
 };
 
+void allocate(Light* light, int width, int height);
 void gen_shadow_texture(Shader* shader, Light light, int width, int height);
 void render_light(Shader* shader, Light light, int index);
 Light get_directional(glm::vec3 color, glm::vec3 direction);

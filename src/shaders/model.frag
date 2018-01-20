@@ -56,8 +56,8 @@ void main() {
   for (int lightIndex = 0; lightIndex < u_numLights; lightIndex++) {
     vec3 lP = vec3(o_ShadowCoords[lightIndex] / o_ShadowCoords[lightIndex].w) * 0.5 + 0.5;
     Light light = u_lights[lightIndex];
-    float f = texture(u_depthTextures[lightIndex], lP);
-    finalColor += get_light(light, normal, viewDir);
+    float visibility = texture(u_depthTextures[lightIndex], lP);
+    finalColor += visibility * get_light(light, normal, viewDir);
   }
 
   Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), 1.0);
@@ -71,26 +71,26 @@ vec3 get_light(Light light, vec3 normal, vec3 viewDir) {
   posToFrag = normalize(posToFrag);
 
   // Point lights will have no light direction
-  vec3 direction = (light.direction == vec3(0.0)) ? posToFrag : light.direction;
+  vec3 direction = (light.direction == vec3(0.0)) ? posToFrag : -light.direction;
   float normalDotDir = max(0.f, dot(normal, direction));
   if (normalDotDir == 0) {
     return vec3(0.f);
   }
 
   // Check if frag is within spot
-  float angleBetween = dot(posToFrag, direction);
+  // Point and Direction have cutoff = 0.0 (so never less)
+  float angleBetween = max(1.0, dot(posToFrag, direction));
   if (angleBetween < light.cosineCutOff) {
-    // Point and Direction have cutoff = 0.0 (so never less)
     return vec3(0.f);
   }
 
   // Calculate intensity of the light (Directional and Point have no drop off)
   float attenuation = (light.constant + delta * light.linear + delta * delta * light.quadratic);
-  vec3 intensity = light.color * pow(angleBetween, light.dropOff) / attenuation;
+  vec3 intensity = (light.color * pow(angleBetween, light.dropOff)) / attenuation;
 
   // Calculate diffuse and specular
-  vec3 diffuse = get_diffuse(normal, direction, light.color) ;
-  vec3 specular = get_specular(normal, direction, viewDir, light.color) ;
+  vec3 diffuse = get_diffuse(normal, direction, intensity) ;
+  vec3 specular = get_specular(normal, direction, viewDir, intensity) ;
 
   return min(diffuse + specular, vec3(1.0));
 }

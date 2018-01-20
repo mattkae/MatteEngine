@@ -12,19 +12,22 @@ out vec2 o_TexCoords;
 out vec3 o_Eye;
 out vec4 o_ShadowCoords[MAX_LIGHTS];
 
-uniform mat4 u_mvp;
 uniform int u_numLights;
-uniform vec4 u_fragPos;
+uniform mat4 u_vp;
 uniform mat4 u_shadowMatrix[MAX_LIGHTS];
+uniform mat4 u_model;
+uniform vec3 u_eye;
 
 void main() {
-  gl_Position = u_mvp * vec4(position, 1.0f);
+  vec4 fragPos = u_model * vec4(position, 1.0f);
+  gl_Position = u_vp * fragPos;
 
-  for (int index = 0; index < u_numLights; index++)
-    o_ShadowCoords[index] = u_shadowMatrix[index] * vec4(position, 1.0f);
+  for (int index = 0; index < u_numLights; index++) {
+     o_ShadowCoords[index] = u_shadowMatrix[index] * fragPos;
+  }
 
-  o_FragPos = u_fragPos;
+  o_FragPos = fragPos;
   o_TexCoords = texCoords;
   o_Normal = normal;
-  o_Eye =  vec3(u_mvp[0][3], u_mvp[1][3], u_mvp[2][3]);
+  o_Eye = u_eye;
 }

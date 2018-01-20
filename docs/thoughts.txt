@@ -1,0 +1,1 @@
+- When I move the camera above an obejct, you can see the specualr reflection below the object. Maybe this could do something with shadows?

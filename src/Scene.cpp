@@ -11,6 +11,12 @@ Scene::Scene() {
   Model floor("assets/floor.obj");
   floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
   mModels.push_back(floor);
+
+  Light light;
+  light.color = glm::vec3(1.0, 1.0, 1.0);
+  light.direction = glm::vec3(0.0, -1.0, 0.0);
+  allocate(&light, mShadowWidth, mShadowHeight);
+  mLights.push_back(light);
 }
 
 Scene::~Scene() {
@@ -23,17 +29,17 @@ void Scene::update(double dt) {
 }
 
 void Scene::render() {
-  //  render_shadows();
+  render_shadows();
   render_scene();
 }
 
 void Scene::render_shadows() {
   if (!mUseShadows) return;
+  mShadowShader.Use();
 
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(2.0f, 4.0f);
-
-  mShadowShader.Use();
+  
   
   for (auto light : mLights) {
     if (!light.isOn) continue;
@@ -43,6 +49,7 @@ void Scene::render_shadows() {
     for (auto model : mModels) {
       glm::mat4 mvp = light.projection * light.view * model.get_model();
       mShadowShader.SetUniformMatrix4fv("u_mvp", 1, GL_FALSE, glm::value_ptr(mvp));
+
       model.render(&mShadowShader);
     }
   }
@@ -59,6 +66,8 @@ void Scene::render_scene() {
   // Lights
   mSceneShader.SetUniform3f("u_ambient", 0.1f, 0.1f, 0.1f);
   mSceneShader.SetUniform1i("u_numLights", mLights.size());
+  glm::vec3 eye = mCamera.get_position();
+  mSceneShader.SetUniform3f("u_eye", eye.x, eye.y, eye.z);
   for (int lidx = 0; lidx < mLights.size(); lidx++) {
     Light light = mLights[lidx];
     render_light(&mSceneShader, light, lidx);
@@ -66,8 +75,10 @@ void Scene::render_scene() {
 
   // Models
   for (auto model : mModels) {
-    glm::mat4 mvp = mCamera.get_projection() * mCamera.get_view() * model.get_model();
-    mSceneShader.SetUniformMatrix4fv("u_mvp", 1, GL_FALSE, glm::value_ptr(mvp));
+    glm::mat4 vp = mCamera.get_projection() * mCamera.get_view();
+    mSceneShader.SetUniformMatrix4fv("u_vp", 1, GL_FALSE, glm::value_ptr(vp));
+    mSceneShader.SetUniformMatrix4fv("u_model", 1, GL_FALSE, glm::value_ptr(model.get_model()));
+    
     model.render(&mSceneShader);
   }
 }

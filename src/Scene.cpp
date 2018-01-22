@@ -7,10 +7,9 @@ Scene::Scene() {
   mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
   mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
 
-  mModels.push_back(Model("assets/test.obj")); // Sphere
-  Model floor("assets/floor.obj");
-  floor.set_model(glm::translate(glm::mat4(1.0), glm::vec3(0.0, -3.0, 0.0)));
-  mModels.push_back(floor);
+  Model church("assets/church/Parish Church Model+.obj");
+  church.set_model(glm::translate(glm::mat4(1.0), glm::vec3(-25, -50, -50)));
+  mModels.push_back(church);
 
   Light light;
   light.set_type(LightType::Point);

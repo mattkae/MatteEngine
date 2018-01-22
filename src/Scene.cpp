@@ -13,9 +13,12 @@ Scene::Scene() {
   mModels.push_back(floor);
 
   Light light;
-  light.color = glm::vec3(1.0, 1.0, 1.0);
-  light.direction = glm::vec3(0.0, -1.0, 0.0);
-  allocate(&light, mShadowWidth, mShadowHeight);
+  light.set_type(LightType::Point);
+  light.set_position(glm::vec3(0, 2.0, 0));
+  light.set_constant(0.88);
+  light.set_linear(0.88);
+  light.set_quadratic(0.001);
+  light.use_shadows( mShadowWidth, mShadowHeight);
   mLights.push_back(light);
 }
 
@@ -36,27 +39,10 @@ void Scene::render() {
 void Scene::render_shadows() {
   if (!mUseShadows) return;
   mShadowShader.Use();
-
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glPolygonOffset(2.0f, 4.0f);
-  
   
   for (auto light : mLights) {
-    if (!light.isOn) continue;
-    
-    gen_shadow_texture(&mShadowShader, light, mShadowWidth, mShadowHeight);
-    
-    for (auto model : mModels) {
-      glm::mat4 mvp = light.projection * light.view * model.get_model();
-      mShadowShader.SetUniformMatrix4fv("u_mvp", 1, GL_FALSE, glm::value_ptr(mvp));
-
-      model.render(&mShadowShader);
-    }
+    light.render_shadows(&mShadowShader, &mModels);
   }
-
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glDisable(GL_POLYGON_OFFSET_FILL);
-  glViewport(0, 0, 800, 600);
 }
 
 void Scene::render_scene() {
@@ -69,8 +55,8 @@ void Scene::render_scene() {
   glm::vec3 eye = mCamera.get_position();
   mSceneShader.SetUniform3f("u_eye", eye.x, eye.y, eye.z);
   for (int lidx = 0; lidx < mLights.size(); lidx++) {
-    Light light = mLights[lidx];
-    render_light(&mSceneShader, light, lidx);
+    Light* light = &mLights[lidx];
+    light->render(&mSceneShader, lidx);
   }
 
   // Models

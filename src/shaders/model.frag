@@ -21,8 +21,6 @@ struct Light {
   float quadratic;
   float cosineCutOff;
   float dropOff;
-  uint type;
-  mat4 shadowMatrix;
 };
 
 // Output color

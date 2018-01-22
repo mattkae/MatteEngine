@@ -19,7 +19,7 @@ unsigned int indices[] = {
 };
 
 ImageDrawer::ImageDrawer() {
-  mShader = Shader("assets/tex.vert", "assets/tex.frag");
+  mShader = Shader("src/shaders/texture.vert", "src/shaders/texture.frag");
   gen_buffers();
   mTexture = nullptr;
   mShader.Use();
@@ -59,6 +59,7 @@ void ImageDrawer::gen_buffers() {
 }
 
 void ImageDrawer::render() {
+  glDisable(GL_DEPTH_TEST);
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -68,9 +69,11 @@ void ImageDrawer::render() {
   mShader.Use();
   glBindVertexArray(mVao);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  glEnable(GL_DEPTH_TEST);
 }
 
 void ImageDrawer::render(GLuint id) {
+  glDisable(GL_DEPTH_TEST);
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -80,4 +83,5 @@ void ImageDrawer::render(GLuint id) {
   mShader.Use();
   glBindVertexArray(mVao);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+  glEnable(GL_DEPTH_TEST);
 }

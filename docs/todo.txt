@@ -9,3 +9,6 @@ Features
 - Optimize draw calls
 - Optimize lighting (big subject)
 - Come up with scheme for non-static lights
+
+Bugs
+- When shadows aren't on, the light is also not on

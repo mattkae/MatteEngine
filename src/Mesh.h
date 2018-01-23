@@ -8,9 +8,9 @@
 class Shader;
 
 struct Vertex {
-  glm::vec3 position;
-  glm::vec3 normal;
-  glm::vec2 texCoord;
+  glm::vec3 position = glm::vec3(0.0);
+  glm::vec3 normal = glm::vec3(0.0);
+  glm::vec2 texCoords = glm::vec2(0.0);
 };
 
 class Mesh {

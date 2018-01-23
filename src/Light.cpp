@@ -47,7 +47,7 @@ void Light::use_shadows(int width, int height) {
 
 void Light::render_shadows(Shader* shader, std::vector<Model>* models) {
   if (!this->isOn || !this->mUsesShadows) return;
-  
+
   glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(2.0f, 4.0f);
@@ -92,10 +92,9 @@ void Light::render(Shader* shader, int index) {
 
   if (this->mUsesShadows) {
     shader->SetUniformMatrix4fv(get_shadow_location(index, "u_shadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * this->mView));
-
-    shader->SetUniform1i(get_shadow_location(index, "u_depthTexture").c_str(), 0);
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, this->mShadowTexture);
+    shader->SetUniform1i(get_shadow_location(index, "u_depthTextures").c_str(), index);
   }
                 
   switch (this->mType) {

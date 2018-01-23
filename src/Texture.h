@@ -1,15 +1,29 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 #include "gl_includes.h"
+#include <iostream>
+#include <SOIL.h>
+#include <map>
+#include <string>
 
-class Texture {
- public:
-  Texture();
-  Texture(const char* path);
-  GLuint get_id() { return mTextureId; };
- private:
-  GLuint mTextureId;
-  GLint mWidth, mHeight;
+using namespace std;
+
+
+enum MaterialType {
+  TEX_DIFFUSE = 0,
+  TEX_SPECULAR
 };
+
+struct Texture {
+  GLuint id;
+  GLint width = 0;
+  GLint height = 0;
+  MaterialType type = MaterialType::TEX_DIFFUSE;
+};
+
+Texture create_blank();
+Texture load_texture(const char* path);
+
+static std::map<std::string, Texture> loadedTextures;
 
 #endif

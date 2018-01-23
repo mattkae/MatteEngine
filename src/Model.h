@@ -4,6 +4,7 @@
 #include "Material.h"
 #include <vector>
 #include <glm/glm.hpp>
+#include <string>
 
 struct aiNode;
 struct aiScene;
@@ -24,6 +25,7 @@ class Model {
 
   std::vector<Mesh> mMeshes;
   glm::mat4 mModel;
+  std::string mDirectory;
 };
 
 #endif

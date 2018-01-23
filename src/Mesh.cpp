@@ -40,7 +40,7 @@ void Mesh::generate() {
 
   // Texture Coordinate
   glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) offsetof(Vertex, normal));
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) offsetof(Vertex, texCoords));
 
   // Unbind the VAO
   glBindVertexArray(0);
@@ -48,7 +48,7 @@ void Mesh::generate() {
 
 void Mesh::render(Shader* shader) {
   render_material(&this->mMaterial, shader);
-  
+
   glBindVertexArray(this->mVao);
   glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);

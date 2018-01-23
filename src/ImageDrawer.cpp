@@ -64,7 +64,7 @@ void ImageDrawer::render() {
   glClear(GL_COLOR_BUFFER_BIT);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, mTexture->get_id());
+  glBindTexture(GL_TEXTURE_2D, mTexture->id);
 
   mShader.Use();
   glBindVertexArray(mVao);

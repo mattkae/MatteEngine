@@ -87,9 +87,9 @@ vec3 get_light(Light light, vec3 normal, vec3 viewDir, vec4 diffuse, vec4 specul
 
   // Check if frag is within spot
   // Point and Direction have cutoff = 0.0 (so never less)
-  float angleBetween = max(1.0, dot(posToFrag, direction));
+  float angleBetween = min(dot(posToFrag, direction), 1.0);
   if (angleBetween < light.cosineCutOff) {
-    return vec3(1.f, 0.f, 0.f);
+    return vec3(0.f);
   }
 
   // Calculate intensity of the light (Directional and Point have no drop off)

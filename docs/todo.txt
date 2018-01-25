@@ -1,10 +1,8 @@
 Refactors
 - Scene class containing:
   ~ A loader? (Kind of big, but worth it)
-- Camera
 
 Features
-- Texture loading for models
 - Add transparency to lighting
 - Optimize draw calls
 - Optimize lighting (big subject)

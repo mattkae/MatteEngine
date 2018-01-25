@@ -8,141 +8,73 @@
 
 using namespace std;
 
-const glm::vec3 DEFAULT_RIGHT = glm::vec3(1.0, 0.0, 0.0);
-const glm::vec3 DEFAULT_FORWARD = glm::vec3(0.0, 0.0, -1.0);
-const glm::vec3 DEFAULT_POSITION = glm::vec3(0.0, 0.0, 10.0);
-
-const float NEAR = 0.1f;
-const float FAR = 1500.0f;
-
-Camera::Camera() {
-  mPos = DEFAULT_POSITION;
-  mUp = mWorldUp;
-  mRight = DEFAULT_RIGHT;
-  mForward = DEFAULT_FORWARD;
-
-  set_projection();
-  update(-1);
-}
-
-Camera::Camera(glm::vec3 pos) {
-  mPos = pos;
-  mUp = mWorldUp;
-  mRight = DEFAULT_RIGHT;
-  mForward = DEFAULT_FORWARD;
-
-  set_projection();
-  update(-1);
-}
+const glm::vec3 WORLD_UP(0.0, 1.0, 0.0);
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
   mPos = pos;
   mUp = up;
   mRight = right;
   mForward = glm::normalize(glm::cross(up, right));
-  
-  set_projection();
-  update(-1);
 }
 
-/**
-   Establishes the projection matrix based off of the camera's spec.
- */
-void Camera::set_projection() {
-  mProjection = glm::perspective(glm::radians(mSpec.fov), mSpec.width / mSpec.height, mSpec.near, mSpec.far);
+void Camera::set_movement_flag(MovementFlag flag) {
+  mMovementFlags = mMovementFlags | flag;
 }
 
-/**
-   Move the camera in the four directions
- */
-void Camera::move_forward(double dt) {
-  mPos += ((float) dt) * mSpec.cameraSpeed * mForward;
-  mViewNeedsUpdate = true;
-}
-
-void Camera::move_backward(double dt) {
-  mPos -= ((float) dt) * mSpec.cameraSpeed * mForward;
-  mViewNeedsUpdate = true;
-}
-
-void Camera::move_right(double dt) {
-  mPos += ((float) dt) * mSpec.cameraSpeed * mRight;
-  mViewNeedsUpdate = true;
-}
-
-void Camera::move_left(double dt) {
-  mPos -= ((float) dt) * mSpec.cameraSpeed * mRight;
-  mViewNeedsUpdate = true;
-}
-
-/**
-   Rotate the camera about the right axis in the provided
-   direction based on the camera sensitivity
-
-   @param up True if rotating upward
- */
-void Camera::update_pitch(double dt, bool up) {
-  mSpec.pitchOffset += dt * mSpec.sensitivity * (up ? 1 : -1);
-
-  // Disallow full rotation
-  if (mSpec.pitchOffset > mSpec.maxYaw) {
-    mSpec.pitchOffset = mSpec.maxYaw; 
-  } else if (mSpec.pitchOffset < -mSpec.maxYaw) {
-    mSpec.pitchOffset = -mSpec.maxYaw;
-  }
-  
-  mVectorsNeedUpdate = true;
-}
-
-/**
-   Rotate the camera about the up axis in the provided direction
-   based on the camera sensitivity.
-
-   @param right True if rotating towards the right side of the screen.
- */
-void Camera::update_yaw(double dt, bool right) {
-  mSpec.yawOffset += dt * mSpec.sensitivity * (right ? 1 : -1);
-
-  mVectorsNeedUpdate = true;
-}
-
-/**
-   Updates the view matrix at the end of an update if the camera
-   changed position, or if the camera rotated.
-
-   If dt < 0, the camera  will receive a froce update.
- */
 void Camera::update(double dt) {
-  if (mVectorsNeedUpdate || dt < 0) {
-    // We've rotated around an axis, so update the camera's vectors
-    glm::vec3 frontTemp;
-
-    float pitch = this->mSpec.defaultPitch + this->mSpec.pitchOffset;
-    float yaw = this->mSpec.defaultYaw + this->mSpec.yawOffset;
+  if (mMovementFlags & MovementFlag::MoveForward) {
+    mPos += ((float) dt) * mMs.speed * mForward;
+  }
+  if (mMovementFlags & MovementFlag::MoveBackward) {
+    mPos -= ((float) dt) * mMs.speed * mForward;
+  }
+  if (mMovementFlags & MovementFlag::MoveRight) {
+    mPos += ((float) dt) * mMs.speed * mRight;
+  }
+  if (mMovementFlags & MovementFlag::MoveLeft) {
+    mPos -= ((float) dt) * mMs.speed * mRight;
+  }
+  if (mMovementFlags & MovementFlag::PlusPitch) {
+    mVs.pitch += dt * mMs.sensitivity;
     
-    frontTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-    frontTemp.y = sin(glm::radians(pitch));
-    frontTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+    if (mVs.pitch > mVs.maxPitch) {
+      mVs.pitch = mVs.maxPitch;
+    }
+  }
+  if (mMovementFlags & MovementFlag::MinusPitch) {
+    mVs.pitch -= dt * mMs.sensitivity;
 
-    this->mForward = glm::normalize(frontTemp);
-    this->mRight = glm::normalize(glm::cross(this->mForward, this->mWorldUp));
-    this->mUp = glm::normalize(glm::cross(this->mRight, this->mForward));
-
-    this->mVectorsNeedUpdate = false;
-    this->mViewNeedsUpdate = true;
+    if (mVs.pitch < -mVs.maxPitch) {
+      mVs.pitch = -mVs.maxPitch;
+    }
+  }
+  if (mMovementFlags & MovementFlag::PlusYaw) {
+    mVs.yaw += dt * mMs.sensitivity;
+  }
+  if (mMovementFlags & MovementFlag::MinusYaw) {
+    mVs.yaw -= dt * mMs.sensitivity;
   }
   
-  if (mViewNeedsUpdate || dt < 0) {
-    // We've moved, so update the look at matrix
-    mView = glm::lookAt(mPos, mPos + mForward, mUp);
-    mViewNeedsUpdate = false;
-  }
+  mMovementFlags = 0;
 }
 
 void Camera::render(Shader* shader) {
-  shader->SetUniformMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(mView));
-  shader->SetUniformMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(mProjection));
-  shader->SetUniform3f("eye", mPos.x, mPos.y, mPos.z);
+  glm::vec3 frontTemp;
+  float pitch = mVs.pitch;
+  float yaw = mVs.yaw - 90.f;
+  frontTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+  frontTemp.y = sin(glm::radians(pitch));
+  frontTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+  
+  mForward = glm::normalize(frontTemp);
+  mRight = glm::normalize(glm::cross(mForward, WORLD_UP));
+  mUp = glm::normalize(glm::cross(mRight, mForward));
+
+  glm::mat4 view = glm::lookAt(mPos, mPos + mForward, mUp);
+  glm::mat4 projection = glm::perspective(glm::radians(mPs.fov), mPs.aspectRatio, mPs.near, mPs.far);
+
+  shader->SetUniformMatrix4fv("u_vp", 1, GL_FALSE, glm::value_ptr(projection * view));
+  shader->SetUniform3f("u_eye", mPos.x, mPos.y, mPos.z);
 }
 
 void move_camera(double dt, Camera* camera) {
@@ -155,29 +87,29 @@ void move_camera(double dt, Camera* camera) {
 
   // Move around
   if (input->is_down(GLFW_KEY_W)) {
-    camera->move_forward(dt);
+    camera->set_movement_flag(MoveForward);
   }
   if (input->is_down(GLFW_KEY_S)) {
-    camera->move_backward(dt);
+    camera->set_movement_flag(MoveBackward);
   }
   if (input->is_down(GLFW_KEY_A)) {
-    camera->move_left(dt);
+    camera->set_movement_flag(MoveLeft);
   }
   if (input->is_down(GLFW_KEY_D)) {
-    camera->move_right(dt);
+    camera->set_movement_flag(MoveRight);
   }
 
   // Look around
   if (input->is_down(GLFW_KEY_UP)) {
-    camera->update_pitch(dt, true);
+    camera->set_movement_flag(PlusPitch);
   }
   if (input->is_down(GLFW_KEY_DOWN)) {
-    camera->update_pitch(dt, false);
+    camera->set_movement_flag(MinusPitch);
   }
   if (input->is_down(GLFW_KEY_LEFT)) {
-    camera->update_yaw(dt, false);
+    camera->set_movement_flag(MinusYaw);
   }
   if (input->is_down(GLFW_KEY_RIGHT)) {
-    camera->update_yaw(dt, true);
+    camera->set_movement_flag(PlusYaw);
   }
 }

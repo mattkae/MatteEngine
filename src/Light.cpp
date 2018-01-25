@@ -88,14 +88,14 @@ void Light::render(Shader* shader, int index) {
     return;
   }
 
-  shader->SetUniform3f(get_location(index, "color").c_str(), this->mColor.x, this->mColor.y, this->mColor.z);
-
   if (this->mUsesShadows) {
     shader->SetUniformMatrix4fv(get_shadow_location(index, "u_shadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * this->mView));
     glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, this->mShadowTexture);
     shader->SetUniform1i(get_shadow_location(index, "u_depthTextures").c_str(), index);
   }
+
+  shader->SetUniform3f(get_location(index, "color").c_str(), this->mColor.x, this->mColor.y, this->mColor.z);
                 
   switch (this->mType) {
   case Directional:

@@ -10,3 +10,4 @@ Features
 
 Bugs
 - When shadows aren't on, the light is also not on
+- Directional Light shadows ~work~ but are dependent on constants...

@@ -19,7 +19,7 @@ unsigned int indices[] = {
 };
 
 ImageDrawer::ImageDrawer() {
-  mShader = Shader("src/shaders/texture.vert", "src/shaders/texture.frag");
+  mShader = Shader("src/shaders/cubemap.vert", "src/shaders/cubemap.frag");
   gen_buffers();
   mTexture = nullptr;
   mShader.Use();
@@ -78,7 +78,7 @@ void ImageDrawer::render(GLuint id) {
   glClear(GL_COLOR_BUFFER_BIT);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, id);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 
   mShader.Use();
   glBindVertexArray(mVao);

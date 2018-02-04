@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const int MATERIAL_TEX_INDEX = 4;
+const int MATERIAL_TEX_INDEX = 8;
 
 void render_material(Material* material, Shader* shader) {
   shader->SetUniform4f("u_material.diffuse", material->diffuse.r, material->diffuse.g, material->diffuse.b, material->diffuse.a);

@@ -8,7 +8,7 @@
 #include <vector>
 
 class Shader;
-class Scene;
+class Camera;
 
 enum LightType {
   Directional = 0,
@@ -19,7 +19,7 @@ enum LightType {
 
 class Light {
  public:
-  Light();
+  Light(Camera* camera);
   ~Light();
 
   void use_shadows(int width, int height);
@@ -42,6 +42,7 @@ class Light {
   bool isOn = true;
  private:
   ImageDrawer mDrawer;
+  Camera* mCamera;
   LightType mType = Directional;
   glm::vec3 mColor = glm::vec3(1.0);
   glm::vec3 mDirection = glm::vec3(0.0, 0.0, -1.0);

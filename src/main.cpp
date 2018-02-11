@@ -11,7 +11,7 @@
 using namespace std;
 
 // Window variables
-const char* WINDOW_TITLE = "Fluid Simulator";
+const char* WINDOWm_TITLE = "Fluid Simulator";
 GLFWwindow* window = nullptr;
 
 void initialize(int argc, char** argv);

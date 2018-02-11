@@ -1,5 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+#include "Constants.h"
 #include <glm/glm.hpp>
 
 enum MovementFlag {
@@ -15,7 +16,7 @@ enum MovementFlag {
 
 struct ProjectionSpec {
   float fov    = 45.f;
-  float aspectRatio = 4.f / 3.f;
+  float aspectRatio = Constants.aspectRatio;
   float near   = 0.1f;
   float far    = 1500.f;
 };

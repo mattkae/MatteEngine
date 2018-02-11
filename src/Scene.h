@@ -4,6 +4,7 @@
 #include "Light.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Constants.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -24,8 +25,8 @@ class Scene {
   void render_scene();
   
   bool mUseShadows = true;
-  int mShadowWidth = 800 * 2;
-  int mShadowHeight = 600 * 2;
+  int mShadowWidth = Constants.width * 2;
+  int mShadowHeight = Constants.height * 2;
 
   Shader mShadowShader;
   Shader mSceneShader;

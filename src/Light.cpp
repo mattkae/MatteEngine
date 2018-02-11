@@ -1,6 +1,7 @@
 #include "Light.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Constants.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
@@ -55,11 +56,11 @@ void Light::use_shadows(int width, int height) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC,  GL_LEQUAL);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC,  GL_LESS);
 
     for (int fidx = 0; fidx < 6; fidx++) {
       glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx, 0,
-		   GL_DEPTH_COMPONENT32,
+		   GL_DEPTH_COMPONENT24,
 		   width,
 		   height, 0,
 		   GL_DEPTH_COMPONENT,
@@ -112,7 +113,7 @@ void Light::render_shadows(Shader* shader, std::vector<Model>* models) {
       switch (fidx) {
       case 0: 
 	currentDirection = glm::vec3(1, 0, 0);
-	up = glm::vec3(0, -1, 0);
+	up = glm::vec3(0, 1, 0);
 	break;
       case 1: 
 	currentDirection = glm::vec3(-1, 0, 0);
@@ -128,7 +129,7 @@ void Light::render_shadows(Shader* shader, std::vector<Model>* models) {
 	break;
       case 4: 
 	currentDirection = glm::vec3(0, 0, 1);
-	up = glm::vec3(0, -1, 0);
+	up = glm::vec3(0, 1, 0);
 	break;
       case 5: 
 	currentDirection = glm::vec3(0, 0, -1);
@@ -164,7 +165,7 @@ void Light::render_shadows(Shader* shader, std::vector<Model>* models) {
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDisable(GL_POLYGON_OFFSET_FILL);
-  glViewport(0, 0, 800, 600);
+  glViewport(0, 0, Constants.width, Constants.height);
   //  mDrawer.render(this->mShadowTexture);
 }
 
@@ -192,12 +193,11 @@ void Light::render(Shader* shader, int index) {
       glActiveTexture(GL_TEXTURE0 + index);
       glBindTexture(GL_TEXTURE_CUBE_MAP, this->mShadowTexture);
       shader->SetUniform1i("u_pointDepthTexture", index);
-      
-      glm::vec3 currentDirection = glm::vec3(0, -1, 0);
-      glm::vec3 up = glm::vec3(0.0, 0.0, -1.0);
-      glm::mat4 currentView = glm::lookAt(mPosition, mPosition + currentDirection, up);
-      shader->SetUniformMatrix4fv(get_shadow_location(index, "u_shadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * currentView));
-      shader->SetUniformMatrix4fv(get_location(index, "projection").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection));
+
+      glm::vec3 up(0.0, 0.0, -1.0);
+      glm::vec3 dir(0.0, -1.0, 0.0);
+      glm::mat4 view = glm::lookAt(mPosition, mPosition + dir, up);
+      shader->SetUniformMatrix4fv(get_shadow_location(index, "u_shadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * view));
     } else {
       /*
       glActiveTexture(GL_TEXTURE0 + index);
@@ -227,6 +227,15 @@ void Light::render(Shader* shader, int index) {
     shader->SetUniform1f(get_location(index, "quadratic").c_str(), this->mQuadratic);
     shader->SetUniform1f(get_location(index, "cosineCutOff").c_str(), -1);
     shader->SetUniform1f(get_location(index, "dropOff").c_str(), 1);
+    {
+      float near = 0.1f;
+      float far = 1000.f;
+      float diff = far - near;
+      glm::vec2 uFarNear;
+      uFarNear.x = (far + near) / diff * 0.5 + 0.5;
+      uFarNear.y = -(far * near) / diff;
+      shader->SetUniform2f("uFarNear", uFarNear.x, uFarNear.y);
+    }
     break;
   case Spot:
     shader->SetUniform3f(get_location(index, "direction").c_str(), this->mDirection.x, this->mDirection.y, this->mDirection.z);
@@ -263,13 +272,13 @@ void Light::update_projection() {
   switch(this->mType) {
   case Directional:
     //    mProjection = glm::ortho<float>(-10.f, 10, -10.f, 10, 0.1f, 1000.f);
-    mProjection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 0.1f, 1000.0f);
+    mProjection = glm::perspective(glm::radians(45.f), Constants.aspectRatio, 0.1f, 1000.0f);
     break;
   case Point:
     mProjection = glm::perspective(glm::radians(90.f), 1.f, 0.1f, 1000.0f);
     break;
   case Spot:
-    mProjection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 0.1f, 1000.0f);
+    mProjection = glm::perspective(glm::radians(45.f), Constants.aspectRatio, 0.1f, 1000.0f);
     break;
   default:
     cerr << "Updating projection on unknown type: " << this->mType << "." << endl;

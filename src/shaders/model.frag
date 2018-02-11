@@ -12,8 +12,8 @@ struct Material {
   float shininess;
 
   int texCount;
-  sampler2D diffuseTex;
-  sampler2D specularTex;
+  //  sampler2D diffuseTex;
+  //  sampler2D specularTex;
 };
 
 struct Light {
@@ -46,25 +46,17 @@ uniform Material u_material;
 uniform int u_numLights;
 uniform Light u_lights[MAX_LIGHTS];
 uniform vec3 u_ambient;
+uniform vec2 uFarNear;
 
 // Helper functions
 vec3 get_light(Light directionalLight, vec3 normal, vec3 viewDir, vec4 diffuse, vec4 specular);
 vec3 get_diffuse(vec3 normal, vec3 lightDir, vec3 color, vec4 diffuse);
 vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec4 specular);
 
-
-float VectorToDepth (vec3 Vec)
-{
-    vec3 AbsVec = abs(Vec);
-    float LocalZcomp = max(AbsVec.x, max(AbsVec.y, AbsVec.z));
-
-    // Replace f and n with the far and near plane values you used when
-    //   you drew your cube map.
-    const float f = 1000.0;
-    const float n = 1.0;
-
-    float NormZComp = (f+n) / (f-n) - (2*f*n)/(f-n)/LocalZcomp;
-    return (NormZComp + 1.0) * 0.5;
+float getDepthValue(const in vec3 v) {
+  vec3 absv = abs(v);
+  float z   = max(absv.x, max(absv.y, absv.z));
+  return uFarNear.x + uFarNear.y / z;
 }
 
 void main() {
@@ -74,22 +66,19 @@ void main() {
   vec4 diffuse = u_material.diffuse;
   vec4 specular = u_material.specular;
   if (u_material.texCount > 0) {
-    diffuse = texture(u_material.diffuseTex, o_TexCoords);
-    specular = texture(u_material.specularTex, o_TexCoords);
+    //diffuse = texture(u_material.diffuseTex, o_TexCoords);
+    //specular = texture(u_material.specularTex, o_TexCoords);
   }
   
   vec3 finalColor = u_ambient + u_material.emissive.rgb;
   for (int lightIndex = 0; lightIndex < u_numLights; lightIndex++) {
     float visibility = 1.0;
+    Light light = u_lights[lightIndex];
     if (u_lights[lightIndex].direction == vec3(0.0)) {
-      // Select correct face
-      vec4 abs_coord = abs(o_ShadowCoords[lightIndex]);
-      float fs_z=-max(abs_coord.x, max(abs_coord.y, abs_coord.z));
-
-      vec4 clip = u_lights[lightIndex].projection * vec4(0.0, 0.0, -fs_z, 1.0);
-      float depth = (clip.z / clip.w) * 0.5 + 0.5;
-
-      visibility = texture(u_pointDepthTexture, vec4(o_ShadowCoords[lightIndex].xyz, depth));
+      //vec3 lP = vec3(o_ShadowCoords[lightIndex] / o_ShadowCoords[lightIndex].w) * 0.5 + 0.5;
+      vec3 lightToFrag = o_FragPos.xyz - light.position;
+      float depth = getDepthValue(lightToFrag);
+      visibility = texture(u_pointDepthTexture, vec4(lightToFrag, depth));
     } else {
       //vec3 lP = vec3(o_ShadowCoords[lightIndex] / o_ShadowCoords[lightIndex].w) * 0.5 + 0.5;
       //visibility = texture(u_depthTextures[lightIndex], lP);

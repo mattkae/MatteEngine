@@ -25,11 +25,11 @@ Model::Model(const char* path) {
 
   process_node(scene->mRootNode, scene);
 
-  // Set Model Matrix
   mModel = glm::mat4(1.0);
 }
 
 void Model::render(Shader* shader) {
+  shader->SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
   for (auto mesh : mMeshes) {
     mesh.render(shader);
   }

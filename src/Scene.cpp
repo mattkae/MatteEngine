@@ -16,27 +16,17 @@ Scene::Scene() {
   floor.set_model(floorModel);
   mModels.push_back(floor);
 
-  // Bind lights as default
-  /*mSceneShader.Use();
-    mSceneShader.SetUniform1i("u_depthTextures[0]", 0);
-  mSceneShader.SetUniform1i("u_depthTextures[1]", 1);
-  mSceneShader.SetUniform1i("u_depthTextures[2]", 2);
-  mSceneShader.SetUniform1i("u_depthTextures[3]", 3);
-  mSceneShader.SetUniform1i("u_pointDepthTexture", 4);*/
+  // Bind uniforms to proper index
+  mSceneShader.Use();
+  mSceneShader.SetUniform1i("uDirShadows[0]", 0);
+  mSceneShader.SetUniform1i("uDirShadows[1]", 1);
 
   // Load lights
-  Light light(&mCamera);
-  light.set_type(Point);
-  light.set_color(glm::vec3(1.0, 1.0, 1.0));
-  // light.set_direction_and_up(glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
-  light.set_position(glm::vec3(0.0, 5.0, 0.0));
-  light.set_constant(1.0);
-  light.set_linear(0.0);
-  light.set_quadratic(0.0);
-  // light.set_cutoff(20.f);
-  // light.set_dropoff(24.f);
-  light.use_shadows(512, 512);
-  mLights.push_back(light);
+  Light pLight = get_point(1024, 1024);
+  pLight.position = glm::vec3(0.0, 5.0, 0.0);
+  pLight.color = glm::vec3(1.0);
+  pLight.usesShadows = true;
+  mLights.push_back(pLight);
 }
 
 Scene::~Scene() {
@@ -58,7 +48,7 @@ void Scene::render_shadows() {
   mShadowShader.Use();
   
   for (auto light : mLights) {
-    light.render_shadows(&mShadowShader, &mModels);
+    render_shadows_from_light(&light, &mShadowShader, this);
   }
 }
 
@@ -68,21 +58,21 @@ void Scene::render_scene() {
 
   mSceneShader.Use();
   
-  // Camera
   mCamera.render(&mSceneShader);
 
-  // Lights
-  mSceneShader.SetUniform3f("u_ambient", 91 / 255.f, 81 / 255.f, 188 / 255.f);
-  mSceneShader.SetUniform1i("u_numLights", mLights.size());
+  mSceneShader.SetUniform3f("uAmbient", 91 / 255.f, 81 / 255.f, 188 / 255.f);
+  mSceneShader.SetUniform1i("uNumLights", mLights.size());
     
   for (int lidx = 0; lidx < mLights.size(); lidx++) {
     Light* light = &mLights[lidx];
-    light->render(&mSceneShader, lidx);
+    render_light(light, &mSceneShader, lidx);
   }
 
-  // Models
+  render_models(&mSceneShader);
+}
+
+void Scene::render_models(Shader* shader) {
   for (auto model : mModels) {
-    mSceneShader.SetUniformMatrix4fv("u_model", 1, GL_FALSE, glm::value_ptr(model.get_model()));
     model.render(&mSceneShader);
   }
 }

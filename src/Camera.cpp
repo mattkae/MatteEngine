@@ -73,8 +73,8 @@ void Camera::render(Shader* shader) {
   glm::mat4 view = glm::lookAt(mPos, mPos + mForward, mUp);
   glm::mat4 projection = glm::perspective(glm::radians(mPs.fov), mPs.aspectRatio, mPs.near, mPs.far);
 
-  shader->SetUniformMatrix4fv("u_vp", 1, GL_FALSE, glm::value_ptr(projection * view));
-  shader->SetUniform3f("u_eye", mPos.x, mPos.y, mPos.z);
+  shader->SetUniformMatrix4fv("uVp", 1, GL_FALSE, glm::value_ptr(projection * view));
+  shader->SetUniform3f("uEye", mPos.x, mPos.y, mPos.z);
 }
 
 void move_camera(double dt, Camera* camera) {

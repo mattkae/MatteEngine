@@ -1,6 +1,7 @@
 #version 410 core
 
 #define MAX_LIGHTS 4
+#define MAX_DIR_LIGHT_SHADOWS 2
 
 // Data types
 struct Material {
@@ -12,8 +13,8 @@ struct Material {
   float shininess;
 
   int texCount;
-  //  sampler2D diffuseTex;
-  //  sampler2D specularTex;
+  sampler2D diffuseTex;
+  sampler2D specularTex;
 };
 
 struct Light {
@@ -25,75 +26,83 @@ struct Light {
   float quadratic;
   float cosineCutOff;
   float dropOff;
-
-  mat4 projection;
 };
 
 // Output color
 out vec4 Color;
 
 // Input from vertex shader
-in vec4 o_FragPos;
-in vec3 o_Normal;
-in vec2 o_TexCoords;
-in vec3 o_Eye;
-in vec4 o_ShadowCoords[MAX_LIGHTS];
+in vec4 oFragPos;
+in vec3 oNormal;
+in vec2 oTexCoords;
+in vec3 oEye;
+in vec4 oShadowCoords[MAX_LIGHTS];
 
 // Uniform variables
-//uniform sampler2DShadow u_depthTextures[MAX_LIGHTS];
-uniform samplerCubeShadow u_pointDepthTexture;
-uniform Material u_material;
-uniform int u_numLights;
-uniform Light u_lights[MAX_LIGHTS];
-uniform vec3 u_ambient;
+uniform Material uMaterial;
+uniform int uNumLights;
+uniform Light uLights[MAX_LIGHTS];
+uniform vec3 uAmbient;
 uniform vec2 uFarNear;
+uniform sampler2DShadow uDirShadows[MAX_DIR_LIGHT_SHADOWS];
+//uniform samplerCubeShadow uOmniShadows[MAX_POINT_LIGHT_SHADOWS];
 
 // Helper functions
-vec3 get_light(Light directionalLight, vec3 normal, vec3 viewDir, vec4 diffuse, vec4 specular);
+vec3 get_color_from_light(Light directionalLight, vec3 normal, vec3 viewDir, vec4 diffuse, vec4 specular);
 vec3 get_diffuse(vec3 normal, vec3 lightDir, vec3 color, vec4 diffuse);
 vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec4 specular);
 
-float getDepthValue(const in vec3 v) {
-  vec3 absv = abs(v);
-  float z   = max(absv.x, max(absv.y, absv.z));
-  return uFarNear.x + uFarNear.y / z;
+float get_omni_visibility(const in Light light) { 
+  vec3 lightToFrag = oFragPos.xyz - light.position;
+
+  // Basicaly, we're moving our depth values into the
+  // range of depth expected by the light's projection,
+  // and then translating those values into device
+  // space. See: https://en.wikipedia.org/wiki/Z-buffering#Mathematics
+  vec3 absltof = abs(lightToFrag);
+  float z = max(absltof.x, max(absltof.y, absltof.z));
+  float depth = uFarNear.x + uFarNear.y / z;
+  
+  return 1.0;//texture(uOmniShadows[lightIndex], vec4(lightToFrag, depth));
+}
+
+float get_dir_visibility(const in int lightIndex) {
+  vec3 lP = vec3(oShadowCoords[lightIndex] / oShadowCoords[lightIndex].w) * 0.5 + 0.5;
+  return texture(uDirShadows[lightIndex], lP);
 }
 
 void main() {
-  vec3 viewDir = normalize(o_Eye - o_FragPos.xyz);
-  vec3 normal = normalize(o_Normal);
+  vec3 viewDir = normalize(oEye - oFragPos.xyz);
+  vec3 normal = normalize(oNormal);
 
-  vec4 diffuse = u_material.diffuse;
-  vec4 specular = u_material.specular;
-  if (u_material.texCount > 0) {
-    //diffuse = texture(u_material.diffuseTex, o_TexCoords);
-    //specular = texture(u_material.specularTex, o_TexCoords);
+  vec4 diffuse = uMaterial.diffuse;
+  vec4 specular = uMaterial.specular;
+  if (uMaterial.texCount > 0) {
+    diffuse = texture(uMaterial.diffuseTex, oTexCoords);
+    specular = texture(uMaterial.specularTex, oTexCoords);
   }
   
-  vec3 finalColor = u_ambient + u_material.emissive.rgb;
-  for (int lightIndex = 0; lightIndex < u_numLights; lightIndex++) {
+  vec3 finalColor = uAmbient + uMaterial.emissive.rgb;
+  for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {
     float visibility = 1.0;
-    Light light = u_lights[lightIndex];
-    if (u_lights[lightIndex].direction == vec3(0.0)) {
-      //vec3 lP = vec3(o_ShadowCoords[lightIndex] / o_ShadowCoords[lightIndex].w) * 0.5 + 0.5;
-      vec3 lightToFrag = o_FragPos.xyz - light.position;
-      float depth = getDepthValue(lightToFrag);
-      visibility = texture(u_pointDepthTexture, vec4(lightToFrag, depth));
+    
+    Light light = uLights[lightIndex];
+    if (light.direction == vec3(0.0)) {
+      visibility = get_omni_visibility(light);
     } else {
-      //vec3 lP = vec3(o_ShadowCoords[lightIndex] / o_ShadowCoords[lightIndex].w) * 0.5 + 0.5;
-      //visibility = texture(u_depthTextures[lightIndex], lP);
+      visibility = get_dir_visibility(lightIndex);
     }
     
-    finalColor += visibility * get_light(u_lights[lightIndex], normal, viewDir, diffuse, specular);
+    finalColor += visibility * get_color_from_light(uLights[lightIndex], normal, viewDir, diffuse, specular);
   }
   
   Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), 1.0);
 }
 
 
-vec3 get_light(Light light, vec3 normal, vec3 viewDir, vec4 diffuse, vec4 specular) {
+vec3 get_color_from_light(Light light, vec3 normal, vec3 viewDir, vec4 diffuse, vec4 specular) {
   // Get vector from the light, to the fragment
-  vec3 posToFrag = light.position - o_FragPos.xyz;
+  vec3 posToFrag = light.position - oFragPos.xyz;
   float delta = length(posToFrag);
   posToFrag = normalize(posToFrag);
 
@@ -126,7 +135,7 @@ vec3 get_light(Light light, vec3 normal, vec3 viewDir, vec4 diffuse, vec4 specul
 
 vec3 get_diffuse(vec3 normal, vec3 lightDir, vec3 color, vec4 diffuse) {
   vec3 diffuseFactor = diffuse.rgb
-    * u_material.diffuseProperty
+    * uMaterial.diffuseProperty
     * max(0.f, dot(normal, lightDir));
    return color * diffuseFactor;
 }
@@ -135,7 +144,7 @@ vec3 get_diffuse(vec3 normal, vec3 lightDir, vec3 color, vec4 diffuse) {
 vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec4 specular) {
   vec3 reflection = reflect(-lightDir, normal);
   vec3 specularFactor = specular.rgb
-    * u_material.specularProperty
-    * pow(max(0.f, dot(viewDir, reflection)), u_material.shininess);
+    * uMaterial.specularProperty
+    * pow(max(0.f, dot(viewDir, reflection)), uMaterial.shininess);
   return specularFactor;
 }

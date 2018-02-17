@@ -18,6 +18,7 @@ class Scene {
   Scene();
   ~Scene();
   void render();
+  void render_models(Shader* shader);
   void update(double dt);
   void load(string path);
  private:
@@ -25,8 +26,6 @@ class Scene {
   void render_scene();
   
   bool mUseShadows = true;
-  int mShadowWidth = Constants.width * 2;
-  int mShadowHeight = Constants.height * 2;
 
   Shader mShadowShader;
   Shader mSceneShader;

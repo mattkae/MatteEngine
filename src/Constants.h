@@ -2,10 +2,13 @@
 #define CONSTANTS_H
 
 struct ApplicationConstants {
-  int width = 1024;
-  int height = 1024;
-  float aspectRatio = 1.f;
+  int width = 800;
+  int height = 600;
+  float aspectRatio = (float)width / (float)height;;
   const char* title = "Flooids";
+
+  float near = 0.1f;
+  float far = 1000.f;
 };
 
 static ApplicationConstants Constants;

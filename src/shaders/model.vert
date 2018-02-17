@@ -6,28 +6,28 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoords;
 
-out vec4 o_FragPos;
-out vec3 o_Normal;
-out vec2 o_TexCoords;
-out vec3 o_Eye;
-out vec4 o_ShadowCoords[MAX_LIGHTS];
+out vec4 oFragPos;
+out vec3 oNormal;
+out vec2 oTexCoords;
+out vec3 oEye;
+out vec4 oShadowCoords[MAX_LIGHTS];
 
-uniform int u_numLights;
-uniform mat4 u_vp;
-uniform mat4 u_shadowMatrix[MAX_LIGHTS];
-uniform mat4 u_model;
-uniform vec3 u_eye;
+uniform int uNumLights;
+uniform mat4 uVp;
+uniform mat4 uShadowMatrix[MAX_LIGHTS];
+uniform mat4 uModel;
+uniform vec3 uEye;
 
 void main() {
-  vec4 fragPos = u_model * vec4(position, 1.0f);
-  gl_Position = u_vp * fragPos;
+  vec4 fragPos = uModel * vec4(position, 1.0f);
+  gl_Position = uVp * fragPos;
 
-  for (int index = 0; index < u_numLights; index++) {
-     o_ShadowCoords[index] = u_shadowMatrix[index] * fragPos;
+  for (int index = 0; index < uNumLights; index++) {
+     oShadowCoords[index] = uShadowMatrix[index] * fragPos;
   }
 
-  o_FragPos = fragPos;
-  o_TexCoords = texCoords;
-  o_Normal = normal;
-  o_Eye = u_eye;
+  oFragPos = fragPos;
+  oTexCoords = texCoords;
+  oNormal = normal;
+  oEye = uEye;
 }

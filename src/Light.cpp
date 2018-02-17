@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Constants.h"
+#include "Scene.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
@@ -10,278 +11,310 @@
 
 using namespace std;
 
-Light::Light(Camera* camera) {
-  mCamera = camera;
-}
+Light get_point(int width, int height) {
+  Light pLight;
+  glGenTextures(1, &pLight.shadowTexture);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, pLight.shadowTexture);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC,  GL_LESS);
 
-Light::~Light() {
-  // TO-DO: Deallocate shadow and fbo
-}
+  for (int fidx = 0; fidx < 6; fidx++) {
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx, 0,
+		 GL_DEPTH_COMPONENT24,
+		 width,
+		 height, 0,
+		 GL_DEPTH_COMPONENT,
+		 GL_FLOAT,
+		 0);
+  }
 
-void Light::use_shadows(int width, int height) {
-  if (mType == Directional || mType == Spot) {
-    // Generate the shadow texture
-    glGenTextures(1, &mShadowTexture);
-    glBindTexture(GL_TEXTURE_2D, mShadowTexture);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC,  GL_LESS);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-    glBindTexture(GL_TEXTURE_2D, 0);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-    // Generate the framebuffer for the shadow
-    glGenFramebuffers(1, &mDepthFbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mShadowTexture, 0);
+  // Generate the framebuffer for the shadow
+  glGenFramebuffers(1, &pLight.depthFbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, pLight.depthFbo);
+  glDrawBuffer(GL_NONE);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  pLight.shadowWidth = width;
+  pLight.shadowHeight = height;
+  pLight.type = Point;
   
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-      cout << "Shadow framebuffer is not okay for light." << endl;
-    } else {
-      mUsesShadows = true;
-      mShadowWidth = width;
-      mShadowHeight = height;
-    }
-    glDrawBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  } else if (mType == Point) {
-    // Generate the cube map
-    glGenTextures(1, &mShadowTexture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, mShadowTexture);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC,  GL_LESS);
-
-    for (int fidx = 0; fidx < 6; fidx++) {
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx, 0,
-		   GL_DEPTH_COMPONENT24,
-		   width,
-		   height, 0,
-		   GL_DEPTH_COMPONENT,
-		   GL_FLOAT,
-		   0);
-    }
-
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-    // Generate the framebuffer for the shadow
-    glGenFramebuffers(1, &mDepthFbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
-    glDrawBuffer(GL_NONE);
-
-    mUsesShadows = true;
-    mShadowWidth = width;
-    mShadowHeight = height;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  } else {
-    cerr << "Attempting to create a shadow texture for an undefined light." << endl;
-  }
+  return pLight;
 }
 
-void Light::render_shadows(Shader* shader, std::vector<Model>* models) {
-  if (!this->isOn || !this->mUsesShadows) return;
+Light get_spot(int width, int height) {
+  Light sLight;
+  glGenTextures(1, &sLight.shadowTexture);
+  glBindTexture(GL_TEXTURE_2D, sLight.shadowTexture);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC,  GL_LESS);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
-  if (mType == Point) {
-    glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(2.0f, 4.0f);
-    glViewport(0, 0, mShadowWidth, mShadowHeight);
-    glClearDepth(1.0);
-
-    for (int fidx = 0; fidx < 6; fidx++) {
-      // Render scene from 90 degree increments around the point light
-      glFramebufferTexture2D(GL_FRAMEBUFFER,
-			     GL_DEPTH_ATTACHMENT,
-			     GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx,
-			     mShadowTexture, 0);
-      glClear(GL_DEPTH_BUFFER_BIT);
-      
-      
-      GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-      if (status != GL_FRAMEBUFFER_COMPLETE) {
-	cerr << "Shadow FBO is broken with code " << status << endl;
-      }
-
-      glm::vec3 currentDirection;
-      glm::vec3 up;
-      switch (fidx) {
-      case 0: 
-	currentDirection = glm::vec3(1, 0, 0);
-	up = glm::vec3(0, 1, 0);
-	break;
-      case 1: 
-	currentDirection = glm::vec3(-1, 0, 0);
-	up = glm::vec3(0, -1, 0);
-	break;
-      case 2: 
-	currentDirection = glm::vec3(0, 1, 0);
-	up = glm::vec3(0.0, 0.0, 1.0);
-	break;
-      case 3: 
-	currentDirection = glm::vec3(0, -1, 0);
-	up = glm::vec3(0.0, 0.0, -1.0);
-	break;
-      case 4: 
-	currentDirection = glm::vec3(0, 0, 1);
-	up = glm::vec3(0, 1, 0);
-	break;
-      case 5: 
-	currentDirection = glm::vec3(0, 0, -1);
-	up = glm::vec3(0, -1, 0);
-	break;
-      default:
-	cerr << "Invalid direction for cube map." << endl;
-	break;
-      }
-      
-      glm::mat4 currentView = glm::lookAt(mPosition, mPosition + currentDirection, up);
-      for (auto model : *models) {
-	glm::mat4 mvp = mProjection * currentView * model.get_model();
-	shader->SetUniformMatrix4fv("u_mvp", 1, GL_FALSE, glm::value_ptr(mvp));
-	model.render(shader);
-      }
-    }
-  } else {    
-    glBindFramebuffer(GL_FRAMEBUFFER, mDepthFbo);
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(2.0f, 4.0f);
-    glViewport(0, 0, mShadowWidth, mShadowHeight);
-    glClearDepth(1.0);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    for (auto model : *models) {
-      glm::mat4 mvp = mProjection * mView * model.get_model();
-      shader->SetUniformMatrix4fv("u_mvp", 1, GL_FALSE, glm::value_ptr(mvp));
-
-      model.render(shader);
-    }  
+  glGenFramebuffers(1, &sLight.depthFbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, sLight.depthFbo);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sLight.shadowTexture, 0);
+  
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    cerr << "Shadow framebuffer is not okay for light." << endl;
+  } else {
+    sLight.shadowWidth = width;
+    sLight.shadowHeight = height;
   }
+  glDrawBuffer(GL_NONE);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  sLight.type = Spot;
+  
+  return sLight;
+}
+
+Light get_directional(int width, int height) {
+  Light dLight;
+  glGenTextures(1, &dLight.shadowTexture);
+  glBindTexture(GL_TEXTURE_2D, dLight.shadowTexture);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC,  GL_LESS);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+
+  glGenFramebuffers(1, &dLight.depthFbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, dLight.depthFbo);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight.shadowTexture, 0);
+  
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    cerr << "Shadow framebuffer is not okay for light." << endl;
+  } else {
+    dLight.shadowWidth = width;
+    dLight.shadowHeight = height;
+  }
+  
+  glDrawBuffer(GL_NONE);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  dLight.type = Directional;
+  
+  return dLight;
+}
+
+void render_point_shadows(Light* light, Shader* shader, Scene* scene) {
+  glBindFramebuffer(GL_FRAMEBUFFER, light->depthFbo);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(2.0f, 4.0f);
+  glViewport(0, 0, light->shadowWidth, light->shadowHeight);
+  glClearDepth(1.0);
+
+  for (int fidx = 0; fidx < 6; fidx++) {    
+    glFramebufferTexture2D(GL_FRAMEBUFFER,
+			   GL_DEPTH_ATTACHMENT,
+			   GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx,
+			   light->shadowTexture, 0);
+    glClear(GL_DEPTH_BUFFER_BIT);
+      
+      
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+      cerr << "Shadow FBO is broken with code " << status << endl;
+    }
+
+    glm::vec3 currentDirection;
+    glm::vec3 up;
+    switch (fidx) {
+    case 0: 
+      currentDirection = glm::vec3(1, 0, 0);
+      up = glm::vec3(0, 1, 0);
+      break;
+    case 1: 
+      currentDirection = glm::vec3(-1, 0, 0);
+      up = glm::vec3(0, -1, 0);
+      break;
+    case 2: 
+      currentDirection = glm::vec3(0, 1, 0);
+      up = glm::vec3(0.0, 0.0, 1.0);
+      break;
+    case 3: 
+      currentDirection = glm::vec3(0, -1, 0);
+      up = glm::vec3(0.0, 0.0, -1.0);
+      break;
+    case 4: 
+      currentDirection = glm::vec3(0, 0, 1);
+      up = glm::vec3(0, 1, 0);
+      break;
+    case 5: 
+      currentDirection = glm::vec3(0, 0, -1);
+      up = glm::vec3(0, -1, 0);
+      break;
+    default:
+      cerr << "Invalid direction for cube map." << endl;
+      break;
+    }
+
+    glm::mat4 view = glm::lookAt(light->position, light->position + currentDirection, up);
+    glm::mat4 proj = glm::perspective(glm::radians(90.f), 1.f, Constants.near, Constants.far);
+    shader->SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(proj * view));
+    scene->render_models(shader);
+  }
+  
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glViewport(0, 0, Constants.width, Constants.height);
+}
+
+void render_spot_shadows(Light* light, Shader* shader, Scene* scene) {
+  glBindFramebuffer(GL_FRAMEBUFFER, light->depthFbo);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(2.0f, 4.0f);
+  glViewport(0, 0, light->shadowWidth, light->shadowHeight);
+  glClearDepth(1.0);
+  glClear(GL_DEPTH_BUFFER_BIT);
+
+  glm::mat4 view = glm::lookAt(light->position, light->position + light->direction, light->up);
+  glm::mat4 proj = glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
+  shader->SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(view * proj));
+  scene->render_models(shader);
+  
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glViewport(0, 0, Constants.width, Constants.height);
+}
+
+void render_directional_shadows(Light* light, Shader* shader, Scene* scene) {
+  glBindFramebuffer(GL_FRAMEBUFFER, light->depthFbo);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(2.0f, 4.0f);
+  glViewport(0, 0, light->shadowWidth, light->shadowHeight);
+  glClearDepth(1.0);
+  glClear(GL_DEPTH_BUFFER_BIT);
+
+  //glm::mat4 view = glm::lookAt(glm::vec3(0, 10, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+  //glm::mat4 proj = glm::ortho
+  //shader->SetUniform4f("uViewProj", 1, GL_FALSE, glm::value_ptr(view * proj));
+  scene->render_models(shader);
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDisable(GL_POLYGON_OFFSET_FILL);
   glViewport(0, 0, Constants.width, Constants.height);
-  //  mDrawer.render(this->mShadowTexture);
 }
 
+void render_shadows_from_light(Light* light, Shader* shader, Scene* scene) {
+  if (!light->isOn || !light->usesShadows) return;
 
-static string get_location(int lightIndex, const char* propertyName) {
-  ostringstream ss;
-  ss << "u_lights[" << lightIndex << "]." << propertyName;
-  string uniformName = ss.str();
-  return uniformName;
+  switch (light->type) {
+  case Point:
+    render_point_shadows(light, shader, scene);
+    break;
+  case Spot:
+    render_spot_shadows(light, shader, scene);
+    break;
+  case Directional:
+    render_directional_shadows(light, shader, scene);
+    break;
+  default:
+    cerr << "Rendering shadows for invalid light type " << light->type << "." << endl;
+    break;
+  }
 }
 
-static string get_shadow_location(int lightIndex, const char* attribute) {
+static string get_array_uniform(int lightIndex, const char* attribute, const char* property = nullptr) {
   ostringstream ss;
   ss << attribute << "[" << lightIndex << "]";
+
+  if (property) {
+    ss << "." << property;
+  }
+  
   return ss.str();
 }
 
-void Light::render(Shader* shader, int index) {
-  if (!this->isOn) {
+void render_point_light(Light* light, Shader* shader, int index) {
+  if (light->usesShadows) {
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, light->shadowTexture);
+  }
+
+  shader->SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), 0, 0, 0);
+  shader->SetUniform3f(get_array_uniform(index, "uLights", "position").c_str(), light->position.x, light->position.y, light->position.z);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "constant").c_str(), light->constant);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "linear").c_str(), light->linear);	
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "quadratic").c_str(), light->quadratic);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
+  
+  float near = Constants.near;
+  float far = Constants.far;
+  float diff = far - near;
+  glm::vec2 uFarNear;
+  uFarNear.x = (far + near) / diff * 0.5 + 0.5;
+  uFarNear.y = -(far * near) / diff;
+  shader->SetUniform2f("uFarNear", uFarNear.x, uFarNear.y);
+}
+
+void render_directional_light(Light* light, Shader* shader, int index) {
+  if (light->usesShadows) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, light->shadowTexture);
+    //shader->SetUniformMatrix4fv(get_shadow_location(index, "uShadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * this->mView));
+  }
+  
+  shader->SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), light->direction.x, light->direction.y, light->direction.z);
+  shader->SetUniform3f(get_array_uniform(index, "uLights", "position").c_str(), 0, 0, 0);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "constant").c_str(), 1);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "linear").c_str(), 0);	
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "quadratic").c_str(), 0);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
+  shader->SetUniform1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
+}
+
+void render_spot_light(Light* light, Shader* shader, int index) {
+  if (light->usesShadows) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, light->shadowTexture);
+    //shader->SetUniformMatrix4fv(get_shadow_location(index, "uShadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * this->mView));
+  }
+  
+  shader->SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), light->direction.x, light->direction.y, light->direction.z);
+  shader->SetUniform3f(get_array_uniform(index, "uLights", "position").c_str(), light->position.x, light->position.y, light->position.z);
+    shader->SetUniform1f(get_array_uniform(index, "uLights", "constant").c_str(), light->constant);
+    shader->SetUniform1f(get_array_uniform(index, "uLights", "linear").c_str(), light->linear);	
+    shader->SetUniform1f(get_array_uniform(index, "uLights", "quadratic").c_str(), light->quadratic);
+    shader->SetUniform1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), light->cosineCutOff);
+    shader->SetUniform1f(get_array_uniform(index, "uLights", "dropOff").c_str(), light->dropOff);
+}
+
+void render_light(Light* light, Shader* shader, int index) {
+  if (!light->isOn) {
     return;
   }
 
-  if (this->mUsesShadows) {
-    if (mType == Point) {
-      glActiveTexture(GL_TEXTURE0 + index);
-      glBindTexture(GL_TEXTURE_CUBE_MAP, this->mShadowTexture);
-      shader->SetUniform1i("u_pointDepthTexture", index);
-
-      glm::vec3 up(0.0, 0.0, -1.0);
-      glm::vec3 dir(0.0, -1.0, 0.0);
-      glm::mat4 view = glm::lookAt(mPosition, mPosition + dir, up);
-      shader->SetUniformMatrix4fv(get_shadow_location(index, "u_shadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * view));
-    } else {
-      /*
-      glActiveTexture(GL_TEXTURE0 + index);
-      glBindTexture(GL_TEXTURE_2D, this->mShadowTexture);
-      shader->SetUniform1i(get_shadow_location(index, "u_depthTextures").c_str(), index);
-      shader->SetUniformMatrix4fv(get_shadow_location(index, "u_shadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * this->mView));*/
-    }
-  }
-
-  shader->SetUniform3f(get_location(index, "color").c_str(), this->mColor.x, this->mColor.y, this->mColor.z);
+  shader->SetUniform3f(get_array_uniform(index, "uLights", "color").c_str(), light->color.x, light->color.y, light->color.z);
                 
-  switch (this->mType) {
+  switch (light->type) {
   case Directional:
-    shader->SetUniform3f(get_location(index, "direction").c_str(), this->mDirection.x, this->mDirection.y, this->mDirection.z);
-    shader->SetUniform3f(get_location(index, "position").c_str(), 0, 0, 0);
-    shader->SetUniform1f(get_location(index, "constant").c_str(), 1);
-    shader->SetUniform1f(get_location(index, "linear").c_str(), 0);	
-    shader->SetUniform1f(get_location(index, "quadratic").c_str(), 0);
-    shader->SetUniform1f(get_location(index, "cosineCutOff").c_str(), -1);
-    shader->SetUniform1f(get_location(index, "dropOff").c_str(), 1);
+    render_directional_light(light, shader, index);
     break;
   case Point:
-    shader->SetUniform3f(get_location(index, "direction").c_str(), 0, 0, 0);
-    shader->SetUniform3f(get_location(index, "position").c_str(), this->mPosition.x, this->mPosition.y, this->mPosition.z);
-    shader->SetUniform1f(get_location(index, "constant").c_str(), this->mConstant);
-    shader->SetUniform1f(get_location(index, "linear").c_str(), this->mLinear);	
-    shader->SetUniform1f(get_location(index, "quadratic").c_str(), this->mQuadratic);
-    shader->SetUniform1f(get_location(index, "cosineCutOff").c_str(), -1);
-    shader->SetUniform1f(get_location(index, "dropOff").c_str(), 1);
-    {
-      float near = 0.1f;
-      float far = 1000.f;
-      float diff = far - near;
-      glm::vec2 uFarNear;
-      uFarNear.x = (far + near) / diff * 0.5 + 0.5;
-      uFarNear.y = -(far * near) / diff;
-      shader->SetUniform2f("uFarNear", uFarNear.x, uFarNear.y);
-    }
+    render_point_light(light, shader, index);
     break;
   case Spot:
-    shader->SetUniform3f(get_location(index, "direction").c_str(), this->mDirection.x, this->mDirection.y, this->mDirection.z);
-    shader->SetUniform3f(get_location(index, "position").c_str(), this->mPosition.x, this->mPosition.y, this->mPosition.z);
-    shader->SetUniform1f(get_location(index, "constant").c_str(), this->mConstant);
-    shader->SetUniform1f(get_location(index, "linear").c_str(), this->mLinear);	
-    shader->SetUniform1f(get_location(index, "quadratic").c_str(), this->mQuadratic);
-    shader->SetUniform1f(get_location(index, "cosineCutOff").c_str(), this->mCosineCutOff);
-    shader->SetUniform1f(get_location(index, "dropOff").c_str(), this->mDropOff);
+    render_spot_light(light, shader, index);
     break;
   default:
-    cerr << "Unknown light type: " << this->mType << endl;
-    break;
-  }
-}
-
-void Light::update_view() {
-  switch (this->mType) {
-  case Directional:
-    mView = glm::lookAt(glm::vec3(0, 10, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-    break;
-  case Spot:
-    mView = glm::lookAt(mPosition, mPosition + mDirection, mUp);
-    break;
-  case Point:
-    break;
-  default:
-    cerr << "Updating view on unknown type: " << this->mType << "." << endl;
-    break;
-  }  
-}
-
-void Light::update_projection() {
-  switch(this->mType) {
-  case Directional:
-    //    mProjection = glm::ortho<float>(-10.f, 10, -10.f, 10, 0.1f, 1000.f);
-    mProjection = glm::perspective(glm::radians(45.f), Constants.aspectRatio, 0.1f, 1000.0f);
-    break;
-  case Point:
-    mProjection = glm::perspective(glm::radians(90.f), 1.f, 0.1f, 1000.0f);
-    break;
-  case Spot:
-    mProjection = glm::perspective(glm::radians(45.f), Constants.aspectRatio, 0.1f, 1000.0f);
-    break;
-  default:
-    cerr << "Updating projection on unknown type: " << this->mType << "." << endl;
+    cerr << "Unknown light type: " << light->type << endl;
     break;
   }
 }

@@ -75,6 +75,7 @@ Light get_spot(int width, int height) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   sLight.type = Spot;
+  sLight.projection = glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
   
   return sLight;
 }
@@ -108,8 +109,23 @@ Light get_directional(int width, int height) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   dLight.type = Directional;
+  //dLight.projection = glm::ortho
   
   return dLight;
+}
+
+
+glm::mat4 get_light_view(Light* light) {
+  switch (light->type) {
+  case Directional:
+    return glm::lookAt(glm::vec3(0, 10, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+  case Spot:
+    return glm::lookAt(light->position, light->position + light->direction, light->up);
+  case Point:
+  default:
+    cerr << "Attempting to get a view for unknown light: " << light->type << endl;
+    return glm::mat4(0.0);
+  }
 }
 
 void render_point_shadows(Light* light, Shader* shader, Scene* scene) {
@@ -183,9 +199,7 @@ void render_spot_shadows(Light* light, Shader* shader, Scene* scene) {
   glClearDepth(1.0);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  glm::mat4 view = glm::lookAt(light->position, light->position + light->direction, light->up);
-  glm::mat4 proj = glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
-  shader->SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(view * proj));
+  shader->SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(get_light_view(light) * light->projection));
   scene->render_models(shader);
   
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -201,9 +215,7 @@ void render_directional_shadows(Light* light, Shader* shader, Scene* scene) {
   glClearDepth(1.0);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  //glm::mat4 view = glm::lookAt(glm::vec3(0, 10, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-  //glm::mat4 proj = glm::ortho
-  //shader->SetUniform4f("uViewProj", 1, GL_FALSE, glm::value_ptr(view * proj));
+  shader->SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(get_light_view(light) * light->projection));
   scene->render_models(shader);
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -243,7 +255,7 @@ static string get_array_uniform(int lightIndex, const char* attribute, const cha
 
 void render_point_light(Light* light, Shader* shader, int index) {
   if (light->usesShadows) {
-    glActiveTexture(GL_TEXTURE0 + 1);
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, light->shadowTexture);
   }
 
@@ -266,9 +278,11 @@ void render_point_light(Light* light, Shader* shader, int index) {
 
 void render_directional_light(Light* light, Shader* shader, int index) {
   if (light->usesShadows) {
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, light->shadowTexture);
-    //shader->SetUniformMatrix4fv(get_shadow_location(index, "uShadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * this->mView));
+    shader->SetUniformMatrix4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
+				1, GL_FALSE,
+				glm::value_ptr(light->projection * get_light_view(light)));
   }
   
   shader->SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), light->direction.x, light->direction.y, light->direction.z);
@@ -282,9 +296,11 @@ void render_directional_light(Light* light, Shader* shader, int index) {
 
 void render_spot_light(Light* light, Shader* shader, int index) {
   if (light->usesShadows) {
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, light->shadowTexture);
-    //shader->SetUniformMatrix4fv(get_shadow_location(index, "uShadowMatrix").c_str(), 1, GL_FALSE, glm::value_ptr(this->mProjection * this->mView));
+    shader->SetUniformMatrix4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
+				1, GL_FALSE,
+				glm::value_ptr(light->projection * get_light_view(light)));
   }
   
   shader->SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), light->direction.x, light->direction.y, light->direction.z);

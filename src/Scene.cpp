@@ -9,22 +9,22 @@ Scene::Scene() {
   mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
 
   // Load models
-  mModels.push_back(Model("assets/test.obj"));
-  Model floor = Model("assets/floor.obj");
-  glm::mat4 floorModel(1.0);
-  floorModel = glm::translate(floorModel, glm::vec3(0, -3, 0));
-  floor.set_model(floorModel);
-  mModels.push_back(floor);
-
+  Model model("assets/BaymaxWhiteOBJ/Bigmax_White_OBJ.obj");
+  glm::mat4 transform(1.0);
+  transform = glm::scale(transform, glm::vec3(0.05));
+  transform = glm::translate(transform, glm::vec3(0, -105, 0));
+  model.set_model(transform);
+  mModels.push_back(model);
   // Bind uniforms to proper index
   mSceneShader.Use();
   mSceneShader.SetUniform1i("uDirShadows[0]", 0);
   mSceneShader.SetUniform1i("uDirShadows[1]", 1);
+  mSceneShader.SetUniform1i("uMaterial.diffuseTex", 8);
+  mSceneShader.SetUniform1i("uMaterial.specularTex", 9);
 
   // Load lights
-  Light pLight = get_point(1024, 1024);
-  pLight.position = glm::vec3(0.0, 5.0, 0.0);
-  pLight.color = glm::vec3(1.0);
+  Light pLight = get_directional(1600, 1200);
+  pLight.direction = glm::vec3(0, -1.0, 0);
   pLight.usesShadows = true;
   mLights.push_back(pLight);
 }
@@ -60,7 +60,7 @@ void Scene::render_scene() {
   
   mCamera.render(&mSceneShader);
 
-  mSceneShader.SetUniform3f("uAmbient", 91 / 255.f, 81 / 255.f, 188 / 255.f);
+  mSceneShader.SetUniform3f("uAmbient", 0.f, 0.f, 0.f);
   mSceneShader.SetUniform1i("uNumLights", mLights.size());
     
   for (int lidx = 0; lidx < mLights.size(); lidx++) {

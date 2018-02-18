@@ -9,5 +9,4 @@ Features
 - Come up with scheme for non-static lights
 
 Bugs
-- When shadows aren't on, the light is also not on
 - Directional Light shadows ~work~ but are dependent on constants...

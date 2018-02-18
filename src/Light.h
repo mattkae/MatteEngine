@@ -35,6 +35,8 @@ struct Light {
   int shadowHeight = 600;
 
   bool isOn = true;
+
+  glm::mat4 projection;
 };
 
 Light get_point(int width, int height);

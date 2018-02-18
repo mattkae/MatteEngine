@@ -23,6 +23,7 @@ class Model {
   Mesh process_mesh(aiMesh* mesh, const aiScene* scene);
   Material process_material(aiMaterial* mat);
 
+  //  Mesh mMesh;
   std::vector<Mesh> mMeshes;
   glm::mat4 mModel;
   std::string mDirectory;

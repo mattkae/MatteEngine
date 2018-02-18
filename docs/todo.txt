@@ -2,11 +2,10 @@ Refactors
 - Scene class containing:
   ~ A loader? (Kind of big, but worth it)
 
+
 Features
 - Add transparency to lighting
-- Optimize draw calls
-- Optimize lighting (big subject)
-- Come up with scheme for non-static lights
+- Optimize draw calls (multi and indirect)
 
 Bugs
 - Directional Light shadows ~work~ but are dependent on constants...

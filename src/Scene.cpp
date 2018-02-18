@@ -23,9 +23,9 @@ Scene::Scene() {
   mSceneShader.SetUniform1i("uMaterial.specularTex", 9);
 
   // Load lights
-  Light pLight = get_directional(1600, 1200);
-  pLight.direction = glm::vec3(0, -1.0, 0);
-  pLight.usesShadows = true;
+  Light pLight = get_point(512, 512);
+  pLight.color = glm::vec3(1.0, 0.0, 0.0);
+  pLight.position = glm::vec3(0.0, 5.0, 0.0);
   mLights.push_back(pLight);
 }
 

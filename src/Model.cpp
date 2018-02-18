@@ -30,6 +30,7 @@ Model::Model(const char* path) {
 
 void Model::render(Shader* shader) {
   shader->SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
+  //mMesh.render(shader);
   for (auto mesh : mMeshes) {
     mesh.render(shader);
   }

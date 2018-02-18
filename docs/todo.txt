@@ -1,11 +1,9 @@
-Refactors
-- Scene class containing:
-  ~ A loader? (Kind of big, but worth it)
+Important Items
+- Skybox would make scene look more real
+- Basic physics
+- Procedurally generated terrain
+- Editor
 
-
-Features
+Extended Features
 - Add transparency to lighting
 - Optimize draw calls (multi and indirect)
-
-Bugs
-- Directional Light shadows ~work~ but are dependent on constants...

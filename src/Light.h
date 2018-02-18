@@ -1,7 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "ImageDrawer.h"
+#include "gl_includes.h"
 #include <glm/glm.hpp>
 
 class Shader;

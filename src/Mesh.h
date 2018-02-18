@@ -18,7 +18,7 @@ class Mesh {
    Mesh();
   ~Mesh();
   void generate();
-  void render(Shader* shader);
+  void render(const Shader& shader);
   void add_vertex(Vertex vertex);
   void add_index(GLint index);
   void set_material(Material material);

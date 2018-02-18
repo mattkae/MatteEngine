@@ -15,7 +15,7 @@ class Shader;
 class Model {
  public:
   Model(const char* path);
-  void render(Shader * shader);
+  void render(const Shader& shader);
   void set_model(glm::mat4 model) { mModel = model; };
   glm::mat4 get_model() { return mModel; };
  private:

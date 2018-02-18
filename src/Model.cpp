@@ -28,9 +28,8 @@ Model::Model(const char* path) {
   mModel = glm::mat4(1.0);
 }
 
-void Model::render(Shader* shader) {
-  shader->SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
-  //mMesh.render(shader);
+void Model::render(const Shader& shader) {
+  shader.SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
   for (auto mesh : mMeshes) {
     mesh.render(shader);
   }

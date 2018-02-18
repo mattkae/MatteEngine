@@ -42,6 +42,6 @@ struct Light {
 Light get_point(int width, int height);
 Light get_spot(int width, int height);
 Light get_directional(int width, int height);
-void render_shadows_from_light(Light* light, Shader* shader, Scene* scene);
-void render_light(Light* light, Shader* shader, int index);
+void render_shadows_from_light(const Light& light, Shader& shader, Scene& scene);
+void render_light(const Light& light, Shader& shader, int index);
 #endif

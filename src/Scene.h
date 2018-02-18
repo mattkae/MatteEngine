@@ -4,6 +4,7 @@
 #include "Light.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Skybox.h"
 #include "Constants.h"
 #include <iostream>
 #include <vector>
@@ -18,7 +19,7 @@ class Scene {
   Scene();
   ~Scene();
   void render();
-  void render_models(Shader* shader);
+  void render_models(const Shader& shader);
   void update(double dt);
   void load(string path);
  private:
@@ -33,6 +34,7 @@ class Scene {
   
   vector<Model> mModels;
   vector<Light> mLights;
+  Skybox mSkybox;
 };
 
 #endif

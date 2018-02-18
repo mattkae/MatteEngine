@@ -27,6 +27,8 @@ Scene::Scene() {
   pLight.color = glm::vec3(1.0, 0.0, 0.0);
   pLight.position = glm::vec3(0.0, 5.0, 0.0);
   mLights.push_back(pLight);
+
+  initialize_skybox(mSkybox, "assets/skybox.png");
 }
 
 Scene::~Scene() {
@@ -48,7 +50,7 @@ void Scene::render_shadows() {
   mShadowShader.Use();
   
   for (auto light : mLights) {
-    render_shadows_from_light(&light, &mShadowShader, this);
+    render_shadows_from_light(light, mShadowShader, *this);
   }
 }
 
@@ -64,15 +66,14 @@ void Scene::render_scene() {
   mSceneShader.SetUniform1i("uNumLights", mLights.size());
     
   for (int lidx = 0; lidx < mLights.size(); lidx++) {
-    Light* light = &mLights[lidx];
-    render_light(light, &mSceneShader, lidx);
+    render_light(mLights[lidx], mSceneShader, lidx);
   }
 
-  render_models(&mSceneShader);
+  render_models(mSceneShader);
 }
 
-void Scene::render_models(Shader* shader) {
+void Scene::render_models(const Shader& shader) {
   for (auto model : mModels) {
-    model.render(&mSceneShader);
+    model.render(mSceneShader);
   }
 }

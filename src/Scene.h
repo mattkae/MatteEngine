@@ -30,6 +30,7 @@ class Scene {
 
   Shader mShadowShader;
   Shader mSceneShader;
+  Shader mSkyboxShader;
   Camera mCamera;
   
   vector<Model> mModels;

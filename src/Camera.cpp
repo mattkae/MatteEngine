@@ -56,9 +56,7 @@ void Camera::update(double dt) {
   }
   
   mMovementFlags = 0;
-}
 
-void Camera::render(Shader* shader) {
   glm::vec3 frontTemp;
   float pitch = mVs.pitch;
   float yaw = mVs.yaw - 90.f;
@@ -69,12 +67,22 @@ void Camera::render(Shader* shader) {
   mForward = glm::normalize(frontTemp);
   mRight = glm::normalize(glm::cross(mForward, WORLD_UP));
   mUp = glm::normalize(glm::cross(mRight, mForward));
+}
 
+glm::mat4 Camera::get_view() const {
+  return glm::lookAt(mPos, mPos + mForward, mUp);
+}
+
+glm::mat4 Camera::get_projection() const {
+  return glm::perspective(glm::radians(mPs.fov), mPs.aspectRatio, mPs.near, mPs.far);
+}
+
+void Camera::render(const Shader& shader) const {
   glm::mat4 view = glm::lookAt(mPos, mPos + mForward, mUp);
   glm::mat4 projection = glm::perspective(glm::radians(mPs.fov), mPs.aspectRatio, mPs.near, mPs.far);
 
-  shader->SetUniformMatrix4fv("uVp", 1, GL_FALSE, glm::value_ptr(projection * view));
-  shader->SetUniform3f("uEye", mPos.x, mPos.y, mPos.z);
+  shader.SetUniformMatrix4fv("uVp", 1, GL_FALSE, glm::value_ptr(projection * view));
+  shader.SetUniform3f("uEye", mPos.x, mPos.y, mPos.z);
 }
 
 void move_camera(double dt, Camera* camera) {

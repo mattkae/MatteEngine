@@ -2,7 +2,6 @@
 #define TEXTURE_H
 #include "gl_includes.h"
 #include <iostream>
-#include <SOIL.h>
 #include <map>
 #include <string>
 

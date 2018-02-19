@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include <SOIL.h>
 
 Texture create_blank() {
   Texture texture;

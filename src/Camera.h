@@ -37,14 +37,16 @@ class Shader;
 class Camera {
  public:
   Camera(glm::vec3 pos = glm::vec3(0, 0, 10), glm::vec3 up = glm::vec3(0, 1, 0), glm::vec3 right = glm::vec3(1, 0, 0));
-  glm::vec3 get_up() { return mUp; };
-  glm::vec3 get_right() { return mRight; };
-  glm::vec3 get_forward() { return mForward; };
-  glm::vec3 get_position() { return mPos; };
+  glm::vec3 get_up() const { return mUp; };
+  glm::vec3 get_right() const { return mRight; };
+  glm::vec3 get_forward() const { return mForward; };
+  glm::vec3 get_position() const { return mPos; };
+  glm::mat4 get_view() const;
+  glm::mat4 get_projection() const;
 
   void set_movement_flag(MovementFlag flag);
   void update(double dt);
-  void render(Shader * shader);
+  void render(const Shader& shader) const;
  private:
   ProjectionSpec mPs;
   ViewSpec mVs;

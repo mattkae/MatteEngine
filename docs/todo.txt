@@ -1,8 +1,8 @@
 Important Items
-- Skybox would make scene look more real
 - Basic physics
 - Procedurally generated terrain
 - Editor
+- Refactor shader class
 
 Extended Features
 - Add transparency to lighting

@@ -17,8 +17,8 @@ enum MovementFlag {
 struct ProjectionSpec {
   float fov    = 45.f;
   float aspectRatio = Constants.aspectRatio;
-  float near   = 0.1f;
-  float far    = 1500.f;
+  float near   = Constants.near;
+  float far    = Constants.far;
 };
 
 struct ViewSpec {
@@ -36,7 +36,7 @@ class Shader;
 
 class Camera {
  public:
-  Camera(glm::vec3 pos = glm::vec3(0, 0, 10), glm::vec3 up = glm::vec3(0, 1, 0), glm::vec3 right = glm::vec3(1, 0, 0));
+  Camera(glm::vec3 pos = glm::vec3(0, 2.5, 10), glm::vec3 up = glm::vec3(0, 1, 0), glm::vec3 right = glm::vec3(1, 0, 0));
   glm::vec3 get_up() const { return mUp; };
   glm::vec3 get_right() const { return mRight; };
   glm::vec3 get_forward() const { return mForward; };

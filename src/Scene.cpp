@@ -8,12 +8,13 @@ Scene::Scene() {
   mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
   mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
   mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
+  mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag");
 
   // Load models
   Model model("assets/BaymaxWhiteOBJ/Bigmax_White_OBJ.obj");
   glm::mat4 transform(1.0);
   transform = glm::scale(transform, glm::vec3(0.05));
-  transform = glm::translate(transform, glm::vec3(0, -30, 0));
+  transform = glm::translate(transform, glm::vec3(0, 0, 0));
   model.set_model(transform);
   mModels.push_back(model);
   // Bind uniforms to proper index
@@ -38,6 +39,9 @@ Scene::Scene() {
   skyboxPaths[4] = "assets/skybox/posz.png";
   skyboxPaths[5] = "assets/skybox/negz.png";
   initialize_skybox(mSkybox, skyboxPaths);
+
+  // Load terrain
+  mTerrain = generate_terrain(100, 10);
 }
 
 Scene::~Scene() {
@@ -69,11 +73,15 @@ void Scene::render_scene() {
 
   mSkyboxShader.Use();
   render_skybox(mSkybox, mSkyboxShader, mCamera);
+
+  mTerrainShader.Use();
+  render_terrain(mTerrain, mTerrainShader, mCamera);
   
   mSceneShader.Use();
   mCamera.render(mSceneShader);
   mSceneShader.SetUniform3f("uAmbient", 0.f, 0.f, 0.f);
   mSceneShader.SetUniform1i("uNumLights", mLights.size());
+
   for (int lidx = 0; lidx < mLights.size(); lidx++) {
     render_light(mLights[lidx], mSceneShader, lidx);
   }

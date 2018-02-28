@@ -7,8 +7,8 @@ struct ApplicationConstants {
   float aspectRatio = (float)width / (float)height;;
   const char* title = "Flooids";
 
-  float near = 0.1f;
-  float far = 1000.f;
+  float near = 1.f;
+  float far = 2000.f;
 };
 
 static ApplicationConstants Constants;

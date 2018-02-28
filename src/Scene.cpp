@@ -8,7 +8,7 @@ Scene::Scene() {
   mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
   mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
   mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-  mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag");
+  mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
 
   // Load models
   Model model("assets/BaymaxWhiteOBJ/Bigmax_White_OBJ.obj");

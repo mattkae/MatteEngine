@@ -78,10 +78,7 @@ glm::mat4 Camera::get_projection() const {
 }
 
 void Camera::render(const Shader& shader) const {
-  glm::mat4 view = glm::lookAt(mPos, mPos + mForward, mUp);
-  glm::mat4 projection = glm::perspective(glm::radians(mPs.fov), mPs.aspectRatio, mPs.near, mPs.far);
-
-  shader.SetUniformMatrix4fv("uVp", 1, GL_FALSE, glm::value_ptr(projection * view));
+  shader.SetUniformMatrix4fv("uVp", 1, GL_FALSE, glm::value_ptr(get_projection() * get_view()));
   shader.SetUniform3f("uEye", mPos.x, mPos.y, mPos.z);
 }
 

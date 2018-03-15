@@ -6,44 +6,73 @@
 
 using namespace std;
 
-const GLuint indices[] = {
-  0, 1, 3,
-  1, 2, 3
-};
-
-
 Terrain generate_terrain(int dimension, int granularity) {
   Terrain terrain;
-    
   glGenVertexArrays(1, &terrain.vao);
   glGenBuffers(1, &terrain.vbo);
   glGenBuffers(1, &terrain.ebo);
   glBindVertexArray(terrain.vao);
 
-  float squareSize = (dimension / granularity) / 2;
-  const GLfloat vertices[] = {
-    squareSize, 0, squareSize,
-    squareSize, 0, -squareSize,
-    -squareSize, 0, -squareSize,
-    -squareSize, 0, squareSize
-  };
+  float squareSize = ((float)dimension / (float)granularity) / 2.f;
+  float vertexArrySize = 3 * granularity * granularity;
+  float indexArrySize = 6 * granularity * granularity;
+
+  // Generate vertices
+  int index = 0;
+  GLfloat* vertices = new GLfloat[vertexArrySize];
+  for (int r = 0; r < granularity; r++) {
+    for (int c = 0; c < granularity; c++) {
+      vertices[index] = c * squareSize;
+      vertices[index + 1] = 0;
+      vertices[index + 2] = r * squareSize;
+
+      index += 3;
+    }
+  }
+
+  // Generate indices
+  index = 0;
+  GLuint* indices = new GLuint[indexArrySize];
+  for (GLuint r = 0; r < granularity - 1; r++) {
+    for (GLuint c = 0; c < granularity - 1; c++) {
+      if (r % 2 == 0) {
+	GLuint idx = r * granularity + c;
+	indices[index] = idx;
+	indices[index + 1] = idx + 1;
+	indices[index + 2] = idx + granularity;
+	indices[index + 3] = idx + granularity;
+	indices[index + 4] = idx + granularity + 1;
+	indices[index + 5] = idx + 1;
+      } else {
+	GLuint idx = r * granularity + (granularity - c - 1);
+	indices[index] = idx;
+	indices[index + 1] = idx - 1;
+	indices[index + 2] = idx + granularity;
+	indices[index + 3] = idx + granularity;
+	indices[index + 4] = idx + granularity - 1;
+	indices[index + 5] = idx - 1;
+      }
+	
+      index += 6;
+    }
+  }
 
    // Put the vertex data into OpenGL
   glBindBuffer(GL_ARRAY_BUFFER, terrain.vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertexArrySize * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
 
   // Put the index data into OpenGL
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrain.ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexArrySize * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
   // Position
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (GLvoid*) 0);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (GLvoid*) 0);
   glBindVertexArray(0);
 
-  int numSquares = dimension / granularity;
-  terrain.numSquares = numSquares / 2;
-  terrain.granularity = granularity;
+  terrain.numIndices = indexArrySize;
+  delete vertices;
+  delete indices;
   return terrain;
 }
 
@@ -58,30 +87,19 @@ void render_terrain(const Terrain& terrain, const Shader& shader, const Camera& 
   glDisable(GL_DEPTH);
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
-  glBindVertexArray(terrain.vao);
 
   shader.SetUniformMatrix4fv("uViewportMatrix", 1, GL_FALSE, glm::value_ptr(get_viewport()));
   shader.SetUniform1f("uLineWidth", 1.0);
   shader.SetUniform4f("uLineColor", 1.0, 1.0, 1.0, 1.0);
-  
-  for (int r = -terrain.numSquares; r < terrain.numSquares; r++) {
-    for (int c = -terrain.numSquares; c < terrain.numSquares; c++) {
-      float x = c * terrain.granularity;
-      float z = r * terrain.granularity;
 
-      if (x > Constants.far || z > Constants.far) {
-	continue;
-      }
+  // TODO: We probably no longer need a model matrix?
+  glm::mat4 model(1.0);
+  shader.SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
 
-      glm::mat4 model(1.0);
-      model = glm::translate(model, glm::vec3(x, 0, z));
-      shader.SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
-      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    }
-  }
-  
+  glBindVertexArray(terrain.vao);
+  glDrawElements(GL_TRIANGLES, terrain.numIndices, GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
+  
   glEnable(GL_DEPTH);
   glDisable(GL_BLEND);
 }

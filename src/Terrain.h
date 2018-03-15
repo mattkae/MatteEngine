@@ -5,8 +5,7 @@
 #include "Camera.h"
 
 struct Terrain {
-  int numSquares = 0;
-  int granularity = 0;
+  int numIndices = 0;
 
   GLuint vao;
   GLuint vbo;

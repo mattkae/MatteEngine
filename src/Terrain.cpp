@@ -3,6 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -20,10 +21,11 @@ Terrain generate_terrain(int dimension, int granularity) {
   // Generate vertices
   int index = 0;
   GLfloat* vertices = new GLfloat[vertexArrySize];
-  for (int r = 0; r < granularity; r++) {
-    for (int c = 0; c < granularity; c++) {
+  int halfGranularity = granularity / 2;
+  for (int r = -halfGranularity; r < halfGranularity; r++) {
+    for (int c = -halfGranularity; c < halfGranularity; c++) {
       vertices[index] = c * squareSize;
-      vertices[index + 1] = 0;
+      vertices[index + 1] = rand() % 2 + 2;
       vertices[index + 2] = r * squareSize;
 
       index += 3;

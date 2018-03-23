@@ -41,7 +41,7 @@ Scene::Scene() {
   initialize_skybox(mSkybox, skyboxPaths);
 
   // Load terrain
-  mTerrain = generate_terrain(100, 50);
+  mTerrain = generate_terrain(500, 50);
 }
 
 Scene::~Scene() {

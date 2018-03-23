@@ -4,40 +4,13 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
 #include <cmath>
 
 using namespace std;
 
 static const float SKEW_FACTOR = (sqrt(3.f) - 1.f) / 2.f;
 static const float UNSKEW_FACTOR = (3.f - sqrt(3.f)) / 6.f;
-
-static const unsigned char perm[512] = { 151,160,137,91,90,15,
-131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
-190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
-88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
-77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,
-102,143,54, 65,25,63,161, 1,216,80,73,209,76,132,187,208, 89,18,169,200,196,
-135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,250,124,123,
-5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,
-223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167, 43,172,9,
-129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,97,228,
-251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107,
-49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
-138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180,
-151,160,137,91,90,15,
-131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
-190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
-88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,134,139,48,27,166,
-77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,
-102,143,54, 65,25,63,161, 1,216,80,73,209,76,132,187,208, 89,18,169,200,196,
-135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,250,124,123,
-5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,
-223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167, 43,172,9,
-129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,97,228,
-251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107,
-49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
-138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
-};
 
 static inline int32_t fast_floor(float fp) {
     int32_t i = static_cast<int32_t>(fp);
@@ -52,25 +25,27 @@ static float grad(int hash, float x, float y)
   return ((h & 1) ? -u : u) + ((h & 2) ? -2.0f*v : 2.0f*v);
 }
 
-
-static float simplex(glm::vec2 in) {
-  in = in;
+static float simplex(glm::vec2 in, const int* perm) {
+  float sample = 0; // Resultant value
   
-  float sample = 0;
-  glm::vec2 s0 = in + (in.x + in.y) * SKEW_FACTOR; // Simplex space
+  glm::vec2 s0 = in + (in.x + in.y) * SKEW_FACTOR; // in point in Simplex-Space
+  glm::vec2 v0 = glm::vec2(fast_floor(s0.x), fast_floor(s0.y)); // Lower left point in Simplex-Space
+  
+  glm::vec2 p0 = v0 - (v0.x + v0.y) * UNSKEW_FACTOR; // Lower left point in IN-space
+  glm::vec2 d0 = in - p0; // Distance between in point and lower left point, in IN-space
 
-  // Lower left point
-  glm::vec2 i0 = glm::vec2(fast_floor(s0.x), fast_floor(s0.y)); // Simplex space
-  glm::vec2 p0 = i0 - (i0.x + i0.y) * UNSKEW_FACTOR;
-  glm::vec2 d0 = in - p0;
+  glm::vec2 v1 = (d0.x > d0.y) ? glm::vec2(1.f, 0.f) : glm::vec2(0.f, 1.f); // Upper left point, or lower right point
 
-  glm::vec2 v1 = (d0.x > d0.y) ? glm::vec2(1.f, 0.f) : glm::vec2(0.f, 1.f);
-
+  // Logic uncovered from: https://github.com/WardBenjamin/SimplexNoise/blob/master/SimplexNoise/Noise.cs
+  // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
+  // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+  // c = (3-sqrt(3))/6
   glm::vec2 d1 = d0 - v1 + UNSKEW_FACTOR;
   glm::vec2 d2 = d0 - 1.f + 2.f * UNSKEW_FACTOR;
 
-  glm::vec2 ii = glm::vec2((int)i0.x & 0xff, (int)i0.y & 0xff);
+  glm::vec2 ii = glm::vec2((int)v0.x & 255, (int)v0.y & 255); // Capped value at 256
 
+  // Sample from bottom left point
   float sample0 = 0;
   float t0 = 0.5f - (d0.x * d0.x) - (d0.y * d0.y);
   if (t0 > 0) {
@@ -78,21 +53,24 @@ static float simplex(glm::vec2 in) {
     sample0 = t0 * t0 * grad(perm[(int)ii.x + perm[(int)ii.y]], d0.x, d0.y);
   }
 
+  // Sample from upper left/bottom right point
   float sample1 = 0;
   float t1 = 0.5f - (d1.x * d1.x) - (d1.y * d1.y);
   if (t1 > 0) {
     t1 *= t1;
-    sample1 = t1 * t1 * grad(perm[(int)ii.x + (int)i0.x + perm[(int)ii.y + (int)i0.y]], d1.x, d1.y);
+    sample1 = t1 * t1 * grad(perm[(int)ii.x + (int)v1.x + perm[(int)ii.y + (int)v1.y]], d1.x, d1.y);
   }
 
+  // Sample from upper right point
   float sample2 = 0;
   float t2 = 0.5f - (d2.x * d2.x) - (d2.y * d2.y);
   if (t2 > 0) {
     t2 *= t2;
     sample2 = t2 * t2 * grad(perm[(int)ii.x + 1 + perm[(int)ii.y + 1]], d1.x, d2.y);
   }
-  
-  return 5 * (40.0f / 0.884343445f * (sample0 + sample1 + sample2));
+
+  // Adjust sample appropriately
+  return 40.0f * (sample0 + sample1 + sample2);
 }
 
 Terrain generate_terrain(int dimension, int granularity) {
@@ -121,13 +99,38 @@ Terrain generate_terrain(int dimension, int granularity) {
   }
 
   // Generate height map
-  index = 1; // Start at y index
-  float scaleFactor = 1.f / ((float)halfGranularity * (float)squareSize); 
+  float scaleFactor = 1.f / ((float)halfGranularity * (float)squareSize);
+  index = 1;
+  float max = 10.f;
+  
+  int* perm = new int[512];
+  srand(time(NULL));
+  for (int p = 0; p < 512; p++) {
+    perm[p] = rand() % 256;
+  }
+    
   for (int r = 0; r < granularity; r++) {
     for (int c = 0; c < granularity; c++) {
       glm::vec2 in = glm::vec2(vertices[index - 1], vertices[index + 1]);
-      in *= scaleFactor;
-      vertices[index] += simplex(in);
+
+      // Add successively smaller, higher-frequency terms
+      float frequency = scaleFactor;
+      float  amp = 1;
+      float  maxAmp = 0;
+      float noise = 0;
+      for (int i = 0; i < 16; i++) {
+        noise += (simplex(frequency * in, perm) * amp);
+	maxAmp += amp;
+	amp *= 0.5f;
+	frequency *= 1.8f;
+      }
+
+      // Take the averafe values of the iterations
+      noise /= maxAmp;
+
+      // Normalize the result
+      vertices[index] = noise * (max + max) / 2.f  + (max - max) / 2.f;
+      
       index += 3;
     }
   }

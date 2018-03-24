@@ -117,4 +117,8 @@ void move_camera(double dt, Camera* camera) {
   if (input->is_down(GLFW_KEY_RIGHT)) {
     camera->set_movement_flag(PlusYaw);
   }
+
+  if (input->is_down(GLFW_KEY_5)) {
+    camera->set_position(glm::vec3(0, 100, 0));
+  }
 }

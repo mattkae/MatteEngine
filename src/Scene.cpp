@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Camera.h"
+#include "Input.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -40,8 +41,8 @@ Scene::Scene() {
   skyboxPaths[5] = "assets/skybox/negz.png";
   initialize_skybox(mSkybox, skyboxPaths);
 
-  // Load terrain
-  mTerrain = generate_terrain(500, 50);
+  // Load terraino
+  mTerrain = generate_terrain(500, 100);
 }
 
 Scene::~Scene() {
@@ -50,6 +51,11 @@ Scene::~Scene() {
 
 void Scene::update(double dt) {
     move_camera(dt, &mCamera);
+
+    if (Input::getInstance()->is_just_up(GLFW_KEY_F)) {
+      mTerrain.wireframeMode = !mTerrain.wireframeMode;
+    }
+    
     mCamera.update(dt);
 }
 

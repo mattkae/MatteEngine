@@ -5,12 +5,14 @@ layout (triangle_strip, max_vertices = 3) out;
 
 in vec3 vNormal[];
 in vec3 vPosition[];
+in vec3 vColor[];
 
 uniform mat4 uViewportMatrix;
 
 out vec3 gNormal;
 out vec3 gPosition;
 smooth out vec3 gEdgeDistance;
+out vec3 gColor;
 
 // Drawn from the GLSL Shader Cookbook 4.0, but I understand it well,
 // so it's cool.
@@ -33,18 +35,21 @@ void main() {
   gEdgeDistance = vec3(ha, 0, 0);
   gNormal = vNormal[0];
   gPosition = vPosition[0];
+  gColor = vColor[0];
   gl_Position = gl_in[0].gl_Position;
   EmitVertex();
 
   gEdgeDistance = vec3(0, hb, 0);
   gNormal = vNormal[1];
   gPosition = vPosition[1];
+  gColor = vColor[1];
   gl_Position = gl_in[1].gl_Position;
   EmitVertex();
   
   gEdgeDistance = vec3(0, 0, hc);
   gNormal = vNormal[2];
   gPosition = vPosition[2];
+  gColor = vColor[2];
   gl_Position = gl_in[2].gl_Position;
   EmitVertex();
 

@@ -10,6 +10,8 @@ struct Terrain {
   GLuint vao;
   GLuint vbo;
   GLuint ebo;
+
+  bool wireframeMode = false;
 };
 
 Terrain generate_terrain(int dimension, int granularity);

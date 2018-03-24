@@ -3,8 +3,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
+#include <random>
+#include <chrono>
 #include <cmath>
 
 using namespace std;
@@ -17,12 +17,17 @@ static inline int32_t fast_floor(float fp) {
     return (fp < i) ? (i - 1) : (i);
 }
 
-static float grad(int hash, float x, float y)
+static int gradients2D[] = {
+  5,  2,    2,  5,
+  -5,  2,   -2,  5,
+  5, -2,    2, -5,
+  -5, -2,   -2, -5,
+};
+
+static float grad(glm::vec2 in, glm::vec2 distance, const int* perm)
 {
-  int h = hash & 7;      // Convert low 3 bits of hash code
-  float u = h < 4 ? x : y;  // into 8 simple gradient directions,
-  float v = h < 4 ? y : x;  // and compute the dot product with (x,y).
-  return ((h & 1) ? -u : u) + ((h & 2) ? -2.0f*v : 2.0f*v);
+  int hash = perm[(perm[(int)in.x & 0xFF] + (int)in.y) & 0xFF] & 0x0E;
+  return gradients2D[hash] * distance.x + gradients2D[hash + 1] * distance.y;
 }
 
 static float simplex(glm::vec2 in, const int* perm) {
@@ -36,41 +41,36 @@ static float simplex(glm::vec2 in, const int* perm) {
 
   glm::vec2 v1 = (d0.x > d0.y) ? glm::vec2(1.f, 0.f) : glm::vec2(0.f, 1.f); // Upper left point, or lower right point
 
-  // Logic uncovered from: https://github.com/WardBenjamin/SimplexNoise/blob/master/SimplexNoise/Noise.cs
-  // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
-  // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
-  // c = (3-sqrt(3))/6
+  // https://github.com/WardBenjamin/SimplexNoise/blob/master/SimplexNoise/Noise.cs
   glm::vec2 d1 = d0 - v1 + UNSKEW_FACTOR;
   glm::vec2 d2 = d0 - 1.f + 2.f * UNSKEW_FACTOR;
 
-  glm::vec2 ii = glm::vec2((int)v0.x & 255, (int)v0.y & 255); // Capped value at 256
-
   // Sample from bottom left point
   float sample0 = 0;
-  float t0 = 0.5f - (d0.x * d0.x) - (d0.y * d0.y);
+  float t0 = 2.f - (d0.x * d0.x) - (d0.y * d0.y);
   if (t0 > 0) {
     t0 *= t0;
-    sample0 = t0 * t0 * grad(perm[(int)ii.x + perm[(int)ii.y]], d0.x, d0.y);
+    sample0 = t0 * t0 * grad(v0, d0, perm);
   }
 
   // Sample from upper left/bottom right point
   float sample1 = 0;
-  float t1 = 0.5f - (d1.x * d1.x) - (d1.y * d1.y);
+  float t1 = 2.f - (d1.x * d1.x) - (d1.y * d1.y);
   if (t1 > 0) {
     t1 *= t1;
-    sample1 = t1 * t1 * grad(perm[(int)ii.x + (int)v1.x + perm[(int)ii.y + (int)v1.y]], d1.x, d1.y);
+    sample1 = t1 * t1 * grad(v0 + v1, d1, perm);
   }
 
   // Sample from upper right point
   float sample2 = 0;
-  float t2 = 0.5f - (d2.x * d2.x) - (d2.y * d2.y);
+  float t2 = 2.f - (d2.x * d2.x) - (d2.y * d2.y);
   if (t2 > 0) {
     t2 *= t2;
-    sample2 = t2 * t2 * grad(perm[(int)ii.x + 1 + perm[(int)ii.y + 1]], d1.x, d2.y);
+    sample2 = t2 * t2 * grad(v0 + glm::vec2(1, 1), d2, perm);
   }
 
   // Adjust sample appropriately
-  return 40.0f * (sample0 + sample1 + sample2);
+  return (sample0 + sample1 + sample2) / 47.f;
 }
 
 Terrain generate_terrain(int dimension, int granularity) {
@@ -81,7 +81,7 @@ Terrain generate_terrain(int dimension, int granularity) {
   glBindVertexArray(terrain.vao);
 
   float squareSize = ((float)dimension / (float)granularity) / 2.f;
-  float vertexArrySize = 3 * granularity * granularity;
+  float vertexArrySize = 6 * granularity * granularity;
   float indexArrySize = 6 * granularity * granularity;
 
   // Generate vertices
@@ -94,19 +94,20 @@ Terrain generate_terrain(int dimension, int granularity) {
       vertices[index + 1] = 0;
       vertices[index + 2] = r * squareSize;
 
-      index += 3;
+      index += 6;
     }
   }
 
   // Generate height map
   float scaleFactor = 1.f / ((float)halfGranularity * (float)squareSize);
   index = 1;
-  float max = 10.f;
+  float max = 15.f;
   
   int* perm = new int[512];
-  srand(time(NULL));
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::mt19937 generator(seed);
   for (int p = 0; p < 512; p++) {
-    perm[p] = rand() % 256;
+    perm[p] = generator();
   }
     
   for (int r = 0; r < granularity; r++) {
@@ -118,11 +119,11 @@ Terrain generate_terrain(int dimension, int granularity) {
       float  amp = 1;
       float  maxAmp = 0;
       float noise = 0;
-      for (int i = 0; i < 16; i++) {
+      for (int i = 0; i < 4; i++) {
         noise += (simplex(frequency * in, perm) * amp);
 	maxAmp += amp;
 	amp *= 0.5f;
-	frequency *= 1.8f;
+	frequency *= 2.f;
       }
 
       // Take the averafe values of the iterations
@@ -130,8 +131,25 @@ Terrain generate_terrain(int dimension, int granularity) {
 
       // Normalize the result
       vertices[index] = noise * (max + max) / 2.f  + (max - max) / 2.f;
-      
-      index += 3;
+
+      glm::vec3 color;
+      if (vertices[index] > max * (3.f / 4.f)) {
+	color = glm::vec3(1.0);
+      } else if (vertices[index] > max * 0.5f) {
+	color = glm::vec3(0.84, 0.74, 0.84);
+      } else if (vertices[index] > 0.f) {
+	color = glm::vec3(0.0, 0.5, 0.1);
+      } else if (vertices[index] > (-max) * 0.25f){
+	color = glm::vec3(0.925, 0.78, 0.68);
+      } else {
+	color = glm::vec3(0.1, 0.7, 0.1);
+      }
+
+      vertices[index + 2] = color.x;
+      vertices[index + 3] = color.y;
+      vertices[index + 4] = color.z;
+
+      index += 6;
     }
   }
 
@@ -172,7 +190,12 @@ Terrain generate_terrain(int dimension, int granularity) {
 
   // Position
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (GLvoid*) 0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (GLvoid*) 0);
+
+  // Color
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (GLvoid*) (3 * sizeof(GLfloat)));
+  
   glBindVertexArray(0);
 
   terrain.numIndices = indexArrySize;
@@ -195,11 +218,7 @@ void render_terrain(const Terrain& terrain, const Shader& shader, const Camera& 
 
   shader.SetUniformMatrix4fv("uViewportMatrix", 1, GL_FALSE, glm::value_ptr(get_viewport()));
   shader.SetUniform1f("uLineWidth", 1.0);
-  shader.SetUniform4f("uLineColor", 1.0, 1.0, 1.0, 1.0);
-
-  // TODO: We probably no longer need a model matrix?
-  glm::mat4 model(1.0);
-  shader.SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
+  shader.SetUniform1i("uShowWireframe", terrain.wireframeMode);
 
   glBindVertexArray(terrain.vao);
   glDrawElements(GL_TRIANGLES, terrain.numIndices, GL_UNSIGNED_INT, 0);

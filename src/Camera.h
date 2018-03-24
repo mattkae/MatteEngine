@@ -43,6 +43,7 @@ class Camera {
   glm::vec3 get_position() const { return mPos; };
   glm::mat4 get_view() const;
   glm::mat4 get_projection() const;
+  void set_position(glm::vec3 pos) { mPos = pos; };
 
   void set_movement_flag(MovementFlag flag);
   void update(double dt);

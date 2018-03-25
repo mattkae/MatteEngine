@@ -33,12 +33,12 @@ Scene::Scene() {
 
   // Load skybox
   const char* skyboxPaths[6];
-  skyboxPaths[0] = "assets/skybox/posx.png";
-  skyboxPaths[1] = "assets/skybox/negx.png";
-  skyboxPaths[2] = "assets/skybox/posy.png";
-  skyboxPaths[3] = "assets/skybox/negy.png";
-  skyboxPaths[4] = "assets/skybox/posz.png";
-  skyboxPaths[5] = "assets/skybox/negz.png";
+  skyboxPaths[0] = "assets/skybox/cloudy/bluecloud_ft.jpg";
+  skyboxPaths[1] = "assets/skybox/cloudy/bluecloud_bk.jpg";
+  skyboxPaths[2] = "assets/skybox/cloudy/bluecloud_up.jpg";
+  skyboxPaths[3] = "assets/skybox/cloudy/bluecloud_dn.jpg";
+  skyboxPaths[4] = "assets/skybox/cloudy/bluecloud_rt.jpg";
+  skyboxPaths[5] = "assets/skybox/cloudy/bluecloud_lf.jpg";
   initialize_skybox(mSkybox, skyboxPaths);
 
   // Load terraino

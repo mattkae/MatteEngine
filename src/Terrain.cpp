@@ -99,31 +99,33 @@ Terrain generate_terrain(int dimension, int granularity) {
   }
 
   // Generate height map
-  float scaleFactor = 1.f / ((float)halfGranularity * (float)squareSize);
-  index = 1;
-  float max = 15.f;
-  
   int* perm = new int[512];
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::mt19937 generator(seed);
   for (int p = 0; p < 512; p++) {
     perm[p] = generator();
   }
+
+  float scaleFactor = 0.02;//1.f / ((float)halfGranularity * (float)squareSize);
+  index = 1;
+  float max = 10.f;
     
   for (int r = 0; r < granularity; r++) {
     for (int c = 0; c < granularity; c++) {
-      glm::vec2 in = glm::vec2(vertices[index - 1], vertices[index + 1]);
+      float x = vertices[index - 1] + (halfGranularity * squareSize);
+      float y = vertices[index + 1] + (halfGranularity * squareSize);
+      glm::vec2 in = glm::vec2(x, y);
 
       // Add successively smaller, higher-frequency terms
       float frequency = scaleFactor;
-      float  amp = 1;
+      float  amp = 1.f;
       float  maxAmp = 0;
       float noise = 0;
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < 128; i++) {
         noise += (simplex(frequency * in, perm) * amp);
 	maxAmp += amp;
-	amp *= 0.5f;
-	frequency *= 2.f;
+	amp *= (1.f / 32.f);
+	frequency *= 32.f;
       }
 
       // Take the averafe values of the iterations
@@ -137,12 +139,12 @@ Terrain generate_terrain(int dimension, int granularity) {
 	color = glm::vec3(1.0);
       } else if (vertices[index] > max * 0.5f) {
 	color = glm::vec3(0.84, 0.74, 0.84);
-      } else if (vertices[index] > 0.f) {
+      } else if (vertices[index] > (-max) * 0.25f) {
 	color = glm::vec3(0.0, 0.5, 0.1);
-      } else if (vertices[index] > (-max) * 0.25f){
+      } else if (vertices[index] > (-max) * 0.35f){
 	color = glm::vec3(0.925, 0.78, 0.68);
       } else {
-	color = glm::vec3(0.1, 0.7, 0.1);
+	color = glm::vec3(0.1, 0.4, 0.7);
       }
 
       vertices[index + 2] = color.x;

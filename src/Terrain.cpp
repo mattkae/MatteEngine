@@ -24,13 +24,13 @@ static int gradients2D[] = {
   -5, -2,   -2, -5,
 };
 
-static float grad(glm::vec2 in, glm::vec2 distance, const int* perm)
+static float grad(glm::vec2 in, glm::vec2 distance, const int* perm, const int permIndexCap)
 {
-  int hash = perm[(perm[(int)in.x & 0xFF] + (int)in.y) & 0xFF] & 0x0E;
+  int hash = perm[(perm[(int)in.x & permIndexCap] + (int)in.y) & permIndexCap] & 0x0E;
   return gradients2D[hash] * distance.x + gradients2D[hash + 1] * distance.y;
 }
 
-static float simplex(glm::vec2 in, const int* perm) {
+static float simplex(glm::vec2 in, const int* perm, const int permIndexCap) {
   float sample = 0; // Resultant value
   
   glm::vec2 s0 = in + (in.x + in.y) * SKEW_FACTOR; // in point in Simplex-Space
@@ -47,113 +47,113 @@ static float simplex(glm::vec2 in, const int* perm) {
 
   // Sample from bottom left point
   float sample0 = 0;
-  float t0 = 2.f - (d0.x * d0.x) - (d0.y * d0.y);
+  float t0 = 0.5f - (d0.x * d0.x) - (d0.y * d0.y);
   if (t0 > 0) {
     t0 *= t0;
-    sample0 = t0 * t0 * grad(v0, d0, perm);
+    sample0 = t0 * t0 * grad(v0, d0, perm, permIndexCap);
   }
 
   // Sample from upper left/bottom right point
   float sample1 = 0;
-  float t1 = 2.f - (d1.x * d1.x) - (d1.y * d1.y);
+  float t1 = 0.5f - (d1.x * d1.x) - (d1.y * d1.y);
   if (t1 > 0) {
     t1 *= t1;
-    sample1 = t1 * t1 * grad(v0 + v1, d1, perm);
+    sample1 = t1 * t1 * grad(v0 + v1, d1, perm, permIndexCap);
   }
 
   // Sample from upper right point
   float sample2 = 0;
-  float t2 = 2.f - (d2.x * d2.x) - (d2.y * d2.y);
+  float t2 = 0.5f - (d2.x * d2.x) - (d2.y * d2.y);
   if (t2 > 0) {
     t2 *= t2;
-    sample2 = t2 * t2 * grad(v0 + glm::vec2(1, 1), d2, perm);
+    sample2 = t2 * t2 * grad(v0 + glm::vec2(1, 1), d2, perm, permIndexCap);
   }
 
   // Adjust sample appropriately
-  return (sample0 + sample1 + sample2) / 47.f;
+  return 40.f *  (sample0 + sample1 + sample2);
 }
 
-Terrain generate_terrain(int dimension, int granularity) {
+float calculate_height(glm::vec2 coordinate, float maxHeight, float scaleFactor, float ampFactor, float frequencyFactor, int numOctaves, int* perm, int permIndexCap) {
+  float frequency = scaleFactor;
+  float  amp = 1.f;
+  float  maxAmp = 0;
+  float noise = 0;
+  for (int i = 0; i < numOctaves; i++) {
+    noise += (simplex(frequency * coordinate, perm, permIndexCap) * amp);
+    maxAmp += amp;
+    amp *= ampFactor;
+    frequency *= frequencyFactor;
+  }
+
+  // Take the averafe values of the iterations
+  noise /= maxAmp;
+
+  // Normalize the result
+  return noise * (maxHeight + maxHeight) / 2.f;
+}
+
+static float random_float(float min, float max) {
+  return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min)))); 
+}
+
+glm::vec3 calculate_color(float height, float max) {
+   glm::vec3 color;
+   if (height > max * 0.98f) {
+     color = glm::vec3(random_float(0.95f, 1.0f));
+   } else if (height > max * 0.9f) {
+     color = glm::vec3(0.84, 0.74, 0.84);
+   } else if (height > (-max) * 0.25f) {
+     color = glm::vec3(0.0, random_float(0.5f, 0.6f), 0.1);
+   } else if (height  > (-max) * 0.35f){
+     color = glm::vec3(0.925, 0.78, 0.68);
+   } else {
+     color = glm::vec3(0.1, 0.4, 0.7);
+   }
+
+   return color;
+}
+
+Terrain generate_terrain(int size, int granularity, int permSize, float maxHeight, float scaleFactor, float ampFactor, float frequencyFactor, int numOctaves) {
   Terrain terrain;
   glGenVertexArrays(1, &terrain.vao);
   glGenBuffers(1, &terrain.vbo);
   glGenBuffers(1, &terrain.ebo);
   glBindVertexArray(terrain.vao);
 
-  float squareSize = ((float)dimension / (float)granularity) / 2.f;
+  float squareSize = ((float)size / (float)granularity) / 2.f;
   float vertexArrySize = 6 * granularity * granularity;
   float indexArrySize = 6 * granularity * granularity;
 
+  // Establish array of values
+  int* perm = new int[permSize];
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::mt19937 generator(seed);
+  std::uniform_int_distribution<int> dist(1, permSize);
+  for (int p = 0; p < permSize; p++) {
+    perm[p] = dist(generator);
+  }
+
   // Generate vertices
+  int permIndexCap = (permSize / 2) - 1;
   int index = 0;
   GLfloat* vertices = new GLfloat[vertexArrySize];
   int halfGranularity = granularity / 2;
   for (int r = -halfGranularity; r < halfGranularity; r++) {
     for (int c = -halfGranularity; c < halfGranularity; c++) {
-      vertices[index] = c * squareSize;
-      vertices[index + 1] = 0;
-      vertices[index + 2] = r * squareSize;
+      glm::vec2 position = squareSize * glm::vec2(c, r);
+      vertices[index] = position.x;
+      vertices[index + 1] = calculate_height((halfGranularity * squareSize) + position, maxHeight, scaleFactor, ampFactor, frequencyFactor, numOctaves, perm, permIndexCap);
+      vertices[index + 2] = position.y;
+
+      glm::vec3 color = calculate_color(vertices[index + 1], maxHeight);
+      vertices[index + 3] = color.x;
+      vertices[index + 4] = color.y;
+      vertices[index + 5] = color.z;
 
       index += 6;
     }
   }
-
-  // Generate height map
-  int* perm = new int[512];
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::mt19937 generator(seed);
-  for (int p = 0; p < 512; p++) {
-    perm[p] = generator();
-  }
-
-  float scaleFactor = 0.02;//1.f / ((float)halfGranularity * (float)squareSize);
-  index = 1;
-  float max = 10.f;
     
-  for (int r = 0; r < granularity; r++) {
-    for (int c = 0; c < granularity; c++) {
-      float x = vertices[index - 1] + (halfGranularity * squareSize);
-      float y = vertices[index + 1] + (halfGranularity * squareSize);
-      glm::vec2 in = glm::vec2(x, y);
-
-      // Add successively smaller, higher-frequency terms
-      float frequency = scaleFactor;
-      float  amp = 1.f;
-      float  maxAmp = 0;
-      float noise = 0;
-      for (int i = 0; i < 128; i++) {
-        noise += (simplex(frequency * in, perm) * amp);
-	maxAmp += amp;
-	amp *= (1.f / 32.f);
-	frequency *= 32.f;
-      }
-
-      // Take the averafe values of the iterations
-      noise /= maxAmp;
-
-      // Normalize the result
-      vertices[index] = noise * (max + max) / 2.f  + (max - max) / 2.f;
-
-      glm::vec3 color;
-      if (vertices[index] > max * (3.f / 4.f)) {
-	color = glm::vec3(1.0);
-      } else if (vertices[index] > max * 0.5f) {
-	color = glm::vec3(0.84, 0.74, 0.84);
-      } else if (vertices[index] > (-max) * 0.25f) {
-	color = glm::vec3(0.0, 0.5, 0.1);
-      } else if (vertices[index] > (-max) * 0.35f){
-	color = glm::vec3(0.925, 0.78, 0.68);
-      } else {
-	color = glm::vec3(0.1, 0.4, 0.7);
-      }
-
-      vertices[index + 2] = color.x;
-      vertices[index + 3] = color.y;
-      vertices[index + 4] = color.z;
-
-      index += 6;
-    }
-  }
 
   // Generate indices
   index = 0;
@@ -204,6 +204,10 @@ Terrain generate_terrain(int dimension, int granularity) {
   delete vertices;
   delete indices;
   return terrain;
+}
+
+Terrain generate_terrain(GenerationParameters params) {
+  return generate_terrain(params.size, params.granularity, params.permSize, params.minMaxHeight, params.scaleFactor, params.ampFactor, params.frequencyFactor, params.numOctaves);
 }
 
 glm::mat4 get_viewport() {

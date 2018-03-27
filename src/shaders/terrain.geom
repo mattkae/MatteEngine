@@ -12,7 +12,7 @@ uniform mat4 uViewportMatrix;
 out vec3 gNormal;
 out vec3 gPosition;
 smooth out vec3 gEdgeDistance;
-out vec3 gColor;
+flat out vec3 gColor;
 
 // Drawn from the GLSL Shader Cookbook 4.0, but I understand it well,
 // so it's cool.

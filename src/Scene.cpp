@@ -41,8 +41,18 @@ Scene::Scene() {
   skyboxPaths[5] = "assets/skybox/cloudy/bluecloud_lf.jpg";
   initialize_skybox(mSkybox, skyboxPaths);
 
-  // Load terraino
-  mTerrain = generate_terrain(500, 100);
+  // Load terrain
+  GenerationParameters params;
+  params.size = 512;
+  params.granularity = 128;
+  params.permSize = 128;
+  params.minMaxHeight = 32;
+  params.scaleFactor = 0.004;
+  params.ampFactor = 0.5;
+  params.frequencyFactor = 2.0f;
+  params.numOctaves = 64;
+  
+  mTerrain = generate_terrain(params);
 }
 
 Scene::~Scene() {

@@ -6,7 +6,7 @@ out vec4 Color;
 in vec3 gNormal;
 in vec3 gPosition;
 smooth in vec3 gEdgeDistance;
-in vec3 gColor;
+flat in vec3 gColor;
 
 uniform float uLineWidth;
 uniform int uShowWireframe;

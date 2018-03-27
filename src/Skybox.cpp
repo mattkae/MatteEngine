@@ -86,8 +86,8 @@ void render_skybox(const Skybox& box, const Shader& shader, const Camera& camera
   glm::mat4 projection = glm::inverse(camera.get_projection());
   glm::mat3 view = glm::inverse(glm::mat3(camera.get_view()));
   
-  shader.SetUniformMatrix4fv("uProjection", 1, GL_FALSE, glm::value_ptr(projection));
-  shader.SetUniformMatrix3fv("uView", 1, GL_FALSE, glm::value_ptr(view));
+  shader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE, glm::value_ptr(projection));
+  shader.set_uniform_matrix_3fv("uView", 1, GL_FALSE, glm::value_ptr(view));
 
   glBindVertexArray(box.vao);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

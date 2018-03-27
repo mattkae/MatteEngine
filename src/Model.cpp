@@ -29,7 +29,7 @@ Model::Model(const char* path) {
 }
 
 void Model::render(const Shader& shader) {
-  shader.SetUniformMatrix4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
+  shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
   for (auto mesh : mMeshes) {
     mesh.render(shader);
   }

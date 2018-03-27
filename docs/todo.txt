@@ -1,6 +1,5 @@
 Important Items
 - Basic physics
-- Procedurally generated terrain
 - Editor
 - Refactor shader class
 

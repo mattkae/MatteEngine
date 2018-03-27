@@ -153,7 +153,6 @@ Terrain generate_terrain(int size, int granularity, int permSize, float maxHeigh
       index += 6;
     }
   }
-    
 
   // Generate indices
   index = 0;
@@ -222,9 +221,9 @@ void render_terrain(const Terrain& terrain, const Shader& shader, const Camera& 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  shader.SetUniformMatrix4fv("uViewportMatrix", 1, GL_FALSE, glm::value_ptr(get_viewport()));
-  shader.SetUniform1f("uLineWidth", 1.0);
-  shader.SetUniform1i("uShowWireframe", terrain.wireframeMode);
+  shader.set_uniform_matrix_4fv("uViewportMatrix", 1, GL_FALSE, glm::value_ptr(get_viewport()));
+  shader.set_uniform_1f("uLineWidth", 1.0);
+  shader.set_uniform_1i("uShowWireframe", terrain.wireframeMode);
 
   glBindVertexArray(terrain.vao);
   glDrawElements(GL_TRIANGLES, terrain.numIndices, GL_UNSIGNED_INT, 0);

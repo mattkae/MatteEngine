@@ -19,11 +19,11 @@ Scene::Scene() {
   model.set_model(transform);
   mModels.push_back(model);
   // Bind uniforms to proper index
-  mSceneShader.Use();
-  mSceneShader.SetUniform1i("uDirShadows[0]", 0);
-  mSceneShader.SetUniform1i("uDirShadows[1]", 1);
-  mSceneShader.SetUniform1i("uMaterial.diffuseTex", 8);
-  mSceneShader.SetUniform1i("uMaterial.specularTex", 9);
+  mSceneShader.use();
+  mSceneShader.set_uniform_1i("uDirShadows[0]", 0);
+  mSceneShader.set_uniform_1i("uDirShadows[1]", 1);
+  mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
+  mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
   // Load lights
   Light pLight = get_point(512, 512);
@@ -76,7 +76,7 @@ void Scene::render() {
 
 void Scene::render_shadows() {
   if (!mUseShadows) return;
-  mShadowShader.Use();
+  mShadowShader.use();
   
   for (auto light : mLights) {
     render_shadows_from_light(light, mShadowShader, *this);
@@ -87,16 +87,16 @@ void Scene::render_scene() {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f); 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  mSkyboxShader.Use();
+  mSkyboxShader.use();
   render_skybox(mSkybox, mSkyboxShader, mCamera);
 
-  mTerrainShader.Use();
+  mTerrainShader.use();
   render_terrain(mTerrain, mTerrainShader, mCamera);
   
-  mSceneShader.Use();
+  mSceneShader.use();
   mCamera.render(mSceneShader);
-  mSceneShader.SetUniform3f("uAmbient", 0.f, 0.f, 0.f);
-  mSceneShader.SetUniform1i("uNumLights", mLights.size());
+  mSceneShader.set_uniform_3f("uAmbient", 0.f, 0.f, 0.f);
+  mSceneShader.set_uniform_1i("uNumLights", mLights.size());
 
   for (int lidx = 0; lidx < mLights.size(); lidx++) {
     render_light(mLights[lidx], mSceneShader, lidx);

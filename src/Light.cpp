@@ -182,7 +182,7 @@ void render_point_shadows(const Light& light, Shader& shader, Scene& scene) {
 
     glm::mat4 view = glm::lookAt(light.position, light.position + currentDirection, up);
     glm::mat4 proj = glm::perspective(glm::radians(90.f), 1.f, Constants.near, Constants.far);
-    shader.SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(proj * view));
+    shader.set_uniform_matrix_4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(proj * view));
     scene.render_models(shader);
   }
   
@@ -199,7 +199,7 @@ void render_spot_shadows(const Light& light, Shader& shader, Scene& scene) {
   glClearDepth(1.0);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  shader.SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(get_light_view(light) * light.projection));
+  shader.set_uniform_matrix_4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(get_light_view(light) * light.projection));
   scene.render_models(shader);
   
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -215,7 +215,7 @@ void render_directional_shadows(const Light& light, Shader& shader, Scene& scene
   glClearDepth(1.0);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  shader.SetUniformMatrix4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(get_light_view(light) * light.projection));
+  shader.set_uniform_matrix_4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(get_light_view(light) * light.projection));
   scene.render_models(shader);
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -259,13 +259,13 @@ void render_point_light(const Light& light, Shader& shader, int index) {
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
   }
 
-  shader.SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), 0, 0, 0);
-  shader.SetUniform3f(get_array_uniform(index, "uLights", "position").c_str(), light.position.x, light.position.y, light.position.z);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "constant").c_str(), light.constant);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "linear").c_str(), light.linear);	
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "quadratic").c_str(), light.quadratic);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
+  shader.set_uniform_3f(get_array_uniform(index, "uLights", "direction").c_str(), 0, 0, 0);
+  shader.set_uniform_3f(get_array_uniform(index, "uLights", "position").c_str(), light.position.x, light.position.y, light.position.z);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "constant").c_str(), light.constant);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(), light.linear);	
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "quadratic").c_str(), light.quadratic);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
   
   float near = Constants.near;
   float far = Constants.far;
@@ -273,43 +273,43 @@ void render_point_light(const Light& light, Shader& shader, int index) {
   glm::vec2 uFarNear;
   uFarNear.x = (far + near) / diff * 0.5 + 0.5;
   uFarNear.y = -(far * near) / diff;
-  shader.SetUniform2f("uFarNear", uFarNear.x, uFarNear.y);
+  shader.set_uniform_2f("uFarNear", uFarNear.x, uFarNear.y);
 }
 
 void render_directional_light(const Light& light, Shader& shader, int index) {
   if (light.usesShadows) {
     glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-    shader.SetUniformMatrix4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
+    shader.set_uniform_matrix_4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
 				1, GL_FALSE,
 				glm::value_ptr(light.projection * get_light_view(light)));
   }
   
-  shader.SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), light.direction.x, light.direction.y, light.direction.z);
-  shader.SetUniform3f(get_array_uniform(index, "uLights", "position").c_str(), 0, 0, 0);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "constant").c_str(), 1);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "linear").c_str(), 0);	
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "quadratic").c_str(), 0);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
-  shader.SetUniform1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
+  shader.set_uniform_3f(get_array_uniform(index, "uLights", "direction").c_str(), light.direction.x, light.direction.y, light.direction.z);
+  shader.set_uniform_3f(get_array_uniform(index, "uLights", "position").c_str(), 0, 0, 0);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "constant").c_str(), 1);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(), 0);	
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "quadratic").c_str(), 0);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
 }
 
 void render_spot_light(const Light& light, Shader& shader, int index) {
   if (light.usesShadows) {
     glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-    shader.SetUniformMatrix4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
+    shader.set_uniform_matrix_4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
 				1, GL_FALSE,
 				glm::value_ptr(light.projection * get_light_view(light)));
   }
   
-  shader.SetUniform3f(get_array_uniform(index, "uLights", "direction").c_str(), light.direction.x, light.direction.y, light.direction.z);
-  shader.SetUniform3f(get_array_uniform(index, "uLights", "position").c_str(), light.position.x, light.position.y, light.position.z);
-    shader.SetUniform1f(get_array_uniform(index, "uLights", "constant").c_str(), light.constant);
-    shader.SetUniform1f(get_array_uniform(index, "uLights", "linear").c_str(), light.linear);	
-    shader.SetUniform1f(get_array_uniform(index, "uLights", "quadratic").c_str(), light.quadratic);
-    shader.SetUniform1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), light.cosineCutOff);
-    shader.SetUniform1f(get_array_uniform(index, "uLights", "dropOff").c_str(), light.dropOff);
+  shader.set_uniform_3f(get_array_uniform(index, "uLights", "direction").c_str(), light.direction.x, light.direction.y, light.direction.z);
+  shader.set_uniform_3f(get_array_uniform(index, "uLights", "position").c_str(), light.position.x, light.position.y, light.position.z);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "constant").c_str(), light.constant);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(), light.linear);	
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "quadratic").c_str(), light.quadratic);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), light.cosineCutOff);
+  shader.set_uniform_1f(get_array_uniform(index, "uLights", "dropOff").c_str(), light.dropOff);
 }
 
 void render_light(const Light& light, Shader& shader, int index) {
@@ -317,7 +317,7 @@ void render_light(const Light& light, Shader& shader, int index) {
     return;
   }
 
-  shader.SetUniform3f(get_array_uniform(index, "uLights", "color").c_str(), light.color.x, light.color.y, light.color.z);
+  shader.set_uniform_3f(get_array_uniform(index, "uLights", "color").c_str(), light.color.x, light.color.y, light.color.z);
                 
   switch (light.type) {
   case Directional:

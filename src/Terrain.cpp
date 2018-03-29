@@ -6,6 +6,7 @@
 #include <random>
 #include <chrono>
 #include <cmath>
+#include <thread>
 
 using namespace std;
 
@@ -100,7 +101,7 @@ glm::vec3 calculate_color(float height, float max) {
    glm::vec3 color;
    if (height > max * 0.98f) {
      color = glm::vec3(random_float(0.95f, 1.0f));
-   } else if (height > max * 0.9f) {
+   } else if (height > max * 0.85f) {
      color = glm::vec3(0.84, 0.74, 0.84);
    } else if (height > (-max) * 0.25f) {
      color = glm::vec3(0.0, random_float(0.5f, 0.6f), 0.1);
@@ -209,11 +210,13 @@ Terrain generate_terrain(GenerationParameters params) {
   return generate_terrain(params.size, params.granularity, params.permSize, params.minMaxHeight, params.scaleFactor, params.ampFactor, params.frequencyFactor, params.numOctaves);
 }
 
-glm::mat4 get_viewport() {
+static glm::mat4 get_viewport() {
   glm::mat4 s  = glm::scale(glm::mat4(1.0), glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f));
   glm::mat4 t = glm::translate(glm::mat4(1.0), glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f)); 
   return t * s;
 }
+
+const static glm::mat4 VIEWPORT = get_viewport();
 
 void render_terrain(const Terrain& terrain, const Shader& shader, const Camera& camera) {
   camera.render(shader);
@@ -221,7 +224,7 @@ void render_terrain(const Terrain& terrain, const Shader& shader, const Camera& 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  shader.set_uniform_matrix_4fv("uViewportMatrix", 1, GL_FALSE, glm::value_ptr(get_viewport()));
+  shader.set_uniform_matrix_4fv("uViewportMatrix", 1, GL_FALSE, glm::value_ptr(VIEWPORT));
   shader.set_uniform_1f("uLineWidth", 1.0);
   shader.set_uniform_1i("uShowWireframe", terrain.wireframeMode);
 

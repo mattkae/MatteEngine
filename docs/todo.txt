@@ -1,7 +1,6 @@
 Important Items
 - Basic physics
 - Editor
-- Refactor shader class
 
 Extended Features
 - Add transparency to lighting

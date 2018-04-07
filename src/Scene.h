@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Skybox.h"
 #include "Terrain.h"
+#include "Particle.h"
 #include "Constants.h"
 #include <iostream>
 #include <vector>
@@ -33,12 +34,14 @@ class Scene {
   Shader mSceneShader;
   Shader mSkyboxShader;
   Shader mTerrainShader;
+  Shader mParticleShader;
   Camera mCamera;
   
   vector<Model> mModels;
   vector<Light> mLights;
   Skybox mSkybox;
   Terrain mTerrain;
+  ParticleEmitter mParticleEmitter;
 };
 
 #endif

@@ -82,7 +82,7 @@ void Shader::load(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
   if (!success) {
     GLchar infoLog[512];
     glGetShaderInfoLog(this->mProgram, 512, 0, infoLog);
-    std::cerr << "Error: Shader program failed to link - " << infoLog << std::endl;
+    std::cerr << "Error: Shader failed to link for files: " << vertexPath << ": "  << infoLog << std::endl;
   }
 
   if (vertexPath) glDeleteShader(vertex);

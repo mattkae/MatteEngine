@@ -5,15 +5,21 @@ CXX = clang++
 CXXFLAGS = -std=c++14 -I./includes
 LINK_FLAGS = -lglfw3 -lglew -lassimp -lSOIL -framework Cocoa -framework OpenGL -framework CoreVideo -framework IOKit
 
-src = $(wildcard src/*.cpp)
-obj = $(src:.cpp=.o)
+SRCS = $(wildcard src/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
+.PHONY: depend clean all
+DEPS = $(OBJS:.o=.d)
 
-$(EXE): $(obj)
-	$(CXX) -o $@ $^ $(COMPILE_FLAGS) $(LINK_FLAGS)
+$(EXE): $(OBJS) 
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LINK_FLAGS)
 
-.PHONY: clean
+-include $(DEPS)
+
+%.o : %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@ -MMD -MF $(@:.o=.d)
+
 clean:
-	rm -rf $(obj) $(EXE)
+	rm -rf $(OBJS) $(DEPS) $(EXE)
 
 run:
 	./$(FILENAME)

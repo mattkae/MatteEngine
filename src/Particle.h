@@ -30,10 +30,11 @@ struct ParticleEmitter {
   int numParticles = 10;
   int numVertices = 3;
 
-  float particleLife = 10;
+  float particleLife = 15;
   float deltaParticleLife = 0;
   glm::vec2 spawnRange = glm::vec2(0.5f, 2.5f);
   float timeUntilSpawn = 0;
+  std::function<glm::vec3(float)> velocityFunction = [](float t) { return glm::vec3(0, 1, 0); };
   
   GLuint vao = 0;
   GLuint vbo = 0;

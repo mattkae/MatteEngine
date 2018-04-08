@@ -94,6 +94,7 @@ void update_particle_emitter(ParticleEmitter& particleEmitter, float deltaTime) 
     }
     
     particle.position = particle.position + particle.velocity * deltaTime;
+    particle.velocity = particleEmitter.initialVelocity * particleEmitter.velocityFunction(particle.timeAlive / particleEmitter.particleLife);
   }
 }
 

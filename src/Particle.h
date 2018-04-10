@@ -12,6 +12,7 @@ class Camera;
 struct Particle {
   glm::vec3 position = glm::vec3(0);;
   glm::vec3 velocity = glm::vec3(0, 1, 0);
+  glm::mat4 rotation = glm::mat4(0);
 
   float timeAlive = 0;
   bool alive = false;
@@ -34,7 +35,7 @@ struct ParticleEmitter {
   float deltaParticleLife = 0;
   glm::vec2 spawnRange = glm::vec2(0.5f, 2.5f);
   float timeUntilSpawn = 0;
-  std::function<glm::vec3(float)> velocityFunction = [](float t) { return glm::vec3(0, 1, 0); };
+  std::function<glm::vec3(float)> velocityFunction = [](float t) { return glm::vec3(0, t, 0); };
   
   GLuint vao = 0;
   GLuint vbo = 0;

@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "Input.h"
+#include "GlmUtility.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -18,7 +19,7 @@ Scene::Scene() {
   transform = glm::scale(transform, glm::vec3(0.05));
   transform = glm::translate(transform, glm::vec3(0, 0, 0));
   model.set_model(transform);
-  //  mModels.push_back(model);
+  mModels.push_back(model);
   // Bind uniforms to proper index
   mSceneShader.use();
   mSceneShader.set_uniform_1i("uDirShadows[0]", 0);
@@ -44,7 +45,7 @@ Scene::Scene() {
 
   // Load terrain
   GenerationParameters params;
-  params.size = 128;
+  params.size = 512;
   params.granularity = 128;
   params.permSize = 128;
   params.minMaxHeight = 32;
@@ -60,10 +61,11 @@ Scene::Scene() {
   mParticleEmitter.numParticles = 100;
   mParticleEmitter.particleDimension = glm::vec3(5.0);
   mParticleEmitter.volumeDimension = glm::vec3(25.0, 25.0, 25.0);
-  mParticleEmitter.color = glm::vec3(1.0, 0.0, 0.0);
+  mParticleEmitter.color = glm::int_rgb_to_float_rgb(glm::vec3(128, 255, 212));
   mParticleEmitter.initialVelocity = glm::vec3(0, 100, 0);
   mParticleEmitter.particleLife = 3;
   mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.5f);
+  mParticleEmitter.velocityFunction = [](float t) { return glm::vec3(t * t, t * t * t - t * t, t * t); };
   initialize_particle_emitter(mParticleEmitter);
 }
 

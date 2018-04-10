@@ -1,6 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 #include "gl_includes.h"
+#include <glm/glm.hpp>
 
 class Shader {
  public:

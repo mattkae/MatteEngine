@@ -5,7 +5,12 @@
 #include <vector>
 #include <cmath>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 #include <iostream>
+#include <array>
 
 using namespace std;
 
@@ -67,6 +72,8 @@ void initialize_particle_emitter(ParticleEmitter& particleEmitter) {
   }
 }
 
+const std::array<bool, 3> rotArray { false, true, false };
+
 void update_particle_emitter(ParticleEmitter& particleEmitter, float deltaTime) {
   // Try spawn new particle
   particleEmitter.timeUntilSpawn -= deltaTime;
@@ -77,6 +84,8 @@ void update_particle_emitter(ParticleEmitter& particleEmitter, float deltaTime) 
     particle.velocity = particleEmitter.initialVelocity;
     particle.position = glm::get_random_within(particleEmitter.origin, particleEmitter.volumeDimension);
     particle.alive = true;
+    particle.rotation = glm::toMat4(glm::get_random_quaternion(rotArray));
+    
     particleEmitter.timeUntilSpawn = glm::get_random_between(particleEmitter.spawnRange);
   }
   
@@ -100,7 +109,6 @@ void update_particle_emitter(ParticleEmitter& particleEmitter, float deltaTime) 
 
 void render_particle_emitter(const ParticleEmitter& particleEmitter, const Shader& shader, const Camera& camera) {
   camera.render(shader);
-  shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(particleEmitter.model));
 
   glBindVertexArray(particleEmitter.vao);
   glEnable(GL_BLEND);
@@ -108,7 +116,8 @@ void render_particle_emitter(const ParticleEmitter& particleEmitter, const Shade
 
   for (const Particle& particle : particleEmitter.particles) {
     if (!particle.alive) continue;
-    
+
+    shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(particleEmitter.model * particle.rotation));
     shader.set_uniform_1f("uTransparency", 1 - particle.timeAlive / particleEmitter.particleLife);
     shader.set_uniform_3f("uPosition", particle.position.x, particle.position.y, particle.position.z);
     glDrawElements(GL_TRIANGLE_FAN, particleEmitter.numVertices, GL_UNSIGNED_INT, 0);

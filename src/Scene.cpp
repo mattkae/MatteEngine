@@ -20,6 +20,7 @@ Scene::Scene() {
   transform = glm::translate(transform, glm::vec3(0, 0, 0));
   model.set_model(transform);
   mModels.push_back(model);
+  
   // Bind uniforms to proper index
   mSceneShader.use();
   mSceneShader.set_uniform_1i("uDirShadows[0]", 0);
@@ -57,15 +58,17 @@ Scene::Scene() {
 
   // Load particle
   mParticleEmitter.model = glm::scale(mParticleEmitter.model, glm::vec3(0.1));
-  mParticleEmitter.numVertices = 10;
-  mParticleEmitter.numParticles = 100;
+  mParticleEmitter.numVertices = 3;
+  //  mParticleEmitter.drawType = GL_POINTS;
+  mParticleEmitter.numParticles = 1000;
   mParticleEmitter.particleDimension = glm::vec3(5.0);
   mParticleEmitter.volumeDimension = glm::vec3(25.0, 25.0, 25.0);
   mParticleEmitter.color = glm::int_rgb_to_float_rgb(glm::vec3(128, 255, 212));
   mParticleEmitter.initialVelocity = glm::vec3(0, 100, 0);
-  mParticleEmitter.particleLife = 3;
+  mParticleEmitter.particleLife = 5;
   mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.5f);
   mParticleEmitter.velocityFunction = [](float t) { return glm::vec3(t * t, t * t * t - t * t, t * t); };
+  mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.3f);
   initialize_particle_emitter(mParticleEmitter);
 }
 

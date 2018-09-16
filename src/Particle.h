@@ -40,6 +40,7 @@ struct ParticleEmitter {
   GLuint vao = 0;
   GLuint vbo = 0;
   GLuint ebo = 0;
+  GLenum drawType = GL_TRIANGLE_FAN;
 };
 
 void initialize_particle_emitter(ParticleEmitter& particleEmitter);

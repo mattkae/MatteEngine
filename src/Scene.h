@@ -7,6 +7,7 @@
 #include "Skybox.h"
 #include "Terrain.h"
 #include "Particle.h"
+//#include "Smoke.h"
 #include "Constants.h"
 #include <iostream>
 #include <vector>

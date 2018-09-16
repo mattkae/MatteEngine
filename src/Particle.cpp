@@ -5,10 +5,8 @@
 #include <vector>
 #include <cmath>
 #include <glm/gtc/type_ptr.hpp>
-
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
-
 #include <iostream>
 #include <array>
 
@@ -113,14 +111,14 @@ void render_particle_emitter(const ParticleEmitter& particleEmitter, const Shade
   glBindVertexArray(particleEmitter.vao);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+  
   for (const Particle& particle : particleEmitter.particles) {
     if (!particle.alive) continue;
 
     shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(particleEmitter.model * particle.rotation));
     shader.set_uniform_1f("uTransparency", 1 - particle.timeAlive / particleEmitter.particleLife);
     shader.set_uniform_3f("uPosition", particle.position.x, particle.position.y, particle.position.z);
-    glDrawElements(GL_TRIANGLE_FAN, particleEmitter.numVertices, GL_UNSIGNED_INT, 0);
+    glDrawElements(particleEmitter.drawType, particleEmitter.numVertices, GL_UNSIGNED_INT, 0);
   }
  
   glBindVertexArray(0);

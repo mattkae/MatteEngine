@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "GlmUtility.h"
+#include "Physics.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -20,7 +21,13 @@ Scene::Scene() {
   transform = glm::translate(transform, glm::vec3(0, 0, 0));
   model.set_model(transform);
   mModels.push_back(model);
-  
+
+  Model model2("assets/floor.obj");
+  glm::mat4 transform2(1.0);
+  transform2 = glm::translate(transform2, glm::vec3(0, -1, 0));
+  model2.set_model(transform2);
+  mModels.push_back(model2);
+
   // Bind uniforms to proper index
   mSceneShader.use();
   mSceneShader.set_uniform_1i("uDirShadows[0]", 0);
@@ -29,10 +36,22 @@ Scene::Scene() {
   mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
   // Load lights
-  Light pLight = get_point(512, 512);
-  pLight.color = glm::vec3(1.0, 0.0, 0.0);
-  pLight.position = glm::vec3(0.0, 5.0, 0.0);
-  mLights.push_back(pLight);
+  Light sLight = get_spot(1600, 1200);
+  sLight.color = glm::vec3(1);
+  sLight.position = glm::vec3(0.0, 10.0, 0.0);
+  sLight.direction = glm::vec3(0.0, -1.0, 0.0);
+  sLight.up = glm::vec3(0.0, 0.0, 1.0);
+  sLight.cosineCutOff = cos(20.f);
+  sLight.dropOff = 24.f;
+  sLight.usesShadows = true;
+  mLights.push_back(sLight);
+
+/*
+  Light dLight = get_directional(1600, 1200);
+  dLight.direction = glm::vec3(0, -1.0, 0);
+  dLight.usesShadows = true;
+  mLights.push_back(dLight);
+*/
 
   // Load skybox
   const char* skyboxPaths[6];
@@ -53,7 +72,7 @@ Scene::Scene() {
   params.scaleFactor = 0.004;
   params.ampFactor = 0.5;
   params.frequencyFactor = 2.0f;
-  params.numOctaves = 64;  
+  params.numOctaves = 64;
   mTerrain = generate_terrain(params);
 
   // Load particle
@@ -73,7 +92,7 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-  
+
 }
 
 void Scene::update(double dt) {
@@ -82,9 +101,13 @@ void Scene::update(double dt) {
     if (Input::getInstance()->is_just_up(GLFW_KEY_F)) {
       mTerrain.wireframeMode = !mTerrain.wireframeMode;
     }
-    
+
     mCamera.update(dt);
     update_particle_emitter(mParticleEmitter, dt);
+
+    //for (Model& model : mModels) {
+    //  model.set_model(applyGravity(dt, model.get_model()));
+    //}
 }
 
 void Scene::render() {
@@ -95,14 +118,14 @@ void Scene::render() {
 void Scene::render_shadows() {
   if (!mUseShadows) return;
   mShadowShader.use();
-  
+
   for (auto light : mLights) {
     render_shadows_from_light(light, mShadowShader, *this);
   }
 }
 
 void Scene::render_scene() {
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f); 
+  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Skybox
@@ -110,8 +133,8 @@ void Scene::render_scene() {
   render_skybox(mSkybox, mSkyboxShader, mCamera);
 
   // Terrain
-  mTerrainShader.use();
-  render_terrain(mTerrain, mTerrainShader, mCamera);
+  //mTerrainShader.use();
+  //render_terrain(mTerrain, mTerrainShader, mCamera);
 
   // Particles
   mParticleShader.use();

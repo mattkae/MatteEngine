@@ -52,7 +52,7 @@ vec3 get_color_from_light(Light directionalLight, vec3 normal, vec3 viewDir, vec
 vec3 get_diffuse(vec3 normal, vec3 lightDir, vec3 color, vec4 diffuse);
 vec3 get_specular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec4 specular);
 
-float get_omni_visibility(const in Light light) { 
+float get_omni_visibility(const in Light light) {
   vec3 lightToFrag = oFragPos.xyz - light.position;
 
   // Basicaly, we're moving our depth values into the
@@ -62,7 +62,7 @@ float get_omni_visibility(const in Light light) {
   vec3 absltof = abs(lightToFrag);
   float z = max(absltof.x, max(absltof.y, absltof.z));
   float depth = uFarNear.x + uFarNear.y / z;
-  
+
   return 1.0;//texture(uOmniShadows[lightIndex], vec4(lightToFrag, depth));
 }
 
@@ -81,21 +81,21 @@ void main() {
     diffuse = texture(uMaterial.diffuseTex, oTexCoords);
     specular = texture(uMaterial.specularTex, oTexCoords);
   }
-  
+
   vec3 finalColor = uAmbient + uMaterial.emissive.rgb;
   for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {
     float visibility = 1.0;
-    
+
     Light light = uLights[lightIndex];
     if (light.direction == vec3(0.0)) {
       visibility = get_omni_visibility(light);
     } else {
       visibility = get_dir_visibility(lightIndex);
     }
-    
+
     finalColor += visibility * get_color_from_light(uLights[lightIndex], normal, viewDir, diffuse, specular);
   }
-  
+
   Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), 1.0);
 }
 

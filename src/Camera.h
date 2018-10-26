@@ -1,5 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "Constants.h"
 #include <glm/glm.hpp>
 

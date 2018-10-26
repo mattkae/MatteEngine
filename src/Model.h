@@ -1,5 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "Mesh.h"
 #include "Material.h"
 #include <vector>

@@ -3,3 +3,5 @@ src/*.d
 src/**/.#*
 src/**/#*
 flooids
+FluidSim/FluidSim/Debug
+FluidSim/.vs

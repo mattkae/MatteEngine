@@ -1,5 +1,5 @@
 #include "Skybox.h"
-#include <SOIL.h>
+#include <SOIL\SOIL.h>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>

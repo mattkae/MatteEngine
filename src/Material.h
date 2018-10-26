@@ -1,5 +1,7 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "gl_includes.h"
 #include "Texture.h"
 #include <glm/glm.hpp>

@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "Physics.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "GlmUtility.h";

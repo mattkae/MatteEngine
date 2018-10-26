@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "Camera.h"
 #include "Shader.h"
 #include "Input.h"

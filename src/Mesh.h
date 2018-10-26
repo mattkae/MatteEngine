@@ -1,5 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "gl_includes.h"
 #include "Material.h"
 #include <glm/glm.hpp>

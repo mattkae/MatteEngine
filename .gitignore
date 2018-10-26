@@ -3,5 +3,6 @@ src/*.d
 src/**/.#*
 src/**/#*
 flooids
-FluidSim/FluidSim/Debug
+FluidSim/Debug/*
+FluidSim/x64/*
 FluidSim/.vs

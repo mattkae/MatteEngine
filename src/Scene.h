@@ -17,40 +17,36 @@ using namespace std;
 
 class Camera;
 
-struct ModelInfo {
-	std::string path;
-	glm::mat4 transform;
-};
-
-struct SceneInfo {
-	std::vector<ModelInfo> models;
-};
-
 class Scene {
  public:
-  Scene(const SceneInfo& info);
-  ~Scene();
-  void render();
-  void render_models(const Shader& shader);
-  void update(double dt);
- private:
-  void render_shadows();
-  void render_scene();
-  
-  bool mUseShadows = true;
+	Scene();
+	~Scene();
 
-  Shader mShadowShader;
-  Shader mSceneShader;
-  Shader mSkyboxShader;
-  Shader mTerrainShader;
-  Shader mParticleShader;
-  Camera mCamera;
+	void set_models(std::vector<Model> models);
+	void render();
+	void render_models(const Shader& shader);
+	void update(double dt);
+
+	vector<Model> get_models() const { return mModels; }
+	vector<Light> get_lights() const { return mLights; }
+ private:
+	void render_shadows();
+	void render_scene();
   
-  vector<Model> mModels;
-  vector<Light> mLights;
-  Skybox mSkybox;
-  Terrain mTerrain;
-  ParticleEmitter mParticleEmitter;
+	bool mUseShadows = true;
+
+	Shader mShadowShader;
+	Shader mSceneShader;
+	Shader mSkyboxShader;
+	Shader mTerrainShader;
+	Shader mParticleShader;
+	Camera mCamera;
+  
+	vector<Model> mModels;
+	vector<Light> mLights;
+	Skybox mSkybox;
+	Terrain mTerrain;
+	ParticleEmitter mParticleEmitter;
 };
 
 #endif

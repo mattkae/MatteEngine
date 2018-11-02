@@ -6,101 +6,83 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Scene::Scene(const SceneInfo& info) {
-  // Load shaders
-  mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
-  mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
-  mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-  mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
-  mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
+Scene::Scene() {
+	// Load shaders
+	mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
+	mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
+	mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
+	mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
+	mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
-  // Load models
-  for (auto modelInfo : info.models) {
-	  Model nextModel(modelInfo.path.c_str());
-	  nextModel.set_model(modelInfo.transform);
-	  mModels.push_back(nextModel);
-  }
+	// Bind uniforms to proper index
+	mSceneShader.use();
+	mSceneShader.set_uniform_1i("uDirShadows[0]", 0);
+	mSceneShader.set_uniform_1i("uDirShadows[1]", 1);
+	mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
+	mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
-  /*
-  Model model("assets/BaymaxWhiteOBJ/Bigmax_White_OBJ.obj");
-  glm::mat4 transform(1.0);
-  transform = glm::scale(transform, glm::vec3(0.05));
-  transform = glm::translate(transform, glm::vec3(0, 0, 0));
-  model.set_model(transform);
-  mModels.push_back(model);
+	// Load lights
+	Light sLight = get_spot(1600, 1200);
+	sLight.color = glm::vec3(1);
+	sLight.position = glm::vec3(0.0, 10.0, 0.0);
+	sLight.direction = glm::vec3(0.0, -1.0, 0.0);
+	sLight.up = glm::vec3(0.0, 0.0, 1.0);
+	sLight.cosineCutOff = cos(20.f);
+	sLight.dropOff = 24.f;
+	sLight.usesShadows = true;
+	mLights.push_back(sLight);
 
-  Model model2("assets/floor.obj");
-  glm::mat4 transform2(1.0);
-  transform2 = glm::translate(transform2, glm::vec3(0, -1, 0));
-  model2.set_model(transform2);
-  mModels.push_back(model2);
-  */
+	/*
+	Light dLight = get_directional(1600, 1200);
+	dLight.direction = glm::vec3(0, -1.0, 0);
+	dLight.usesShadows = true;
+	mLights.push_back(dLight);
+	*/
 
-  // Bind uniforms to proper index
-  mSceneShader.use();
-  mSceneShader.set_uniform_1i("uDirShadows[0]", 0);
-  mSceneShader.set_uniform_1i("uDirShadows[1]", 1);
-  mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
-  mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
+	// Load skybox
+	const char* skyboxPaths[6];
+	skyboxPaths[0] = "assets/skybox/cloudy/bluecloud_ft.jpg";
+	skyboxPaths[1] = "assets/skybox/cloudy/bluecloud_bk.jpg";
+	skyboxPaths[2] = "assets/skybox/cloudy/bluecloud_up.jpg";
+	skyboxPaths[3] = "assets/skybox/cloudy/bluecloud_dn.jpg";
+	skyboxPaths[4] = "assets/skybox/cloudy/bluecloud_rt.jpg";
+	skyboxPaths[5] = "assets/skybox/cloudy/bluecloud_lf.jpg";
+	initialize_skybox(mSkybox, skyboxPaths);
 
-  // Load lights
-  Light sLight = get_spot(1600, 1200);
-  sLight.color = glm::vec3(1);
-  sLight.position = glm::vec3(0.0, 10.0, 0.0);
-  sLight.direction = glm::vec3(0.0, -1.0, 0.0);
-  sLight.up = glm::vec3(0.0, 0.0, 1.0);
-  sLight.cosineCutOff = cos(20.f);
-  sLight.dropOff = 24.f;
-  sLight.usesShadows = true;
-  mLights.push_back(sLight);
+	// Load terrain
+	GenerationParameters params;
+	params.size = 512;
+	params.granularity = 128;
+	params.permSize = 128;
+	params.minMaxHeight = 32;
+	params.scaleFactor = 0.004;
+	params.ampFactor = 0.5;
+	params.frequencyFactor = 2.0f;
+	params.numOctaves = 64;
+	mTerrain = generate_terrain(params);
 
-/*
-  Light dLight = get_directional(1600, 1200);
-  dLight.direction = glm::vec3(0, -1.0, 0);
-  dLight.usesShadows = true;
-  mLights.push_back(dLight);
-*/
-
-  // Load skybox
-  const char* skyboxPaths[6];
-  skyboxPaths[0] = "assets/skybox/cloudy/bluecloud_ft.jpg";
-  skyboxPaths[1] = "assets/skybox/cloudy/bluecloud_bk.jpg";
-  skyboxPaths[2] = "assets/skybox/cloudy/bluecloud_up.jpg";
-  skyboxPaths[3] = "assets/skybox/cloudy/bluecloud_dn.jpg";
-  skyboxPaths[4] = "assets/skybox/cloudy/bluecloud_rt.jpg";
-  skyboxPaths[5] = "assets/skybox/cloudy/bluecloud_lf.jpg";
-  initialize_skybox(mSkybox, skyboxPaths);
-
-  // Load terrain
-  GenerationParameters params;
-  params.size = 512;
-  params.granularity = 128;
-  params.permSize = 128;
-  params.minMaxHeight = 32;
-  params.scaleFactor = 0.004;
-  params.ampFactor = 0.5;
-  params.frequencyFactor = 2.0f;
-  params.numOctaves = 64;
-  mTerrain = generate_terrain(params);
-
-  // Load particle
-  mParticleEmitter.model = glm::scale(mParticleEmitter.model, glm::vec3(0.1));
-  mParticleEmitter.numVertices = 3;
-  //  mParticleEmitter.drawType = GL_POINTS;
-  mParticleEmitter.numParticles = 1000;
-  mParticleEmitter.particleDimension = glm::vec3(5.0);
-  mParticleEmitter.volumeDimension = glm::vec3(25.0, 25.0, 25.0);
-  mParticleEmitter.color = glm::int_rgb_to_float_rgb(glm::vec3(128, 255, 212));
-  mParticleEmitter.initialVelocity = glm::vec3(0, 100, 0);
-  mParticleEmitter.particleLife = 5;
-  mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.5f);
-  mParticleEmitter.velocityFunction = [](float t) { return glm::vec3(t * t, t * t * t - t * t, t * t); };
-  mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.3f);
-  initialize_particle_emitter(mParticleEmitter);
+	// Load particle
+	mParticleEmitter.model = glm::scale(mParticleEmitter.model, glm::vec3(0.1));
+	mParticleEmitter.numVertices = 3;
+	//  mParticleEmitter.drawType = GL_POINTS;
+	mParticleEmitter.numParticles = 1000;
+	mParticleEmitter.particleDimension = glm::vec3(5.0);
+	mParticleEmitter.volumeDimension = glm::vec3(25.0, 25.0, 25.0);
+	mParticleEmitter.color = glm::int_rgb_to_float_rgb(glm::vec3(128, 255, 212));
+	mParticleEmitter.initialVelocity = glm::vec3(0, 100, 0);
+	mParticleEmitter.particleLife = 5;
+	mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.5f);
+	mParticleEmitter.velocityFunction = [](float t) { return glm::vec3(t * t, t * t * t - t * t, t * t); };
+	mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.3f);
+	initialize_particle_emitter(mParticleEmitter);
 }
 
 Scene::~Scene() {
 
+}
+
+void Scene::set_models(std::vector<Model> models) {
+	this->mModels = models;
 }
 
 void Scene::update(double dt) {

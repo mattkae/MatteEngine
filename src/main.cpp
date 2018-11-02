@@ -28,7 +28,7 @@ int main(int argc, const char* argv[]) {
 	initialize(argc, argv);
 
 	double currentTime = 0, prevTime = 0, deltaTime;
-	Scene scene(SceneReader::readScene("assets/scenes/scene.json"));
+	Scene scene = SceneReader::load_scene("assets/scenes/scene.json");
 
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window)) {

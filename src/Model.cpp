@@ -10,7 +10,10 @@
 
 using namespace std;
 
-Model::Model(const char* path) {
+Model::Model() {
+}
+
+Model::Model(std::string path, glm::mat4 transform) {
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
   
@@ -25,7 +28,8 @@ Model::Model(const char* path) {
 
   process_node(scene->mRootNode, scene);
 
-  mModel = glm::mat4(1.0);
+  mPath = path;
+  mModel = transform;
 }
 
 void Model::render(const Shader& shader) {

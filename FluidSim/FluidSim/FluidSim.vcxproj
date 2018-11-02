@@ -51,6 +51,7 @@
     <ClInclude Include="..\..\src\Physics.h" />
     <ClInclude Include="..\..\src\PointParticles.h" />
     <ClInclude Include="..\..\src\Scene.h" />
+    <ClInclude Include="..\..\src\SceneReader.h" />
     <ClInclude Include="..\..\src\Shader.h" />
     <ClInclude Include="..\..\src\Skybox.h" />
     <ClInclude Include="..\..\src\Terrain.h" />

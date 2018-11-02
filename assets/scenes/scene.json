@@ -1,0 +1,22 @@
+{
+  "models": [
+    {
+        "path": "assets/BaymaxWhiteOBJ/Bigmax_White_OBJ.obj",
+        "transform": [
+          0.05, 0, 0, 0,
+          0, 0.05, 0, 0,
+          0, 0, 0.05, 0,
+          0, 0, 0, 1
+        ]
+    },
+    {
+        "path": "assets/floor.obj",
+        "transform": [
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, -1, 0, 1
+        ]
+    }
+  ]
+}

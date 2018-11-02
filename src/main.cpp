@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include "SceneReader.h"
 
 using namespace std;
 
@@ -16,39 +17,54 @@ using namespace std;
 const char* WINDOWm_TITLE = "Fluid Simulator";
 GLFWwindow* window = nullptr;
 
-void initialize(int argc, char** argv);
+void initialize(int argc, const char* argv[]);
 void cleanup();
 
 void glfw_error_callback(int error, const char* message) {
-  cerr << "GLFW error #" << error << ": " << message << endl;
+	cerr << "GLFW error #" << error << ": " << message << endl;
 }
 
-int main(int argc, char** argv) {
-  initialize(argc, argv);
+int main(int argc, const char* argv[]) {
+	initialize(argc, argv);
 
-  double currentTime = 0, prevTime = 0, deltaTime;
-  Scene scene;
+	double currentTime = 0, prevTime = 0, deltaTime;
+	Scene scene(SceneReader::readScene("assets/scenes/scene.json"));
 
-  glEnable(GL_DEPTH_TEST);
-  while (!glfwWindowShouldClose(window)) {
-    currentTime = glfwGetTime();
-    deltaTime = currentTime - prevTime;
-    prevTime = currentTime;
+	glEnable(GL_DEPTH_TEST);
+	while (!glfwWindowShouldClose(window)) {
+	currentTime = glfwGetTime();
+	deltaTime = currentTime - prevTime;
+	prevTime = currentTime;
     
-    glfwPollEvents();
+	glfwPollEvents();
 
-    scene.update(deltaTime);
-    scene.render();
+	scene.update(deltaTime);
+	scene.render();
     
-    glfwSwapBuffers(window);
-  }
+	glfwSwapBuffers(window);
+	}
 
-  cleanup();
-  return 0;
+	cleanup();
+	return 0;
 }
 
 
-void initialize(int argc, char** argv) {
+void initialize(int argc, const char* argv[]) {
+	// Constants
+	boost::program_options::options_description desc{ "Options" };
+	desc.add_options()
+		("w,w", boost::program_options::value<int>()->default_value(800), "width")
+		("h,h", boost::program_options::value<int>()->default_value(600), "height");
+
+	boost::program_options::variables_map vm;
+	boost::program_options::store(parse_command_line(argc, argv, desc), vm);
+	boost::program_options::notify(vm);
+
+	Constants.width = vm["w"].as<int>();
+	Constants.height = vm["h"].as<int>();
+	Constants.aspectRatio = (float)Constants.width / (float)Constants.height;
+
+	// GLFW
   if (!glfwInit()) {
     cerr << "Failed to initialize glfw." << endl;
     exit(EXIT_FAILURE);
@@ -60,7 +76,7 @@ void initialize(int argc, char** argv) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  window = glfwCreateWindow(Constants.width, Constants.height, Constants.title, nullptr, nullptr);
+  window = glfwCreateWindow(Constants.width, Constants.height, Constants.title.c_str(), nullptr, nullptr);
   if (!window) {
     cerr << "Error initializing GLFW window" << endl;
     return;

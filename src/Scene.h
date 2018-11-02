@@ -17,14 +17,22 @@ using namespace std;
 
 class Camera;
 
+struct ModelInfo {
+	std::string path;
+	glm::mat4 transform;
+};
+
+struct SceneInfo {
+	std::vector<ModelInfo> models;
+};
+
 class Scene {
  public:
-  Scene();
+  Scene(const SceneInfo& info);
   ~Scene();
   void render();
   void render_models(const Shader& shader);
   void update(double dt);
-  void load(string path);
  private:
   void render_shadows();
   void render_scene();

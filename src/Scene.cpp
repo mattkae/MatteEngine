@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Scene::Scene() {
+Scene::Scene(const SceneInfo& info) {
   // Load shaders
   mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
   mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
@@ -15,6 +15,13 @@ Scene::Scene() {
   mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
   // Load models
+  for (auto modelInfo : info.models) {
+	  Model nextModel(modelInfo.path.c_str());
+	  nextModel.set_model(modelInfo.transform);
+	  mModels.push_back(nextModel);
+  }
+
+  /*
   Model model("assets/BaymaxWhiteOBJ/Bigmax_White_OBJ.obj");
   glm::mat4 transform(1.0);
   transform = glm::scale(transform, glm::vec3(0.05));
@@ -27,6 +34,7 @@ Scene::Scene() {
   transform2 = glm::translate(transform2, glm::vec3(0, -1, 0));
   model2.set_model(transform2);
   mModels.push_back(model2);
+  */
 
   // Bind uniforms to proper index
   mSceneShader.use();
@@ -133,8 +141,8 @@ void Scene::render_scene() {
   render_skybox(mSkybox, mSkyboxShader, mCamera);
 
   // Terrain
-  //mTerrainShader.use();
-  //render_terrain(mTerrain, mTerrainShader, mCamera);
+  mTerrainShader.use();
+  render_terrain(mTerrain, mTerrainShader, mCamera);
 
   // Particles
   mParticleShader.use();

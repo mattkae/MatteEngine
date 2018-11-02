@@ -17,6 +17,7 @@ Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
   mUp = up;
   mRight = right;
   mForward = glm::normalize(glm::cross(up, right));
+  mPs.aspectRatio = Constants.aspectRatio;
 }
 
 void Camera::set_movement_flag(MovementFlag flag) {

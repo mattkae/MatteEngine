@@ -65,7 +65,7 @@ namespace glm {
     std::cout << "START";
     for (int r = 0; r < 3; r++) {
       for (int c = 0; c < 3; c++) {
-	std::cout << std::setw(5) << matrix[r][c];
+		std::cout << std::setw(5) << matrix[r][c];
       }
       std::cout << std::endl;
     }

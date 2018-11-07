@@ -23,6 +23,7 @@ class Scene {
 	~Scene();
 
 	void set_models(std::vector<Model> models);
+	void set_lights(std::vector<Light> lights);
 	void render();
 	void render_models(const Shader& shader);
 	void update(double dt);

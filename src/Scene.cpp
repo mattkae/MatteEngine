@@ -21,24 +21,6 @@ Scene::Scene() {
 	mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
 	mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
-	// Load lights
-	Light sLight = get_spot(1600, 1200);
-	sLight.color = glm::vec3(1);
-	sLight.position = glm::vec3(0.0, 10.0, 0.0);
-	sLight.direction = glm::vec3(0.0, -1.0, 0.0);
-	sLight.up = glm::vec3(0.0, 0.0, 1.0);
-	sLight.cosineCutOff = cos(20.f);
-	sLight.dropOff = 24.f;
-	sLight.usesShadows = true;
-	mLights.push_back(sLight);
-
-	/*
-	Light dLight = get_directional(1600, 1200);
-	dLight.direction = glm::vec3(0, -1.0, 0);
-	dLight.usesShadows = true;
-	mLights.push_back(dLight);
-	*/
-
 	// Load skybox
 	const char* skyboxPaths[6];
 	skyboxPaths[0] = "assets/skybox/cloudy/bluecloud_ft.jpg";
@@ -85,6 +67,10 @@ void Scene::set_models(std::vector<Model> models) {
 	this->mModels = models;
 }
 
+void Scene::set_lights(std::vector<Light> lights) {
+	this->mLights = lights;
+}
+
 void Scene::update(double dt) {
     move_camera(dt, &mCamera);
 
@@ -94,10 +80,6 @@ void Scene::update(double dt) {
 
     mCamera.update(dt);
     update_particle_emitter(mParticleEmitter, dt);
-
-    //for (Model& model : mModels) {
-    //  model.set_model(applyGravity(dt, model.get_model()));
-    //}
 }
 
 void Scene::render() {
@@ -123,8 +105,8 @@ void Scene::render_scene() {
   render_skybox(mSkybox, mSkyboxShader, mCamera);
 
   // Terrain
-  mTerrainShader.use();
-  render_terrain(mTerrain, mTerrainShader, mCamera);
+  //mTerrainShader.use();
+  //render_terrain(mTerrain, mTerrainShader, mCamera);
 
   // Particles
   mParticleShader.use();

@@ -30,18 +30,22 @@ int main(int argc, const char* argv[]) {
 	double currentTime = 0, prevTime = 0, deltaTime;
 	Scene scene = SceneReader::load_scene("assets/scenes/scene.json");
 
+
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window)) {
-	currentTime = glfwGetTime();
-	deltaTime = currentTime - prevTime;
-	prevTime = currentTime;
+		currentTime = glfwGetTime();
+		deltaTime = currentTime - prevTime;
+		prevTime = currentTime;
     
-	glfwPollEvents();
+		glfwPollEvents();
+		if (Input::getInstance()->is_down(GLFW_KEY_R)) {
+			scene = SceneReader::load_scene("assets/scenes/scene.json");
+		}
 
-	scene.update(deltaTime);
-	scene.render();
-    
-	glfwSwapBuffers(window);
+		scene.update(deltaTime);
+		scene.render();
+
+		glfwSwapBuffers(window);
 	}
 
 	cleanup();
@@ -69,7 +73,7 @@ void initialize(int argc, const char* argv[]) {
     cerr << "Failed to initialize glfw." << endl;
     exit(EXIT_FAILURE);
   }
-
+  
   glfwSetErrorCallback(glfw_error_callback);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);

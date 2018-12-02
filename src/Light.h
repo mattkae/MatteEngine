@@ -18,7 +18,7 @@ enum LightType {
 struct Light {
   LightType type;
   glm::vec3 color = glm::vec3(1.0);
-  glm::vec3 direction = glm::vec3(1.0);
+  glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
   glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
   glm::vec3 position = glm::vec3(0.0);
 
@@ -36,13 +36,9 @@ struct Light {
   int shadowHeight = 600;
 
   bool isOn = true;
-
-  glm::mat4 projection;
 };
 
-Light get_point(int width, int height);
-Light get_spot(int width, int height);
-Light get_directional(int width, int height);
+void create_shadow_texture_for_light(Light& light, int width, int height);
 void render_shadows_from_light(const Light& light, Shader& shader, Scene& scene);
 void render_light(const Light& light, Shader& shader, int index);
 #endif

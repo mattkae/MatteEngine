@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\Entity.cpp" />
+    <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
@@ -40,9 +41,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h" />
     <ClInclude Include="..\..\src\Constants.h" />
+    <ClInclude Include="..\..\src\DirectionalLight.h" />
     <ClInclude Include="..\..\src\Entity.h" />
     <ClInclude Include="..\..\src\GlmUtility.h" />
     <ClInclude Include="..\..\src\gl_includes.h" />
+    <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\input.h" />
     <ClInclude Include="..\..\src\Light.h" />
     <ClInclude Include="..\..\src\Material.h" />

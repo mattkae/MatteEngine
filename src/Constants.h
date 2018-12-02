@@ -3,9 +3,9 @@
 #include <string>
 
 struct ApplicationConstants {
-  int width = 1280;
-  int height = 960;
-  float aspectRatio = (float)width / (float)height;;
+  int width = 1600;
+  int height = 1200;
+  float aspectRatio = (float)width / (float)height;
   std::string title = "Flooids";
 
   float near = 1.f;

@@ -5,6 +5,7 @@
 #include "Physics.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "ImageUtil.h"
 
 Scene::Scene() {
 	// Load shaders
@@ -16,8 +17,7 @@ Scene::Scene() {
 
 	// Bind uniforms to proper index
 	mSceneShader.use();
-	mSceneShader.set_uniform_1i("uDirShadows[0]", 0);
-	mSceneShader.set_uniform_1i("uDirShadows[1]", 1);
+	mSceneShader.set_uniform_1i("uDirShadow", 0);
 	mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
 	mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 

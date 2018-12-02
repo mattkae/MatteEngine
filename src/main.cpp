@@ -54,20 +54,6 @@ int main(int argc, const char* argv[]) {
 
 
 void initialize(int argc, const char* argv[]) {
-	// Constants
-	boost::program_options::options_description desc{ "Options" };
-	desc.add_options()
-		("w,w", boost::program_options::value<int>()->default_value(800), "width")
-		("h,h", boost::program_options::value<int>()->default_value(600), "height");
-
-	boost::program_options::variables_map vm;
-	boost::program_options::store(parse_command_line(argc, argv, desc), vm);
-	boost::program_options::notify(vm);
-
-	Constants.width = vm["w"].as<int>();
-	Constants.height = vm["h"].as<int>();
-	Constants.aspectRatio = (float)Constants.width / (float)Constants.height;
-
 	// GLFW
   if (!glfwInit()) {
     cerr << "Failed to initialize glfw." << endl;

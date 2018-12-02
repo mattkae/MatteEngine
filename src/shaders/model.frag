@@ -1,6 +1,6 @@
 #version 410 core
 
-#define MAX_LIGHTS 4
+#define MAX_LIGHTS 2
 #define MAX_DIR_LIGHT_SHADOWS 2
 
 // Data types
@@ -44,7 +44,7 @@ uniform int uNumLights;
 uniform Light uLights[MAX_LIGHTS];
 uniform vec3 uAmbient;
 uniform vec2 uFarNear;
-uniform sampler2DShadow uDirShadows[MAX_DIR_LIGHT_SHADOWS];
+uniform sampler2DShadow uDirShadow;
 //uniform samplerCubeShadow uOmniShadows[MAX_POINT_LIGHT_SHADOWS];
 
 // Helper functions
@@ -67,14 +67,13 @@ float get_omni_visibility(const in Light light) {
 }
 
 float get_dir_visibility(const in int lightIndex) {
-  vec3 lP = vec3(oShadowCoords[lightIndex] / oShadowCoords[lightIndex].w) * 0.5 + 0.5;
-  return texture(uDirShadows[lightIndex], lP);
+  vec3 lP = vec3(oShadowCoords[lightIndex].xyz / oShadowCoords[lightIndex].w) * 0.5 + vec3(0.5f, 0.5f, 0.5f);
+  return texture(uDirShadow, lP);
 }
 
 void main() {
   vec3 viewDir = normalize(oEye - oFragPos.xyz);
   vec3 normal = normalize(oNormal);
-
   vec4 diffuse = uMaterial.diffuse;
   vec4 specular = uMaterial.specular;
   if (uMaterial.texCount > 0) {

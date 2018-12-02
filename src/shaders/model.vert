@@ -1,6 +1,6 @@
 #version 410 core
 
-#define MAX_LIGHTS 4
+#define MAX_LIGHTS 2
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
@@ -23,7 +23,7 @@ void main() {
   gl_Position = uVp * fragPos;
 
   for (int index = 0; index < uNumLights; index++) {
-     oShadowCoords[index] = uShadowMatrix[index] * fragPos;
+     oShadowCoords[index] = uShadowMatrix[index] * vec4(position, 1.0f);
   }
 
   oFragPos = fragPos;

@@ -90,39 +90,29 @@ void from_json(const json& j, Light& light) {
 	std::vector<float> position;
 
 	j.at("type").get_to(light.type);
-	switch (light.type) {
-	case LightType::Directional:
-		light = get_directional(1600, 800);
-		break;
-	case LightType::Point:
-		light = get_point(1600, 800);
-		break;
-	case LightType::Spot:
-		light = get_spot(1600, 800);
-		break;
-	}
-
 	j.at("color").get_to<std::vector<float>>(color);
-	j.at("constant").get_to(light.constant);
-	j.at("linear").get_to(light.linear);
-	j.at("quadratic").get_to(light.quadratic);
-	j.at("cosineCutOff").get_to(light.cosineCutOff);
-	j.at("dropOff").get_to(light.dropOff);
 	j.at("usesShadows").get_to(light.usesShadows);
+	if (light.usesShadows) {
+		create_shadow_texture_for_light(light, Constants.width, Constants.height);
+	}
 	j.at("isOn").get_to(light.isOn);
-
 	light.color = arrayToVec3(color);
 
 	if (light.type != LightType::Point) {
 		j.at("direction").get_to<std::vector<float>>(direction);
 		light.direction = arrayToVec3(direction);
+		j.at("up").get_to<std::vector<float>>(up);
+		light.up = arrayToVec3(up);
 	}
 
 	if (light.type != LightType::Directional) {
-		j.at("up").get_to<std::vector<float>>(up);
+		j.at("constant").get_to(light.constant);
+		j.at("linear").get_to(light.linear);
+		j.at("quadratic").get_to(light.quadratic);
+		j.at("cosineCutOff").get_to(light.cosineCutOff);
+		j.at("dropOff").get_to(light.dropOff);
 		j.at("position").get_to<std::vector<float>>(position);
 		light.position = arrayToVec3(position);
-		light.up = arrayToVec3(up);
 	}
 }
 

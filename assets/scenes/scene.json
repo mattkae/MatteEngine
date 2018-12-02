@@ -1,6 +1,15 @@
 {
   "models": [
     {
+        "path": "assets/floor.obj",
+        "transform": [
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, -3, 0, 1
+        ]
+    },
+    {
         "path": "assets/sword/sword.obj",
         "transform": [
           1, 0, 0, 0,
@@ -8,29 +17,14 @@
           0, 0, 1, 0,
           0, 0, 0, 1
         ]
-    },
-    {
-        "path": "assets/floor.obj",
-        "transform": [
-          1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, -1, 0, 1
-        ]
     }
   ],
   "lights": [
       {
-          "type": 2,
+          "type": 0,
           "color": [1, 1, 1],
           "direction": [0, -1, 0],
-          "up": [0, 0, 1],
-          "position": [0, 10, 0],
-          "constant": 1,
-          "linear": 0,
-          "quadratic": 0,
-          "cosineCutOff": 0.41,
-          "dropOff": 24,
+          "up": [0, 1, 0],
           "usesShadows": true,
           "isOn": true
       }

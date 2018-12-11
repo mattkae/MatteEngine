@@ -16,7 +16,7 @@ class Shader;
 
 class Model {
  public:
-	 Model();
+	Model();
 	Model(std::string path, glm::mat4 transform = glm::mat4(1.0));
 	void render(const Shader& shader);
 	void set_model(glm::mat4 model) { mModel = model; };

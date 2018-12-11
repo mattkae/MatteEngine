@@ -2,6 +2,8 @@
 c:\users\mattykae\projects\fluid-sim\src\camera.h(6): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
   Entity.cpp
 c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  ImageUtil.cpp
+c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
   Input.cpp
 c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
   Light.cpp
@@ -20,11 +22,12 @@ c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Ca
 c:\users\mattykae\projects\fluid-sim\src\physics.h(3): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
   Scene.cpp
 c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  SceneReader.cpp
+c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
   Shader.cpp
 c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
   Skybox.cpp
 c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
-  Smoke.cpp
   Terrain.cpp
 c:\users\mattykae\projects\fluid-sim\src\gl_includes.h(4): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
   Texture.cpp

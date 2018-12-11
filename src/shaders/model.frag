@@ -1,4 +1,4 @@
-#version 410 core
+#version 430
 
 #define MAX_LIGHTS 2
 #define MAX_DIR_LIGHT_SHADOWS 2
@@ -36,7 +36,7 @@ in vec4 oFragPos;
 in vec3 oNormal;
 in vec2 oTexCoords;
 in vec3 oEye;
-in vec4 oShadowCoords[MAX_LIGHTS];
+in vec4 oShadowCoord;
 
 // Uniform variables
 uniform Material uMaterial;
@@ -63,11 +63,11 @@ float get_omni_visibility(const in Light light) {
   float z = max(absltof.x, max(absltof.y, absltof.z));
   float depth = uFarNear.x + uFarNear.y / z;
 
-  return 1.0;//texture(uOmniShadows[lightIndex], vec4(lightToFrag, depth));
+  return 0.0;//texture(uOmniShadows[lightIndex], vec4(lightToFrag, depth));
 }
 
 float get_dir_visibility(const in int lightIndex) {
-  vec3 lP = vec3(oShadowCoords[lightIndex].xyz / oShadowCoords[lightIndex].w) * 0.5 + vec3(0.5f, 0.5f, 0.5f);
+  vec3 lP = vec3(oShadowCoord.xyz / oShadowCoord.w) * 0.5 + 0.5f;
   return texture(uDirShadow, lP);
 }
 
@@ -92,7 +92,7 @@ void main() {
       visibility = get_dir_visibility(lightIndex);
     }
 
-    finalColor += visibility * get_color_from_light(uLights[lightIndex], normal, viewDir, diffuse, specular);
+    finalColor = visibility * get_color_from_light(uLights[lightIndex], normal, viewDir, diffuse, specular);
   }
 
   Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), 1.0);

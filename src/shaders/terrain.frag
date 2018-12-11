@@ -1,4 +1,4 @@
-#version 410
+#version 430
 
 out vec4 Color;
 
@@ -22,6 +22,6 @@ void main() {
   // TODO: Hack
   if (d <= 0)
     discard;
-  
-  Color = vec4(gColor, 1.0) * mixVal;  
+
+  Color = vec4(gColor, 1.0) * mixVal;
 }

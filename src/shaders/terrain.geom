@@ -1,4 +1,4 @@
-#version 410
+#version 430
 
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
@@ -45,7 +45,7 @@ void main() {
   gColor = vColor[1];
   gl_Position = gl_in[1].gl_Position;
   EmitVertex();
-  
+
   gEdgeDistance = vec3(0, 0, hc);
   gNormal = vNormal[2];
   gPosition = vPosition[2];

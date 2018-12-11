@@ -1,4 +1,20 @@
 {
+  "lights": [
+      {
+          "type": 2,
+          "color": [1, 1, 1],
+          "direction": [0, -1, 0],
+          "position": [0, 10, 0],
+          "up": [0, 0, 1],
+          "usesShadows": true,
+          "isOn": true,
+          "constant": 0.25,
+          "linear": 0.05,
+          "quadratic": 0.01,
+          "cosineCutOff": 0.1,
+          "dropOff": 16
+      }
+  ],
   "models": [
     {
         "path": "assets/floor.obj",
@@ -6,27 +22,17 @@
           1, 0, 0, 0,
           0, 1, 0, 0,
           0, 0, 1, 0,
-          0, -3, 0, 1
+          0, 0, 0, 1
         ]
     },
     {
-        "path": "assets/sword/sword.obj",
+        "path": "assets/cube.obj",
         "transform": [
           1, 0, 0, 0,
           0, 1, 0, 0,
           0, 0, 1, 0,
-          0, 0, 0, 1
+          0, 3, 0, 1
         ]
     }
-  ],
-  "lights": [
-      {
-          "type": 0,
-          "color": [1, 1, 1],
-          "direction": [0, -1, 0],
-          "up": [0, 1, 0],
-          "usesShadows": true,
-          "isOn": true
-      }
   ]
 }

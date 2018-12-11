@@ -1,4 +1,4 @@
-#version 410
+#version 430
 
 smooth in vec3 oViewDir;
 

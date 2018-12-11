@@ -60,7 +60,7 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-
+	
 }
 
 void Scene::set_models(std::vector<Model> models) {
@@ -101,16 +101,16 @@ void Scene::render_scene() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Skybox
-  mSkyboxShader.use();
-  render_skybox(mSkybox, mSkyboxShader, mCamera);
+  //mSkyboxShader.use();
+  //render_skybox(mSkybox, mSkyboxShader, mCamera);
 
   // Terrain
   //mTerrainShader.use();
   //render_terrain(mTerrain, mTerrainShader, mCamera);
 
   // Particles
-  mParticleShader.use();
-  render_particle_emitter(mParticleEmitter, mParticleShader, mCamera);
+  //mParticleShader.use();
+  //render_particle_emitter(mParticleEmitter, mParticleShader, mCamera);
 
   // Models
   mSceneShader.use();

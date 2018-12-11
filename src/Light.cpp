@@ -48,20 +48,19 @@ void create_shadow_texture_for_ominidirectional_light(Light& pLight, int width, 
 void create_shadow_texture_for_directional_light(Light& dLight, int width, int height) {
   glGenTextures(1, &dLight.shadowTexture);
   glBindTexture(GL_TEXTURE_2D, dLight.shadowTexture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
   
   glGenFramebuffers(1, &dLight.depthFbo);
   glBindFramebuffer(GL_FRAMEBUFFER, dLight.depthFbo);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight.shadowTexture, 0);
   glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, dLight.shadowTexture, 0);
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     cerr << "Shadow framebuffer is not okay for light." << endl;
@@ -87,9 +86,9 @@ void create_shadow_texture_for_light(Light& light, int width, int height) {
 glm::mat4 get_light_projection(const Light& light) {
 	switch (light.type) {
 	case Directional:
-		return glm::ortho<float>(-10, 10, -10.f, 10, Constants.near, Constants.far);
+		return glm::ortho<float>(-10, 10, -10.f, 10, 1.f, 7.5f);
 	case Spot:
-		glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
+		return glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
 	case Point:
 	default:
 		cerr << "Attempting to get a view for unknown light: " << light.type << endl;
@@ -101,7 +100,9 @@ glm::mat4 get_light_projection(const Light& light) {
 glm::mat4 get_light_view(const Light& light) {
   switch (light.type) {
   case Directional:
-	return glm::lookAt(glm::vec3(0, 10, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));//glm::lookAt(10.f * (-light.direction), (10.f * (-light.direction)) + light.direction, light.up);
+	return glm::lookAt(glm::vec3(-2, 4, -1),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));  //glm::lookAt(10.f * (-light.direction), (10.f * (-light.direction)) + light.direction, light.up);
   case Spot:
     return glm::lookAt(light.position, light.position + light.direction, light.up);
   case Point:
@@ -182,7 +183,9 @@ void render_directional_shadows(const Light& light, Shader& shader, Scene& scene
   glClearDepth(1.0);
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  shader.set_uniform_matrix_4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(get_light_projection(light) * get_light_view(light)));
+  auto view = get_light_view(light);
+  auto projection = get_light_projection(light);
+  shader.set_uniform_matrix_4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(projection * view));
   scene.render_models(shader);
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -220,7 +223,7 @@ static string get_array_uniform(const int lightIndex, const char* attribute, con
 
 void render_point_light(const Light& light, Shader& shader, int index) {
   if (light.usesShadows) {
-    glActiveTexture(GL_TEXTURE0 + index);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
   }
 
@@ -241,13 +244,11 @@ void render_point_light(const Light& light, Shader& shader, int index) {
   shader.set_uniform_2f("uFarNear", uFarNear.x, uFarNear.y);
 }
 
-void render_directional_light(const Light& light, Shader& shader, int index) {
+void render_directional_light(const Light& light, Shader& shader, const int index) {
   if (light.usesShadows) {
-    glActiveTexture(GL_TEXTURE0 );
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-    shader.set_uniform_matrix_4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
-				1, GL_FALSE,
-				glm::value_ptr(get_light_projection(light) * get_light_view(light)));
+    glActiveTexture(GL_TEXTURE0);
+    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(get_light_projection(light) * get_light_view(light)));
   }
 
   glm::vec3 position = glm::vec3(light.direction);
@@ -261,13 +262,14 @@ void render_directional_light(const Light& light, Shader& shader, int index) {
   shader.set_uniform_1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
 }
 
-void render_spot_light(const Light& light, Shader& shader, int index) {
+void render_spot_light(const Light& light, Shader& shader, const int index) {
   if (light.usesShadows) {
-    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-    shader.set_uniform_matrix_4fv(get_array_uniform(index, "uShadowMatrix").c_str(),
-				1, GL_FALSE,
-				glm::value_ptr(get_light_projection(light) * get_light_view(light)));
+	auto projection = get_light_projection(light);
+	auto view = get_light_view(light);
+	auto lightShadowMatrix = projection * view;
+	shader.set_uniform_1i("uDirShadow", 0);
+    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(lightShadowMatrix));
   }
 
   shader.set_uniform_3f(get_array_uniform(index, "uLights", "direction").c_str(), light.direction.x, light.direction.y, light.direction.z);
@@ -279,7 +281,7 @@ void render_spot_light(const Light& light, Shader& shader, int index) {
   shader.set_uniform_1f(get_array_uniform(index, "uLights", "dropOff").c_str(), light.dropOff);
 }
 
-void render_light(const Light& light, Shader& shader, int index) {
+void render_light(const Light& light, Shader& shader, const int index) {
   if (!light.isOn) {
     return;
   }

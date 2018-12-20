@@ -5,7 +5,7 @@
 const int fileHeaderSize = 14;
 const int infoHeaderSize = 40;
 
-void writeTextureToFile(const char* filePath) {
+void writeRGBTextureToFile(const char* filePath) {
 	int width = 0;
 	int height = 0;
 	glfwGetWindowSize(glfwGetCurrentContext() , &width, &height);

@@ -46,8 +46,10 @@ void Mesh::generate() {
   glBindVertexArray(0);
 }
 
-void Mesh::render(const Shader& shader) {
-  render_material(mMaterial, shader);
+void Mesh::render(Shader& shader, bool withMaterial) {
+	if (withMaterial) {
+		render_material(mMaterial, shader);
+	}
 
   glBindVertexArray(this->mVao);
   glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);

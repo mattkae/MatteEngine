@@ -78,7 +78,7 @@ bool initialize_skybox(Skybox& box, const char** paths) {
 }
 
 
-void render_skybox(const Skybox& box, const Shader& shader, const Camera& camera) {
+void render_skybox(const Skybox& box, Shader& shader, const Camera& camera) {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_CUBE_MAP, box.texture);
   glDisable(GL_DEPTH_TEST);

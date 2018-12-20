@@ -19,6 +19,6 @@ struct Material {
   std::vector<Texture> textures;
 };
 
-void render_material(const Material& material, const Shader& shader);
+void render_material(const Material& material, Shader& shader);
 
 #endif

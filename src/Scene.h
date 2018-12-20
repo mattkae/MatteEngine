@@ -7,8 +7,8 @@
 #include "Skybox.h"
 #include "Terrain.h"
 #include "Particle.h"
-//#include "Smoke.h"
 #include "Constants.h"
+#include "DepthVisualizer.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -25,7 +25,7 @@ class Scene {
 	void set_models(std::vector<Model> models);
 	void set_lights(std::vector<Light> lights);
 	void render();
-	void render_models(const Shader& shader);
+	void render_models(Shader& shader, bool withMaterial = true);
 	void update(double dt);
 
 	vector<Model> get_models() const { return mModels; }
@@ -48,6 +48,7 @@ class Scene {
 	Skybox mSkybox;
 	Terrain mTerrain;
 	ParticleEmitter mParticleEmitter;
+	DepthVisualizer mDepthVisualizer;
 };
 
 #endif

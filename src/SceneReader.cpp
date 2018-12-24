@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 #include "Model.h"
 #include "Light.h"
@@ -83,6 +84,35 @@ void to_json(json& j, const Light& light) {
 	};
 }
 
+glm::mat4 get_light_projection(const Light& light) {
+	switch (light.type) {
+	case Directional:
+		return glm::ortho<float>(-10, 10, -10.f, 10, 1.f, 7.5f);
+	case Spot:
+		return glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
+	case Point:
+	default:
+		cerr << "Attempting to get a view for unknown light: " << light.type << endl;
+		return glm::mat4(0.0);
+	}
+	return glm::mat4(0);
+}
+
+glm::mat4 get_light_view(const Light& light) {
+	switch (light.type) {
+	case Directional:
+		return glm::lookAt(glm::vec3(-2, 4, -1),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));  //glm::lookAt(10.f * (-light.direction), (10.f * (-light.direction)) + light.direction, light.up);
+	case Spot:
+		return glm::lookAt(light.position, light.position + light.direction, light.up);
+	case Point:
+	default:
+		cerr << "Attempting to get a view for unknown light: " << light.type << endl;
+		return glm::mat4(0.0);
+	}
+}
+
 void from_json(const json& j, Light& light) {
 	std::vector<float> color;
 	std::vector<float> direction;
@@ -114,6 +144,9 @@ void from_json(const json& j, Light& light) {
 		j.at("position").get_to<std::vector<float>>(position);
 		light.position = arrayToVec3(position);
 	}
+
+	light.projection = get_light_projection(light);
+	light.view = get_light_view(light);
 }
 
 // Scene

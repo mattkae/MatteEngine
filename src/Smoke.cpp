@@ -20,7 +20,7 @@ void initialize_smoke(Smoke& smoke) {
   glBindVertexArray(0);
 }
 
-void render_smoke(const Smoke& smoke, const Shader& shader, const Camera& camera) {
+void render_smoke(const Smoke& smoke, Shader& shader, const Camera& camera) {
   camera.render(shader);
   glBindVertexArray(smoke.vao);
   glDrawArrays(GL_POINTS, 0, smoke.numParticles * smoke.numParticles);

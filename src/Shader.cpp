@@ -4,9 +4,10 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 Shader::Shader() {
-  
+
 }
 
 /*********************************************
@@ -76,13 +77,20 @@ void Shader::load(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
     glAttachShader(this->mProgram, geometry);
   }
 
+
   glLinkProgram(this->mProgram);
-  GLint success;
-  glGetShaderiv(this->mProgram, GL_LINK_STATUS, &success);
-  if (!success) {
-    GLchar infoLog[512];
-    glGetShaderInfoLog(this->mProgram, 512, 0, infoLog);
-    std::cerr << "Error: Shader failed to link for files: " << vertexPath << ": "  << infoLog << std::endl;
+  GLint isLinked = 0;
+  glGetProgramiv(this->mProgram, GL_LINK_STATUS, (int *)&isLinked);
+  if (isLinked == GL_FALSE)
+  {
+	  GLint maxLength = 0;
+	  glGetProgramiv(this->mProgram, GL_INFO_LOG_LENGTH, &maxLength);
+
+	  // The maxLength includes the NULL character
+	  std::vector<GLchar> infoLog(maxLength);
+	  glGetProgramInfoLog(this->mProgram, maxLength, &maxLength, &infoLog[0]);
+	  glDeleteProgram(this->mProgram);
+	  printf("Error. Could not initialize shader");
   }
 
   if (vertexPath) glDeleteShader(vertex);
@@ -96,7 +104,7 @@ void Shader::load(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
 		@return this - Shader object
 *********************************************/
 void
-Shader::use() const
+Shader::use()
 {
   glUseProgram(this->mProgram);
 }
@@ -107,7 +115,7 @@ Shader::use() const
 		@return shader program.
 *********************************************/
 GLuint
-Shader::get_program() const
+Shader::get_program()
 {
   return this->mProgram;
 }
@@ -120,7 +128,7 @@ Shader::get_program() const
 		@return location of uniform.
 *********************************************/
 GLint
-Shader::get_uniform(const GLchar* name) const
+Shader::get_uniform(const GLchar* name)
 {
   return glGetUniformLocation(this->mProgram, name);
 }
@@ -132,7 +140,7 @@ Shader::get_uniform(const GLchar* name) const
 		@param v0 - First value.
 *********************************************/
 void
-Shader::set_uniform_1f(const GLchar* name, GLfloat v0) const
+Shader::set_uniform_1f(const GLchar* name, GLfloat v0)
 {
   glUniform1f(this->get_uniform(name), v0);
 }
@@ -145,7 +153,7 @@ Shader::set_uniform_1f(const GLchar* name, GLfloat v0) const
 		@param v1 - Second value.
 *********************************************/
 void
-Shader::set_uniform_2f(const GLchar* name, GLfloat v0, GLfloat v1) const
+Shader::set_uniform_2f(const GLchar* name, GLfloat v0, GLfloat v1)
 {
   glUniform2f(this->get_uniform(name), v0, v1);
 }
@@ -159,7 +167,7 @@ Shader::set_uniform_2f(const GLchar* name, GLfloat v0, GLfloat v1) const
 		@param v2 - Third value.
 *********************************************/
 void
-Shader::set_uniform_3f(const GLchar* name, GLfloat v0, GLfloat v1, GLfloat v2) const
+Shader::set_uniform_3f(const GLchar* name, GLfloat v0, GLfloat v1, GLfloat v2)
 {
   glUniform3f(this->get_uniform(name), v0, v1, v2);
 }
@@ -175,7 +183,6 @@ Shader::set_uniform_3f(const GLchar* name, GLfloat v0, GLfloat v1, GLfloat v2) c
 *********************************************/
 void
 Shader::set_uniform_4f(const GLchar* name, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
-  const
 {
   glUniform4f(this->get_uniform(name), v0, v1, v2, v3);
 }
@@ -187,7 +194,7 @@ Shader::set_uniform_4f(const GLchar* name, GLfloat v0, GLfloat v1, GLfloat v2, G
 		@param v0 - First value.
 *********************************************/
 void
-Shader::set_uniform_1i(const GLchar* name, GLint v0) const
+Shader::set_uniform_1i(const GLchar* name, GLint v0)
 {
   glUniform1i(this->get_uniform(name), v0);
 }
@@ -200,7 +207,7 @@ Shader::set_uniform_1i(const GLchar* name, GLint v0) const
 		@param v1 - Second value.
 *********************************************/
 void
-Shader::set_uniform_2i(const GLchar* name, GLint v0, GLint v1) const
+Shader::set_uniform_2i(const GLchar* name, GLint v0, GLint v1)
 {
   glUniform2i(this->get_uniform(name), v0, v1);
 }
@@ -214,7 +221,7 @@ Shader::set_uniform_2i(const GLchar* name, GLint v0, GLint v1) const
 		@param v2 - Third value.
 *********************************************/
 void
-Shader::set_uniform_3i(const GLchar* name, GLint v0, GLint v1, GLint v2) const
+Shader::set_uniform_3i(const GLchar* name, GLint v0, GLint v1, GLint v2)
 {
   glUniform3i(this->get_uniform(name), v0, v1, v2);
 }
@@ -229,7 +236,7 @@ Shader::set_uniform_3i(const GLchar* name, GLint v0, GLint v1, GLint v2) const
 		@param v3 - Fourth value.
 *********************************************/
 void
-Shader::set_uniform_4i(const GLchar* name, GLint v0, GLint v1, GLint v2, GLint v3) const
+Shader::set_uniform_4i(const GLchar* name, GLint v0, GLint v1, GLint v2, GLint v3)
 {
   glUniform4i(this->get_uniform(name), v0, v1, v2, v3);
 }
@@ -241,7 +248,7 @@ Shader::set_uniform_4i(const GLchar* name, GLint v0, GLint v1, GLint v2, GLint v
 		@param v0 - First value.
 *********************************************/
 void
-Shader::set_uniform_1ui(const GLchar* name, GLuint v0) const
+Shader::set_uniform_1ui(const GLchar* name, GLuint v0)
 {
   glUniform1ui(this->get_uniform(name), v0);
 }
@@ -254,7 +261,7 @@ Shader::set_uniform_1ui(const GLchar* name, GLuint v0) const
 		@param v1 - Second value.
 *********************************************/
 void
-Shader::set_uniform_2ui(const GLchar* name, GLuint v0, GLuint v1) const
+Shader::set_uniform_2ui(const GLchar* name, GLuint v0, GLuint v1)
 {
   glUniform2ui(this->get_uniform(name), v0, v1);
 }
@@ -268,7 +275,7 @@ Shader::set_uniform_2ui(const GLchar* name, GLuint v0, GLuint v1) const
 		@param v2 - Third value.
 *********************************************/
 void
-Shader::set_uniform_3ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2) const
+Shader::set_uniform_3ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2)
 {
   glUniform3ui(this->get_uniform(name), v0, v1, v2);
 }
@@ -283,7 +290,7 @@ Shader::set_uniform_3ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2) con
 		@param v3 - Fourth value.
 *********************************************/
 void
-Shader::set_uniform_4ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const
+Shader::set_uniform_4ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
 {
   glUniform4ui(this->get_uniform(name), v0, v1, v2, v3);
 }
@@ -296,7 +303,7 @@ Shader::set_uniform_4ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2, GLu
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_1fv(const GLchar* name, GLsizei count, const GLfloat *v0) const
+Shader::set_uniform_1fv(const GLchar* name, GLsizei count, const GLfloat *v0)
 {
   glUniform1fv(this->get_uniform(name), count, v0);
 }
@@ -309,7 +316,7 @@ Shader::set_uniform_1fv(const GLchar* name, GLsizei count, const GLfloat *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_2fv(const GLchar* name, GLsizei count, const GLfloat *v0) const
+Shader::set_uniform_2fv(const GLchar* name, GLsizei count, const GLfloat *v0)
 {
   glUniform2fv(this->get_uniform(name), count, v0);
 }
@@ -322,7 +329,7 @@ Shader::set_uniform_2fv(const GLchar* name, GLsizei count, const GLfloat *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_3fv(const GLchar* name, GLsizei count, const GLfloat *v0) const
+Shader::set_uniform_3fv(const GLchar* name, GLsizei count, const GLfloat *v0)
 {
   glUniform3fv(this->get_uniform(name), count, v0);
 }
@@ -335,7 +342,7 @@ Shader::set_uniform_3fv(const GLchar* name, GLsizei count, const GLfloat *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_4fv(const GLchar* name, GLsizei count, const GLfloat *v0) const
+Shader::set_uniform_4fv(const GLchar* name, GLsizei count, const GLfloat *v0)
 {
   glUniform4fv(this->get_uniform(name), count, v0);
 }
@@ -348,7 +355,7 @@ Shader::set_uniform_4fv(const GLchar* name, GLsizei count, const GLfloat *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_1iv(const GLchar* name, GLsizei count, const GLint *v0) const
+Shader::set_uniform_1iv(const GLchar* name, GLsizei count, const GLint *v0)
 {
   glUniform1iv(this->get_uniform(name), count, v0);
 }
@@ -361,7 +368,7 @@ Shader::set_uniform_1iv(const GLchar* name, GLsizei count, const GLint *v0) cons
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_2iv(const GLchar* name, GLsizei count, const GLint *v0) const
+Shader::set_uniform_2iv(const GLchar* name, GLsizei count, const GLint *v0)
 {
   glUniform2iv(this->get_uniform(name), count, v0);
 }
@@ -374,7 +381,7 @@ Shader::set_uniform_2iv(const GLchar* name, GLsizei count, const GLint *v0) cons
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_3iv(const GLchar* name, GLsizei count, const GLint *v0) const
+Shader::set_uniform_3iv(const GLchar* name, GLsizei count, const GLint *v0)
 {
   glUniform3iv(this->get_uniform(name), count, v0);
 }
@@ -387,7 +394,7 @@ Shader::set_uniform_3iv(const GLchar* name, GLsizei count, const GLint *v0) cons
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_4iv(const GLchar* name, GLsizei count, const GLint *v0) const
+Shader::set_uniform_4iv(const GLchar* name, GLsizei count, const GLint *v0)
 {
   glUniform4iv(this->get_uniform(name), count, v0);
 }
@@ -400,7 +407,7 @@ Shader::set_uniform_4iv(const GLchar* name, GLsizei count, const GLint *v0) cons
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_1uiv(const GLchar* name, GLsizei count, const GLuint *v0) const
+Shader::set_uniform_1uiv(const GLchar* name, GLsizei count, const GLuint *v0)
 {
   glUniform1uiv(this->get_uniform(name), count, v0);
 }
@@ -413,7 +420,7 @@ Shader::set_uniform_1uiv(const GLchar* name, GLsizei count, const GLuint *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_2uiv(const GLchar* name, GLsizei count, const GLuint *v0) const
+Shader::set_uniform_2uiv(const GLchar* name, GLsizei count, const GLuint *v0)
 {
   glUniform2uiv(this->get_uniform(name), count, v0);
 }
@@ -426,7 +433,7 @@ Shader::set_uniform_2uiv(const GLchar* name, GLsizei count, const GLuint *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_3uiv(const GLchar* name, GLsizei count, const GLuint *v0) const
+Shader::set_uniform_3uiv(const GLchar* name, GLsizei count, const GLuint *v0)
 {
   glUniform3uiv(this->get_uniform(name), count, v0);
 }
@@ -439,7 +446,7 @@ Shader::set_uniform_3uiv(const GLchar* name, GLsizei count, const GLuint *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_4uiv(const GLchar* name, GLsizei count, const GLuint *v0) const
+Shader::set_uniform_4uiv(const GLchar* name, GLsizei count, const GLuint *v0)
 {
   glUniform4uiv(this->get_uniform(name), count, v0);
 }
@@ -453,7 +460,7 @@ Shader::set_uniform_4uiv(const GLchar* name, GLsizei count, const GLuint *v0) co
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix2fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -467,7 +474,7 @@ Shader::set_uniform_matrix_2fv(const GLchar* name, GLsizei count, GLboolean tran
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix3fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -481,7 +488,7 @@ Shader::set_uniform_matrix_3fv(const GLchar* name, GLsizei count, GLboolean tran
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix4fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -495,7 +502,7 @@ Shader::set_uniform_matrix_4fv(const GLchar* name, GLsizei count, GLboolean tran
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_2x3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_2x3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix2x3fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -509,7 +516,7 @@ Shader::set_uniform_matrix_2x3fv(const GLchar* name, GLsizei count, GLboolean tr
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_3x2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_3x2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix3x2fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -523,7 +530,7 @@ Shader::set_uniform_matrix_3x2fv(const GLchar* name, GLsizei count, GLboolean tr
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_2x4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_2x4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix2x4fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -537,7 +544,7 @@ Shader::set_uniform_matrix_2x4fv(const GLchar* name, GLsizei count, GLboolean tr
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_4x2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_4x2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix4x2fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -551,7 +558,7 @@ Shader::set_uniform_matrix_4x2fv(const GLchar* name, GLsizei count, GLboolean tr
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_3x4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_3x4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix3x4fv(this->get_uniform(name), count, transpose, v0);
 }
@@ -565,7 +572,7 @@ Shader::set_uniform_matrix_3x4fv(const GLchar* name, GLsizei count, GLboolean tr
 		@param v0
 *********************************************/
 void
-Shader::set_uniform_matrix_4x3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const
+Shader::set_uniform_matrix_4x3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0)
 {
   glUniformMatrix4x3fv(this->get_uniform(name), count, transpose, v0);
 }

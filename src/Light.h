@@ -1,9 +1,10 @@
 #ifndef LIGHT_H
 #define LIGHT_H
-#define GLM_ENABLE_EXPERIMENTAL
 
 #include "gl_includes.h"
+#include "Model.h"
 #include <glm/glm.hpp>
+#include <vector>
 
 class Shader;
 class Scene;
@@ -36,9 +37,11 @@ struct Light {
   int shadowHeight = 600;
 
   bool isOn = true;
+  glm::mat4 projection;
+  glm::mat4 view;
 };
 
 void create_shadow_texture_for_light(Light& light, int width, int height);
-void render_shadows_from_light(const Light& light, Shader& shader, Scene& scene);
+void render_shadows_from_light(const Light& light, Shader& shader, std::vector<Model>& models);
 void render_light(const Light& light, Shader& shader, int index);
 #endif

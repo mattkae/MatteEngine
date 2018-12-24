@@ -218,7 +218,7 @@ static glm::mat4 get_viewport() {
 
 const static glm::mat4 VIEWPORT = get_viewport();
 
-void render_terrain(const Terrain& terrain, const Shader& shader, const Camera& camera) {
+void render_terrain(const Terrain& terrain, Shader& shader, Camera& camera) {
   camera.render(shader);
   glDisable(GL_DEPTH);
   glEnable (GL_BLEND);

@@ -32,21 +32,21 @@ Model::Model(std::string path, glm::mat4 transform) {
   mModel = transform;
 }
 
-void Model::render(const Shader& shader) {
+void Model::render(Shader& shader, bool withMaterial) {
   shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
   for (auto mesh : mMeshes) {
-    mesh.render(shader);
+    mesh.render(shader, withMaterial);
   }
 }
 
 void Model::process_node(aiNode* node, const aiScene* scene) {
-  for (int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
+  for (unsigned int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[meshIndex]];
 
     mMeshes.push_back(process_mesh(mesh, scene));
   }
 
-  for (int childIndex = 0; childIndex < node->mNumChildren; childIndex++) {
+  for (unsigned int childIndex = 0; childIndex < node->mNumChildren; childIndex++) {
     process_node(node->mChildren[childIndex], scene);
   }
 }
@@ -59,7 +59,7 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
   
   // Vertices
-  for (int vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
+  for (unsigned int vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++) {
     Vertex vertex;
     glm::vec3 position = glm::vec3(mesh->mVertices[vertexIndex].x,
 			  mesh->mVertices[vertexIndex].y,
@@ -85,10 +85,10 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
   
   // Indices
-  for (int faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++) {
+  for (unsigned int faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++) {
     aiFace face = mesh->mFaces[faceIndex];
     
-    for (int indexIndex = 0; indexIndex < face.mNumIndices; indexIndex++) {
+    for (unsigned int indexIndex = 0; indexIndex < face.mNumIndices; indexIndex++) {
       unsigned int index = face.mIndices[indexIndex];
       result.add_index(index);
     }
@@ -120,7 +120,7 @@ Material Model::process_material(aiMaterial* mat) {
     result.emissive = glm::vec4(emissive.r, emissive.g, emissive.b, emissive.a);
   }
 
-  for (int tindx = 0; tindx < mat->GetTextureCount(aiTextureType_DIFFUSE); tindx++) {
+  for (unsigned int tindx = 0; tindx < mat->GetTextureCount(aiTextureType_DIFFUSE); tindx++) {
     aiString str;
     mat->GetTexture(aiTextureType_DIFFUSE, tindx, &str);
 
@@ -135,7 +135,7 @@ Material Model::process_material(aiMaterial* mat) {
     }
   }
 
-  for (int tindx = 0; tindx < mat->GetTextureCount(aiTextureType_SPECULAR); tindx++) {
+  for (unsigned int tindx = 0; tindx < mat->GetTextureCount(aiTextureType_SPECULAR); tindx++) {
     aiString str;
     mat->GetTexture(aiTextureType_SPECULAR, tindx, &str);
 

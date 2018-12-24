@@ -3,7 +3,6 @@
 #include "gl_includes.h"
 #include <iostream>
 #include <string>
-#include <boost/program_options.hpp>
 #include "Constants.h"
 #include "Input.h"
 #include "Scene.h"
@@ -30,13 +29,12 @@ int main(int argc, const char* argv[]) {
 	double currentTime = 0, prevTime = 0, deltaTime;
 	Scene scene = SceneReader::load_scene("assets/scenes/scene.json");
 
-
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window)) {
 		currentTime = glfwGetTime();
 		deltaTime = currentTime - prevTime;
 		prevTime = currentTime;
-    
+
 		glfwPollEvents();
 		if (Input::getInstance()->is_down(GLFW_KEY_R)) {
 			scene = SceneReader::load_scene("assets/scenes/scene.json");
@@ -59,11 +57,13 @@ void initialize(int argc, const char* argv[]) {
     cerr << "Failed to initialize glfw." << endl;
     exit(EXIT_FAILURE);
   }
-  
+
   glfwSetErrorCallback(glfw_error_callback);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#ifdef __APPLE__
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
+#endif
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window = glfwCreateWindow(Constants.width, Constants.height, Constants.title.c_str(), nullptr, nullptr);
@@ -87,6 +87,6 @@ void cleanup() {
   if (window) {
     glfwDestroyWindow(window);
   }
-  
+
   glfwTerminate();
 }

@@ -18,7 +18,7 @@ class Model {
  public:
 	Model();
 	Model(std::string path, glm::mat4 transform = glm::mat4(1.0));
-	void render(const Shader& shader);
+	void render(Shader& shader, bool withMaterial = true);
 	void set_model(glm::mat4 model) { mModel = model; };
 	glm::mat4 get_model() const { return mModel; };
 	std::string get_path() const { return mPath; };

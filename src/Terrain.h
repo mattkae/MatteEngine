@@ -34,6 +34,6 @@ struct Terrain {
 
 Terrain generate_terrain(int size, int granularity, int permSize = 512, float maxHeight = DEFAULT_HEIGHT,float scaleFactor = DEFAULT_SCALE, float ampFactor = DEFAULT_AMP_FACTOR, float frequencyFactor = DEFAULT_FREQUENCY_FACTOR, int numOctaves = DEFAULT_NUM_OCTAVES);
 Terrain generate_terrain(GenerationParameters params);
-void render_terrain(const Terrain& terrain, const Shader& shader, const Camera& camera);
+void render_terrain(const Terrain& terrain, Shader& shader, const Camera& camera);
 
 #endif

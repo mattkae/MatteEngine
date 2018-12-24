@@ -11,6 +11,6 @@ struct Skybox {
 };
 
 bool initialize_skybox(Skybox& box, const char** paths);
-void render_skybox(const Skybox& box, const Shader& shader, const Camera& camera);
+void render_skybox(const Skybox& box, Shader& shader, const Camera& camera);
 
 #endif

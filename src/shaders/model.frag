@@ -67,7 +67,7 @@ float get_omni_visibility(const in Light light) {
 }
 
 float get_dir_visibility(const in int lightIndex) {
-  vec3 lP = vec3(oShadowCoord.xyz / oShadowCoord.w) * 0.5 + 0.5f;
+  vec3 lP = (vec3(oShadowCoord) * 0.5 + 0.5f) / oShadowCoord.w;
   return texture(uDirShadow, lP);
 }
 

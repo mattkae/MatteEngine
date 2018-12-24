@@ -4,13 +4,11 @@
 #include "Constants.h"
 #include "Scene.h"
 #include "ImageUtil.h"
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
-
-using namespace std;
 
 void create_shadow_texture_for_ominidirectional_light(Light& pLight, int width, int height) {
   glGenTextures(1, &pLight.shadowTexture);
@@ -21,7 +19,7 @@ void create_shadow_texture_for_ominidirectional_light(Light& pLight, int width, 
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC,  GL_LESS);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC,  GL_LEQUAL);
 
   for (int fidx = 0; fidx < 6; fidx++) {
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx, 0,
@@ -48,19 +46,18 @@ void create_shadow_texture_for_ominidirectional_light(Light& pLight, int width, 
 void create_shadow_texture_for_directional_light(Light& dLight, int width, int height) {
   glGenTextures(1, &dLight.shadowTexture);
   glBindTexture(GL_TEXTURE_2D, dLight.shadowTexture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
   
   glGenFramebuffers(1, &dLight.depthFbo);
   glBindFramebuffer(GL_FRAMEBUFFER, dLight.depthFbo);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight.shadowTexture, 0);
-  glDrawBuffer(GL_NONE);
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     cerr << "Shadow framebuffer is not okay for light." << endl;
@@ -69,6 +66,7 @@ void create_shadow_texture_for_directional_light(Light& dLight, int width, int h
     dLight.shadowHeight = height;
   }
 
+  glDrawBuffer(GL_NONE);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -81,35 +79,6 @@ void create_shadow_texture_for_light(Light& light, int width, int height) {
 	case Point:
 		create_shadow_texture_for_ominidirectional_light(light, width, height);
 	}
-}
-
-glm::mat4 get_light_projection(const Light& light) {
-	switch (light.type) {
-	case Directional:
-		return glm::ortho<float>(-10, 10, -10.f, 10, 1.f, 7.5f);
-	case Spot:
-		return glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
-	case Point:
-	default:
-		cerr << "Attempting to get a view for unknown light: " << light.type << endl;
-		return glm::mat4(0.0);
-	}
-	return glm::mat4(0);
-}
-
-glm::mat4 get_light_view(const Light& light) {
-  switch (light.type) {
-  case Directional:
-	return glm::lookAt(glm::vec3(-2, 4, -1),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));  //glm::lookAt(10.f * (-light.direction), (10.f * (-light.direction)) + light.direction, light.up);
-  case Spot:
-    return glm::lookAt(light.position, light.position + light.direction, light.up);
-  case Point:
-  default:
-    cerr << "Attempting to get a view for unknown light: " << light.type << endl;
-    return glm::mat4(0.0);
-  }
 }
 
 void render_omindirectional_shadows(const Light& light, Shader& shader, Scene& scene) {
@@ -175,34 +144,35 @@ void render_omindirectional_shadows(const Light& light, Shader& shader, Scene& s
   glViewport(0, 0, Constants.width, Constants.height);
 }
 
-void render_directional_shadows(const Light& light, Shader& shader, Scene& scene) {
-  glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glPolygonOffset(2.0f, 4.0f);
-  glViewport(0, 0, light.shadowWidth, light.shadowHeight);
-  glClearDepth(1.0);
-  glClear(GL_DEPTH_BUFFER_BIT);
+void render_directional_shadows(const Light& light, Shader& shader, std::vector<Model>& models) {
+	glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(2.0f, 4.0f);
+	glViewport(0, 0, light.shadowWidth, light.shadowHeight);
+	glClearDepth(1.0);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
-  auto view = get_light_view(light);
-  auto projection = get_light_projection(light);
-  shader.set_uniform_matrix_4fv("uViewProj", 1, GL_FALSE, glm::value_ptr(projection * view));
-  scene.render_models(shader);
+	shader.set_uniform_matrix_4fv("uView", 1, GL_FALSE, glm::value_ptr(light.view));
+	shader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE, glm::value_ptr(light.projection));
+	for (auto model : models) {
+		model.render(shader, false);
+	}
 
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glDisable(GL_POLYGON_OFFSET_FILL);
-  glViewport(0, 0, Constants.width, Constants.height);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	glViewport(0, 0, Constants.width, Constants.height);
 }
 
-void render_shadows_from_light(const Light& light, Shader& shader, Scene& scene) {
+void render_shadows_from_light(const Light& light, Shader& shader, std::vector<Model>& models) {
   if (!light.isOn || !light.usesShadows) return;
 
   switch (light.type) {
   case Point:
-    render_omindirectional_shadows(light, shader, scene);
+    //render_omindirectional_shadows(light, shader, scene);
     break;
   case Spot:
   case Directional:
-    render_directional_shadows(light, shader, scene);
+    render_directional_shadows(light, shader, models);
     break;
   default:
     cerr << "Rendering shadows for invalid light type " << light.type << "." << endl;
@@ -247,8 +217,7 @@ void render_point_light(const Light& light, Shader& shader, int index) {
 void render_directional_light(const Light& light, Shader& shader, const int index) {
   if (light.usesShadows) {
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-    glActiveTexture(GL_TEXTURE0);
-    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(get_light_projection(light) * get_light_view(light)));
+    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(light.projection));
   }
 
   glm::vec3 position = glm::vec3(light.direction);
@@ -264,12 +233,10 @@ void render_directional_light(const Light& light, Shader& shader, const int inde
 
 void render_spot_light(const Light& light, Shader& shader, const int index) {
   if (light.usesShadows) {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-	auto projection = get_light_projection(light);
-	auto view = get_light_view(light);
-	auto lightShadowMatrix = projection * view;
 	shader.set_uniform_1i("uDirShadow", 0);
-    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(lightShadowMatrix));
+    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(light.projection * light.view));
   }
 
   shader.set_uniform_3f(get_array_uniform(index, "uLights", "direction").c_str(), light.direction.x, light.direction.y, light.direction.z);

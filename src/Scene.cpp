@@ -9,11 +9,11 @@
 
 Scene::Scene() {
 	// Load shaders
-	mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
 	mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
-	mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-	mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
-	mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
+	mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
+	//mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
+	//mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
+	//mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
 	// Bind uniforms to proper index
 	mSceneShader.use();
@@ -21,7 +21,7 @@ Scene::Scene() {
 	mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
 	mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
-	// Load skybox
+	/* Load skybox
 	const char* skyboxPaths[6];
 	skyboxPaths[0] = "assets/skybox/cloudy/bluecloud_ft.jpg";
 	skyboxPaths[1] = "assets/skybox/cloudy/bluecloud_bk.jpg";
@@ -56,7 +56,12 @@ Scene::Scene() {
 	mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.5f);
 	mParticleEmitter.velocityFunction = [](float t) { return glm::vec3(t * t, t * t * t - t * t, t * t); };
 	mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.3f);
-	initialize_particle_emitter(mParticleEmitter);
+	initialize_particle_emitter(mParticleEmitter);*/
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR)
+	{
+		printf("Error DURING setup: %d\n", err);
+	}
 }
 
 Scene::~Scene() {
@@ -69,6 +74,14 @@ void Scene::set_models(std::vector<Model> models) {
 
 void Scene::set_lights(std::vector<Light> lights) {
 	this->mLights = lights;
+
+	// Depth visualizer
+	for (auto light : this->mLights) {
+		if (light.usesShadows) {
+			mDepthVisualizer = create_depth_visualizer(light.shadowTexture);
+			break;
+		}
+	}
 }
 
 void Scene::update(double dt) {
@@ -92,7 +105,13 @@ void Scene::render_shadows() {
   mShadowShader.use();
 
   for (auto light : mLights) {
-    render_shadows_from_light(light, mShadowShader, *this);
+    render_shadows_from_light(light, mShadowShader, mModels);
+  }
+
+  GLenum err;
+  while ((err = glGetError()) != GL_NO_ERROR)
+  {
+	  printf("Error DURING shadow pass: %d\n", err);
   }
 }
 
@@ -122,10 +141,17 @@ void Scene::render_scene() {
     render_light(mLights[lidx], mSceneShader, lidx);
   }
   render_models(mSceneShader);
+  render_depth_visualization(this->mDepthVisualizer);
+
+  GLenum err;
+  while ((err = glGetError()) != GL_NO_ERROR)
+  {
+	  printf("Error during scene pass: %i\n", err);
+  }
 }
 
-void Scene::render_models(const Shader& shader) {
+void Scene::render_models(Shader& shader, bool withMaterial) {
   for (auto model : mModels) {
-    model.render(mSceneShader);
+    model.render(mSceneShader, withMaterial);
   }
 }

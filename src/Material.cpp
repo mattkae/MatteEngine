@@ -8,7 +8,7 @@ using namespace std;
 
 const int MATERIAL_TEX_INDEX = 8;
 
-void render_material(const Material& material, const Shader& shader) {
+void render_material(const Material& material, Shader& shader) {
   shader.set_uniform_4f("uMaterial.diffuse", material.diffuse.r, material.diffuse.g, material.diffuse.b, material.diffuse.a);
   shader.set_uniform_4f("uMaterial.specular", material.specular.r, material.specular.g, material.specular.b, material.specular.a);
   shader.set_uniform_4f("uMaterial.emissive", material.emissive.r, material.emissive.g, material.emissive.b, material.emissive.a);
@@ -22,7 +22,7 @@ void render_material(const Material& material, const Shader& shader) {
     shader.set_uniform_1i("uMaterial.specularTex", MATERIAL_TEX_INDEX + 1);
   }
     
-  for (int tidx = 0; tidx < material.textures.size(); tidx++) {
+  for (unsigned int tidx = 0; tidx < material.textures.size(); tidx++) {
     glActiveTexture(GL_TEXTURE0 + MATERIAL_TEX_INDEX + tidx);
     glBindTexture(GL_TEXTURE_2D, material.textures[tidx].id);
 

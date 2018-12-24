@@ -43,5 +43,5 @@ void writeRGBTextureToFile(const char* filePath) {
 	fwrite(imageData, 1, imageSize, file);
 
 	fclose(file);
-	delete imageData;
+	delete[] imageData;
 }

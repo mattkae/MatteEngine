@@ -54,7 +54,7 @@ void create_shadow_texture_for_directional_light(Light& dLight, int width, int h
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
   glBindTexture(GL_TEXTURE_2D, 0);
-  
+
   glGenFramebuffers(1, &dLight.depthFbo);
   glBindFramebuffer(GL_FRAMEBUFFER, dLight.depthFbo);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dLight.shadowTexture, 0);
@@ -78,6 +78,8 @@ void create_shadow_texture_for_light(Light& light, int width, int height) {
 		break;
 	case Point:
 		create_shadow_texture_for_ominidirectional_light(light, width, height);
+  default:
+    break;
 	}
 }
 

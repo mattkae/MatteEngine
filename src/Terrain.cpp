@@ -33,10 +33,10 @@ static float grad(glm::vec2 in, glm::vec2 distance, const int* perm, const int p
 
 static float simplex(glm::vec2 in, const int* perm, const int permIndexCap) {
   float sample = 0; // Resultant value
-  
+
   glm::vec2 s0 = in + (in.x + in.y) * SKEW_FACTOR; // in point in Simplex-Space
   glm::vec2 v0 = glm::vec2(fast_floor(s0.x), fast_floor(s0.y)); // Lower left point in Simplex-Space
-  
+
   glm::vec2 p0 = v0 - (v0.x + v0.y) * UNSKEW_FACTOR; // Lower left point in IN-space
   glm::vec2 d0 = in - p0; // Distance between in point and lower left point, in IN-space
 
@@ -94,7 +94,7 @@ float calculate_height(glm::vec2 coordinate, float maxHeight, float scaleFactor,
 }
 
 static float random_float(float min, float max) {
-  return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min)))); 
+  return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min))));
 }
 
 glm::vec3 calculate_color(float height, float max) {
@@ -177,7 +177,7 @@ Terrain generate_terrain(int size, int granularity, int permSize, float maxHeigh
 	indices[index + 4] = idx + granularity - 1;
 	indices[index + 5] = idx - 1;
       }
-	
+
       index += 6;
     }
   }
@@ -197,12 +197,12 @@ Terrain generate_terrain(int size, int granularity, int permSize, float maxHeigh
   // Color
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (GLvoid*) (3 * sizeof(GLfloat)));
-  
+
   glBindVertexArray(0);
 
   terrain.numIndices = indexArrySize;
-  delete vertices;
-  delete indices;
+  delete[] vertices;
+  delete[] indices;
   return terrain;
 }
 
@@ -212,7 +212,7 @@ Terrain generate_terrain(GenerationParameters params) {
 
 static glm::mat4 get_viewport() {
   glm::mat4 s  = glm::scale(glm::mat4(1.0), glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f));
-  glm::mat4 t = glm::translate(glm::mat4(1.0), glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f)); 
+  glm::mat4 t = glm::translate(glm::mat4(1.0), glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f));
   return t * s;
 }
 
@@ -231,7 +231,7 @@ void render_terrain(const Terrain& terrain, Shader& shader, Camera& camera) {
   glBindVertexArray(terrain.vao);
   glDrawElements(GL_TRIANGLES, terrain.numIndices, GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
-  
+
   glEnable(GL_DEPTH);
   glDisable(GL_BLEND);
 }

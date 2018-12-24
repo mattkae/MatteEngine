@@ -218,8 +218,10 @@ void render_point_light(const Light& light, Shader& shader, int index) {
 
 void render_directional_light(const Light& light, Shader& shader, const int index) {
   if (light.usesShadows) {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(light.projection));
+    shader.set_uniform_1i("uDirShadow", 0);
+    shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(light.projection * light.view));
   }
 
   glm::vec3 position = glm::vec3(light.direction);
@@ -237,7 +239,7 @@ void render_spot_light(const Light& light, Shader& shader, const int index) {
   if (light.usesShadows) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-	shader.set_uniform_1i("uDirShadow", 0);
+    shader.set_uniform_1i("uDirShadow", 0);
     shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE, glm::value_ptr(light.projection * light.view));
   }
 

@@ -21,7 +21,7 @@ struct Particle {
 struct ParticleEmitter {
   std::vector<Particle> particles;
   std::queue<int> inactiveParticles;
-  
+
   glm::mat4 model = glm::mat4(1.0f);
   glm::vec3 color = glm::vec3(1.0f);
   glm::vec3 volumeDimension = glm::vec3(1.0f);
@@ -36,7 +36,7 @@ struct ParticleEmitter {
   glm::vec2 spawnRange = glm::vec2(0.5f, 2.5f);
   float timeUntilSpawn = 0;
   std::function<glm::vec3(float)> velocityFunction = [](float t) { return glm::vec3(0, t, 0); };
-  
+
   GLuint vao = 0;
   GLuint vbo = 0;
   GLuint ebo = 0;
@@ -45,6 +45,6 @@ struct ParticleEmitter {
 
 void initialize_particle_emitter(ParticleEmitter& particleEmitter);
 void update_particle_emitter(ParticleEmitter& particleEmitter, float deltaTime);
-void render_particle_emitter(const ParticleEmitter& particleEmitter, Shader& shader, const Camera& camera);
+void render_particle_emitter(const ParticleEmitter& particleEmitter, Shader& shader, Camera& camera);
 
 #endif

@@ -11,9 +11,9 @@ Scene::Scene() {
 	// Load shaders
 	mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
 	mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
-	//mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-	//mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
-	//mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
+	mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
+	mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
+	mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
 	// Bind uniforms to proper index
 	mSceneShader.use();
@@ -21,7 +21,7 @@ Scene::Scene() {
 	mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
 	mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
-	/* Load skybox
+	// Load skybox
 	const char* skyboxPaths[6];
 	skyboxPaths[0] = "assets/skybox/cloudy/bluecloud_ft.jpg";
 	skyboxPaths[1] = "assets/skybox/cloudy/bluecloud_bk.jpg";
@@ -56,7 +56,7 @@ Scene::Scene() {
 	mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.5f);
 	mParticleEmitter.velocityFunction = [](float t) { return glm::vec3(t * t, t * t * t - t * t, t * t); };
 	mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.3f);
-	initialize_particle_emitter(mParticleEmitter);*/
+	initialize_particle_emitter(mParticleEmitter);
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR)
 	{
@@ -65,7 +65,7 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-	
+
 }
 
 void Scene::set_models(std::vector<Model> models) {
@@ -120,8 +120,8 @@ void Scene::render_scene() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Skybox
-  //mSkyboxShader.use();
-  //render_skybox(mSkybox, mSkyboxShader, mCamera);
+  mSkyboxShader.use();
+  render_skybox(mSkybox, mSkyboxShader, mCamera);
 
   // Terrain
   //mTerrainShader.use();
@@ -141,7 +141,7 @@ void Scene::render_scene() {
     render_light(mLights[lidx], mSceneShader, lidx);
   }
   render_models(mSceneShader);
-  render_depth_visualization(this->mDepthVisualizer);
+  //render_depth_visualization(this->mDepthVisualizer);
 
   GLenum err;
   while ((err = glGetError()) != GL_NO_ERROR)

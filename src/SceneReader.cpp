@@ -87,7 +87,7 @@ void to_json(json& j, const Light& light) {
 glm::mat4 get_light_projection(const Light& light) {
 	switch (light.type) {
 	case Directional:
-		return glm::ortho<float>(-10, 10, -10.f, 10, 1.f, 7.5f);
+		return glm::ortho<float>(-10, 10, -10.f, 10, Constants.near, Constants.far);
 	case Spot:
 		return glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
 	case Point:
@@ -101,9 +101,15 @@ glm::mat4 get_light_projection(const Light& light) {
 glm::mat4 get_light_view(const Light& light) {
 	switch (light.type) {
 	case Directional:
-		return glm::lookAt(glm::vec3(-2, 4, -1),
+		/*return glm::lookAt(glm::vec3(0.0f, 10.f, 0.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));  //glm::lookAt(10.f * (-light.direction), (10.f * (-light.direction)) + light.direction, light.up);
+			glm::vec3(0.0f, 0.0f, 1.0f)
+		);*/
+		return glm::lookAt(
+			(-Constants.far / 2.0f) * light.direction,
+			-light.direction,
+			light.up
+		);
 	case Spot:
 		return glm::lookAt(light.position, light.position + light.direction, light.up);
 	case Point:

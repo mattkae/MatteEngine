@@ -1,5 +1,5 @@
 
-#version 430 core
+#version 410 core
 out vec4 FragColor;
 
 float near = 0.1;

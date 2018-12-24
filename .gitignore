@@ -6,3 +6,4 @@ flooids
 FluidSim/FluidSim/Debug/
 FluidSim/x64/*
 FluidSim/.vs
+build/*

@@ -18,10 +18,9 @@ void writeTextureToFile(const char* filePath) {
 	glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, imageData);
 
 	FILE* file;
-	auto error = fopen_s(&file, filePath, "wb");
-	if (error != 0) {
-		return;
-	}
+
+	file = fopen(filePath, "wb");
+
 	unsigned char bmpfileheader[fileHeaderSize] = { 'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0 };
 	unsigned char bmpinfoheader[infoHeaderSize] = { 40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0 };
 	unsigned char bmppad[4] = { 0,0,0,0 };

@@ -1,4 +1,4 @@
-#version 430
+#version 410
 
 #define MAX_LIGHTS 2
 #define MAX_DIR_LIGHT_SHADOWS 2

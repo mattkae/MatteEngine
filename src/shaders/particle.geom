@@ -1,4 +1,4 @@
-#version 430
+#version 410
 
 layout (trangles) in;
 

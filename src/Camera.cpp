@@ -39,7 +39,7 @@ void Camera::update(double dt) {
   }
   if (mMovementFlags & MovementFlag::PlusPitch) {
     mVs.pitch += dt * mMs.sensitivity;
-    
+
     if (mVs.pitch > mVs.maxPitch) {
       mVs.pitch = mVs.maxPitch;
     }
@@ -57,7 +57,7 @@ void Camera::update(double dt) {
   if (mMovementFlags & MovementFlag::MinusYaw) {
     mVs.yaw -= dt * mMs.sensitivity;
   }
-  
+
   mMovementFlags = 0;
 
   glm::vec3 frontTemp;
@@ -66,7 +66,7 @@ void Camera::update(double dt) {
   frontTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
   frontTemp.y = sin(glm::radians(pitch));
   frontTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-  
+
   mForward = glm::normalize(frontTemp);
   mRight = glm::normalize(glm::cross(mForward, WORLD_UP));
   mUp = glm::normalize(glm::cross(mRight, mForward));

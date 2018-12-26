@@ -72,7 +72,7 @@ Scene::Scene() {
     }
 }
 
-Scene::Scene(const char *jsonPath): Scene() { this->load_from_json(jsonPath); }
+Scene::Scene(const char *jsonPath) : Scene() { this->load_from_json(jsonPath); }
 
 Scene::~Scene() {}
 
@@ -127,32 +127,33 @@ void Scene::render_scene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Skybox
-    //mSkyboxShader.use();
-    //render_skybox(mSkybox, mSkyboxShader, mCamera);
+    mSkyboxShader.use();
+    render_skybox(mSkybox, mSkyboxShader, mCamera);
 
     // Terrain
-    //mTerrainShader.use();
-    //render_terrain(mTerrain, mTerrainShader, mCamera);
+    mTerrainShader.use();
+    render_terrain(mTerrain, mTerrainShader, mCamera);
 
     // Particles
-    // mParticleShader.use();
-    // render_particle_emitter(mParticleEmitter, mParticleShader, mCamera);
+    mParticleShader.use();
+    render_particle_emitter(mParticleEmitter, mParticleShader, mCamera);
 
     // Models
     mSceneShader.use();
     mCamera.render(mSceneShader);
+    glEnable(GL_DEPTH_TEST);
     mSceneShader.set_uniform_3f("uAmbient", 0.f, 0.f, 0.f);
     mSceneShader.set_uniform_1i("uNumLights", mLights.size());
 
     for (int lidx = 0; lidx < mLights.size(); lidx++) {
         render_light(mLights[lidx], mSceneShader, lidx);
     }
+
     render_models(mSceneShader);
-    // render_depth_visualization(this->mDepthVisualizer);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        printf("Error during scene pass: %i\n", err);
+        printf("Error during scene pass: %i, %s\n", err, glewGetErrorString(err));
     }
 }
 

@@ -220,7 +220,7 @@ const static glm::mat4 VIEWPORT = get_viewport();
 
 void render_terrain(const Terrain& terrain, Shader& shader, Camera& camera) {
   camera.render(shader);
-  glDisable(GL_DEPTH);
+  glEnable(GL_DEPTH_TEST);
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -232,6 +232,6 @@ void render_terrain(const Terrain& terrain, Shader& shader, Camera& camera) {
   glDrawElements(GL_TRIANGLES, terrain.numIndices, GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
 
-  glEnable(GL_DEPTH);
+  glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
 }

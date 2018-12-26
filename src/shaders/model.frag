@@ -11,6 +11,7 @@ struct Material {
     vec3 diffuseProperty;
     vec3 specularProperty;
     float shininess;
+    float opacity;
 
     int texCount;
     sampler2D diffuseTex;
@@ -78,12 +79,13 @@ void main() {
     vec3 normal = normalize(oNormal);
     vec4 diffuse = uMaterial.diffuse;
     vec4 specular = uMaterial.specular;
+    vec4 emissive = uMaterial.emissive;
     if (uMaterial.texCount > 0) {
         diffuse = texture(uMaterial.diffuseTex, oTexCoords);
         specular = texture(uMaterial.specularTex, oTexCoords);
     }
 
-    vec3 finalColor = uAmbient + uMaterial.emissive.rgb;
+    vec3 finalColor = uAmbient + emissive.rgb;
     for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {
         float visibility = 1.0;
 
@@ -99,7 +101,7 @@ void main() {
                                               viewDir, diffuse, specular);
     }
 
-    Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), 1.0);
+    Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), uMaterial.opacity);
 }
 
 vec3 get_color_from_light(Light light, vec3 normal, vec3 viewDir, vec4 diffuse,

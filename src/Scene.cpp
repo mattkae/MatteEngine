@@ -127,12 +127,12 @@ void Scene::render_scene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Skybox
-    mSkyboxShader.use();
-    render_skybox(mSkybox, mSkyboxShader, mCamera);
+    // mSkyboxShader.use();
+    // render_skybox(mSkybox, mSkyboxShader, mCamera);
 
     // Terrain
-    mTerrainShader.use();
-    render_terrain(mTerrain, mTerrainShader, mCamera);
+    // mTerrainShader.use();
+    // render_terrain(mTerrain, mTerrainShader, mCamera);
 
     // Particles
     mParticleShader.use();
@@ -142,6 +142,10 @@ void Scene::render_scene() {
     mSceneShader.use();
     mCamera.render(mSceneShader);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_DEPTH_TEST);
     mSceneShader.set_uniform_3f("uAmbient", 0.f, 0.f, 0.f);
     mSceneShader.set_uniform_1i("uNumLights", mLights.size());
 
@@ -150,10 +154,12 @@ void Scene::render_scene() {
     }
 
     render_models(mSceneShader);
+    glDisable(GL_BLEND);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        printf("Error during scene pass: %i, %s\n", err, glewGetErrorString(err));
+        printf("Error during scene pass: %i, %s\n", err,
+               glewGetErrorString(err));
     }
 }
 

@@ -1,7 +1,4 @@
-Important Items
-- Basic physics
-- Editor
-
-Extended Features
-- Add transparency to lighting
-- Optimize draw calls (multi and indirect)
+(1) Better load times for large models
+(2) Better draw times for large models
+(3) Fix bug with spots at large distances
+(4) Add terrain generation to the JSON

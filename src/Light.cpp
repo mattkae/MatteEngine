@@ -16,20 +16,16 @@ glm::mat4 get_light_projection(const Light &light) {
     case Directional:
         return glm::ortho<float>(-10, 10, -10.f, 10, Constants.near,
                                  Constants.far);
-    case Spot: {
-        auto perspective =
-            glm::perspective<float>(glm::radians(45.f), Constants.aspectRatio,
-                                    Constants.near, Constants.far);
-        print(perspective);
-        return perspective;
-    }
+    case Spot:
+        return glm::perspective<float>(glm::radians(45.f),
+                                       Constants.aspectRatio, Constants.near,
+                                       Constants.far);
     case Point:
     default:
         cerr << "Attempting to get a view for unknown light: " << light.type
              << endl;
         return glm::mat4(0.0);
     }
-    return glm::mat4(0);
 }
 
 glm::mat4 get_light_view(const Light &light) {
@@ -49,7 +45,6 @@ glm::mat4 get_light_view(const Light &light) {
         return glm::mat4(0.0);
     }
 }
-
 
 void to_json(json &j, const Light &light) {
     j = json{{"type", light.type},

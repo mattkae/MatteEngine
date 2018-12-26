@@ -2,11 +2,14 @@
 #define MODEL_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "Mesh.h"
 #include "Material.h"
-#include <vector>
+#include "Mesh.h"
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 struct aiNode;
 struct aiScene;
@@ -15,23 +18,25 @@ struct aiMaterial;
 class Shader;
 
 class Model {
- public:
-	Model();
-	Model(std::string path, glm::mat4 transform = glm::mat4(1.0));
-	void render(Shader& shader, bool withMaterial = true);
-	void set_model(glm::mat4 model) { mModel = model; };
-	glm::mat4 get_model() const { return mModel; };
-	std::string get_path() const { return mPath; };
- private:
-	void process_node(aiNode* node, const aiScene* scene);
-	Mesh process_mesh(aiMesh* mesh, const aiScene* scene);
-	Material process_material(aiMaterial* mat);
+  public:
+    Model();
+    void load_model(std::string path, glm::mat4 transform = glm::mat4(1.0));
+    void render(Shader &shader, bool withMaterial = true);
+    std::string get_path() const { return mPath; };
+    glm::mat4 mModel;
 
-	//  Mesh mMesh;
-	std::string mPath;
-	std::vector<Mesh> mMeshes;
-	glm::mat4 mModel;
-	std::string mDirectory;
+  private:
+    void process_node(aiNode *node, const aiScene *scene);
+    Mesh process_mesh(aiMesh *mesh, const aiScene *scene);
+    Material process_material(aiMaterial *mat);
+
+    std::string mPath;
+    std::vector<Mesh> mMeshes;
+    std::string mDirectory;
 };
+
+
+void to_json(json &j, const Model &model);
+void from_json(const json &j, Model &model);
 
 #endif

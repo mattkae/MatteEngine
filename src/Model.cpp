@@ -1,6 +1,7 @@
 #include "gl_includes.h"
 #include "Model.h"
 #include "Shader.h"
+#include "GlmUtility.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -10,10 +11,25 @@
 
 using namespace std;
 
+void to_json(json &j, const Model &model) {
+    j = json{{"path", model.get_path()},
+             {"transform", glm::mat4ToArray(model.mModel)}};
+}
+
+void from_json(const json &j, Model &model) {
+    std::string path;
+    std::vector<float> matrixArray;
+
+    j.at("path").get_to(path);
+    j.at("transform").get_to<std::vector<float>>(matrixArray);
+
+    model.load_model(path, glm::arrayToMat4(matrixArray));
+}
+
 Model::Model() {
 }
 
-Model::Model(std::string path, glm::mat4 transform) {
+void Model::load_model(std::string path, glm::mat4 transform) {
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
   

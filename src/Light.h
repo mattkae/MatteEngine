@@ -5,6 +5,10 @@
 #include "Model.h"
 #include <glm/glm.hpp>
 #include <vector>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 
 class Shader;
 class Scene;
@@ -40,6 +44,9 @@ struct Light {
   glm::mat4 projection;
   glm::mat4 view;
 };
+
+void to_json(json &j, const Light &light);
+void from_json(const json &j, Light &light);
 
 void create_shadow_texture_for_light(Light& light, int width, int height);
 void render_shadows_from_light(const Light& light, Shader& shader, std::vector<Model>& models);

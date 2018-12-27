@@ -148,7 +148,7 @@ Material Model::process_material(aiMaterial *mat) {
     }
 
     if (mat->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {
-	result.opacity = opacity;
+        result.opacity = opacity;
     }
 
     for (unsigned int tindx = 0;

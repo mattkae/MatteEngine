@@ -4,66 +4,64 @@
 using namespace std;
 
 Mesh::Mesh() {
-  mVao = 0;
-  mVbo = 0;
-  mEbo = 0;
+    mVao = 0;
+    mVbo = 0;
+    mEbo = 0;
 }
 
-Mesh::~Mesh() {
-  
-}
+Mesh::~Mesh() {}
 
 void Mesh::generate() {
-  // Generate our buffers
-  glGenVertexArrays(1, &this->mVao);
-  glGenBuffers(1, &this->mVbo);
-  glGenBuffers(1, &this->mEbo);
+    // Generate our buffers
+    glGenVertexArrays(1, &this->mVao);
+    glGenBuffers(1, &this->mVbo);
+    glGenBuffers(1, &this->mEbo);
 
-  // Bind data to VAO
-  glBindVertexArray(this->mVao);
+    // Bind data to VAO
+    glBindVertexArray(this->mVao);
 
-  // Put the vertex data into OpenGL
-  glBindBuffer(GL_ARRAY_BUFFER, this->mVbo);
-  glBufferData(GL_ARRAY_BUFFER, this->mVertices.size() * sizeof(Vertex), &this->mVertices[0], GL_STATIC_DRAW);
+    // Put the vertex data into OpenGL
+    glBindBuffer(GL_ARRAY_BUFFER, this->mVbo);
+    glBufferData(GL_ARRAY_BUFFER, this->mVertices.size() * sizeof(Vertex),
+                 &this->mVertices[0], GL_STATIC_DRAW);
 
-  // Put the index data into OpenGL
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->mEbo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->mIndices.size() * sizeof(GLuint), &this->mIndices[0], GL_STATIC_DRAW);
+    // Put the index data into OpenGL
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->mEbo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 this->mIndices.size() * sizeof(GLuint), &this->mIndices[0],
+                 GL_STATIC_DRAW);
 
-  // Position
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) 0);
+    // Position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (GLvoid *)0);
 
-  // Normal
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) offsetof(Vertex, normal));
+    // Normal
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (GLvoid *)offsetof(Vertex, normal));
 
-  // Texture Coordinate
-  glEnableVertexAttribArray(2);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) offsetof(Vertex, texCoords));
+    // Texture Coordinate
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (GLvoid *)offsetof(Vertex, texCoords));
 
-  // Unbind the VAO
-  glBindVertexArray(0);
+    // Unbind the VAO
+    glBindVertexArray(0);
 }
 
-void Mesh::render(Shader& shader, bool withMaterial) {
-	if (withMaterial) {
-		render_material(mMaterial, shader);
-	}
+void Mesh::render(Shader &shader, bool withMaterial) {
+    if (withMaterial) {
+        render_material(mMaterial, shader);
+    }
 
-  glBindVertexArray(this->mVao);
-  glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);
-  glBindVertexArray(0);
+    glBindVertexArray(this->mVao);
+    glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
-void Mesh::add_vertex(Vertex vertex) {
-  this->mVertices.push_back(vertex);
-}
+void Mesh::add_vertex(Vertex vertex) { this->mVertices.push_back(vertex); }
 
-void Mesh::add_index(GLint index) {
-  this->mIndices.push_back(index);
-}
+void Mesh::add_index(GLint index) { this->mIndices.push_back(index); }
 
-void Mesh::set_material(Material material) {
-  this->mMaterial = material;
-}
+void Mesh::set_material(Material material) { this->mMaterial = material; }

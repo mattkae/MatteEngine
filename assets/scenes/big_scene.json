@@ -1,0 +1,23 @@
+{
+  "lights": [
+    {
+        "type": 0,
+        "color": [0.25, 0.25, 0.25],
+        "direction": [0, -1, 0],
+        "up": [0, 0, 1],
+        "usesShadows": true,
+        "isOn": true
+    }
+  ],
+  "models": [
+    {
+        "path": "assets/building.obj",
+        "transform": [
+          0.01, 0, 0, 0,
+          0, 0.01, 0, 0,
+          0, 0, 0.01, 0,
+          0, 0, 0, 1
+        ]
+    }
+  ]
+}

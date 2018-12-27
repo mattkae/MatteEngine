@@ -1,4 +1,14 @@
 {
+  "terrain": {
+    "size": 1000,
+    "granularity": 500,
+    "permSize": 1000,
+    "minMaxHeight": 32,
+    "scaleFactor": 0.004,
+    "ampFactor": 0.6,
+    "frequencyFactor": 1.5,
+    "numOctaves": 64
+  },
   "lights": [
       {
           "type": 2,

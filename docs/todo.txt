@@ -1,4 +1,12 @@
-(1) Better load times for large models
-(2) Better draw times for large models
-(3) Fix bug with spots at large distances
-(4) Add terrain generation to the JSON
+- Sphere Object
+- GUI support
+- Cube Object
+- Resupport textures on objects
+- Load Models in a better way
+- Load Meshes and render them in a better way
+- Clean up some of the GLSL code
+- Fix anti-aliasing problems
+- Allow dynamically resizable windows that keeps original aspect ratio
+- Start messing aroud with basic water
+- With the terrain system, generate biomes
+- Add terrain generation to the json file

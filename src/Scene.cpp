@@ -37,18 +37,6 @@ Scene::Scene() {
     skyboxPaths[5] = "assets/skybox/cloudy/bluecloud_lf.jpg";
     initialize_skybox(mSkybox, skyboxPaths);
 
-    // Load terrain
-    GenerationParameters params;
-    params.size = 512;
-    params.granularity = 128;
-    params.permSize = 128;
-    params.minMaxHeight = 32;
-    params.scaleFactor = 0.004;
-    params.ampFactor = 0.5;
-    params.frequencyFactor = 2.0f;
-    params.numOctaves = 64;
-    mTerrain = generate_terrain(params);
-
     // Load particle
     mParticleEmitter.model = glm::scale(mParticleEmitter.model, glm::vec3(0.1));
     mParticleEmitter.numVertices = 3;
@@ -83,15 +71,19 @@ void to_json(json &j, const Scene &scene) {
 void from_json(const json &j, Scene &scene) {
     j.at("models").get_to<std::vector<Model>>(scene.mModels);
     j.at("lights").get_to<std::vector<Light>>(scene.mLights);
+    if (j.count("terrain") == 1) {
+        j.at("terrain").get_to<Terrain>(scene.mTerrain);
+    }
 }
 
 void Scene::load_from_json(const char *jsonPath) {
-    for (auto model: mModels) {
-	model.free_resources();
+    for (auto model : mModels) {
+        model.free_resources();
     }
     mLights.clear();
     mModels.clear();
-    
+    free_terrain(mTerrain);
+
     std::ifstream sceneFile(jsonPath);
     json sceneJson = json::parse(sceneFile);
     from_json(sceneJson, *this);
@@ -137,8 +129,10 @@ void Scene::render_scene() {
     render_skybox(mSkybox, mSkyboxShader, mCamera);
 
     // Terrain
-    // mTerrainShader.use();
-    // render_terrain(mTerrain, mTerrainShader, mCamera);
+    if (mTerrain.hasGenerated) {
+        mTerrainShader.use();
+        render_terrain(mTerrain, mTerrainShader, mCamera);
+    }
 
     // Particles
     mParticleShader.use();

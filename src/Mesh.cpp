@@ -16,6 +16,8 @@ void Mesh::free_resources() {
 	glDeleteBuffers(1, &this->mVbo);
 	glDeleteBuffers(1, &this->mEbo);
     }
+
+    mHasGenerated = false;
 }
 
 void Mesh::generate() {

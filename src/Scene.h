@@ -25,6 +25,7 @@ class Scene {
 	void update(double dt);
 	std::vector<Model> mModels;
 	std::vector<Light> mLights;
+	Terrain mTerrain;
  private:
 	void render_shadows();
 	void render_scene();
@@ -39,7 +40,6 @@ class Scene {
 	Camera mCamera;
   
 	Skybox mSkybox;
-	Terrain mTerrain;
 	ParticleEmitter mParticleEmitter;
 	DepthVisualizer mDepthVisualizer;
 };

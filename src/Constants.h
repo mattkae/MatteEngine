@@ -8,7 +8,7 @@ struct ApplicationConstants {
   float aspectRatio = (float)width / (float)height;
   std::string title = "Flooids";
 
-  float near = 0.0001f;
+  float near = 1.f;
   float far = 1000.f;
 };
 

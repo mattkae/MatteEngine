@@ -24,7 +24,7 @@ class Model {
     void render(Shader &shader, bool withMaterial = true);
     std::string get_path() const { return mPath; };
     glm::mat4 mModel;
-
+    void free_resources();
   private:
     void process_node(aiNode *node, const aiScene *scene);
     Mesh process_mesh(aiMesh *mesh, const aiScene *scene);

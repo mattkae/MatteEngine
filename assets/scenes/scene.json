@@ -17,12 +17,21 @@
   ],
   "models": [
     {
-        "path": "assets/Transparent.obj",
+        "path": "assets/sword/sword.obj",
         "transform": [
           1, 0, 0, 0,
           0, 1, 0, 0,
           0, 0, 1, 0,
           0, 0, 0, 1
+        ]
+    },
+    {
+        "path": "assets/Transparent.obj",
+        "transform": [
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 3, 1
         ]
     },
     {

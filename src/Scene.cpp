@@ -86,6 +86,12 @@ void from_json(const json &j, Scene &scene) {
 }
 
 void Scene::load_from_json(const char *jsonPath) {
+    for (auto model: mModels) {
+	model.free_resources();
+    }
+    mLights.clear();
+    mModels.clear();
+    
     std::ifstream sceneFile(jsonPath);
     json sceneJson = json::parse(sceneFile);
     from_json(sceneJson, *this);
@@ -127,8 +133,8 @@ void Scene::render_scene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Skybox
-    // mSkyboxShader.use();
-    // render_skybox(mSkybox, mSkyboxShader, mCamera);
+    mSkyboxShader.use();
+    render_skybox(mSkybox, mSkyboxShader, mCamera);
 
     // Terrain
     // mTerrainShader.use();

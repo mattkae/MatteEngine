@@ -28,6 +28,14 @@ void from_json(const json &j, Model &model) {
 
 Model::Model() {}
 
+void Model::free_resources() {
+    for (auto mesh: mMeshes) {
+	mesh.free_resources();
+    }
+    
+    mMeshes.clear();
+}
+
 void Model::load_model(std::string path, glm::mat4 transform) {
     Assimp::Importer importer;
     const aiScene *scene =

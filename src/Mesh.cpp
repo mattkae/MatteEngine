@@ -7,9 +7,16 @@ Mesh::Mesh() {
     mVao = 0;
     mVbo = 0;
     mEbo = 0;
+    mHasGenerated = false;
 }
 
-Mesh::~Mesh() {}
+void Mesh::free_resources() {
+    if (mHasGenerated) {
+	glDeleteVertexArrays(1, &this->mVao);
+	glDeleteBuffers(1, &this->mVbo);
+	glDeleteBuffers(1, &this->mEbo);
+    }
+}
 
 void Mesh::generate() {
     // Generate our buffers
@@ -48,6 +55,8 @@ void Mesh::generate() {
 
     // Unbind the VAO
     glBindVertexArray(0);
+
+    mHasGenerated = true;
 }
 
 void Mesh::render(Shader &shader, bool withMaterial) {

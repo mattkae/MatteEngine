@@ -8,7 +8,6 @@
 #include "Terrain.h"
 #include "Particle.h"
 #include "Constants.h"
-#include "DepthVisualizer.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -41,7 +40,6 @@ class Scene {
   
 	Skybox mSkybox;
 	ParticleEmitter mParticleEmitter;
-	DepthVisualizer mDepthVisualizer;
 };
 
 #endif

@@ -2,7 +2,7 @@
 #define TERRAIN_H
 #include "Camera.h"
 #include "Shader.h"
-#include "gl_includes.h"
+#include <GL/glew.h>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;

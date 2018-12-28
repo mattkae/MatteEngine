@@ -1,5 +1,6 @@
 #include "ImageUtil.h"
-#include "gl_includes.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 const int fileHeaderSize = 14;

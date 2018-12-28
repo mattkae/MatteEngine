@@ -1,6 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-#include "gl_includes.h"
+#include <GLFW/glfw3.h>
 
 struct KeyState {
   bool hasChanged = false;
@@ -14,7 +14,7 @@ class Input {
   bool is_just_down(int key);
   bool is_down(int key);
   bool is_just_up(int key);
-  
+
   static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
  private:
   static Input* mInstance;

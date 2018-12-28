@@ -3,7 +3,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Material.h"
-#include "gl_includes.h"
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
 

@@ -1,10 +1,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include "Constants.h"
 #include "Input.h"
 #include "Scene.h"
-#include "gl_includes.h"
-#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
 

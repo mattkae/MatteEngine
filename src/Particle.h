@@ -1,6 +1,6 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
-#include "gl_includes.h"
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include <functional>

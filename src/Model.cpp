@@ -1,7 +1,7 @@
 #include "Model.h"
 #include "GlmUtility.h"
 #include "Shader.h"
-#include "gl_includes.h"
+#include <GL/glew.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -32,7 +32,7 @@ void Model::free_resources() {
     for (auto mesh: mMeshes) {
 	mesh.free_resources();
     }
-    
+
     mMeshes.clear();
 }
 

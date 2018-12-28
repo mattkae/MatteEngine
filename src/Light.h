@@ -1,8 +1,8 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "gl_includes.h"
 #include "Model.h"
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include <nlohmann/json.hpp>

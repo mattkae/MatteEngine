@@ -240,7 +240,7 @@ void render_omindirectional_shadows(const Light &light, Shader &shader,
 }
 
 void render_directional_shadows(const Light &light, Shader &shader,
-                                std::vector<Model> &models) {
+                                Scene& scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -252,9 +252,10 @@ void render_directional_shadows(const Light &light, Shader &shader,
                                   glm::value_ptr(light.view));
     shader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE,
                                   glm::value_ptr(light.projection));
-    for (auto model : models) {
+    scene.render_models(shader, false);
+    /*for (auto model : models) {
         model.render(shader, false);
-    }
+	}*/
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
@@ -262,7 +263,7 @@ void render_directional_shadows(const Light &light, Shader &shader,
 }
 
 void render_shadows_from_light(const Light &light, Shader &shader,
-                               std::vector<Model> &models) {
+                               Scene& scene) {
     if (!light.isOn || !light.usesShadows)
         return;
 
@@ -272,7 +273,7 @@ void render_shadows_from_light(const Light &light, Shader &shader,
         break;
     case Spot:
     case Directional:
-        render_directional_shadows(light, shader, models);
+        render_directional_shadows(light, shader, scene);
         break;
     default:
         cerr << "Rendering shadows for invalid light type " << light.type << "."

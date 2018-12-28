@@ -111,7 +111,7 @@ void Scene::render_shadows() {
     mShadowShader.use();
 
     for (auto light : mLights) {
-        render_shadows_from_light(light, mShadowShader, mModels);
+        render_shadows_from_light(light, mShadowShader, *this);
     }
 
     GLenum err;

@@ -17,7 +17,7 @@ enum MovementFlag {
 };
 
 struct ProjectionSpec {
-  float fov    = 45.f;
+  float fov    = 60.f;
   float aspectRatio = Constants.aspectRatio;
   float near   = Constants.near;
   float far    = Constants.far;

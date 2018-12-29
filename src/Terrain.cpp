@@ -117,7 +117,7 @@ glm::vec3 calculate_color(float height, float max) {
     } else if (height > (-max) * 0.35f) {
         color = glm::vec3(0.925, 0.78, 0.68);
     } else {
-        color = glm::vec3(0.1, 0.4, 0.7);
+        color = glm::vec3(0.1, random_float(0.3f, 0.5f), random_float(0.8f, 1.f));
     }
 
     return color;

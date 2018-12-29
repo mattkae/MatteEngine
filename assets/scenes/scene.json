@@ -1,4 +1,12 @@
 {
+  "skybox": {
+    "front": "assets/skybox/cloudy/bluecloud_ft.jpg",
+    "back": "assets/skybox/cloudy/bluecloud_bk.jpg",
+    "up": "assets/skybox/cloudy/bluecloud_up.jpg",
+    "down": "assets/skybox/cloudy/bluecloud_dn.jpg",
+    "right": "assets/skybox/cloudy/bluecloud_rt.jpg",
+    "left": "assets/skybox/cloudy/bluecloud_lf.jpg"
+  },
   "terrain": {
     "size": 1000,
     "granularity": 500,

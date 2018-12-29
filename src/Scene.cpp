@@ -27,16 +27,6 @@ Scene::Scene() {
     mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
     mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
-    // Load skybox
-    const char *skyboxPaths[6];
-    skyboxPaths[0] = "assets/skybox/cloudy/bluecloud_ft.jpg";
-    skyboxPaths[1] = "assets/skybox/cloudy/bluecloud_bk.jpg";
-    skyboxPaths[2] = "assets/skybox/cloudy/bluecloud_up.jpg";
-    skyboxPaths[3] = "assets/skybox/cloudy/bluecloud_dn.jpg";
-    skyboxPaths[4] = "assets/skybox/cloudy/bluecloud_rt.jpg";
-    skyboxPaths[5] = "assets/skybox/cloudy/bluecloud_lf.jpg";
-    initialize_skybox(mSkybox, skyboxPaths);
-
     // Load particle
     mParticleEmitter.model = glm::scale(mParticleEmitter.model, glm::vec3(0.1));
     mParticleEmitter.numVertices = 3;
@@ -73,6 +63,9 @@ void from_json(const json &j, Scene &scene) {
     j.at("lights").get_to<std::vector<Light>>(scene.mLights);
     if (j.count("terrain") == 1) {
         j.at("terrain").get_to<Terrain>(scene.mTerrain);
+    }
+    if (j.count("skybox") == 1) {
+        j.at("skybox").get_to<Skybox>(scene.mSkybox);
     }
 }
 
@@ -125,8 +118,10 @@ void Scene::render_scene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Skybox
-    mSkyboxShader.use();
-    render_skybox(mSkybox, mSkyboxShader, mCamera);
+    if (mSkybox.isInited) {
+        mSkyboxShader.use();
+        render_skybox(mSkybox, mSkyboxShader, mCamera);
+    }
 
     // Terrain
     if (mTerrain.hasGenerated) {

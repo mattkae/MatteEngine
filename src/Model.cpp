@@ -58,7 +58,7 @@ void Model::load_model(std::string path, glm::mat4 transform) {
     mModel = transform;
 }
 
-void Model::render(Shader &shader, bool withMaterial) {
+void Model::render(const Shader &shader, bool withMaterial) const {
     shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE,
                                   glm::value_ptr(mModel));
     for (auto mesh : mMeshes) {

@@ -8,7 +8,7 @@ using namespace std;
 
 const int MATERIAL_TEX_INDEX = 8;
 
-void render_material(const Material& material, Shader& shader) {
+void render_material(const Shader& shader, const Material& material) {
   shader.set_uniform_4f("uMaterial.diffuse", material.diffuse.r, material.diffuse.g, material.diffuse.b, material.diffuse.a);
   shader.set_uniform_4f("uMaterial.specular", material.specular.r, material.specular.g, material.specular.b, material.specular.a);
   shader.set_uniform_4f("uMaterial.emissive", material.emissive.r, material.emissive.g, material.emissive.b, material.emissive.a);

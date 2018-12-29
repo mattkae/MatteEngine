@@ -45,6 +45,6 @@ struct ParticleEmitter {
 
 void initialize_particle_emitter(ParticleEmitter& particleEmitter);
 void update_particle_emitter(ParticleEmitter& particleEmitter, float deltaTime);
-void render_particle_emitter(const ParticleEmitter& particleEmitter, Shader& shader, Camera& camera);
+void render_particle_emitter(const ParticleEmitter& particleEmitter, const Shader& shader, const Camera& camera);
 
 #endif

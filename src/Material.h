@@ -20,6 +20,6 @@ struct Material {
     std::vector<Texture> textures;
 };
 
-void render_material(const Material &material, Shader &shader);
+void render_material(const Shader &shader, const Material &material);
 
 #endif

@@ -20,7 +20,7 @@ class Mesh {
     Mesh();
     void generate();
     void free_resources();
-    void render(Shader &shader, bool withMaterial = true);
+    void render(const Shader &shader, bool withMaterial = true) const;
     void add_vertex(Vertex vertex);
     void add_index(GLint index);
     void set_material(Material material);

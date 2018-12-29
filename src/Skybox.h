@@ -18,7 +18,7 @@ void to_json(json &j, const Skybox &skybox);
 void from_json(const json &j, Skybox &skybox);
 
 bool initialize_skybox(Skybox &box, std::string* paths);
-void render_skybox(const Skybox &box, Shader &shader, const Camera &camera);
+void render_skybox(const Skybox &box, const Shader &shader, const Camera &camera);
 void free_resources(Skybox &box);
 
 #endif

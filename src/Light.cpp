@@ -173,8 +173,8 @@ void create_shadow_texture_for_light(Light &light, int width, int height) {
     }
 }
 
-void render_omindirectional_shadows(const Light &light, Shader &shader,
-                                    Scene &scene) {
+void render_omindirectional_shadows(const Light &light, const Shader &shader,
+                                    const Scene &scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -239,8 +239,8 @@ void render_omindirectional_shadows(const Light &light, Shader &shader,
     glViewport(0, 0, Constants.width, Constants.height);
 }
 
-void render_directional_shadows(const Light &light, Shader &shader,
-                                Scene& scene) {
+void render_directional_shadows(const Light &light, const Shader &shader,
+                                const Scene& scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -262,8 +262,8 @@ void render_directional_shadows(const Light &light, Shader &shader,
     glViewport(0, 0, Constants.width, Constants.height);
 }
 
-void render_shadows_from_light(const Light &light, Shader &shader,
-                               Scene& scene) {
+void render_shadows_from_light(const Light &light, const Shader &shader,
+                               const Scene& scene) {
     if (!light.isOn || !light.usesShadows)
         return;
 
@@ -294,7 +294,7 @@ static string get_array_uniform(const int lightIndex, const char *attribute,
     return ss.str();
 }
 
-void render_point_light(const Light &light, Shader &shader, int index) {
+void render_point_light(const Light &light, const Shader &shader, const int index) {
     if (light.usesShadows) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
@@ -327,7 +327,7 @@ void render_point_light(const Light &light, Shader &shader, int index) {
     shader.set_uniform_2f("uFarNear", uFarNear.x, uFarNear.y);
 }
 
-void render_directional_light(const Light &light, Shader &shader,
+void render_directional_light(const Light &light, const Shader &shader,
                               const int index) {
     if (light.usesShadows) {
         glActiveTexture(GL_TEXTURE0);
@@ -358,7 +358,7 @@ void render_directional_light(const Light &light, Shader &shader,
         get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
 }
 
-void render_spot_light(const Light &light, Shader &shader, const int index) {
+void render_spot_light(const Light &light, const Shader &shader, const int index) {
     if (light.usesShadows) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
@@ -389,7 +389,7 @@ void render_spot_light(const Light &light, Shader &shader, const int index) {
         get_array_uniform(index, "uLights", "dropOff").c_str(), light.dropOff);
 }
 
-void render_light(const Light &light, Shader &shader, const int index) {
+void render_light(const Light &light, const Shader &shader, const int index) {
     if (!light.isOn) {
         return;
     }

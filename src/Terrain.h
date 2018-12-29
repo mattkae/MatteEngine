@@ -47,6 +47,6 @@ Terrain generate_terrain(int size, int granularity, int permSize = 512,
                          int numOctaves = DEFAULT_NUM_OCTAVES);
 Terrain generate_terrain(GenerationParameters params);
 void free_terrain(Terrain &terrain);
-void render_terrain(const Terrain &terrain, Shader &shader, Camera &camera);
+void render_terrain(const Terrain &terrain, const Shader &shader, const Camera &camera);
 
 #endif

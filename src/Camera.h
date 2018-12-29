@@ -49,7 +49,7 @@ class Camera {
 
   void set_movement_flag(MovementFlag flag);
   void update(double dt);
-  void render(Shader& shader);
+  void render(const Shader& shader) const;
  private:
   ProjectionSpec mPs;
   ViewSpec mVs;

@@ -21,7 +21,7 @@ class Model {
   public:
     Model();
     void load_model(std::string path, glm::mat4 transform = glm::mat4(1.0));
-    void render(Shader &shader, bool withMaterial = true);
+    void render(const Shader &shader, bool withMaterial = true) const;
     std::string get_path() const { return mPath; };
     glm::mat4 mModel;
     void free_resources();

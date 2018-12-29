@@ -19,8 +19,8 @@ class Scene {
     ~Scene();
 
     void load_from_json(const char *json);
-    void render();
-    void render_models(Shader &shader, bool withMaterial = true);
+    void render() const;
+    void render_models(const Shader &shader, bool withMaterial = true) const;
     void update(double dt);
     std::vector<Model> mModels;
     std::vector<Light> mLights;
@@ -28,8 +28,8 @@ class Scene {
     Skybox mSkybox;
 
   private:
-    void render_shadows();
-    void render_scene();
+    void render_shadows() const;
+    void render_scene() const;
 
     bool mUseShadows = true;
 

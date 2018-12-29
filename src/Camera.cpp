@@ -80,7 +80,7 @@ glm::mat4 Camera::get_projection() const {
   return glm::perspective(glm::radians(mPs.fov), mPs.aspectRatio, mPs.near, mPs.far);
 }
 
-void Camera::render(Shader& shader) {
+void Camera::render(const Shader& shader) const {
   shader.set_uniform_matrix_4fv("uVp", 1, GL_FALSE, glm::value_ptr(get_projection() * get_view()));
   shader.set_uniform_3f("uEye", mPos.x, mPos.y, mPos.z);
 }

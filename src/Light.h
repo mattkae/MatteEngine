@@ -49,6 +49,6 @@ void to_json(json &j, const Light &light);
 void from_json(const json &j, Light &light);
 
 void create_shadow_texture_for_light(Light& light, int width, int height);
-void render_shadows_from_light(const Light& light, Shader& shader, Scene& scene);
-void render_light(const Light& light, Shader& shader, int index);
+void render_shadows_from_light(const Light& light, const Shader& shader, const Scene& scene);
+void render_light(const Light& light, const Shader& shader, const int index);
 #endif

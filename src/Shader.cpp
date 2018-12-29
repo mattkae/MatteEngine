@@ -8,12 +8,6 @@
 
 Shader::Shader() {}
 
-/*********************************************
-        Create a shader program from the given shader paths.
-
-        @param vertexPath - Path to vertex shader.
-        @param fragmentPath - Path to fragment shader.
-*********************************************/
 Shader::Shader(const GLchar *vertexPath, const GLchar *fragmentPath,
                const GLchar *geomPath) {
     this->load(vertexPath, fragmentPath, geomPath);
@@ -54,9 +48,6 @@ GLuint loadShader(GLenum shaderType, const GLchar *path) {
     return shader;
 }
 
-/*********************************************
-Creates a shader from the given vertex and fragment programs
- ********************************************/
 void Shader::load(const GLchar *vertexPath, const GLchar *fragmentPath,
                   const GLchar *geomPath) {
     this->mProgram = glCreateProgram();
@@ -100,431 +91,178 @@ void Shader::load(const GLchar *vertexPath, const GLchar *fragmentPath,
         glDeleteShader(geometry);
 }
 
-/*********************************************
-                use this shader's program.
+void Shader::use() const { glUseProgram(this->mProgram); }
 
-                @return this - Shader object
-*********************************************/
-void Shader::use() { glUseProgram(this->mProgram); }
-
-/*********************************************
-                Returns the shader's program number.
-
-                @return shader program.
-*********************************************/
 GLuint Shader::get_program() { return this->mProgram; }
 
-/*********************************************
-                Return the location of the given name.
-
-                @param name - Tag being looked for.
-
-                @return location of uniform.
-*********************************************/
-GLint Shader::get_uniform(const GLchar *name) {
+GLint Shader::get_uniform(const GLchar *name) const {
     return glGetUniformLocation(this->mProgram, name);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-*********************************************/
-void Shader::set_uniform_1f(const GLchar *name, GLfloat v0) {
+void Shader::set_uniform_1f(const GLchar *name, GLfloat v0) const {
     glUniform1f(this->get_uniform(name), v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-*********************************************/
-void Shader::set_uniform_2f(const GLchar *name, GLfloat v0, GLfloat v1) {
+void Shader::set_uniform_2f(const GLchar *name, GLfloat v0, GLfloat v1) const {
     glUniform2f(this->get_uniform(name), v0, v1);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-                @param v2 - Third value.
-*********************************************/
 void Shader::set_uniform_3f(const GLchar *name, GLfloat v0, GLfloat v1,
-                            GLfloat v2) {
+                            GLfloat v2) const {
     glUniform3f(this->get_uniform(name), v0, v1, v2);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-                @param v2 - Third value.
-                @param v3 - Fourth value.
-*********************************************/
 void Shader::set_uniform_4f(const GLchar *name, GLfloat v0, GLfloat v1,
-                            GLfloat v2, GLfloat v3) {
+                            GLfloat v2, GLfloat v3) const {
     glUniform4f(this->get_uniform(name), v0, v1, v2, v3);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-*********************************************/
-void Shader::set_uniform_1i(const GLchar *name, GLint v0) {
+void Shader::set_uniform_1i(const GLchar *name, GLint v0) const {
     glUniform1i(this->get_uniform(name), v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-*********************************************/
-void Shader::set_uniform_2i(const GLchar *name, GLint v0, GLint v1) {
+void Shader::set_uniform_2i(const GLchar *name, GLint v0, GLint v1) const {
     glUniform2i(this->get_uniform(name), v0, v1);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-                @param v2 - Third value.
-*********************************************/
-void Shader::set_uniform_3i(const GLchar *name, GLint v0, GLint v1, GLint v2) {
+void Shader::set_uniform_3i(const GLchar *name, GLint v0, GLint v1,
+                            GLint v2) const {
     glUniform3i(this->get_uniform(name), v0, v1, v2);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-                @param v2 - Third value.
-                @param v3 - Fourth value.
-*********************************************/
 void Shader::set_uniform_4i(const GLchar *name, GLint v0, GLint v1, GLint v2,
-                            GLint v3) {
+                            GLint v3) const {
     glUniform4i(this->get_uniform(name), v0, v1, v2, v3);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-*********************************************/
-void Shader::set_uniform_1ui(const GLchar *name, GLuint v0) {
+void Shader::set_uniform_1ui(const GLchar *name, GLuint v0) const {
     glUniform1ui(this->get_uniform(name), v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-*********************************************/
-void Shader::set_uniform_2ui(const GLchar *name, GLuint v0, GLuint v1) {
+void Shader::set_uniform_2ui(const GLchar *name, GLuint v0, GLuint v1) const {
     glUniform2ui(this->get_uniform(name), v0, v1);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-                @param v2 - Third value.
-*********************************************/
 void Shader::set_uniform_3ui(const GLchar *name, GLuint v0, GLuint v1,
-                             GLuint v2) {
+                             GLuint v2) const {
     glUniform3ui(this->get_uniform(name), v0, v1, v2);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param v0 - First value.
-                @param v1 - Second value.
-                @param v2 - Third value.
-                @param v3 - Fourth value.
-*********************************************/
 void Shader::set_uniform_4ui(const GLchar *name, GLuint v0, GLuint v1,
-                             GLuint v2, GLuint v3) {
+                             GLuint v2, GLuint v3) const {
     glUniform4ui(this->get_uniform(name), v0, v1, v2, v3);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_1fv(const GLchar *name, GLsizei count,
-                             const GLfloat *v0) {
+                             const GLfloat *v0) const {
     glUniform1fv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_2fv(const GLchar *name, GLsizei count,
-                             const GLfloat *v0) {
+                             const GLfloat *v0) const {
     glUniform2fv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_3fv(const GLchar *name, GLsizei count,
-                             const GLfloat *v0) {
+                             const GLfloat *v0) const {
     glUniform3fv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_4fv(const GLchar *name, GLsizei count,
-                             const GLfloat *v0) {
+                             const GLfloat *v0) const {
     glUniform4fv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_1iv(const GLchar *name, GLsizei count,
-                             const GLint *v0) {
+                             const GLint *v0) const {
     glUniform1iv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_2iv(const GLchar *name, GLsizei count,
-                             const GLint *v0) {
+                             const GLint *v0) const {
     glUniform2iv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_3iv(const GLchar *name, GLsizei count,
-                             const GLint *v0) {
+                             const GLint *v0) const {
     glUniform3iv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_4iv(const GLchar *name, GLsizei count,
-                             const GLint *v0) {
+                             const GLint *v0) const {
     glUniform4iv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_1uiv(const GLchar *name, GLsizei count,
-                              const GLuint *v0) {
+                              const GLuint *v0) const {
     glUniform1uiv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_2uiv(const GLchar *name, GLsizei count,
-                              const GLuint *v0) {
+                              const GLuint *v0) const {
     glUniform2uiv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_3uiv(const GLchar *name, GLsizei count,
-                              const GLuint *v0) {
+                              const GLuint *v0) const {
     glUniform3uiv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param v0
-*********************************************/
 void Shader::set_uniform_4uiv(const GLchar *name, GLsizei count,
-                              const GLuint *v0) {
+                              const GLuint *v0) const {
     glUniform4uiv(this->get_uniform(name), count, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_2fv(const GLchar *name, GLsizei count,
-                                    GLboolean transpose, const GLfloat *v0) {
+                                    GLboolean transpose,
+                                    const GLfloat *v0) const {
     glUniformMatrix2fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_3fv(const GLchar *name, GLsizei count,
-                                    GLboolean transpose, const GLfloat *v0) {
+                                    GLboolean transpose,
+                                    const GLfloat *v0) const {
     glUniformMatrix3fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_4fv(const GLchar *name, GLsizei count,
-                                    GLboolean transpose, const GLfloat *v0) {
+                                    GLboolean transpose,
+                                    const GLfloat *v0) const {
     glUniformMatrix4fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_2x3fv(const GLchar *name, GLsizei count,
-                                      GLboolean transpose, const GLfloat *v0) {
+                                      GLboolean transpose,
+                                      const GLfloat *v0) const {
     glUniformMatrix2x3fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_3x2fv(const GLchar *name, GLsizei count,
-                                      GLboolean transpose, const GLfloat *v0) {
+                                      GLboolean transpose,
+                                      const GLfloat *v0) const {
     glUniformMatrix3x2fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_2x4fv(const GLchar *name, GLsizei count,
-                                      GLboolean transpose, const GLfloat *v0) {
+                                      GLboolean transpose,
+                                      const GLfloat *v0) const {
     glUniformMatrix2x4fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_4x2fv(const GLchar *name, GLsizei count,
-                                      GLboolean transpose, const GLfloat *v0) {
+                                      GLboolean transpose,
+                                      const GLfloat *v0) const {
     glUniformMatrix4x2fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_3x4fv(const GLchar *name, GLsizei count,
-                                      GLboolean transpose, const GLfloat *v0) {
+                                      GLboolean transpose,
+                                      const GLfloat *v0) const {
     glUniformMatrix3x4fv(this->get_uniform(name), count, transpose, v0);
 }
 
-/*********************************************
-                Set the value of the given tag in the shader.
-
-                @param name - Tag being looked for.
-                @param count
-                @param transpose
-                @param v0
-*********************************************/
 void Shader::set_uniform_matrix_4x3fv(const GLchar *name, GLsizei count,
-                                      GLboolean transpose, const GLfloat *v0) {
+                                      GLboolean transpose,
+                                      const GLfloat *v0) const {
     glUniformMatrix4x3fv(this->get_uniform(name), count, transpose, v0);
 }

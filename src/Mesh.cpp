@@ -61,9 +61,9 @@ void Mesh::generate() {
     mHasGenerated = true;
 }
 
-void Mesh::render(Shader &shader, bool withMaterial) {
+void Mesh::render(const Shader &shader, bool withMaterial) const {
     if (withMaterial) {
-        render_material(mMaterial, shader);
+        render_material(shader, mMaterial);
     }
 
     glBindVertexArray(this->mVao);

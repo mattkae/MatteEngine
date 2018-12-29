@@ -93,12 +93,12 @@ void Scene::update(double dt) {
     update_particle_emitter(mParticleEmitter, dt);
 }
 
-void Scene::render() {
+void Scene::render() const {
     render_shadows();
     render_scene();
 }
 
-void Scene::render_shadows() {
+void Scene::render_shadows() const {
     if (!mUseShadows)
         return;
     mShadowShader.use();
@@ -113,7 +113,7 @@ void Scene::render_shadows() {
     }
 }
 
-void Scene::render_scene() {
+void Scene::render_scene() const {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -158,7 +158,7 @@ void Scene::render_scene() {
     }
 }
 
-void Scene::render_models(Shader &shader, bool withMaterial) {
+void Scene::render_models(const Shader &shader, bool withMaterial) const {
     for (auto model : mModels) {
         model.render(mSceneShader, withMaterial);
     }

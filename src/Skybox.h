@@ -12,13 +12,13 @@ struct Skybox {
     GLuint texture;
     GLuint vao, vbo, ebo;
     bool isInited = false;
+
+    bool generate(std::string* paths);
+    void render(const Shader &shader, const Camera &camera) const;
+    void free();
 };
 
 void to_json(json &j, const Skybox &skybox);
 void from_json(const json &j, Skybox &skybox);
-
-bool initialize_skybox(Skybox &box, std::string* paths);
-void render_skybox(const Skybox &box, const Shader &shader, const Camera &camera);
-void free_resources(Skybox &box);
 
 #endif

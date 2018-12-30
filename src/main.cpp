@@ -11,7 +11,7 @@
 using namespace std;
 
 // Window variables
-const char *WINDOWm_TITLE = "Fluid Simulator";
+const char *WINDOWm_TITLE = "Matte 0.0.1";
 GLFWwindow *window = nullptr;
 
 void initialize(int argc, const char *argv[]);
@@ -26,7 +26,7 @@ int main(int argc, const char *argv[]) {
 
     double currentTime = 0, prevTime = 0, deltaTime;
     Scene scene("assets/scenes/scene.json");
-
+    
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(window)) {
         currentTime = glfwGetTime();

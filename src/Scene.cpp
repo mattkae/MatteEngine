@@ -120,7 +120,7 @@ void Scene::render_scene() const {
     // Skybox
     if (mSkybox.isInited) {
         mSkyboxShader.use();
-        render_skybox(mSkybox, mSkyboxShader, mCamera);
+        mSkybox.render(mSkyboxShader, mCamera);
     }
 
     // Terrain

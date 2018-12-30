@@ -22,12 +22,12 @@ void from_json(const json &j, Skybox &skybox) {
     j.at("down").get_to(skyboxPaths[3]);
     j.at("right").get_to(skyboxPaths[4]);
     j.at("left").get_to(skyboxPaths[5]);
-    initialize_skybox(skybox, skyboxPaths);
+    skybox.generate(skyboxPaths);
 }
 
-bool initialize_skybox(Skybox &box, std::string *paths) {
-    glGenTextures(1, &box.texture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, box.texture);
+bool Skybox::generate(std::string *paths) {
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -59,19 +59,19 @@ bool initialize_skybox(Skybox &box, std::string *paths) {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     // Generate buffers
-    glGenVertexArrays(1, &box.vao);
-    glGenBuffers(1, &box.vbo);
-    glGenBuffers(1, &box.ebo);
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
-    glBindVertexArray(box.vao);
+    glBindVertexArray(vao);
 
     // Vertex data
-    glBindBuffer(GL_ARRAY_BUFFER, box.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(GLfloat),
                  &vertices[0], GL_STATIC_DRAW);
 
     // Index data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box.ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(GLuint),
                  &indices[0], GL_STATIC_DRAW);
 
@@ -82,14 +82,14 @@ bool initialize_skybox(Skybox &box, std::string *paths) {
 
     glBindVertexArray(0);
 
-    box.isInited = true;
+    isInited = true;
 
     return true;
 }
 
-void render_skybox(const Skybox &box, const Shader &shader, const Camera &camera) {
+void Skybox::render(const Shader &shader, const Camera &camera) const {
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, box.texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
     glDisable(GL_DEPTH_TEST);
 
     glm::mat4 projection = glm::inverse(camera.get_projection());
@@ -99,19 +99,19 @@ void render_skybox(const Skybox &box, const Shader &shader, const Camera &camera
                                   glm::value_ptr(projection));
     shader.set_uniform_matrix_3fv("uView", 1, GL_FALSE, glm::value_ptr(view));
 
-    glBindVertexArray(box.vao);
+    glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     glEnable(GL_DEPTH_TEST);
 }
 
-void free_resources(Skybox &box) {
-    if (box.isInited) {
-        glDeleteVertexArrays(1, &box.vao);
-        glDeleteBuffers(1, &box.vbo);
-        glDeleteBuffers(1, &box.ebo);
+void Skybox::free() {
+    if (isInited) {
+        glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &vbo);
+        glDeleteBuffers(1, &ebo);
     }
 
-    box.isInited = false;
+    isInited = false;
 }

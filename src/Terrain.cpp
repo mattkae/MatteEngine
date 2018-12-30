@@ -117,7 +117,8 @@ glm::vec3 calculate_color(float height, float max) {
     } else if (height > (-max) * 0.35f) {
         color = glm::vec3(0.925, 0.78, 0.68);
     } else {
-        color = glm::vec3(0.1, random_float(0.3f, 0.5f), random_float(0.8f, 1.f));
+        color =
+            glm::vec3(0.1, random_float(0.3f, 0.5f), random_float(0.8f, 1.f));
     }
 
     return color;
@@ -259,7 +260,8 @@ static glm::mat4 get_viewport() {
 
 const static glm::mat4 VIEWPORT = get_viewport();
 
-void render_terrain(const Terrain &terrain, const Shader &shader, const Camera &camera) {
+void render_terrain(const Terrain &terrain, const Shader &shader,
+                    const Camera &camera) {
     camera.render(shader);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);

@@ -71,8 +71,7 @@ void from_json(const json &j, Light &light) {
     j.at("color").get_to<std::vector<float>>(color);
     j.at("usesShadows").get_to(light.usesShadows);
     if (light.usesShadows) {
-        create_shadow_texture_for_light(light, Constants.width,
-                                        Constants.height);
+        light.generate(Constants.width, Constants.height);
     }
     j.at("isOn").get_to(light.isOn);
     light.color = glm::arrayToVec3(color);
@@ -98,10 +97,10 @@ void from_json(const json &j, Light &light) {
     light.view = get_light_view(light);
 }
 
-void create_shadow_texture_for_ominidirectional_light(Light &pLight, int width,
-                                                      int height) {
-    glGenTextures(1, &pLight.shadowTexture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, pLight.shadowTexture);
+void Light::create_shadow_texture_for_omnidirectional_light(int width,
+                                                             int height) {
+    glGenTextures(1, &shadowTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexture);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -120,19 +119,18 @@ void create_shadow_texture_for_ominidirectional_light(Light &pLight, int width,
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     // Generate the framebuffer for the shadow
-    glGenFramebuffers(1, &pLight.depthFbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, pLight.depthFbo);
+    glGenFramebuffers(1, &depthFbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);
     glDrawBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    pLight.shadowWidth = width;
-    pLight.shadowHeight = height;
+    shadowWidth = width;
+    shadowHeight = height;
 }
 
-void create_shadow_texture_for_directional_light(Light &dLight, int width,
-                                                 int height) {
-    glGenTextures(1, &dLight.shadowTexture);
-    glBindTexture(GL_TEXTURE_2D, dLight.shadowTexture);
+void Light::create_shadow_texture_for_directional_light(int width, int height) {
+    glGenTextures(1, &shadowTexture);
+    glBindTexture(GL_TEXTURE_2D, shadowTexture);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -144,47 +142,51 @@ void create_shadow_texture_for_directional_light(Light &dLight, int width,
                  GL_DEPTH_COMPONENT, GL_FLOAT, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    glGenFramebuffers(1, &dLight.depthFbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, dLight.depthFbo);
+    glGenFramebuffers(1, &depthFbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
-                           dLight.shadowTexture, 0);
+                           shadowTexture, 0);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         cerr << "Shadow framebuffer is not okay for light." << endl;
     } else {
-        dLight.shadowWidth = width;
-        dLight.shadowHeight = height;
+        shadowWidth = width;
+        shadowHeight = height;
     }
 
     glDrawBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void create_shadow_texture_for_light(Light &light, int width, int height) {
-    switch (light.type) {
+bool Light::generate(int width, int height) {
+    switch (type) {
     case Spot:
     case Directional:
-        create_shadow_texture_for_directional_light(light, width, height);
+        create_shadow_texture_for_directional_light(width, height);
         break;
     case Point:
-        create_shadow_texture_for_ominidirectional_light(light, width, height);
+        create_shadow_texture_for_omnidirectional_light(width, height);
+        break;
     default:
         break;
     }
+
+    hasGenerated = true;
+    return true;
 }
 
-void render_omindirectional_shadows(const Light &light, const Shader &shader,
-                                    const Scene &scene) {
-    glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
+void Light::render_omindirectional_shadows(const Shader &shader,
+                                           const Scene &scene) const {
+    glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
-    glViewport(0, 0, light.shadowWidth, light.shadowHeight);
+    glViewport(0, 0, shadowWidth, shadowHeight);
     glClearDepth(1.0);
 
     for (int fidx = 0; fidx < 6; fidx++) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                                GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx,
-                               light.shadowTexture, 0);
+                               shadowTexture, 0);
         glClear(GL_DEPTH_BUFFER_BIT);
 
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -225,7 +227,7 @@ void render_omindirectional_shadows(const Light &light, const Shader &shader,
         }
 
         glm::mat4 view =
-            glm::lookAt(light.position, light.position + currentDirection, up);
+            glm::lookAt(position, position + currentDirection, up);
         glm::mat4 proj =
             glm::perspective(glm::radians(45.f), Constants.aspectRatio,
                              Constants.near, Constants.far);
@@ -239,44 +241,40 @@ void render_omindirectional_shadows(const Light &light, const Shader &shader,
     glViewport(0, 0, Constants.width, Constants.height);
 }
 
-void render_directional_shadows(const Light &light, const Shader &shader,
-                                const Scene& scene) {
-    glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
+void Light::render_directional_shadows(const Shader &shader,
+                                       const Scene &scene) const {
+    glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
-    glViewport(0, 0, light.shadowWidth, light.shadowHeight);
+    glViewport(0, 0, shadowWidth, shadowHeight);
     glClearDepth(1.0);
     glClear(GL_DEPTH_BUFFER_BIT);
 
     shader.set_uniform_matrix_4fv("uView", 1, GL_FALSE,
-                                  glm::value_ptr(light.view));
+                                  glm::value_ptr(view));
     shader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE,
-                                  glm::value_ptr(light.projection));
+                                  glm::value_ptr(projection));
     scene.render_models(shader, false);
-    /*for (auto model : models) {
-        model.render(shader, false);
-	}*/
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
     glViewport(0, 0, Constants.width, Constants.height);
 }
 
-void render_shadows_from_light(const Light &light, const Shader &shader,
-                               const Scene& scene) {
-    if (!light.isOn || !light.usesShadows)
+void Light::render_shadows(const Shader &shader, const Scene &scene) const {
+    if (!isOn || !usesShadows)
         return;
 
-    switch (light.type) {
+    switch (this->type) {
     case Point:
         // render_omindirectional_shadows(light, shader, scene);
         break;
     case Spot:
     case Directional:
-        render_directional_shadows(light, shader, scene);
+        render_directional_shadows(shader, scene);
         break;
     default:
-        cerr << "Rendering shadows for invalid light type " << light.type << "."
+        cerr << "Rendering shadows for invalid light type " << type << "."
              << endl;
         break;
     }
@@ -294,25 +292,25 @@ static string get_array_uniform(const int lightIndex, const char *attribute,
     return ss.str();
 }
 
-void render_point_light(const Light &light, const Shader &shader, const int index) {
-    if (light.usesShadows) {
+void Light::render_point_light(const Shader &shader, const int index) const {
+    if (usesShadows) {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
+        glBindTexture(GL_TEXTURE_2D, shadowTexture);
     }
 
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "direction").c_str(), 0, 0, 0);
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "position").c_str(),
-        light.position.x, light.position.y, light.position.z);
+        position.x, position.y, position.z);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "constant").c_str(),
-        light.constant);
+        constant);
     shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(),
-                          light.linear);
+                          linear);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "quadratic").c_str(),
-        light.quadratic);
+        quadratic);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
     shader.set_uniform_1f(
@@ -327,22 +325,22 @@ void render_point_light(const Light &light, const Shader &shader, const int inde
     shader.set_uniform_2f("uFarNear", uFarNear.x, uFarNear.y);
 }
 
-void render_directional_light(const Light &light, const Shader &shader,
-                              const int index) {
-    if (light.usesShadows) {
+void Light::render_directional_light(const Shader &shader,
+                                     const int index) const {
+    if (usesShadows) {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
+        glBindTexture(GL_TEXTURE_2D, shadowTexture);
         shader.set_uniform_1i("uDirShadow", 0);
         shader.set_uniform_matrix_4fv(
             "uShadowMatrix", 1, GL_FALSE,
-            glm::value_ptr(light.projection * light.view));
+            glm::value_ptr(projection * view));
     }
 
-    glm::vec3 position = glm::vec3(light.direction);
+    glm::vec3 position = glm::vec3(direction);
     position *= -Constants.far;
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "direction").c_str(),
-        light.direction.x, light.direction.y, light.direction.z);
+        direction.x, direction.y, direction.z);
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "position").c_str(), position.x,
         position.y, position.z);
@@ -358,57 +356,64 @@ void render_directional_light(const Light &light, const Shader &shader,
         get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
 }
 
-void render_spot_light(const Light &light, const Shader &shader, const int index) {
-    if (light.usesShadows) {
+void Light::render_spot_light(const Shader &shader, const int index) const {
+    if (usesShadows) {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
+        glBindTexture(GL_TEXTURE_2D, shadowTexture);
         shader.set_uniform_1i("uDirShadow", 0);
         shader.set_uniform_matrix_4fv(
             "uShadowMatrix", 1, GL_FALSE,
-            glm::value_ptr(light.projection * light.view));
+            glm::value_ptr(projection * view));
     }
 
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "direction").c_str(),
-        light.direction.x, light.direction.y, light.direction.z);
+        direction.x, direction.y, direction.z);
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "position").c_str(),
-        light.position.x, light.position.y, light.position.z);
+        position.x, position.y, position.z);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "constant").c_str(),
-        light.constant);
+        constant);
     shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(),
-                          light.linear);
+                          linear);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "quadratic").c_str(),
-        light.quadratic);
+        quadratic);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "cosineCutOff").c_str(),
-        light.cosineCutOff);
+        cosineCutOff);
     shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "dropOff").c_str(), light.dropOff);
+        get_array_uniform(index, "uLights", "dropOff").c_str(), dropOff);
 }
 
-void render_light(const Light &light, const Shader &shader, const int index) {
-    if (!light.isOn) {
+void Light::render(const Shader &shader, const int index) const {
+    if (!isOn) {
         return;
     }
 
     shader.set_uniform_3f(get_array_uniform(index, "uLights", "color").c_str(),
-                          light.color.x, light.color.y, light.color.z);
+                          color.x, color.y, color.z);
 
-    switch (light.type) {
+    switch (type) {
     case Directional:
-        render_directional_light(light, shader, index);
+        render_directional_light(shader, index);
         break;
     case Point:
-        render_point_light(light, shader, index);
+        render_point_light(shader, index);
         break;
     case Spot:
-        render_spot_light(light, shader, index);
+        render_spot_light(shader, index);
         break;
     default:
-        cerr << "Unknown light type: " << light.type << endl;
+        cerr << "Unknown light type: " << type << endl;
         break;
+    }
+}
+
+void Light::free() {
+    if (hasGenerated) {
+	glDeleteTextures(1, &shadowTexture);
+	glDeleteFramebuffers(1, &depthFbo);
     }
 }

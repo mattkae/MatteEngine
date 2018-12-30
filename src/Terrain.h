@@ -27,7 +27,7 @@ struct GenerationParameters {
     int numOctaves = DEFAULT_NUM_OCTAVES;
 };
 
-struct  Terrain {
+struct Terrain {
  public:
     bool generate(const GenerationParameters& params);
     void render(const Shader& shader, const Camera &camera) const;

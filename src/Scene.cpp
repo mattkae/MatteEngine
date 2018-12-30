@@ -73,8 +73,13 @@ void Scene::load_from_json(const char *jsonPath) {
     for (auto model : mModels) {
         model.free_resources();
     }
-    mLights.clear();
     mModels.clear();
+
+    for (auto light: mLights) {
+	light.free();
+    }
+    mLights.clear();
+    
     mSkybox.free();
     mTerrain.free();
 
@@ -105,7 +110,7 @@ void Scene::render_shadows() const {
     mShadowShader.use();
 
     for (auto light : mLights) {
-        render_shadows_from_light(light, mShadowShader, *this);
+        light.render_shadows(mShadowShader, *this);
     }
 
     GLenum err;
@@ -146,7 +151,7 @@ void Scene::render_scene() const {
     mSceneShader.set_uniform_1i("uNumLights", mLights.size());
 
     for (int lidx = 0; lidx < mLights.size(); lidx++) {
-        render_light(mLights[lidx], mSceneShader, lidx);
+        mLights[lidx].render(mSceneShader, lidx);
     }
 
     render_models(mSceneShader);

@@ -75,7 +75,8 @@ void Scene::load_from_json(const char *jsonPath) {
     }
     mLights.clear();
     mModels.clear();
-    free_terrain(mTerrain);
+    mSkybox.free();
+    mTerrain.free();
 
     std::ifstream sceneFile(jsonPath);
     json sceneJson = json::parse(sceneFile);
@@ -124,9 +125,9 @@ void Scene::render_scene() const {
     }
 
     // Terrain
-    if (mTerrain.hasGenerated) {
+    if (mTerrain.isInited()) {
         mTerrainShader.use();
-        render_terrain(mTerrain, mTerrainShader, mCamera);
+        mTerrain.render(mTerrainShader, mCamera);
     }
 
     // Particles

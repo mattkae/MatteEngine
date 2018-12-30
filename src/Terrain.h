@@ -27,26 +27,22 @@ struct GenerationParameters {
     int numOctaves = DEFAULT_NUM_OCTAVES;
 };
 
-struct Terrain {
+class Terrain {
+ public:
+    bool generate(const GenerationParameters& params);
+    void render(const Shader& shader, const Camera &camera) const;
+    void free();
+    bool isInited() const { return hasGenerated; }
+    bool wireframeMode = false;
+ private:
     int numIndices = 0;
     GLuint vao = 0;
     GLuint vbo = 0;
     GLuint ebo = 0;
-    bool wireframeMode = false;
     bool hasGenerated = false;
 };
 
-void to_json(json &j, const Terrain &terrain);
-void from_json(const json &j, Terrain &terrain);
-
-Terrain generate_terrain(int size, int granularity, int permSize = 512,
-                         float maxHeight = DEFAULT_HEIGHT,
-                         float scaleFactor = DEFAULT_SCALE,
-                         float ampFactor = DEFAULT_AMP_FACTOR,
-                         float frequencyFactor = DEFAULT_FREQUENCY_FACTOR,
-                         int numOctaves = DEFAULT_NUM_OCTAVES);
-Terrain generate_terrain(GenerationParameters params);
-void free_terrain(Terrain &terrain);
-void render_terrain(const Terrain &terrain, const Shader &shader, const Camera &camera);
+void to_json(json &j, const Terrain& terrain);
+void from_json(const json &j, Terrain& terrain);
 
 #endif

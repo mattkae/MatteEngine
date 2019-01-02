@@ -54,7 +54,7 @@ bool Terrain::generate(const GenerationParameters &params) {
     float indexArrySize = 6 * params.granularity * params.granularity;
 
     // Establish array of values
-    int* perm = get_simplex_array(params.permSize);
+    int *perm = get_simplex_array(params.permSize);
 
     // Generate vertices
     int permIndexCap = (params.permSize / 2) - 1;

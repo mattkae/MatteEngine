@@ -1,3 +1,4 @@
+
 #include "Mesh.h"
 #include <iostream>
 
@@ -12,9 +13,9 @@ Mesh::Mesh() {
 
 void Mesh::free_resources() {
     if (mHasGenerated) {
-	glDeleteVertexArrays(1, &this->mVao);
-	glDeleteBuffers(1, &this->mVbo);
-	glDeleteBuffers(1, &this->mEbo);
+        glDeleteVertexArrays(1, &this->mVao);
+        glDeleteBuffers(1, &this->mVbo);
+        glDeleteBuffers(1, &this->mEbo);
     }
 
     mHasGenerated = false;

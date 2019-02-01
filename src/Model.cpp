@@ -29,8 +29,8 @@ void from_json(const json &j, Model &model) {
 Model::Model() {}
 
 void Model::free_resources() {
-    for (auto mesh: mMeshes) {
-	mesh.free_resources();
+    for (auto mesh : mMeshes) {
+        mesh.free_resources();
     }
 
     mMeshes.clear();

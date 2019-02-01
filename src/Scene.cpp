@@ -48,6 +48,7 @@ Scene::Scene() {
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error DURING setup: %d\n", err);
     }
+    sphere.generate(5);
 }
 
 Scene::Scene(const char *jsonPath) : Scene() { this->load_from_json(jsonPath); }
@@ -75,11 +76,11 @@ void Scene::load_from_json(const char *jsonPath) {
     }
     mModels.clear();
 
-    for (auto light: mLights) {
-	light.free();
+    for (auto light : mLights) {
+        light.free();
     }
     mLights.clear();
-    
+
     mSkybox.free();
     mTerrain.free();
 
@@ -107,6 +108,7 @@ void Scene::render() const {
 void Scene::render_shadows() const {
     if (!mUseShadows)
         return;
+
     mShadowShader.use();
 
     for (auto light : mLights) {
@@ -154,6 +156,7 @@ void Scene::render_scene() const {
         mLights[lidx].render(mSceneShader, lidx);
     }
 
+    sphere.render(mSceneShader);
     render_models(mSceneShader);
     glDisable(GL_BLEND);
 

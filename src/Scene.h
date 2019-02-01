@@ -7,6 +7,7 @@
 #include "Particle.h"
 #include "Shader.h"
 #include "Skybox.h"
+#include "Sphere.h"
 #include "Terrain.h"
 #include <iostream>
 #include <string>
@@ -26,6 +27,7 @@ class Scene {
     std::vector<Light> mLights;
     Terrain mTerrain;
     Skybox mSkybox;
+    Sphere sphere;
 
   private:
     void render_shadows() const;

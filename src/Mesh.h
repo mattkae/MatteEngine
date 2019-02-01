@@ -24,12 +24,12 @@ class Mesh {
     void add_vertex(Vertex vertex);
     void add_index(GLint index);
     void set_material(Material material);
+    std::vector<Vertex> mVertices;
+    std::vector<GLint> mIndices;
 
   private:
     bool mHasGenerated;
     GLuint mVao, mVbo, mEbo;
-    std::vector<Vertex> mVertices;
-    std::vector<GLint> mIndices;
     Material mMaterial;
     GLfloat mShininess;
 };

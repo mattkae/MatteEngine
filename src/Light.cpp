@@ -98,7 +98,7 @@ void from_json(const json &j, Light &light) {
 }
 
 void Light::create_shadow_texture_for_omnidirectional_light(int width,
-                                                             int height) {
+                                                            int height) {
     glGenTextures(1, &shadowTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, shadowTexture);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -226,8 +226,7 @@ void Light::render_omindirectional_shadows(const Shader &shader,
             break;
         }
 
-        glm::mat4 view =
-            glm::lookAt(position, position + currentDirection, up);
+        glm::mat4 view = glm::lookAt(position, position + currentDirection, up);
         glm::mat4 proj =
             glm::perspective(glm::radians(45.f), Constants.aspectRatio,
                              Constants.near, Constants.far);
@@ -250,8 +249,7 @@ void Light::render_directional_shadows(const Shader &shader,
     glClearDepth(1.0);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    shader.set_uniform_matrix_4fv("uView", 1, GL_FALSE,
-                                  glm::value_ptr(view));
+    shader.set_uniform_matrix_4fv("uView", 1, GL_FALSE, glm::value_ptr(view));
     shader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE,
                                   glm::value_ptr(projection));
     scene.render_models(shader, false);
@@ -301,16 +299,14 @@ void Light::render_point_light(const Shader &shader, const int index) const {
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "direction").c_str(), 0, 0, 0);
     shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "position").c_str(),
-        position.x, position.y, position.z);
+        get_array_uniform(index, "uLights", "position").c_str(), position.x,
+        position.y, position.z);
     shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "constant").c_str(),
-        constant);
+        get_array_uniform(index, "uLights", "constant").c_str(), constant);
     shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(),
                           linear);
     shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "quadratic").c_str(),
-        quadratic);
+        get_array_uniform(index, "uLights", "quadratic").c_str(), quadratic);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
     shader.set_uniform_1f(
@@ -331,16 +327,15 @@ void Light::render_directional_light(const Shader &shader,
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, shadowTexture);
         shader.set_uniform_1i("uDirShadow", 0);
-        shader.set_uniform_matrix_4fv(
-            "uShadowMatrix", 1, GL_FALSE,
-            glm::value_ptr(projection * view));
+        shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE,
+                                      glm::value_ptr(projection * view));
     }
 
     glm::vec3 position = glm::vec3(direction);
     position *= -Constants.far;
     shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "direction").c_str(),
-        direction.x, direction.y, direction.z);
+        get_array_uniform(index, "uLights", "direction").c_str(), direction.x,
+        direction.y, direction.z);
     shader.set_uniform_3f(
         get_array_uniform(index, "uLights", "position").c_str(), position.x,
         position.y, position.z);
@@ -361,25 +356,22 @@ void Light::render_spot_light(const Shader &shader, const int index) const {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, shadowTexture);
         shader.set_uniform_1i("uDirShadow", 0);
-        shader.set_uniform_matrix_4fv(
-            "uShadowMatrix", 1, GL_FALSE,
-            glm::value_ptr(projection * view));
+        shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE,
+                                      glm::value_ptr(projection * view));
     }
 
     shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "direction").c_str(),
-        direction.x, direction.y, direction.z);
+        get_array_uniform(index, "uLights", "direction").c_str(), direction.x,
+        direction.y, direction.z);
     shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "position").c_str(),
-        position.x, position.y, position.z);
+        get_array_uniform(index, "uLights", "position").c_str(), position.x,
+        position.y, position.z);
     shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "constant").c_str(),
-        constant);
+        get_array_uniform(index, "uLights", "constant").c_str(), constant);
     shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(),
                           linear);
     shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "quadratic").c_str(),
-        quadratic);
+        get_array_uniform(index, "uLights", "quadratic").c_str(), quadratic);
     shader.set_uniform_1f(
         get_array_uniform(index, "uLights", "cosineCutOff").c_str(),
         cosineCutOff);
@@ -413,7 +405,7 @@ void Light::render(const Shader &shader, const int index) const {
 
 void Light::free() {
     if (hasGenerated) {
-	glDeleteTextures(1, &shadowTexture);
-	glDeleteFramebuffers(1, &depthFbo);
+        glDeleteTextures(1, &shadowTexture);
+        glDeleteFramebuffers(1, &depthFbo);
     }
 }

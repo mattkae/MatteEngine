@@ -5,6 +5,7 @@
 #include "Constants.h"
 #include "Input.h"
 #include "Scene.h"
+#include "Sphere.h"
 #include <iostream>
 #include <string>
 

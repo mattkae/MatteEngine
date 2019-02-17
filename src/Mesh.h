@@ -3,18 +3,12 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Material.h"
+#include "Vertex.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
 
 class Shader;
-
-struct Vertex {
-    glm::vec3 position = glm::vec3(0.0);
-    glm::vec3 normal = glm::vec3(0.0);
-    glm::vec2 texCoords = glm::vec2(0.0);
-};
-
 class Mesh {
   public:
     Mesh();

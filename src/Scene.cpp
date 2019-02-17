@@ -48,7 +48,6 @@ Scene::Scene() {
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error DURING setup: %d\n", err);
     }
-    sphere.generate(5);
 }
 
 Scene::Scene(const char *jsonPath) : Scene() { this->load_from_json(jsonPath); }
@@ -56,12 +55,13 @@ Scene::Scene(const char *jsonPath) : Scene() { this->load_from_json(jsonPath); }
 Scene::~Scene() {}
 
 void to_json(json &j, const Scene &scene) {
-    j = json{{"models", scene.mModels}, {"lights", scene.mLights}};
+    j = json{{"models", scene.mModels}, {"lights", scene.mLights}, {"spheres", scene.spheres}};
 }
 
 void from_json(const json &j, Scene &scene) {
     j.at("models").get_to<std::vector<Model>>(scene.mModels);
     j.at("lights").get_to<std::vector<Light>>(scene.mLights);
+    j.at("spheres").get_to<std::vector<Sphere>>(scene.spheres);
     if (j.count("terrain") == 1) {
         j.at("terrain").get_to<Terrain>(scene.mTerrain);
     }
@@ -156,7 +156,6 @@ void Scene::render_scene() const {
         mLights[lidx].render(mSceneShader, lidx);
     }
 
-    sphere.render(mSceneShader);
     render_models(mSceneShader);
     glDisable(GL_BLEND);
 
@@ -169,6 +168,10 @@ void Scene::render_scene() const {
 
 void Scene::render_models(const Shader &shader, bool withMaterial) const {
     for (auto model : mModels) {
-        model.render(mSceneShader, withMaterial);
+        model.render(shader, withMaterial);
+    }
+
+    for (auto sphere : spheres) {
+	sphere.render(shader, withMaterial);
     }
 }

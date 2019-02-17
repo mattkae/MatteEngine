@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <nlohmann/json.hpp>
 
 class Shader;
 
@@ -18,5 +19,8 @@ struct Sphere {
   private:
     Mesh mMesh;
 };
+
+void to_json(nlohmann::json &j, const Sphere &sphere);
+void from_json(const nlohmann::json &j, Sphere &sphere);
 
 #endif

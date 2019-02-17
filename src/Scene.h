@@ -25,9 +25,9 @@ class Scene {
     void update(double dt);
     std::vector<Model> mModels;
     std::vector<Light> mLights;
+    std::vector<Sphere> spheres;
     Terrain mTerrain;
     Skybox mSkybox;
-    Sphere sphere;
 
   private:
     void render_shadows() const;

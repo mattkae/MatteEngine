@@ -5,9 +5,9 @@
 #include "Material.h"
 #include "Mesh.h"
 #include <glm/glm.hpp>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
@@ -25,6 +25,7 @@ class Model {
     std::string get_path() const { return mPath; };
     glm::mat4 mModel;
     void free_resources();
+
   private:
     void process_node(aiNode *node, const aiScene *scene);
     Mesh process_mesh(aiMesh *mesh, const aiScene *scene);
@@ -34,7 +35,6 @@ class Model {
     std::vector<Mesh> mMeshes;
     std::string mDirectory;
 };
-
 
 void to_json(json &j, const Model &model);
 void from_json(const json &j, Model &model);

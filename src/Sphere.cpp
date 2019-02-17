@@ -1,9 +1,27 @@
 #include "Sphere.h"
 #include "Shader.h"
+#include "Vertex.h"
+#include "GlmUtility.h"
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
+
+void to_json(nlohmann::json& j, const Sphere& sphere) {
+    j = {
+	{"radius", sphere.radius},
+	{"transform", glm::mat4ToArray(sphere.model)}
+    };
+}
+
+void from_json(const nlohmann::json& j, Sphere& sphere) {
+    float angleIncrements = 5.0f;
+    
+    j.at("radius").get_to(sphere.radius);
+    glm::mat4_from_json(j, "transform", sphere.model);
+    j.at("angleIncrements").get_to(angleIncrements);
+    sphere.generate(angleIncrements);
+}
 
 void Sphere::generate(float angleIncrements) {
     std::vector<Vertex> vertices;
@@ -11,19 +29,21 @@ void Sphere::generate(float angleIncrements) {
 
     // Generate vertices and indices
     GLint index = 0;
-    for (float phi = 0.0; phi <= 180; phi += 5) {
+    for (float phi = 0.0; phi <= 180; phi += angleIncrements) {
         const auto cosPhi = cos(glm::radians(phi));
         const auto sinPhi = sin(glm::radians(phi));
 
-        const auto nextCosPhi = cos(glm::radians(phi + 5));
-        const auto nextSinPhi = sin(glm::radians(phi + 5));
+        const auto nextCosPhi = cos(glm::radians(phi + angleIncrements));
+        const auto nextSinPhi = sin(glm::radians(phi + angleIncrements));
 
-        for (float theta = 0.0; theta <= 360; theta += 5) {
+        for (float theta = 0.0; theta <= 360; theta += angleIncrements) {
             const auto cosTheta = cos(glm::radians(theta));
             const auto sinTheta = sin(glm::radians(theta));
 
-            const auto nextSinTheta = sin(glm::radians(theta + 5));
-            const auto nextCosTheta = cos(glm::radians(theta + 5));
+            const auto nextSinTheta =
+                sin(glm::radians(theta + angleIncrements));
+            const auto nextCosTheta =
+                cos(glm::radians(theta + angleIncrements));
 
             // Top Left Point
             auto topLeftPoint =

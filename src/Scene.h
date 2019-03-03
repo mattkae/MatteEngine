@@ -4,7 +4,7 @@
 #include "Constants.h"
 #include "Light.h"
 #include "Model.h"
-#include "Particle.h"
+#include "ParticleEmitter.h"
 #include "Shader.h"
 #include "Skybox.h"
 #include "Sphere.h"
@@ -23,9 +23,10 @@ class Scene {
     void render() const;
     void render_models(const Shader &shader, bool withMaterial = true) const;
     void update(double dt);
-    std::vector<Model> mModels;
-    std::vector<Light> mLights;
+    std::vector<Model> models;
+    std::vector<Light> lights;
     std::vector<Sphere> spheres;
+    std::vector<ParticleEmitter> particleEmitters;
     Terrain mTerrain;
     Skybox mSkybox;
 
@@ -41,8 +42,6 @@ class Scene {
     Shader mTerrainShader;
     Shader mParticleShader;
     Camera mCamera;
-
-    ParticleEmitter mParticleEmitter;
 };
 
 #endif

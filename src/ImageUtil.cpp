@@ -20,7 +20,11 @@ void writeRGBTextureToFile(const char* filePath) {
 
 	FILE* file;
 
+#ifdef _WIN32
+        fopen_s(&file, filePath, "wb");
+#else
 	file = fopen(filePath, "wb");
+#endif
 
 	unsigned char bmpfileheader[fileHeaderSize] = { 'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0 };
 	unsigned char bmpinfoheader[infoHeaderSize] = { 40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0 };

@@ -119,11 +119,18 @@ static std::vector<float> vec3ToArray(const glm::vec3 vec) {
     return vecArray;
 }
 
- static void mat4_from_json(const nlohmann::json& j, const char* field, glm::mat4& result) {
+ static void from_json(const nlohmann::json& j, const char* field, glm::mat4& result) {
      std::vector<float> temp;
      j.at(field).get_to(temp);
      result = glm::arrayToMat4(temp);
  }
-} // namespace glm
+
+ static void from_json(const nlohmann::json &j, const char *field,
+                            glm::vec3 &result) {
+     std::vector<float> temp;
+     j.at(field).get_to(temp);
+     result = glm::arrayToVec3(temp);
+ }
+ } // namespace glm
 
 #endif

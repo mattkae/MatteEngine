@@ -13,7 +13,7 @@ using namespace std;
 
 void to_json(json &j, const Model &model) {
     j = json{{"path", model.get_path()},
-             {"transform", glm::mat4ToArray(model.mModel)}};
+             {"transform", glm::mat4ToArray(model.model)}};
 }
 
 void from_json(const json &j, Model &model) {
@@ -28,7 +28,7 @@ void from_json(const json &j, Model &model) {
 
 Model::Model() {}
 
-void Model::free_resources() {
+void Model::free() {
     for (auto mesh : mMeshes) {
         mesh.free_resources();
     }
@@ -55,12 +55,12 @@ void Model::load_model(std::string path, glm::mat4 transform) {
     process_node(scene->mRootNode, scene);
 
     mPath = path;
-    mModel = transform;
+    model = transform;
 }
 
 void Model::render(const Shader &shader, bool withMaterial) const {
     shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE,
-                                  glm::value_ptr(mModel));
+                                  glm::value_ptr(model));
     for (auto mesh : mMeshes) {
         mesh.render(shader, withMaterial);
     }

@@ -26,7 +26,7 @@ int main(int argc, const char *argv[]) {
     initialize(argc, argv);
 
     double currentTime = 0, prevTime = 0, deltaTime;
-    Scene scene("assets/scenes/scene.json");
+    Scene scene("assets/scenes/particle.json");
 
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(window)) {
@@ -36,7 +36,7 @@ int main(int argc, const char *argv[]) {
 
         glfwPollEvents();
         if (Input::getInstance()->is_down(GLFW_KEY_R)) {
-            scene.load_from_json("assets/scenes/scene.json");
+            scene.load_from_json("assets/scenes/particle.json");
         }
 
         scene.update(deltaTime);

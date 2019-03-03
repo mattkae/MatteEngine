@@ -27,23 +27,6 @@ Scene::Scene() {
     mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
     mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
 
-    // Load particle
-    mParticleEmitter.model = glm::scale(mParticleEmitter.model, glm::vec3(0.1));
-    mParticleEmitter.numVertices = 3;
-    //  mParticleEmitter.drawType = GL_POINTS;
-    mParticleEmitter.numParticles = 1000;
-    mParticleEmitter.particleDimension = glm::vec3(5.0);
-    mParticleEmitter.volumeDimension = glm::vec3(25.0, 25.0, 25.0);
-    mParticleEmitter.color =
-        glm::int_rgb_to_float_rgb(glm::vec3(128, 255, 212));
-    mParticleEmitter.initialVelocity = glm::vec3(0, 100, 0);
-    mParticleEmitter.particleLife = 5;
-    mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.5f);
-    mParticleEmitter.velocityFunction = [](float t) {
-        return glm::vec3(t * t, t * t * t - t * t, t * t);
-    };
-    mParticleEmitter.spawnRange = glm::vec2(0.1f, 0.3f);
-    initialize_particle_emitter(mParticleEmitter);
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error DURING setup: %d\n", err);
@@ -55,13 +38,22 @@ Scene::Scene(const char *jsonPath) : Scene() { this->load_from_json(jsonPath); }
 Scene::~Scene() {}
 
 void to_json(json &j, const Scene &scene) {
-    j = json{{"models", scene.mModels}, {"lights", scene.mLights}, {"spheres", scene.spheres}};
+    j = json{{"models", scene.models}, {"lights", scene.lights}, {"spheres", scene.spheres}};
 }
 
 void from_json(const json &j, Scene &scene) {
-    j.at("models").get_to<std::vector<Model>>(scene.mModels);
-    j.at("lights").get_to<std::vector<Light>>(scene.mLights);
-    j.at("spheres").get_to<std::vector<Sphere>>(scene.spheres);
+	if (j.count("models") != 0) {
+		j.at("models").get_to<std::vector<Model>>(scene.models);
+	}
+	if (j.count("lights") != 0) {
+		j.at("lights").get_to<std::vector<Light>>(scene.lights);
+	}
+	if (j.count("spheres") != 0) {
+		j.at("spheres").get_to<std::vector<Sphere>>(scene.spheres);
+	}
+	if (j.count("particleEmitters") != 0) {
+		j.at("particleEmitters").get_to<std::vector<ParticleEmitter>>(scene.particleEmitters);
+	}
     if (j.count("terrain") == 1) {
         j.at("terrain").get_to<Terrain>(scene.mTerrain);
     }
@@ -71,22 +63,36 @@ void from_json(const json &j, Scene &scene) {
 }
 
 void Scene::load_from_json(const char *jsonPath) {
-    for (auto model : mModels) {
-        model.free_resources();
+    for (auto model : models) {
+        model.free();
     }
-    mModels.clear();
+    models.clear();
+    for (auto mSphere : spheres) {
+        mSphere.free();
+	}
+    spheres.clear();
 
-    for (auto light : mLights) {
+    for (auto light : lights) {
         light.free();
     }
-    mLights.clear();
+    lights.clear();
+
+	for (auto emitter : particleEmitters) {
+		emitter.free();
+	}
+	particleEmitters.clear();
 
     mSkybox.free();
     mTerrain.free();
 
     std::ifstream sceneFile(jsonPath);
-    json sceneJson = json::parse(sceneFile);
-    from_json(sceneJson, *this);
+
+	try {
+		json sceneJson = json::parse(sceneFile);
+		from_json(sceneJson, *this);
+	} catch (std::exception e) {
+        std::cerr << "Scene::load_from_json - " << e.what() << "\n";
+	}
 }
 
 void Scene::update(double dt) {
@@ -97,7 +103,10 @@ void Scene::update(double dt) {
     }
 
     mCamera.update(dt);
-    update_particle_emitter(mParticleEmitter, dt);
+    
+	for (auto& emitter : particleEmitters) {
+		emitter.update(dt);
+	}
 }
 
 void Scene::render() const {
@@ -111,7 +120,7 @@ void Scene::render_shadows() const {
 
     mShadowShader.use();
 
-    for (auto light : mLights) {
+    for (auto light : lights) {
         light.render_shadows(mShadowShader, *this);
     }
 
@@ -139,7 +148,9 @@ void Scene::render_scene() const {
 
     // Particles
     mParticleShader.use();
-    render_particle_emitter(mParticleEmitter, mParticleShader, mCamera);
+	for (auto emitter : particleEmitters) {
+		emitter.render(mParticleShader, mCamera);
+	}
 
     // Models
     mSceneShader.use();
@@ -150,10 +161,10 @@ void Scene::render_scene() const {
 
     glEnable(GL_DEPTH_TEST);
     mSceneShader.set_uniform_3f("uAmbient", 0.f, 0.f, 0.f);
-    mSceneShader.set_uniform_1i("uNumLights", mLights.size());
+    mSceneShader.set_uniform_1i("uNumLights", lights.size());
 
-    for (int lidx = 0; lidx < mLights.size(); lidx++) {
-        mLights[lidx].render(mSceneShader, lidx);
+    for (int lidx = 0; lidx < lights.size(); lidx++) {
+        lights[lidx].render(mSceneShader, lidx);
     }
 
     render_models(mSceneShader);
@@ -167,7 +178,7 @@ void Scene::render_scene() const {
 }
 
 void Scene::render_models(const Shader &shader, bool withMaterial) const {
-    for (auto model : mModels) {
+    for (auto model : models) {
         model.render(shader, withMaterial);
     }
 

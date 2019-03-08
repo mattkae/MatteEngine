@@ -2,21 +2,21 @@
     "particleEmitters" : [
         {
             "model" : [
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
+                5, 0, 0, 0,
+                0, 5, 0, 0,
+                0, 0, 5, 0,
                 0, 0, 0, 1
             ],
-            "volumeDimension" : [ 1, 1, 1 ],
-            "particleDimension" : [ 1, 1, 1 ],
+            "volumeDimension" : [ 2, 2, 2 ],
+            "particleDimension" : [ 0.1, 0.1, 0.1 ],
             "origin" : [ 0, 0, 0 ],
-            "rotationArray" : [ false, true, false ],
-            "numVertices" : 3,
-            "particleLifeRangeSeconds" : [ 0.5, 1 ],
-            "spawnFrequencyRangeSeconds" : [ 0.25, 0.3 ],
+            "rotationArray" : [ false, true, true ],
+            "numVertices" : 8,
+            "particleLifeRangeSeconds" : [ 1, 1 ],
+            "spawnFrequencyRangeSeconds" : [ 0.001, 0.002 ],
             "colorFunction" : {
-                "initialVelocity" : [ 0, 0, 0, 0 ],
-                "linear" : [ 0, 0.5, 0, 1 ],
+                "initialVelocity" : [ 1, 0, 0, 1 ],
+                "linear" : [ -1, 0, 1, -1 ],
                 "quadratic" : [ 0, 0, 0, 0 ]
             },
             "movementFunction" : {

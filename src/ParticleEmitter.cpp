@@ -152,7 +152,6 @@ void ParticleEmitter::update(double deltaTime)
         }
 
         Particle& particle = item.value;
-        particle.timeAliveSeconds += deltaTime;
         if (particle.timeAliveSeconds > particle.deathTimeSeconds) {
             particlePool.ret(item);
         } else {
@@ -160,6 +159,8 @@ void ParticleEmitter::update(double deltaTime)
             particle.velocity = movementFunction.calculate(particle.timeAliveSeconds / particle.deathTimeSeconds);
             particle.color = colorFunction.calculate(particle.timeAliveSeconds / particle.deathTimeSeconds);
         }
+
+        particle.timeAliveSeconds += deltaTime;
     }
 }
 
@@ -182,10 +183,9 @@ void ParticleEmitter::render(const Shader& shader, const Camera& camera) const
 
         const Particle& particle = particlePair.value;
 
-        shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
-        shader.set_uniform_1f("uTransparency", 1 - particle.timeAliveSeconds / particle.deathTimeSeconds);
+        shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model * particle.rotation));
         shader.set_uniform_3f("uPosition", particle.position.x, particle.position.y, particle.position.z);
-        shader.set_uniform_4f("uColor", particle.color[0], particle.color[1], particle.position[2], particle.color[3]);
+        shader.set_uniform_4f("uColor", particle.color[0], particle.color[1], particle.color[2], particle.color[3]);
         glDrawElements(drawType, numVertices, GL_UNSIGNED_INT, 0);
     }
 

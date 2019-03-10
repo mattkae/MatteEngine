@@ -38,7 +38,7 @@ namespace glm {
     static glm::quat get_random_quaternion(std::array<bool, 3> anglesToRotate)
     {
         std::uniform_real_distribution<float> distribution(0, 360);
-        glm::vec3 rotationAngles;
+        glm::vec3 rotationAngles = glm::vec3(0);
 
         for (int i = 0; i < 3; i++) {
             if (anglesToRotate[i]) {

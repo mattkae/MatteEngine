@@ -8,3 +8,9 @@ FluidSim/x64/*
 FluidSim/.vs
 build/*
 FluidSim/FluidSim/x64/Debug/*
+
+FluidSim/FluidSim/x64/Debug/
+
+\.vs/
+
+FluidSim/Debug/

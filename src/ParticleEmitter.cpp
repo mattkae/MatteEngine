@@ -51,7 +51,7 @@ void from_json(const nlohmann::json& j, ParticleEmitter& emitter)
     j.at("particleLifeRangeSeconds").get_to(emitter.particleLifeRangeSeconds);
     j.at("spawnFrequencyRangeSeconds").get_to(emitter.spawnFrequencyRangeSeconds);
     j.at("colorFunction").get_to(emitter.colorFunction);
-    j.at("movementFunction").get_to<ParticleFunctionConfig<glm::vec3>>(emitter.movementFunction);
+    j.at("movementFunction").get_to(emitter.movementFunction);
 
     emitter.generate();
 }
@@ -67,9 +67,9 @@ void ParticleEmitter::onGetParticle(ObjectPoolItem<Particle>& item)
     item.value.velocity = movementFunction.initialVelocity;
     item.value.position = glm::get_random_within(origin, volumeDimension);
     item.value.color = colorFunction.initialVelocity;
+    item.value.rotation = glm::toMat4(glm::get_random_quaternion(rotationArray));
     item.value.timeAliveSeconds = 0;
     item.value.deathTimeSeconds = lifeFrequencyDistribution(generator);
-    item.value.rotation = glm::toMat4(glm::get_random_quaternion(rotationArray));
 }
 
 void ParticleEmitter::onRetParticle(ObjectPoolItem<Particle>& particle)
@@ -97,8 +97,7 @@ void ParticleEmitter::generate()
         float thetaRadians = ((theta * vidx) * PI) / 180.f;
         vertices[index] = cos(thetaRadians) * particleDimension.x;
         vertices[index + 1] = sin(thetaRadians) * particleDimension.y;
-        vertices[index + 2] = 1.0f;
-        index += 3;
+        index += 2;
     }
 
     // Indices
@@ -117,7 +116,7 @@ void ParticleEmitter::generate()
 
     // Position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
 
     glBindVertexArray(0);
 
@@ -176,14 +175,15 @@ void ParticleEmitter::render(const Shader& shader, const Camera& camera) const
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
+    shader.set_uniform_vec("uCameraUp", camera.get_up());
+    shader.set_uniform_vec("uCameraRight", camera.get_right());
     for (auto const& particlePair : particlePool.getConstValues()) {
         if (!particlePair.isTaken) {
             continue;
         }
 
         const Particle& particle = particlePair.value;
-
-        shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model * particle.rotation));
         shader.set_uniform_3f("uPosition", particle.position.x, particle.position.y, particle.position.z);
         shader.set_uniform_4f("uColor", particle.color[0], particle.color[1], particle.color[2], particle.color[3]);
         glDrawElements(drawType, numVertices, GL_UNSIGNED_INT, 0);

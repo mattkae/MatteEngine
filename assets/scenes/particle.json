@@ -2,15 +2,15 @@
     "particleEmitters" : [
         {
             "model" : [
-                5, 0, 0, 0,
-                0, 5, 0, 0,
-                0, 0, 5, 0,
+                3, 0, 0, 0,
+                0, 3, 0, 0,
+                0, 0, 3, 0,
                 0, 0, 0, 1
             ],
             "volumeDimension" : [ 2, 2, 2 ],
             "particleDimension" : [ 0.1, 0.1, 0.1 ],
             "origin" : [ 0, 0, 0 ],
-            "rotationArray" : [ false, true, true ],
+            "rotationArray" : [ true, true, true ],
             "numVertices" : 8,
             "particleLifeRangeSeconds" : [ 1, 1 ],
             "spawnFrequencyRangeSeconds" : [ 0.001, 0.002 ],

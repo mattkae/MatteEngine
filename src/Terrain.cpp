@@ -4,11 +4,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-static float random_float(float min, float max) {
+static float random_float(float min, float max)
+{
     return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min))));
 }
 
-glm::vec3 calculate_color(float height, float max) {
+glm::vec3 calculate_color(float height, float max)
+{
     glm::vec3 color;
     if (height > max * 0.98f) {
         color = glm::vec3(random_float(0.95f, 1.0f));
@@ -19,18 +21,19 @@ glm::vec3 calculate_color(float height, float max) {
     } else if (height > (-max) * 0.35f) {
         color = glm::vec3(0.925, 0.78, 0.68);
     } else {
-        color =
-            glm::vec3(0.1, random_float(0.3f, 0.5f), random_float(0.8f, 1.f));
+        color = glm::vec3(0.1, random_float(0.3f, 0.5f), random_float(0.8f, 1.f));
     }
 
     return color;
 }
 
-void to_json(json &j, const Terrain &terrain) {
+void to_json(json& j, const Terrain& terrain)
+{
     // TODO!
 }
 
-void from_json(const json &j, Terrain &terrain) {
+void from_json(const json& j, Terrain& terrain)
+{
     GenerationParameters genParams;
     j.at("size").get_to<int>(genParams.size);
     j.at("granularity").get_to<int>(genParams.granularity);
@@ -43,7 +46,8 @@ void from_json(const json &j, Terrain &terrain) {
     terrain.generate(genParams);
 }
 
-bool Terrain::generate(const GenerationParameters &params) {
+bool Terrain::generate(const GenerationParameters& params)
+{
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
@@ -54,12 +58,12 @@ bool Terrain::generate(const GenerationParameters &params) {
     float indexArrySize = 6 * params.granularity * params.granularity;
 
     // Establish array of values
-    int *perm = get_simplex_array(params.permSize);
+    int* perm = get_simplex_array(params.permSize);
 
     // Generate vertices
     int permIndexCap = (params.permSize / 2) - 1;
     int index = 0;
-    GLfloat *vertices = new GLfloat[vertexArrySize];
+    GLfloat* vertices = new GLfloat[vertexArrySize];
     int halfSize = params.granularity / 2;
     for (int r = -halfSize; r < halfSize; r++) {
         for (int c = -halfSize; c < halfSize; c++) {
@@ -71,8 +75,7 @@ bool Terrain::generate(const GenerationParameters &params) {
                 params.numOctaves, perm, permIndexCap);
             vertices[index + 2] = position.y;
 
-            glm::vec3 color =
-                calculate_color(vertices[index + 1], params.minMaxHeight);
+            glm::vec3 color = calculate_color(vertices[index + 1], params.minMaxHeight);
             vertices[index + 3] = color.x;
             vertices[index + 4] = color.y;
             vertices[index + 5] = color.z;
@@ -83,7 +86,7 @@ bool Terrain::generate(const GenerationParameters &params) {
 
     // Generate indices
     index = 0;
-    GLuint *indices = new GLuint[indexArrySize];
+    GLuint* indices = new GLuint[indexArrySize];
     for (GLuint r = 0; r < params.granularity - 1; r++) {
         for (GLuint c = 0; c < params.granularity - 1; c++) {
             if (r % 2 == 0) {
@@ -95,8 +98,7 @@ bool Terrain::generate(const GenerationParameters &params) {
                 indices[index + 4] = idx + params.granularity + 1;
                 indices[index + 5] = idx + 1;
             } else {
-                GLuint idx =
-                    r * params.granularity + (params.granularity - c - 1);
+                GLuint idx = r * params.granularity + (params.granularity - c - 1);
                 indices[index] = idx;
                 indices[index + 1] = idx - 1;
                 indices[index + 2] = idx + params.granularity;
@@ -112,22 +114,22 @@ bool Terrain::generate(const GenerationParameters &params) {
     // Put the vertex data into OpenGL
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertexArrySize * sizeof(GLfloat), vertices,
-                 GL_STATIC_DRAW);
+        GL_STATIC_DRAW);
 
     // Put the index data into OpenGL
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexArrySize * sizeof(GLuint),
-                 indices, GL_STATIC_DRAW);
+        indices, GL_STATIC_DRAW);
 
     // Position
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
-                          (GLvoid *)0);
+        (GLvoid*)0);
 
     // Color
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
-                          (GLvoid *)(3 * sizeof(GLfloat)));
+        (GLvoid*)(3 * sizeof(GLfloat)));
 
     glBindVertexArray(0);
 
@@ -138,7 +140,8 @@ bool Terrain::generate(const GenerationParameters &params) {
     return true;
 }
 
-static glm::mat4 get_viewport() {
+static glm::mat4 get_viewport()
+{
     glm::mat4 s = glm::scale(
         glm::mat4(1.0),
         glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f));
@@ -150,14 +153,15 @@ static glm::mat4 get_viewport() {
 
 const static glm::mat4 VIEWPORT = get_viewport();
 
-void Terrain::render(const Shader &shader, const Camera &camera) const {
+void Terrain::render(const Shader& shader, const Camera& camera) const
+{
     camera.render(shader);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     shader.set_uniform_matrix_4fv("uViewportMatrix", 1, GL_FALSE,
-                                  glm::value_ptr(VIEWPORT));
+        glm::value_ptr(VIEWPORT));
     shader.set_uniform_1f("uLineWidth", 1.0);
     shader.set_uniform_1i("uShowWireframe", wireframeMode);
 
@@ -169,7 +173,8 @@ void Terrain::render(const Shader &shader, const Camera &camera) const {
     glDisable(GL_BLEND);
 }
 
-void Terrain::free() {
+void Terrain::free()
+{
     if (hasGenerated) {
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vbo);

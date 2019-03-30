@@ -12,21 +12,23 @@
 using namespace std;
 
 // Window variables
-const char *WINDOWm_TITLE = "Matte 0.0.1";
-GLFWwindow *window = nullptr;
+const char* WINDOWm_TITLE = "Matte 0.0.1";
+GLFWwindow* window = nullptr;
 
-void initialize(int argc, const char *argv[]);
+void initialize(int argc, const char* argv[]);
 void cleanup();
 
-void glfw_error_callback(int error, const char *message) {
+void glfw_error_callback(int error, const char* message)
+{
     cerr << "GLFW error #" << error << ": " << message << endl;
 }
 
-int main(int argc, const char *argv[]) {
+int main(int argc, const char* argv[])
+{
     initialize(argc, argv);
 
     double currentTime = 0, prevTime = 0, deltaTime;
-    Scene scene("assets/scenes/particle.json");
+    Scene scene("assets/scenes/scene.json");
 
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(window)) {
@@ -36,7 +38,7 @@ int main(int argc, const char *argv[]) {
 
         glfwPollEvents();
         if (Input::getInstance()->is_down(GLFW_KEY_R)) {
-            scene.load_from_json("assets/scenes/particle.json");
+            scene.load_from_json("assets/scenes/scene.json");
         }
 
         scene.update(deltaTime);
@@ -49,7 +51,8 @@ int main(int argc, const char *argv[]) {
     return 0;
 }
 
-void initialize(int argc, const char *argv[]) {
+void initialize(int argc, const char* argv[])
+{
     // GLFW
     if (!glfwInit()) {
         cerr << "Failed to initialize glfw." << endl;
@@ -67,7 +70,7 @@ void initialize(int argc, const char *argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(Constants.width, Constants.height,
-                              Constants.title.c_str(), nullptr, nullptr);
+        Constants.title.c_str(), nullptr, nullptr);
     if (!window) {
         cerr << "Error initializing GLFW window" << endl;
         return;
@@ -85,7 +88,8 @@ void initialize(int argc, const char *argv[]) {
     }
 }
 
-void cleanup() {
+void cleanup()
+{
     if (window) {
         glfwDestroyWindow(window);
     }

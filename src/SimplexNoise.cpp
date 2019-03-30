@@ -1,10 +1,11 @@
 #include "SimplexNoise.h"
-#include <cmath>
 #include <chrono>
+#include <cmath>
 #include <random>
 
-int *get_simplex_array(int permSize) {
-    int *perm = new int[permSize];
+int* get_simplex_array(int permSize)
+{
+    int* perm = new int[permSize];
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 generator(seed);
     std::uniform_int_distribution<int> dist(1, permSize);
@@ -17,41 +18,52 @@ int *get_simplex_array(int permSize) {
 const float SKEW_FACTOR = (sqrt(3.f) - 1.f) / 2.f;
 const float UNSKEW_FACTOR = (3.f - sqrt(3.f)) / 6.f;
 
-inline int32_t fast_floor(float fp) {
+inline int32_t fast_floor(float fp)
+{
     int32_t i = static_cast<int32_t>(fp);
     return (fp < i) ? (i - 1) : (i);
 }
 
 int gradients2D[] = {
-    5, 2, 2, 5, -5, 2, -2, 5, 5, -2, 2, -5, -5, -2, -2, -5,
+    5,
+    2,
+    2,
+    5,
+    -5,
+    2,
+    -2,
+    5,
+    5,
+    -2,
+    2,
+    -5,
+    -5,
+    -2,
+    -2,
+    -5,
 };
 
-float grad(glm::vec2 in, glm::vec2 distance, const int *perm,
-                  const int permIndexCap) {
-    int hash =
-        perm[(perm[(int)in.x & permIndexCap] + (int)in.y) & permIndexCap] &
-        0x0E;
+float grad(glm::vec2 in, glm::vec2 distance, const int* perm,
+    const int permIndexCap)
+{
+    int hash = perm[(perm[(int)in.x & permIndexCap] + (int)in.y) & permIndexCap] & 0x0E;
     return gradients2D[hash] * distance.x + gradients2D[hash + 1] * distance.y;
 }
 
-float simplex(glm::vec2 in, const int *perm, const int permIndexCap) {
+float simplex(glm::vec2 in, const int* perm, const int permIndexCap)
+{
     float sample = 0; // Resultant value
 
-    glm::vec2 s0 =
-        in + (in.x + in.y) * SKEW_FACTOR; // in point in Simplex-Space
-    glm::vec2 v0 =
-        glm::vec2(fast_floor(s0.x),
-                  fast_floor(s0.y)); // Lower left point in Simplex-Space
+    glm::vec2 s0 = in + (in.x + in.y) * SKEW_FACTOR; // in point in Simplex-Space
+    glm::vec2 v0 = glm::vec2(fast_floor(s0.x),
+        fast_floor(s0.y)); // Lower left point in Simplex-Space
 
-    glm::vec2 p0 =
-        v0 - (v0.x + v0.y) * UNSKEW_FACTOR; // Lower left point in IN-space
-    glm::vec2 d0 =
-        in - p0; // Distance between in point and lower left point, in IN-space
+    glm::vec2 p0 = v0 - (v0.x + v0.y) * UNSKEW_FACTOR; // Lower left point in IN-space
+    glm::vec2 d0 = in - p0; // Distance between in point and lower left point, in IN-space
 
-    glm::vec2 v1 =
-        (d0.x > d0.y)
-            ? glm::vec2(1.f, 0.f)
-            : glm::vec2(0.f, 1.f); // Upper left point, or lower right point
+    glm::vec2 v1 = (d0.x > d0.y)
+        ? glm::vec2(1.f, 0.f)
+        : glm::vec2(0.f, 1.f); // Upper left point, or lower right point
 
     // https://github.com/WardBenjamin/SimplexNoise/blob/master/SimplexNoise/Noise.cs
     glm::vec2 d1 = d0 - v1 + UNSKEW_FACTOR;
@@ -86,9 +98,10 @@ float simplex(glm::vec2 in, const int *perm, const int permIndexCap) {
 }
 
 float calculate_simplex_value(glm::vec2 coordinate, float maxHeight,
-                                     float scaleFactor, float ampFactor,
-                                     float frequencyFactor, int numOctaves,
-                                     int *perm, int permIndexCap) {
+    float scaleFactor, float ampFactor,
+    float frequencyFactor, int numOctaves,
+    int* perm, int permIndexCap)
+{
     float frequency = scaleFactor;
     float amp = 1.f;
     float maxAmp = 0;

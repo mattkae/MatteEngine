@@ -7,21 +7,21 @@
                 0, 0, 3, 0,
                 0, 0, 0, 1
             ],
-            "volumeDimension" : [ 2, 2, 2 ],
+            "volumeDimension" : [ 1, 1, 1 ],
             "particleDimension" : [ 0.1, 0.1, 0.1 ],
             "origin" : [ 0, 0, 0 ],
             "rotationArray" : [ true, true, true ],
-            "numVertices" : 8,
-            "particleLifeRangeSeconds" : [ 1, 1 ],
-            "spawnFrequencyRangeSeconds" : [ 0.001, 0.002 ],
+            "numVertices" : 100,
+            "particleLifeRangeSeconds" : [ 1, 2 ],
+            "spawnFrequencyRangeSeconds" : [ 0.00001, 0.00002 ],
             "colorFunction" : {
                 "initialVelocity" : [ 1, 0, 0, 1 ],
-                "linear" : [ -1, 0, 1, -1 ],
+                "linear" : [ -0.25, 0, 0, -1 ],
                 "quadratic" : [ 0, 0, 0, 0 ]
             },
             "movementFunction" : {
                 "initialVelocity" : [ 0, 0.5, 0 ],
-                "linear" : [ 0, 0.5, 0 ],
+                "linear" : [ 1, -0.5, 0 ],
                 "quadratic" : [ 0, 0, 0 ]
             }
         }

@@ -1,4 +1,3 @@
-- Sphere Object
 - GUI support
 - Cube Object
 - Resupport textures on objects
@@ -9,4 +8,3 @@
 - Allow dynamically resizable windows that keeps original aspect ratio
 - Start messing aroud with basic water
 - With the terrain system, generate biomes
-- Add terrain generation to the json file

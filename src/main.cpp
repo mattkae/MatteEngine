@@ -4,6 +4,7 @@
 
 #include "Constants.h"
 #include "Input.h"
+#include "ObjModel.h"
 #include "Scene.h"
 #include "Sphere.h"
 #include <iostream>
@@ -29,6 +30,7 @@ int main(int argc, const char* argv[])
 
     double currentTime = 0, prevTime = 0, deltaTime;
     Scene scene("assets/scenes/scene.json");
+    loadFromObj("assets/sword/sword.obj");
 
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(window)) {

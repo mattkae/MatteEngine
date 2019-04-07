@@ -11,12 +11,14 @@
 
 using namespace std;
 
-void to_json(json &j, const Model &model) {
-    j = json{{"path", model.get_path()},
-             {"transform", glm::mat4ToArray(model.model)}};
+void to_json(json& j, const Model& model)
+{
+    j = json { { "path", model.get_path() },
+        { "transform", glm::mat4ToArray(model.model) } };
 }
 
-void from_json(const json &j, Model &model) {
+void from_json(const json& j, Model& model)
+{
     std::string path;
     std::vector<float> matrixArray;
 
@@ -28,7 +30,8 @@ void from_json(const json &j, Model &model) {
 
 Model::Model() {}
 
-void Model::free() {
+void Model::free()
+{
     for (auto mesh : mMeshes) {
         mesh.free_resources();
     }
@@ -36,13 +39,12 @@ void Model::free() {
     mMeshes.clear();
 }
 
-void Model::load_model(std::string path, glm::mat4 transform) {
+void Model::load_model(std::string path, glm::mat4 transform)
+{
     Assimp::Importer importer;
-    const aiScene *scene =
-        importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-        !scene->mRootNode) {
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         cerr << "Unable to load scene from path " << path
              << " because: " << importer.GetErrorString() << endl;
         return;
@@ -58,18 +60,20 @@ void Model::load_model(std::string path, glm::mat4 transform) {
     model = transform;
 }
 
-void Model::render(const Shader &shader, bool withMaterial) const {
+void Model::render(const Shader& shader, bool withMaterial) const
+{
     shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE,
-                                  glm::value_ptr(model));
+        glm::value_ptr(model));
     for (auto mesh : mMeshes) {
         mesh.render(shader, withMaterial);
     }
 }
 
-void Model::process_node(aiNode *node, const aiScene *scene) {
+void Model::process_node(aiNode* node, const aiScene* scene)
+{
     for (unsigned int meshIndex = 0; meshIndex < node->mNumMeshes;
          meshIndex++) {
-        aiMesh *mesh = scene->mMeshes[node->mMeshes[meshIndex]];
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[meshIndex]];
 
         mMeshes.push_back(process_mesh(mesh, scene));
     }
@@ -80,7 +84,8 @@ void Model::process_node(aiNode *node, const aiScene *scene) {
     }
 }
 
-Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene) {
+Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene)
+{
     Mesh result;
 
     if (mesh == nullptr) {
@@ -92,20 +97,20 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene) {
          vertexIndex++) {
         Vertex vertex;
         glm::vec3 position = glm::vec3(mesh->mVertices[vertexIndex].x,
-                                       mesh->mVertices[vertexIndex].y,
-                                       mesh->mVertices[vertexIndex].z);
+            mesh->mVertices[vertexIndex].y,
+            mesh->mVertices[vertexIndex].z);
 
         glm::vec3 normal;
         if (mesh->HasNormals()) {
             normal = glm::vec3(mesh->mNormals[vertexIndex].x,
-                               mesh->mNormals[vertexIndex].y,
-                               mesh->mNormals[vertexIndex].z);
+                mesh->mNormals[vertexIndex].y,
+                mesh->mNormals[vertexIndex].z);
         }
 
         glm::vec2 texCoords = glm::vec2(0.f);
         if (mesh->HasTextureCoords(0)) {
             texCoords = glm::vec2(mesh->mTextureCoords[0][vertexIndex].x,
-                                  mesh->mTextureCoords[0][vertexIndex].y);
+                mesh->mTextureCoords[0][vertexIndex].y);
         }
 
         vertex.position = position;
@@ -134,7 +139,8 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene) {
     return result;
 }
 
-Material Model::process_material(aiMaterial *mat) {
+Material Model::process_material(aiMaterial* mat)
+{
     Material result;
 
     aiColor4D diffuse, specular, emissive;
@@ -146,13 +152,11 @@ Material Model::process_material(aiMaterial *mat) {
     }
 
     if (mat->Get(AI_MATKEY_COLOR_SPECULAR, specular) == AI_SUCCESS) {
-        result.specular =
-            glm::vec4(specular.r, specular.g, specular.b, specular.a);
+        result.specular = glm::vec4(specular.r, specular.g, specular.b, specular.a);
     }
 
     if (mat->Get(AI_MATKEY_COLOR_EMISSIVE, emissive) == AI_SUCCESS) {
-        result.emissive =
-            glm::vec4(emissive.r, emissive.g, emissive.b, emissive.a);
+        result.emissive = glm::vec4(emissive.r, emissive.g, emissive.b, emissive.a);
     }
 
     if (mat->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS) {

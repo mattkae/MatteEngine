@@ -10,14 +10,16 @@
 class Shader;
 
 struct Material {
-    glm::vec4 emissive = glm::vec4(1.0);
-    glm::vec4 diffuse = glm::vec4(1.0);
-    glm::vec4 specular = glm::vec4(1.0);
+    std::string name;
+    glm::vec3 emissive = glm::vec3(0);
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
     glm::vec3 diffuseProperty = glm::vec3(1.0);
     glm::vec3 specularProperty = glm::vec3(1.0);
-    GLfloat shininess = 20.f;
-    GLfloat opacity = 1.f;
-    std::vector<Texture> textures;
+    float specularComponent = 20.f;
+    float opacity = 1.f;
+    float dissolved = 1.0;
 };
 
 void render_material(const Shader &shader, const Material &material);

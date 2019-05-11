@@ -72,8 +72,4 @@ void Mesh::render(const Shader &shader, bool withMaterial) const {
     glBindVertexArray(0);
 }
 
-void Mesh::add_vertex(Vertex vertex) { this->mVertices.push_back(vertex); }
-
-void Mesh::add_index(GLint index) { this->mIndices.push_back(index); }
-
 void Mesh::set_material(Material material) { this->mMaterial = material; }

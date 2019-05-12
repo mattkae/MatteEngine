@@ -20,7 +20,7 @@ void render_material(const Shader &shader, const Material &material) {
         "uMaterial.specularProperty", material.specularProperty.r,
         material.specularProperty.g, material.specularProperty.b);
     shader.set_uniform_1f("uMaterial.shininess", material.specularComponent);
-    shader.set_uniform_1f("uMaterial.opacity", material.opacity);
+    shader.set_uniform_1f("uMaterial.opacity", material.transparency);
 
     // @TODO: Render textures once we have them hooked up to the loader
 }

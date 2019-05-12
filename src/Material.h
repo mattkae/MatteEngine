@@ -18,8 +18,7 @@ struct Material {
     glm::vec3 diffuseProperty = glm::vec3(1.0);
     glm::vec3 specularProperty = glm::vec3(1.0);
     float specularComponent = 20.f;
-    float opacity = 1.f;
-    float dissolved = 1.0;
+    float transparency = 1.0;
 };
 
 void render_material(const Shader &shader, const Material &material);

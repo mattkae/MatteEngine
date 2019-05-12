@@ -57,10 +57,14 @@ std::vector<Material> loadMtlFile(std::string path)
         } else if (type == "Ns") {
             iss >> current.specularComponent;
         } else if (type == "d") {
-            iss >> current.dissolved;
+            iss >> current.transparency;
         }
 
         // @TODO: Texture maps
+    }
+
+	if (!current.name.empty()) {
+        materials.push_back(current);
     }
 
     if (mtlFile.bad()) {
@@ -78,6 +82,7 @@ struct FaceVertex {
 };
 
 struct Face {
+    std::string mtlName;
     std::vector<FaceVertex> vertices;
 };
 
@@ -133,6 +138,7 @@ Model loadFromObj(std::string path)
         } else if (type == "f") {
             // Found a face
             Face face;
+            face.mtlName = activeMaterialName;
             std::string faceVertexString;
             const std::string delimiter = "/";
             while (iss >> faceVertexString) {
@@ -149,7 +155,7 @@ Model loadFromObj(std::string path)
                         continue;
                     }
 
-                    int faceVertexValue = std::stoi(token);
+                    int faceVertexValue = std::stoi(token) - 1;
                     switch (index) {
                     case 0:
                         vertex.vertexIndex = faceVertexValue;
@@ -169,7 +175,7 @@ Model loadFromObj(std::string path)
                 }
 
 				if (index == 2) {
-                    vertex.vertexNormal = std::stoi(faceVertexString);
+                    vertex.vertexNormal = std::stoi(faceVertexString) - 1;
 				}
 
                 face.vertices.push_back(vertex);
@@ -212,23 +218,37 @@ Model loadFromObj(std::string path)
     for (Face& face : faces) {
         Mesh mesh;
         std::vector<Vertex> meshVertices;
-        std::vector<int> indices;
-        int index = 0;
+        std::vector<GLint> indices;
 
-        for (auto& faceVertex : face.vertices) {
+        for (int vertexIndex = 0; vertexIndex < face.vertices.size(); vertexIndex++) {
+            FaceVertex faceVertex = face.vertices.at(vertexIndex);
             Vertex vertex;
-            if (faceVertex.vertexNormal > 0) {        
-	            vertex.normal = normals.at(faceVertex.vertexNormal - 1);
+            if (faceVertex.vertexNormal > -1) {        
+	            vertex.normal = normals.at(faceVertex.vertexNormal);
 			}
-            if (faceVertex.vertexIndex > 0) {
-				vertex.position = vertices.at(faceVertex.vertexIndex - 1);
+            if (faceVertex.vertexIndex > -1) {
+				vertex.position = vertices.at(faceVertex.vertexIndex);
             }
-            // @TODO: Add texture coordinate
+
+			if (vertexIndex > 2 && vertexIndex % 3 == 0) {
+                indices.push_back(vertexIndex - 3);
+                indices.push_back(vertexIndex - 1);
+			}
+
             meshVertices.push_back(vertex);
-            indices.push_back(index++);
+            indices.push_back(vertexIndex);
         }
+
         mesh.mVertices = meshVertices;
         mesh.mIndices = indices;
+
+		for (auto& material : materials) {
+            if (material.name == face.mtlName) {
+				mesh.set_material(material);
+                break;
+			}
+		}
+
         meshes.push_back(mesh);
     }
 

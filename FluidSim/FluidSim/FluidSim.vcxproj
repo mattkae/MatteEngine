@@ -52,6 +52,7 @@
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\Model.h" />
     <ClInclude Include="..\..\src\ObjectPool.h" />
+    <ClInclude Include="..\..\src\ObjModel.h" />
     <ClInclude Include="..\..\src\ParticleEmitter.h" />
     <ClInclude Include="..\..\src\Physics.h" />
     <ClInclude Include="..\..\src\Scene.h" />
@@ -60,6 +61,7 @@
     <ClInclude Include="..\..\src\Skybox.h" />
     <ClInclude Include="..\..\src\Terrain.h" />
     <ClInclude Include="..\..\src\Texture.h" />
+    <ClInclude Include="..\..\src\Vertex.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

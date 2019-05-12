@@ -23,7 +23,6 @@ class Mesh {
     bool mHasGenerated;
     GLuint mVao, mVbo, mEbo;
     Material mMaterial;
-    GLfloat mShininess;
 };
 
 #endif

@@ -11,10 +11,10 @@ class Shader;
 
 struct Material {
     std::string name;
-    glm::vec3 emissive = glm::vec3(0);
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+    glm::vec3 emissive = glm::vec3(0.0);
+    glm::vec3 ambient = glm::vec3(1.0);
+    glm::vec3 diffuse = glm::vec3(1.0);
+    glm::vec3 specular = glm::vec3(1.0);
     glm::vec3 diffuseProperty = glm::vec3(1.0);
     glm::vec3 specularProperty = glm::vec3(1.0);
     float specularComponent = 20.f;

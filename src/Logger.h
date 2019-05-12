@@ -20,15 +20,16 @@ private:
     }
 
     std::string printTime() {
-        std::time_t t = std::time(0);
-        std::tm* now = std::localtime(&t);
+        time_t t = time(0);
+        tm now;
+        localtime_s(&now, &t);
         std::stringstream ss;
-        ss << (now->tm_year + 1900) << '-' 
-            << (now->tm_mon + 1) << '-'
-            <<  now->tm_mday
-            << now->tm_hour <<  ':'
-            << now->tm_min << ':'
-            << now->tm_sec << ':';
+        ss << (now.tm_year + 1900) << '-' 
+            << (now.tm_mon + 1) << '-'
+            <<  now.tm_mday
+            << now.tm_hour <<  ':'
+            << now.tm_min << ':'
+            << now.tm_sec << ':';
         return ss.str();
     }
 

@@ -1,14 +1,17 @@
-#pragma once
+#ifndef OBJ_MODEL_H
+#define OBJ_MODEL_H
 
-#include "Model.h"
-#include "Material.h"
-#include "ObjModel.h"
 #include "Logger.h"
+#include "Material.h"
+#include "Mesh.h"
+#include "Model.h"
+#include "ObjModel.h"
+#include "Vertex.h"
 #include <cstring>
 #include <fstream>
 #include <glm/glm.hpp>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
 /*
@@ -20,7 +23,8 @@
     do it.
 */
 
-std::vector<Material> loadMtlFile(std::string path) {
+std::vector<Material> loadMtlFile(std::string path)
+{
     std::vector<Material> materials;
     Logger::logInfo("Loading MTL file from " + path);
 
@@ -85,7 +89,7 @@ Model loadFromObj(std::string path)
     std::ifstream objFile(path);
     if (!objFile.is_open()) {
         Logger::logError("Failed to parse file " + path);
-        return;
+        return model;
     }
 
     std::vector<Material> materials;
@@ -135,33 +139,38 @@ Model loadFromObj(std::string path)
                 FaceVertex vertex;
                 int index = 0;
                 size_t pos = 0;
-                std::string faceVertexValueString;
+                std::string token;
                 while ((pos = faceVertexString.find(delimiter)) != std::string::npos) {
-                    faceVertexValueString = faceVertexString.substr(0, pos);
+                    token = faceVertexString.substr(0, pos);
                     faceVertexString.erase(0, pos + delimiter.length());
 
-                    if (faceVertexValueString.length() == 0) {
+                    if (token.length() == 0) {
+                        index++;
                         continue;
                     }
 
-                    int faceVertexValue = std::stoi(faceVertexValueString);
+                    int faceVertexValue = std::stoi(token);
                     switch (index) {
-                        case 0:
-                            vertex.vertexIndex = faceVertexValue;
-                            break;
-                        case 1:
-                            vertex.vertexNormal = faceVertexValue;
-                            break;
-                        case 2: 
-                            vertex.vertexTexture = faceVertexValue;
-                            break;
-                        default:
-                            Logger::logError("Came accross invalid index while loading FaceVertex: " + index);
-                            break;
+                    case 0:
+                        vertex.vertexIndex = faceVertexValue;
+                        break;
+                    case 1:
+                        vertex.vertexTexture = faceVertexValue;
+                        break;
+                    case 2:
+                        vertex.vertexNormal = faceVertexValue;
+                        break;
+                    default:
+                        Logger::logError("Came accross invalid index while loading FaceVertex: " + index);
+                        break;
                     }
 
                     index++;
                 }
+
+				if (index == 2) {
+                    vertex.vertexNormal = std::stoi(faceVertexString);
+				}
 
                 face.vertices.push_back(vertex);
             }
@@ -180,8 +189,7 @@ Model loadFromObj(std::string path)
             // @TODO Use filesystem from the std lib
             string directory;
             const size_t last_slash_idx = path.rfind('/');
-            if (std::string::npos != last_slash_idx)
-            {
+            if (std::string::npos != last_slash_idx) {
                 directory = path.substr(0, last_slash_idx);
             }
             std::string materialFile;
@@ -195,6 +203,38 @@ Model loadFromObj(std::string path)
 
     if (objFile.bad()) {
         Logger::logError("Error while reading OBJ file from " + path);
-        return;
+        return model;
     }
+
+    // @Investigate: If vertices are guaranteed to be declared before faces,
+    // we don't have to do this.
+    std::vector<Mesh> meshes;
+    for (Face& face : faces) {
+        Mesh mesh;
+        std::vector<Vertex> meshVertices;
+        std::vector<int> indices;
+        int index = 0;
+
+        for (auto& faceVertex : face.vertices) {
+            Vertex vertex;
+            if (faceVertex.vertexNormal > 0) {        
+	            vertex.normal = normals.at(faceVertex.vertexNormal - 1);
+			}
+            if (faceVertex.vertexIndex > 0) {
+				vertex.position = vertices.at(faceVertex.vertexIndex - 1);
+            }
+            // @TODO: Add texture coordinate
+            meshVertices.push_back(vertex);
+            indices.push_back(index++);
+        }
+        mesh.mVertices = meshVertices;
+        mesh.mIndices = indices;
+        meshes.push_back(mesh);
+    }
+
+	model.mMeshes = meshes;
+    model.generate();
+    return model;
 }
+
+#endif

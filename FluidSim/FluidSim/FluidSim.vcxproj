@@ -31,7 +31,7 @@
     <ClCompile Include="..\..\src\Physics.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\Shader.cpp" />
-    <ClCompile Include="..\..\src\SimplexNoise.cpp" />
+    <ClCompile Include="..\..\src\OpenSimplexNoise.cpp" />
     <ClCompile Include="..\..\src\Skybox.cpp" />
     <ClCompile Include="..\..\src\Sphere.cpp" />
     <ClCompile Include="..\..\src\Terrain.cpp" />
@@ -40,11 +40,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h" />
     <ClInclude Include="..\..\src\Constants.h" />
-    <ClInclude Include="..\..\src\DepthVisualizer.h" />
-    <ClInclude Include="..\..\src\DirectionalLight.h" />
     <ClInclude Include="..\..\src\Entity.h" />
     <ClInclude Include="..\..\src\GlmUtility.h" />
-    <ClInclude Include="..\..\src\gl_includes.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\input.h" />
     <ClInclude Include="..\..\src\Light.h" />
@@ -57,7 +54,7 @@
     <ClInclude Include="..\..\src\Physics.h" />
     <ClInclude Include="..\..\src\Scene.h" />
     <ClInclude Include="..\..\src\Shader.h" />
-    <ClInclude Include="..\..\src\SimplexNoise.h" />
+    <ClInclude Include="..\..\src\OpenSimplexNoise.h" />
     <ClInclude Include="..\..\src\Skybox.h" />
     <ClInclude Include="..\..\src\Terrain.h" />
     <ClInclude Include="..\..\src\Texture.h" />

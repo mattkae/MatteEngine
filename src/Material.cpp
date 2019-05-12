@@ -8,39 +8,19 @@ const int MATERIAL_TEX_INDEX = 8;
 
 void render_material(const Shader &shader, const Material &material) {
     shader.set_uniform_4f("uMaterial.diffuse", material.diffuse.r,
-                          material.diffuse.g, material.diffuse.b,
-                          material.diffuse.a);
+                          material.diffuse.g, material.diffuse.b, 1.0);
     shader.set_uniform_4f("uMaterial.specular", material.specular.r,
-                          material.specular.g, material.specular.b,
-                          material.specular.a);
+                          material.specular.g, material.specular.b, 1.0);
     shader.set_uniform_4f("uMaterial.emissive", material.emissive.r,
-                          material.emissive.g, material.emissive.b,
-                          material.emissive.a);
+                          material.emissive.g, material.emissive.b, 1.0);
     shader.set_uniform_3f(
         "uMaterial.diffuseProperty", material.diffuseProperty.r,
         material.diffuseProperty.g, material.diffuseProperty.b);
     shader.set_uniform_3f(
         "uMaterial.specularProperty", material.specularProperty.r,
         material.specularProperty.g, material.specularProperty.b);
-    shader.set_uniform_1f("uMaterial.shininess", material.shininess);
-    shader.set_uniform_1f("uMaterial.opacity", material.opacity);
-    shader.set_uniform_1i("uMaterial.texCount", material.textures.size());
+    shader.set_uniform_1f("uMaterial.shininess", material.specularComponent);
+    shader.set_uniform_1f("uMaterial.opacity", material.transparency);
 
-    if (material.textures.size() == 0) {
-        shader.set_uniform_1i("uMaterial.diffuseTex", MATERIAL_TEX_INDEX);
-        shader.set_uniform_1i("uMaterial.specularTex", MATERIAL_TEX_INDEX + 1);
-    }
-
-    for (unsigned int tidx = 0; tidx < material.textures.size(); tidx++) {
-        glActiveTexture(GL_TEXTURE0 + MATERIAL_TEX_INDEX + tidx);
-        glBindTexture(GL_TEXTURE_2D, material.textures[tidx].id);
-
-        if (material.textures[tidx].type == TEX_DIFFUSE) {
-            shader.set_uniform_1i("uMaterial.diffuseTex",
-                                  MATERIAL_TEX_INDEX + tidx);
-        } else {
-            shader.set_uniform_1i("uMaterial.specularTex",
-                                  MATERIAL_TEX_INDEX + tidx);
-        }
-    }
+    // @TODO: Render textures once we have them hooked up to the loader
 }

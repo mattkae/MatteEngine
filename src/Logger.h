@@ -21,15 +21,19 @@ private:
 
     std::string printTime() {
         time_t t = time(0);
-        tm now;
-        localtime_s(&now, &t);
+        tm* now;
+        #ifdef WIN_32
+        localtime_s(now, &t);
+        #else
+        now = localtime(&t);
+        #endif
         std::stringstream ss;
-        ss << (now.tm_year + 1900) << '-' 
-            << (now.tm_mon + 1) << '-'
-			<< now.tm_mday << ' '
-            << now.tm_hour <<  ':'
-            << now.tm_min << ':'
-            << now.tm_sec;
+        ss << (now->tm_year + 1900) << '-' 
+            << (now->tm_mon + 1) << '-'
+			<< now->tm_mday << ' '
+            << now->tm_hour <<  ':'
+            << now->tm_min << ':'
+            << now->tm_sec;
         return ss.str();
     }
 

@@ -107,6 +107,10 @@ void Scene::update(double dt) {
 	for (auto& emitter : particleEmitters) {
 		emitter.update(dt);
 	}
+
+    for (auto& light : lights) {
+        light.update(dt);
+    }
 }
 
 void Scene::render() const {
@@ -120,9 +124,11 @@ void Scene::render_shadows() const {
 
     mShadowShader.use();
 
+    glCullFace(GL_FRONT);
     for (auto light : lights) {
         light.render_shadows(mShadowShader, *this);
     }
+    glCullFace(GL_BACK);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -160,7 +166,7 @@ void Scene::render_scene() const {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_DEPTH_TEST);
-    mSceneShader.set_uniform_3f("uAmbient", 0.f, 0.f, 0.f);
+    mSceneShader.set_uniform_3f("uAmbient", 0.3f, 0.3f, 0.3f);
     mSceneShader.set_uniform_1i("uNumLights", lights.size());
 
     for (int lidx = 0; lidx < lights.size(); lidx++) {

@@ -175,6 +175,10 @@ bool Light::generate(int width, int height) {
     return true;
 }
 
+void Light::update(double dt) {
+    
+}
+
 void Light::render_omindirectional_shadows(const Shader &shader,
                                            const Scene &scene) const {
     glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);

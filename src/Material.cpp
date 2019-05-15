@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "Shader.h"
+#include "Logger.h"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -7,12 +8,12 @@
 const int MATERIAL_TEX_INDEX = 8;
 
 void render_material(const Shader &shader, const Material &material) {
-    shader.set_uniform_4f("uMaterial.diffuse", material.diffuse.r,
-                          material.diffuse.g, material.diffuse.b, 1.0);
-    shader.set_uniform_4f("uMaterial.specular", material.specular.r,
-                          material.specular.g, material.specular.b, 1.0);
-    shader.set_uniform_4f("uMaterial.emissive", material.emissive.r,
-                          material.emissive.g, material.emissive.b, 1.0);
+    shader.set_uniform_3f("uMaterial.diffuse", material.diffuse.r,
+                          material.diffuse.g, material.diffuse.b);
+    shader.set_uniform_3f("uMaterial.specular", material.specular.r,
+                          material.specular.g, material.specular.b);
+    shader.set_uniform_3f("uMaterial.emissive", material.emissive.r,
+                          material.emissive.g, material.emissive.b);
     shader.set_uniform_3f(
         "uMaterial.diffuseProperty", material.diffuseProperty.r,
         material.diffuseProperty.g, material.diffuseProperty.b);

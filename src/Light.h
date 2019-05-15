@@ -38,6 +38,7 @@ struct Light {
     glm::mat4 view;
 
     bool generate(int width, int height);
+    void update(double dt);
     void render_shadows(const Shader &shader, const Scene &scene) const;
     void render(const Shader &shader, const int index) const;
     void free();

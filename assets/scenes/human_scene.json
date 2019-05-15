@@ -1,0 +1,29 @@
+{
+  "lights": [
+    {
+        "type": 2,
+        "color": [0.3, 0.3, 0.3],
+        "direction": [0, -1, 0],
+        "position": [0, 1000, 0],
+        "up": [0, 0, 1],
+        "usesShadows": true,
+        "isOn": true,
+        "constant": 1,
+        "linear": 0,
+        "quadratic": 0,
+        "cosineCutOff": 0.5,
+        "dropOff": 24
+    }
+],
+    "models": [
+        {
+            "path": "assets/human.obj",
+            "transform": [
+              1, 0, 0, 0,
+              0, 1, 0, 0,
+              0, 0, 1, 0,
+              0, 0, 0, 1
+            ]
+        }
+      ]
+}

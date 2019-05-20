@@ -84,8 +84,8 @@ void Sphere::generate(float angleIncrements) {
         }
     }
 
-    mMesh.mVertices = vertices;
-    mMesh.mIndices = indices;
+    mMesh.vertices = vertices;
+    mMesh.indicies = indices;
     mMesh.generate();
 }
 

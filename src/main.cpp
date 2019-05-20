@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
 
         glfwPollEvents();
         if (Input::getInstance()->is_down(GLFW_KEY_R)) {
-            scene.load_from_json("assets/scenes/scene.json");
+            scene.loadFromJson("assets/scenes/scene.json");
         }
 
         scene.update(deltaTime);

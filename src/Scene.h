@@ -19,9 +19,9 @@ class Scene {
     Scene(const char *json);
     ~Scene();
 
-    void load_from_json(const char *json);
+    void loadFromJson(const char *json);
     void render() const;
-    void render_models(const Shader &shader, bool withMaterial = true) const;
+    void renderModels(const Shader &shader, bool withMaterial = true) const;
     void update(double dt);
     std::vector<Model> models;
     std::vector<Light> lights;
@@ -31,10 +31,12 @@ class Scene {
     Skybox mSkybox;
 
   private:
-    void render_shadows() const;
-    void render_scene() const;
+    void renderShadows() const;
+    void renderGBuffer() const;
+    void renderScene() const;
 
     bool mUseShadows = true;
+    bool mUseDefferedRendering = true;
 
     Shader mShadowShader;
     Shader mSceneShader;
@@ -42,6 +44,7 @@ class Scene {
     Shader mTerrainShader;
     Shader mParticleShader;
     Camera mCamera;
+    GLuint mGBuffer;
 };
 
 #endif

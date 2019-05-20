@@ -33,7 +33,7 @@ Scene::Scene() {
     }
 }
 
-Scene::Scene(const char *jsonPath) : Scene() { this->load_from_json(jsonPath); }
+Scene::Scene(const char *jsonPath) : Scene() { this->loadFromJson(jsonPath); }
 
 Scene::~Scene() {}
 
@@ -62,7 +62,7 @@ void from_json(const json &j, Scene &scene) {
     }
 }
 
-void Scene::load_from_json(const char *jsonPath) {
+void Scene::loadFromJson(const char *jsonPath) {
     for (auto model : models) {
         model.free();
     }
@@ -114,11 +114,11 @@ void Scene::update(double dt) {
 }
 
 void Scene::render() const {
-    render_shadows();
-    render_scene();
+    renderShadows();
+    renderScene();
 }
 
-void Scene::render_shadows() const {
+void Scene::renderShadows() const {
     if (!mUseShadows)
         return;
 
@@ -136,7 +136,11 @@ void Scene::render_shadows() const {
     }
 }
 
-void Scene::render_scene() const {
+void Scene::renderGBuffer() const {
+
+}
+
+void Scene::renderScene() const {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -173,7 +177,7 @@ void Scene::render_scene() const {
         lights[lidx].render(mSceneShader, lidx);
     }
 
-    render_models(mSceneShader);
+    renderModels(mSceneShader);
     glDisable(GL_BLEND);
 
     GLenum err;
@@ -183,7 +187,7 @@ void Scene::render_scene() const {
     }
 }
 
-void Scene::render_models(const Shader &shader, bool withMaterial) const {
+void Scene::renderModels(const Shader &shader, bool withMaterial) const {
     for (auto model : models) {
         model.render(shader, withMaterial);
     }

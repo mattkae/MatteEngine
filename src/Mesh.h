@@ -16,8 +16,8 @@ class Mesh {
     void free_resources();
     void render(const Shader &shader, bool withMaterial = true) const;
     void set_material(Material material);
-    std::vector<Vertex> mVertices;
-    std::vector<GLint> mIndices;
+    std::vector<Vertex> vertices;
+    std::vector<GLint> indicies;
 
   private:
     bool mHasGenerated;

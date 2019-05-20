@@ -239,8 +239,8 @@ Model loadFromObj(std::string path)
             indices.push_back(vertexIndex);
         }
 
-        mesh.mVertices = meshVertices;
-        mesh.mIndices = indices;
+        mesh.vertices = meshVertices;
+        mesh.indicies = indices;
 
 		for (auto& material : materials) {
             if (material.name == face.mtlName) {

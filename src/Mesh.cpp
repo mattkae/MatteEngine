@@ -32,13 +32,13 @@ void Mesh::generate() {
 
     // Put the vertex data into OpenGL
     glBindBuffer(GL_ARRAY_BUFFER, this->mVbo);
-    glBufferData(GL_ARRAY_BUFFER, this->mVertices.size() * sizeof(Vertex),
-                 &this->mVertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(Vertex),
+                 &this->vertices[0], GL_STATIC_DRAW);
 
     // Put the index data into OpenGL
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->mEbo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 this->mIndices.size() * sizeof(GLuint), &this->mIndices[0],
+                 this->indicies.size() * sizeof(GLuint), &this->indicies[0],
                  GL_STATIC_DRAW);
 
     // Position
@@ -68,7 +68,7 @@ void Mesh::render(const Shader &shader, bool withMaterial) const {
     }
 
     glBindVertexArray(this->mVao);
-    glDrawElements(GL_TRIANGLES, this->mIndices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, this->indicies.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 

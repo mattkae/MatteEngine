@@ -27,6 +27,7 @@ struct Light {
     float quadratic;
     float cosineCutOff;
     float dropOff;
+    bool usesShadows;
 };
 
 // Output color
@@ -72,10 +73,12 @@ void main() {
         float visibility = 1.0;
 
         Light light = uLights[lightIndex];
-        if (light.direction == vec3(0.0)) {
-            visibility = getOmniVisibility(light);
-        } else {
-            visibility = getDirVisibility(lightIndex, fragPosInLightSpace);
+        if (light.usesShadows) {
+            if (light.direction == vec3(0.0)) {
+                visibility = getOmniVisibility(light);
+            } else {
+                visibility = getDirVisibility(lightIndex, fragPosInLightSpace);
+            }
         }
 
         finalColor += visibility * getColorFromLight(uLights[lightIndex], normal, viewDir, diffuse, specular);

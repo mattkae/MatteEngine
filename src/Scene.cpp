@@ -31,6 +31,8 @@ Scene::Scene() {
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error DURING setup: %d\n", err);
     }
+
+	// Bind gBuffer
 }
 
 Scene::Scene(const char *jsonPath) : Scene() { this->loadFromJson(jsonPath); }
@@ -115,6 +117,7 @@ void Scene::update(double dt) {
 
 void Scene::render() const {
     renderShadows();
+    renderGBuffer();
     renderScene();
 }
 

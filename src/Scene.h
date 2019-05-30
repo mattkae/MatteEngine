@@ -13,6 +13,13 @@
 #include <string>
 #include <vector>
 
+struct DeferredGeometryPass {
+    GLuint buffer;
+    GLuint positionTexture;
+    GLuint normalTexture;
+    GLuint colorTexture;
+};
+
 class Scene {
   public:
     Scene();
@@ -44,7 +51,7 @@ class Scene {
     Shader mTerrainShader;
     Shader mParticleShader;
     Camera mCamera;
-    GLuint mGBuffer;
+    DeferredGeometryPass geometryPass;
 };
 
 #endif

@@ -8,17 +8,11 @@
 #include "Shader.h"
 #include "Skybox.h"
 #include "Sphere.h"
+#include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
 #include <iostream>
 #include <string>
 #include <vector>
-
-struct DeferredGeometryPass {
-    GLuint buffer;
-    GLuint positionTexture;
-    GLuint normalTexture;
-    GLuint colorTexture;
-};
 
 class Scene {
   public:
@@ -51,7 +45,7 @@ class Scene {
     Shader mTerrainShader;
     Shader mParticleShader;
     Camera mCamera;
-    DeferredGeometryPass geometryPass;
+    DeferredGeometryBuffer mDeferredBuffer;
 };
 
 #endif

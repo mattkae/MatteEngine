@@ -33,6 +33,7 @@ Scene::Scene() {
     }
 
 	// Bind gBuffer
+    mDeferredBuffer.generate();
 }
 
 Scene::Scene(const char *jsonPath) : Scene() { this->loadFromJson(jsonPath); }
@@ -86,6 +87,7 @@ void Scene::loadFromJson(const char *jsonPath) {
 
     mSkybox.free();
     mTerrain.free();
+    mDeferredBuffer.free();
 
     std::ifstream sceneFile(jsonPath);
 

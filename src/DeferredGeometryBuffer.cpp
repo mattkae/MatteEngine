@@ -1,5 +1,6 @@
 #include "DeferredGeometryBuffer.h"
 #include "Constants.h"
+#include "Model.h"
 
 void DeferredGeometryBuffer::generate() {
     glGenBuffers(1, &this->mBuffer);
@@ -31,7 +32,7 @@ void DeferredGeometryBuffer::generate() {
     mHasGenerated = true;
 }
 
-void DeferredGeometryBuffer::free_resources() {
+void DeferredGeometryBuffer::free() {
     if (mHasGenerated) {
         glDeleteFramebuffers(1, &this->mBuffer);
         glDeleteTextures(1, &this->mPositionTexture);
@@ -40,4 +41,18 @@ void DeferredGeometryBuffer::free_resources() {
         delete mAttachments;
         mHasGenerated = false;
 	}
+}
+
+void DeferredGeometryBuffer::render(const Shader& shader, const std::vector<Model> models) const {
+    glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
+
+    for (auto model: models) {
+        model.render(shader, true);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void DeferredGeometryBuffer::bindTextures() const {
+    
 }

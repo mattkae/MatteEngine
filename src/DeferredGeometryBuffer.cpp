@@ -3,6 +3,8 @@
 #include "Model.h"
 
 void DeferredGeometryBuffer::generate() {
+    mShader.load("src/shaders/GBufferShader.vert");
+
     glGenBuffers(1, &this->mBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
 
@@ -43,11 +45,12 @@ void DeferredGeometryBuffer::free() {
 	}
 }
 
-void DeferredGeometryBuffer::render(const Shader& shader, const std::vector<Model> models) const {
+void DeferredGeometryBuffer::render(const std::vector<Model> models) const {
+    mShader.use();
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
 
     for (auto model: models) {
-        model.render(shader, true);
+        model.render(mShader, true);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -16,10 +16,8 @@ Scene::Scene() {
     mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
     mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
     mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-    mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag",
-                        "src/shaders/terrain.geom");
-    mParticleShader.load("src/shaders/particle.vert",
-                         "src/shaders/particle.frag");
+    mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
+    mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
     // Bind uniforms to proper index
     mSceneShader.use();
@@ -137,12 +135,16 @@ void Scene::renderShadows() const {
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        printf("Error DURING shadow pass: %d\n", err);
+        printf("Error during shadow pass: %d\n", err);
     }
 }
 
 void Scene::renderGBuffer() const {
-
+    mDeferredBuffer.render(models);
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        printf("Error during gBuffer pass: %d\n", err);
+    }
 }
 
 void Scene::renderScene() const {

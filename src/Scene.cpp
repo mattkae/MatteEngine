@@ -4,6 +4,7 @@
 #include "ImageUtil.h"
 #include "Input.h"
 #include "Physics.h"
+#include "Logger.h"
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -12,26 +13,16 @@
 using json = nlohmann::json;
 
 Scene::Scene() {
-    // Load shaders
-    mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
+    // TODO: Load shaders from a JSON config
     mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
     mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
     mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
     mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
-    // Bind uniforms to proper index
-    mSceneShader.use();
-    mSceneShader.set_uniform_1i("uDirShadow", 0);
-    mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
-    mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
-
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error DURING setup: %d\n", err);
     }
-
-	// Bind gBuffer
-    mDeferredBuffer.generate();
 }
 
 Scene::Scene(const char *jsonPath) : Scene() { this->loadFromJson(jsonPath); }
@@ -60,6 +51,25 @@ void from_json(const json &j, Scene &scene) {
     }
     if (j.count("skybox") == 1) {
         j.at("skybox").get_to<Skybox>(scene.mSkybox);
+    }
+
+    if (j.count("useDeferredRendering") == 1) {
+        j.at("useDeferredRendering").get_to<bool>(scene.useDefferredRendering);
+    }
+
+    if (scene.useDefferredRendering) {
+        scene.mDeferredBuffer.generate();
+        scene.mSceneShader.load("src/shaders/DefferedModel.vert", "src/shaders/DefferedModel.frag");
+        scene.mSceneShader.use();
+        scene.mSceneShader.set_uniform_1i("uPosition", 0);
+        scene.mSceneShader.set_uniform_1i("uNormal", 1);
+        scene.mSceneShader.set_uniform_1i("uAlbedoSpec", 2);
+    } else {
+        scene.mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
+        scene.mSceneShader.use();
+        scene.mSceneShader.set_uniform_1i("uDirShadow", 0);
+        scene.mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
+        scene.mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
     }
 }
 
@@ -140,7 +150,11 @@ void Scene::renderShadows() const {
 }
 
 void Scene::renderGBuffer() const {
-    mDeferredBuffer.render(models);
+    if (!useDefferredRendering) {
+        return;
+    }
+
+    mDeferredBuffer.render(mCamera, models);
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error during gBuffer pass: %d\n", err);
@@ -184,13 +198,16 @@ void Scene::renderScene() const {
         lights[lidx].render(mSceneShader, lidx);
     }
 
-    renderModels(mSceneShader);
+    if (useDefferredRendering) {
+        mDeferredBuffer.bindTextures(mSceneShader);
+    } else {
+        renderModels(mSceneShader);
+    }
     glDisable(GL_BLEND);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        printf("Error during scene pass: %i, %s\n", err,
-               glewGetErrorString(err));
+        printf("Error during scene pass: %i, %s\n", err, glewGetErrorString(err));
     }
 }
 
@@ -200,6 +217,6 @@ void Scene::renderModels(const Shader &shader, bool withMaterial) const {
     }
 
     for (auto sphere : spheres) {
-	sphere.render(shader, withMaterial);
+	    sphere.render(shader, withMaterial);
     }
 }

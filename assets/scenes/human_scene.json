@@ -1,4 +1,5 @@
 {
+  "useDeferredRendering": true,
   "lights": [
     {
         "type": 2,

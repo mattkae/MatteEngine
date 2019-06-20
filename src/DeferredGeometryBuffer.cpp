@@ -1,9 +1,16 @@
 #include "DeferredGeometryBuffer.h"
 #include "Constants.h"
 #include "Model.h"
+#include "Logger.h"
+#include "Camera.h"
+#include "Shader.h"
 
 void DeferredGeometryBuffer::generate() {
-    mShader.load("src/shaders/GBufferShader.vert");
+    if (mHasGenerated) {
+        free();
+    }
+
+    mShader.load("src/shaders/GBufferShader.vert", "src/shaders/GBufferShader.frag");
 
     glGenBuffers(1, &this->mBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
@@ -31,6 +38,14 @@ void DeferredGeometryBuffer::generate() {
 
 	mAttachments = new GLuint[3]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     glDrawBuffers(3, mAttachments);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        Logger::logError("GBuffer framebuffer is not okay.");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    mQuad.generate();
+
     mHasGenerated = true;
 }
 
@@ -45,17 +60,36 @@ void DeferredGeometryBuffer::free() {
 	}
 }
 
-void DeferredGeometryBuffer::render(const std::vector<Model> models) const {
-    mShader.use();
+void DeferredGeometryBuffer::render(const Camera& camera, const std::vector<Model> models) const {
+    if (!mHasGenerated) {
+        return;
+    }
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
 
+    mShader.use();
+    camera.render(mShader, false);
     for (auto model: models) {
-        model.render(mShader, true);
+        model.render(mShader);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void DeferredGeometryBuffer::bindTextures() const {
-    
+void DeferredGeometryBuffer::bindTextures(const Shader& shader) const {
+    if (!mHasGenerated) {
+        return;
+    }
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mPositionTexture);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, mNormalTexture);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, mColorTexture);
+
+    mQuad.render();
 }

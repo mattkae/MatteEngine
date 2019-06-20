@@ -1,4 +1,5 @@
 {
+  "useDeferredRendering": true,
   "skybox": {
     "front": "assets/skybox/cloudy/bluecloud_ft.jpg",
     "back": "assets/skybox/cloudy/bluecloud_bk.jpg",

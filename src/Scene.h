@@ -30,6 +30,9 @@ class Scene {
     std::vector<ParticleEmitter> particleEmitters;
     Terrain mTerrain;
     Skybox mSkybox;
+    Shader mSceneShader;
+    bool useDefferredRendering = false;
+    DeferredGeometryBuffer mDeferredBuffer;
 
   private:
     void renderShadows() const;
@@ -37,15 +40,12 @@ class Scene {
     void renderScene() const;
 
     bool mUseShadows = true;
-    bool mUseDefferedRendering = true;
 
     Shader mShadowShader;
-    Shader mSceneShader;
     Shader mSkyboxShader;
     Shader mTerrainShader;
     Shader mParticleShader;
     Camera mCamera;
-    DeferredGeometryBuffer mDeferredBuffer;
 };
 
 #endif

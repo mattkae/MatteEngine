@@ -1,45 +1,55 @@
 #include "DeferredGeometryBuffer.h"
-#include "Constants.h"
-#include "Model.h"
-#include "Logger.h"
 #include "Camera.h"
+#include "Constants.h"
+#include "Logger.h"
+#include "Model.h"
+#include "OpenGLUtil.h"
 #include "Shader.h"
 
-void DeferredGeometryBuffer::generate() {
+void DeferredGeometryBuffer::generate()
+{
     if (mHasGenerated) {
         free();
     }
 
-    GLenum err;
+    GLint* dims = OpenGLUtil::getWindowDimensions();
+    this->width = dims[2];
+    this->height = dims[3];
 
+    GLenum err;
     mShader.load("src/shaders/GBufferShader.vert", "src/shaders/GBufferShader.frag");
 
     glGenFramebuffers(1, &this->mBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
 
-	glGenTextures(1, &this->mPositionTexture);
+    glGenTextures(1, &this->mPositionTexture);
     glBindTexture(GL_TEXTURE_2D, this->mPositionTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, Constants.width, Constants.height, 0, GL_RGB, GL_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, this->width, this->height, 0, GL_RGB, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->mPositionTexture, 0);
 
-	glGenTextures(1, &this->mNormalTexture);
+    glGenTextures(1, &this->mNormalTexture);
     glBindTexture(GL_TEXTURE_2D, this->mNormalTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, Constants.width, Constants.height, 0, GL_RGB, GL_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, this->width, this->height, 0, GL_RGB, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glGenTextures(1, &this->mColorTexture);
+    glBindTexture(GL_TEXTURE_2D, this->mColorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glGenRenderbuffers(1, &this->mDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, this->mDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->mPositionTexture, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, this->mNormalTexture, 0);
-
-	glGenTextures(1, &this->mColorTexture);
-	glBindTexture(GL_TEXTURE_2D, this->mColorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Constants.width, Constants.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, this->mColorTexture, 0);
-
-	mAttachments = new GLuint[3]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    mAttachments = new GLuint[3] { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     glDrawBuffers(3, mAttachments);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this->mDepth);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         Logger::logError("GBuffer framebuffer is not okay.");
     }
@@ -54,36 +64,40 @@ void DeferredGeometryBuffer::generate() {
     mHasGenerated = true;
 }
 
-void DeferredGeometryBuffer::free() {
+void DeferredGeometryBuffer::free()
+{
     if (mHasGenerated) {
         glDeleteFramebuffers(1, &this->mBuffer);
         glDeleteTextures(1, &this->mPositionTexture);
         glDeleteTextures(1, &this->mNormalTexture);
         glDeleteTextures(1, &this->mColorTexture);
+        glDeleteBuffers(1, &this->mDepth);
         delete mAttachments;
         mHasGenerated = false;
-	}
+    }
 }
 
-void DeferredGeometryBuffer::render(const Camera& camera, const std::vector<Model> models) const {
+void DeferredGeometryBuffer::render(const Camera& camera, const std::vector<Model> models) const
+{
     if (!mHasGenerated) {
         return;
     }
 
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mShader.use();
     camera.render(mShader, false);
-    for (auto model: models) {
+    for (auto model : models) {
         model.render(mShader);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void DeferredGeometryBuffer::bindTextures(const Shader& shader) const {
+void DeferredGeometryBuffer::bindTextures(const Shader& shader) const
+{
     if (!mHasGenerated) {
         return;
     }
@@ -96,4 +110,12 @@ void DeferredGeometryBuffer::bindTextures(const Shader& shader) const {
     glBindTexture(GL_TEXTURE_2D, mColorTexture);
 
     mQuad.render();
+}
+
+void DeferredGeometryBuffer::applyDepth() const 
+{
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, this->mBuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
+    glBlitFramebuffer(0, 0, this->width, this->height, 0, 0, this->width, this->height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

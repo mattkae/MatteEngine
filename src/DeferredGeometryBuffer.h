@@ -13,13 +13,18 @@ public:
     void free();
     void render(const Camera& camera, const std::vector<Model> models) const;
     void bindTextures(const Shader& shader) const;
+    void applyDepth() const;
 private:
     GLuint mBuffer;
     GLuint mPositionTexture;
     GLuint mNormalTexture;
     GLuint mColorTexture;
+    GLuint mDepth;
     bool mHasGenerated = false;
     GLuint* mAttachments;
     Shader mShader;
     Quad mQuad;
+
+    GLint width;
+    GLint height;
 };

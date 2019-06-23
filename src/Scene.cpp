@@ -23,6 +23,8 @@ Scene::Scene() {
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error DURING setup: %d\n", err);
     }
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 Scene::Scene(const char *jsonPath) : Scene() { this->loadFromJson(jsonPath); }
@@ -185,12 +187,8 @@ void Scene::renderScene() const {
 
     // Models
     mSceneShader.use();
-    mCamera.render(mSceneShader);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glEnable(GL_DEPTH_TEST);
+    mCamera.render(mSceneShader);
     mSceneShader.set_uniform_3f("uAmbient", 0.3f, 0.3f, 0.3f);
     mSceneShader.set_uniform_1i("uNumLights", lights.size());
 
@@ -200,10 +198,10 @@ void Scene::renderScene() const {
 
     if (useDefferredRendering) {
         mDeferredBuffer.bindTextures(mSceneShader);
+        mDeferredBuffer.applyDepth();
     } else {
         renderModels(mSceneShader);
     }
-    glDisable(GL_BLEND);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {

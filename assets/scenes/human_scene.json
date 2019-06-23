@@ -2,18 +2,18 @@
   "useDeferredRendering": true,
   "lights": [
     {
-        "type": 2,
-        "color": [0.3, 0.3, 0.3],
-        "direction": [0, -1, 0],
-        "position": [0, 100, 0],
-        "up": [0, 0, 1],
-        "usesShadows": false,
-        "isOn": true,
-        "constant": 1,
-        "linear": 0,
-        "quadratic": 0,
-        "cosineCutOff": 0.5,
-        "dropOff": 24
+      "type": 2,
+      "color": [0.3, 0.3, 0.3],
+      "direction": [0, -1, 0],
+      "position": [2.5, 100, 2.5],
+      "up": [0, 0, 1],
+      "usesShadows": false,
+      "isOn": true,
+      "constant": 0.75,
+      "linear": 0,
+      "quadratic": 0,
+      "cosineCutOff": 0.25,
+      "dropOff": 24
     }
 ],
     "models": [

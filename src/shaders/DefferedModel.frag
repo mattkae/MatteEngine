@@ -34,7 +34,6 @@ vec3 getSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec3 spec
 
 void main()
 {             
-    // retrieve data from G-buffer
     vec3 fragPos = texture(uPosition, oTexCoords).rgb;
     vec3 normal = texture(uNormal, oTexCoords).rgb;
     vec3 albedo = texture(uAlbedoSpec, oTexCoords).rgb;

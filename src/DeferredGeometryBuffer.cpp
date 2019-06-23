@@ -15,6 +15,7 @@ void DeferredGeometryBuffer::generate()
     GLint* dims = OpenGLUtil::getWindowDimensions();
     this->width = dims[2];
     this->height = dims[3];
+    delete dims;
 
     GLenum err;
     mShader.load("src/shaders/GBufferShader.vert", "src/shaders/GBufferShader.frag");

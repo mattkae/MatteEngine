@@ -266,3 +266,23 @@ void Shader::set_uniform_matrix_4x3fv(const GLchar *name, GLsizei count,
                                       const GLfloat *v0) const {
     glUniformMatrix4x3fv(this->get_uniform(name), count, transpose, v0);
 }
+
+void Shader::setFloat(const GLchar* name, GLfloat value) const {
+    glUniform1f(this->get_uniform(name), value);
+}
+
+void Shader::setInt(const GLchar* name, GLint value) const {
+    glUniform1i(this->get_uniform(name), value);
+}
+
+void Shader::setUint(const GLchar* name, GLuint value) const {
+    glUniform1ui(this->get_uniform(name), value);
+}
+
+void Shader::setVec3(const GLchar* name, glm::vec3 value) const {
+    glUniform3f(this->get_uniform(name), value.x, value.y, value.z);
+}
+
+void Shader::setVec4(const GLchar* name, glm::vec4 value) const {
+    glUniform4f(this->get_uniform(name), value.x, value.y, value.z, value.w);
+}

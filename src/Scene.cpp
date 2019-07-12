@@ -23,8 +23,6 @@ Scene::Scene() {
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error DURING setup: %d\n", err);
     }
-
-    glEnable(GL_DEPTH_TEST);
 }
 
 Scene::Scene(const char *jsonPath) : Scene() { this->loadFromJson(jsonPath); }
@@ -110,7 +108,7 @@ void Scene::loadFromJson(const char *jsonPath) {
 }
 
 void Scene::update(double dt) {
-    move_camera(dt, &mCamera);
+    moveCamera(dt, &mCamera);
 
     if (Input::getInstance()->is_just_up(GLFW_KEY_F)) {
         mTerrain.wireframeMode = !mTerrain.wireframeMode;
@@ -156,7 +154,7 @@ void Scene::renderGBuffer() const {
         return;
     }
 
-    mDeferredBuffer.render(mCamera, models);
+    mDeferredBuffer.renderToBuffer(mCamera, this);
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error during gBuffer pass: %d\n", err);
@@ -187,8 +185,12 @@ void Scene::renderScene() const {
 
     // Models
     mSceneShader.use();
-
     mCamera.render(mSceneShader);
+
+    glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     mSceneShader.set_uniform_3f("uAmbient", 0.3f, 0.3f, 0.3f);
     mSceneShader.set_uniform_1i("uNumLights", lights.size());
 
@@ -197,11 +199,12 @@ void Scene::renderScene() const {
     }
 
     if (useDefferredRendering) {
-        mDeferredBuffer.bindTextures(mSceneShader);
-        mDeferredBuffer.applyDepth();
+        mDeferredBuffer.renderToScreen(mSceneShader);
     } else {
         renderModels(mSceneShader);
     }
+    ///glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {

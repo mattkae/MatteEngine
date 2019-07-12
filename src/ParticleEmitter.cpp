@@ -176,8 +176,8 @@ void ParticleEmitter::render(const Shader& shader, const Camera& camera) const
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
-    shader.set_uniform_vec("uCameraUp", camera.get_up());
-    shader.set_uniform_vec("uCameraRight", camera.get_right());
+    shader.setVec3("uCameraUp", camera.get_up());
+    shader.setVec3("uCameraRight", camera.get_right());
     for (auto const& particlePair : particlePool.getConstValues()) {
         if (!particlePair.isTaken) {
             continue;

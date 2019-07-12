@@ -4,16 +4,15 @@
 #include "Shader.h"
 #include "Quad.h"
 
-class Model;
+class Scene;
 class Camera;
 class Shader;
 class DeferredGeometryBuffer {
 public:
 	void generate();
     void free();
-    void render(const Camera& camera, const std::vector<Model> models) const;
-    void bindTextures(const Shader& shader) const;
-    void applyDepth() const;
+    void renderToBuffer(const Camera& camera, const Scene* scene) const;
+    void renderToScreen(const Shader& shader) const;
 private:
     GLuint mBuffer;
     GLuint mPositionTexture;

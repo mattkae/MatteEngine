@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "Scene.h"
 #include "Sphere.h"
+#include "Logger.h"
 #include <iostream>
 #include <string>
 
@@ -28,9 +29,11 @@ int main(int argc, const char* argv[])
     initialize(argc, argv);
 
     double currentTime = 0, prevTime = 0, deltaTime;
-    Scene scene("assets/scenes/human_scene.json");
+    Scene scene("assets/scenes/scene.json");
 
     glEnable(GL_DEPTH_TEST);
+    uint16_t frameCount = 0;
+    double frameTimerMs = 0;
     while (!glfwWindowShouldClose(window)) {
         currentTime = glfwGetTime();
         deltaTime = currentTime - prevTime;
@@ -45,6 +48,13 @@ int main(int argc, const char* argv[])
         scene.render();
 
         glfwSwapBuffers(window);
+        frameCount++;
+        frameTimerMs += deltaTime;
+        if (frameTimerMs > 1.0) {
+            Logger::logInfo(std::to_string(frameCount) + " frames per second");
+            frameCount = 0;
+            frameTimerMs = 0;
+		}
     }
 
     cleanup();

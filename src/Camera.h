@@ -58,6 +58,6 @@ class Camera {
   unsigned char mMovementFlags = 0;
 };
 
-void move_camera(double dt, Camera* camera);
+void moveCamera(double dt, Camera* camera);
 
 #endif

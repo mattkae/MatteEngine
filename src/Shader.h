@@ -44,12 +44,13 @@ class Shader {
   void set_uniform_matrix_4x2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
   void set_uniform_matrix_3x4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
   void set_uniform_matrix_4x3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
+ 
+  void setFloat(const GLchar* name, GLfloat value) const;
+  void setInt(const GLchar* name, GLint value) const;
+  void setUint(const GLchar* name, GLuint value) const;
+  void setVec3(const GLchar* name, glm::vec3 value) const;
+  void setVec4(const GLchar* name, glm::vec4 value) const;
 
-  template <glm::length_t T, typename U>
-  void set_uniform_vec(const GLchar* name, const glm::vec<T, U> vec) const
-  {
-      this->set_uniform_3f(name, vec.x, vec.y, vec.z);
-  }
  private:
   GLint get_uniform(const GLchar* name) const;
   GLuint mProgram;

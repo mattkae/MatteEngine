@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
+    <ClCompile Include="..\..\src\Logger.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Material.cpp" />
     <ClCompile Include="..\..\src\Mesh.cpp" />

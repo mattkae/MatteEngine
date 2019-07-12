@@ -87,7 +87,7 @@ void Camera::render(const Shader& shader, bool withEye) const {
   }
 }
 
-void move_camera(double dt, Camera* camera) {
+void moveCamera(double dt, Camera* camera) {
   if (camera == nullptr) {
     cerr << "Camera does not exist to be moved." << endl;
     return;

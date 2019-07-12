@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "Constants.h"
 #include "Logger.h"
-#include "Model.h"
+#include "Scene.h"
 #include "OpenGLUtil.h"
 #include "Shader.h"
 
@@ -40,17 +40,18 @@ void DeferredGeometryBuffer::generate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glGenRenderbuffers(1, &this->mDepth);
-    glBindRenderbuffer(GL_RENDERBUFFER, this->mDepth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
-
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->mPositionTexture, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, this->mNormalTexture, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, this->mColorTexture, 0);
     mAttachments = new GLuint[3] { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     glDrawBuffers(3, mAttachments);
+
+    glGenRenderbuffers(1, &this->mDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, this->mDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, this->width, this->height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this->mDepth);
+
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         Logger::logError("GBuffer framebuffer is not okay.");
     }
@@ -78,7 +79,7 @@ void DeferredGeometryBuffer::free()
     }
 }
 
-void DeferredGeometryBuffer::render(const Camera& camera, const std::vector<Model> models) const
+void DeferredGeometryBuffer::renderToBuffer(const Camera& camera, const Scene* scene) const
 {
     if (!mHasGenerated) {
         return;
@@ -90,14 +91,12 @@ void DeferredGeometryBuffer::render(const Camera& camera, const std::vector<Mode
 
     mShader.use();
     camera.render(mShader, false);
-    for (auto model : models) {
-        model.render(mShader);
-    }
+    scene->renderModels(mShader, true);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void DeferredGeometryBuffer::bindTextures(const Shader& shader) const
+void DeferredGeometryBuffer::renderToScreen(const Shader& shader) const
 {
     if (!mHasGenerated) {
         return;
@@ -111,10 +110,7 @@ void DeferredGeometryBuffer::bindTextures(const Shader& shader) const
     glBindTexture(GL_TEXTURE_2D, mColorTexture);
 
     mQuad.render();
-}
 
-void DeferredGeometryBuffer::applyDepth() const 
-{
     glBindFramebuffer(GL_READ_FRAMEBUFFER, this->mBuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
     glBlitFramebuffer(0, 0, this->width, this->height, 0, 0, this->width, this->height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);

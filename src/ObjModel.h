@@ -244,7 +244,7 @@ Model loadFromObj(std::string path)
 
 		for (auto& material : materials) {
             if (material.name == face.mtlName) {
-				mesh.set_material(material);
+				mesh.material = material;
                 break;
 			}
 		}

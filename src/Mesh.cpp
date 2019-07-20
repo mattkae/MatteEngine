@@ -64,12 +64,10 @@ void Mesh::generate() {
 
 void Mesh::render(const Shader &shader, bool withMaterial) const {
     if (withMaterial) {
-        render_material(shader, mMaterial);
+        render_material(shader, material);
     }
 
     glBindVertexArray(this->mVao);
     glDrawElements(GL_TRIANGLES, this->indicies.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
-
-void Mesh::set_material(Material material) { this->mMaterial = material; }

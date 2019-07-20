@@ -2,6 +2,7 @@
 #define TERRAIN_H
 #include "Camera.h"
 #include "Shader.h"
+#include "Mesh.h"
 #include <GL/glew.h>
 #include <nlohmann/json.hpp>
 
@@ -21,17 +22,12 @@ struct GenerationParameters {
 struct Terrain {
 public:
     bool generate(const GenerationParameters& params);
-    void render(const Shader& shader, const Camera& camera) const;
+    void render(const Shader& shader, bool withMaterial = true) const;
     void free();
-    bool isInited() const { return hasGenerated; }
     bool wireframeMode = false;
-
 private:
-    int numIndices = 0;
-    GLuint vao = 0;
-    GLuint vbo = 0;
-    GLuint ebo = 0;
-    bool hasGenerated = false;
+    Mesh mMesh;
+    glm::mat4 mModel;
 };
 
 void to_json(json& j, const Terrain& terrain);

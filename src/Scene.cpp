@@ -16,7 +16,6 @@ Scene::Scene() {
     // TODO: Load shaders from a JSON config
     mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
     mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-    mTerrainShader.load("src/shaders/terrain.vert", "src/shaders/terrain.frag", "src/shaders/terrain.geom");
     mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
     GLenum err;
@@ -171,17 +170,11 @@ void Scene::renderScene() const {
         mSkybox.render(mSkyboxShader, mCamera);
     }
 
-    // Terrain
-    if (mTerrain.isInited()) {
-        mTerrainShader.use();
-        mTerrain.render(mTerrainShader, mCamera);
-    }
-
-    // Particles
-    mParticleShader.use();
-	for (auto emitter : particleEmitters) {
-		emitter.render(mParticleShader, mCamera);
-	}
+    // @TODO: Make particles be GPU accelerated, and work well
+    // mParticleShader.use();
+	// for (auto emitter : particleEmitters) {
+	// 	emitter.render(mParticleShader, mCamera);
+	// }
 
     // Models
     mSceneShader.use();
@@ -203,7 +196,6 @@ void Scene::renderScene() const {
     } else {
         renderModels(mSceneShader);
     }
-    ///glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
     GLenum err;
@@ -213,6 +205,8 @@ void Scene::renderScene() const {
 }
 
 void Scene::renderModels(const Shader &shader, bool withMaterial) const {
+    mTerrain.render(shader, withMaterial);
+
     for (auto model : models) {
         model.render(shader, withMaterial);
     }

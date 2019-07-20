@@ -1,6 +1,7 @@
-#include "Terrain.h"
+﻿#include "Terrain.h"
 #include "Logger.h"
 #include "OpenSimplexNoise.h"
+#include "GlmUtility.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -49,136 +50,76 @@ void from_json(const json& j, Terrain& terrain)
 
 bool Terrain::generate(const GenerationParameters& params)
 {
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
-    glBindVertexArray(vao);
+    Logger::logInfo("Generating terrain...");
 
     float squareSize = ((float)params.size / (float)params.granularity) / 2.f;
-    float vertexArrySize = 6 * params.granularity * params.granularity;
-    float indexArrySize = 6 * params.granularity * params.granularity;
-
-    // Establish array of values
     int* perm = getSimplexArray(params.permSize);
-
-	Logger::logInfo("Generating terrain...");
-    // Generate vertices
     int permIndexCap = (params.permSize / 2) - 1;
-    int index = 0;
-    GLfloat* vertices = new GLfloat[vertexArrySize];
-    int halfSize = params.granularity / 2;
-    GLuint* indices = new GLuint[indexArrySize];
-    for (int r = -halfSize; r < halfSize; r++) {
-        for (int c = -halfSize; c < halfSize; c++) {
-            glm::vec2 position = squareSize * glm::vec2(c, r);
-            vertices[index] = position.x;
-            vertices[index + 1] = calculateSimplexValue(
-                (halfSize * squareSize) + position, params.minMaxHeight,
+    std::vector<Vertex> vertices;
+    std::vector<GLint> indices;
+
+    for (int yCoord = 0; yCoord < params.granularity; yCoord++) {
+        for (int xCoord = 0; xCoord < params.granularity; xCoord++) {
+            float height = calculateSimplexValue(
+                squareSize + glm::vec2(xCoord, yCoord), params.minMaxHeight,
                 params.scaleFactor, params.ampFactor, params.frequencyFactor,
                 params.numOctaves, perm, permIndexCap);
-            vertices[index + 2] = position.y;
+            glm::vec3 position = glm::vec3(squareSize * xCoord, height, squareSize * yCoord);
 
-            glm::vec3 color = calculateColor(vertices[index + 1], params.minMaxHeight);
-            vertices[index + 3] = color.x;
-            vertices[index + 4] = color.y;
-            vertices[index + 5] = color.z;
+            vertices.push_back({ position });
 
-			if (r != halfSize - 1 && c != halfSize - 1) {
-				const int indexRValue = r + halfSize;
-				const int indexCValue = c + halfSize;
-				if (indexRValue % 2 == 0) {
-					GLuint idx = indexRValue * params.granularity + indexCValue;
-					indices[index] = idx;
-					indices[index + 1] = idx + 1;
-					indices[index + 2] = idx + params.granularity;
-					indices[index + 3] = idx + params.granularity;
-					indices[index + 4] = idx + params.granularity + 1;
-					indices[index + 5] = idx + 1;
-				} else {
-					GLuint idx = indexRValue * params.granularity + (params.granularity - indexCValue - 1);
-					indices[index] = idx;
-					indices[index + 1] = idx - 1;
-					indices[index + 2] = idx + params.granularity;
-					indices[index + 3] = idx + params.granularity;
-					indices[index + 4] = idx + params.granularity - 1;
-					indices[index + 5] = idx - 1;
-				}
-			}
-
-            index += 6;
+            if (yCoord != params.granularity - 1 && xCoord != params.granularity - 1) {
+                GLuint idx = yCoord * params.granularity + xCoord;
+                indices.push_back(idx);
+                indices.push_back(idx + 1);
+                indices.push_back(idx + params.granularity);
+                indices.push_back(idx + params.granularity);
+                indices.push_back(idx + params.granularity + 1);
+                indices.push_back(idx + 1);
+            }
         }
     }
-	Logger::logInfo("Finished generating terrain!");
 
-    // Put the vertex data into OpenGL
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertexArrySize * sizeof(GLfloat), vertices,
-        GL_STATIC_DRAW);
+    // Calculate normals
+    for (int indexIndex = 0; indexIndex < indices.size(); indexIndex += 3) {
+        if (indexIndex + 2 >= indices.size()) {
+            break;
+        }
 
-    // Put the index data into OpenGL
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexArrySize * sizeof(GLuint),
-        indices, GL_STATIC_DRAW);
+        auto firstIndex = indices.at(indexIndex);
+        auto secondIndex = indices.at(indexIndex + 1);
+        auto thirdIndex = indices.at(indexIndex + 2);
+        if (firstIndex >= vertices.size() 
+			|| secondIndex >= vertices.size()
+			|| thirdIndex >= vertices.size()) {
+            break;
+		}
 
-    // Position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
-        (GLvoid*)0);
+        auto normal = glm::normalize(glm::cross(vertices[firstIndex].position - vertices[secondIndex].position, 
+			vertices[thirdIndex].position - vertices[secondIndex].position));
+        vertices[firstIndex].normal = normal;
+        vertices[secondIndex].normal = normal;
+        vertices[thirdIndex].normal = normal;
+    }
 
-    // Color
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
-        (GLvoid*)(3 * sizeof(GLfloat)));
+    Logger::logInfo("Finished generating terrain!");
 
-    glBindVertexArray(0);
+    mMesh.indicies = indices;
+    mMesh.vertices = vertices;
+    mMesh.material.diffuse = glm::vec3(0, 0.2, 0);
+    mMesh.generate();
 
-    numIndices = indexArrySize;
-    hasGenerated = true;
-    delete[] vertices;
-    delete[] indices;
+    mModel = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     return true;
 }
 
-static glm::mat4 get_viewport()
+void Terrain::render(const Shader& shader, bool withMaterial) const
 {
-    glm::mat4 s = glm::scale(
-        glm::mat4(1.0),
-        glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f));
-    glm::mat4 t = glm::translate(
-        glm::mat4(1.0),
-        glm::vec3(Constants.width / 2.f, Constants.height / 2.f, 1.f / 2.f));
-    return t * s;
-}
-
-const static glm::mat4 VIEWPORT = get_viewport();
-
-void Terrain::render(const Shader& shader, const Camera& camera) const
-{
-    camera.render(shader);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    shader.set_uniform_matrix_4fv("uViewportMatrix", 1, GL_FALSE,
-        glm::value_ptr(VIEWPORT));
-    shader.set_uniform_1f("uLineWidth", 1.0);
-    shader.set_uniform_1i("uShowWireframe", wireframeMode);
-
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
+    shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
+    mMesh.render(shader, withMaterial);
 }
 
 void Terrain::free()
 {
-    if (hasGenerated) {
-        glDeleteVertexArrays(1, &vao);
-        glDeleteBuffers(1, &vbo);
-        glDeleteBuffers(1, &ebo);
-    }
-
-    hasGenerated = false;
+    mMesh.free_resources();
 }

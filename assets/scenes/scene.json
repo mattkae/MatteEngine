@@ -20,12 +20,12 @@
   },
   "lights": [
       {
-          "type": 2,
+          "type": 0,
           "color": [1, 1, 1],
           "direction": [0, -1, 0],
           "position": [0, 10, 0],
           "up": [0, 0, 1],
-          "usesShadows": true,
+          "usesShadows": false,
           "isOn": true,
           "constant": 1,
           "linear": 0,

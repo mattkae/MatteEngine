@@ -15,14 +15,13 @@ class Mesh {
     void generate();
     void free_resources();
     void render(const Shader &shader, bool withMaterial = true) const;
-    void set_material(Material material);
     std::vector<Vertex> vertices;
     std::vector<GLint> indicies;
+    Material material;
 
   private:
     bool mHasGenerated;
     GLuint mVao, mVbo, mEbo;
-    Material mMaterial;
 };
 
 #endif

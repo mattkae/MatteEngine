@@ -43,7 +43,6 @@ class Scene {
 
     Shader mShadowShader;
     Shader mSkyboxShader;
-    Shader mTerrainShader;
     Shader mParticleShader;
     Camera mCamera;
 };

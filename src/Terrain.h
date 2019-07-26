@@ -24,7 +24,6 @@ public:
     bool generate(const GenerationParameters& params);
     void render(const Shader& shader, bool withMaterial = true) const;
     void free();
-    bool wireframeMode = false;
 private:
     Mesh mMesh;
     glm::mat4 mModel;

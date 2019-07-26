@@ -86,14 +86,13 @@ bool Terrain::generate(const GenerationParameters& params)
             break;
         }
 
-        auto firstIndex = indices.at(indexIndex);
-        auto secondIndex = indices.at(indexIndex + 1);
         auto thirdIndex = indices.at(indexIndex + 2);
-        if (firstIndex >= vertices.size() 
-			|| secondIndex >= vertices.size()
-			|| thirdIndex >= vertices.size()) {
+        if (thirdIndex >= vertices.size()) {
             break;
 		}
+
+        auto firstIndex = indices.at(indexIndex);
+        auto secondIndex = indices.at(indexIndex + 1);
 
         auto normal = glm::normalize(glm::cross(vertices[firstIndex].position - vertices[secondIndex].position, 
 			vertices[thirdIndex].position - vertices[secondIndex].position));
@@ -109,7 +108,9 @@ bool Terrain::generate(const GenerationParameters& params)
     mMesh.material.diffuse = glm::vec3(0, 0.2, 0);
     mMesh.generate();
 
+    int halfMapSize = params.granularity / 2;
     mModel = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    mModel = glm::translate(mModel, glm::vec3(-halfMapSize, -50, -halfMapSize));
     return true;
 }
 

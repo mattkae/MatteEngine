@@ -108,11 +108,6 @@ void Scene::loadFromJson(const char *jsonPath) {
 
 void Scene::update(double dt) {
     moveCamera(dt, &mCamera);
-
-    if (Input::getInstance()->is_just_up(GLFW_KEY_F)) {
-        mTerrain.wireframeMode = !mTerrain.wireframeMode;
-    }
-
     mCamera.update(dt);
     
 	for (auto& emitter : particleEmitters) {
@@ -165,10 +160,6 @@ void Scene::renderScene() const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Skybox
-    if (mSkybox.isInited) {
-        mSkyboxShader.use();
-        mSkybox.render(mSkyboxShader, mCamera);
-    }
 
     // @TODO: Make particles be GPU accelerated, and work well
     // mParticleShader.use();
@@ -176,7 +167,6 @@ void Scene::renderScene() const {
 	// 	emitter.render(mParticleShader, mCamera);
 	// }
 
-    // Models
     mSceneShader.use();
     mCamera.render(mSceneShader);
 
@@ -196,6 +186,12 @@ void Scene::renderScene() const {
     } else {
         renderModels(mSceneShader);
     }
+
+    if (mSkybox.isInited) {
+        mSkyboxShader.use();
+        mSkybox.render(mSkyboxShader, mCamera);
+    }
+
     glDisable(GL_BLEND);
 
     GLenum err;

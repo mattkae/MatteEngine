@@ -2,6 +2,7 @@
 #define PARTICLE_H
 #include "GlmUtility.h"
 #include "ObjectPool.h"
+#include "Shader.h"
 #include <GL/glew.h>
 #include <functional>
 #include <glm/glm.hpp>
@@ -47,12 +48,13 @@ public:
 
     void generate();
     void update(double deltaTimeSec);
-    void render(const Shader& shader, const Camera& camera) const;
+    void render(const Camera& camera) const;
     void free();
     void onGetParticle(ObjectPoolItem<Particle>& particle);
     void onRetParticle(ObjectPoolItem<Particle>& particle);
 
 private:
+    Shader mParticleShader;
     bool isGenerated = false;
     double timeUntilSpawnSeconds = 0;
     GLuint vao = 0;

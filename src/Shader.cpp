@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader() {}
 
@@ -285,4 +286,9 @@ void Shader::setVec3(const GLchar* name, glm::vec3 value) const {
 
 void Shader::setVec4(const GLchar* name, glm::vec4 value) const {
     glUniform4f(this->get_uniform(name), value.x, value.y, value.z, value.w);
+}
+
+void Shader::setMat4(const GLchar* name, glm::mat4 matrix) const
+{
+    glUniformMatrix4fv(this->get_uniform(name), 1, GL_FALSE, glm::value_ptr(matrix));
 }

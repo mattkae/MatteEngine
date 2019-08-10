@@ -9,13 +9,16 @@
 using json = nlohmann::json;
 
 struct Skybox {
-    GLuint texture;
-    GLuint vao, vbo, ebo;
-    bool isInited = false;
-
+public:
     bool generate(std::string* paths);
-    void render(const Shader &shader, const Camera &camera) const;
+    void render(const Camera &camera) const;
     void free();
+
+private:
+    GLuint mTexture;
+    GLuint vao, vbo, ebo;
+    bool mIsInited = false;
+    Shader mSkyboxShader;
 };
 
 void to_json(json &j, const Skybox &skybox);

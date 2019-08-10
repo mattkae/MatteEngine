@@ -10,6 +10,7 @@
 #include "Sphere.h"
 #include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
+#include "TextRenderer.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -33,6 +34,7 @@ class Scene {
     Shader mSceneShader;
     bool useDefferredRendering = false;
     DeferredGeometryBuffer mDeferredBuffer;
+    TextRenderer textRenderer;
 
   private:
     void renderShadows() const;
@@ -42,8 +44,6 @@ class Scene {
     bool mUseShadows = true;
 
     Shader mShadowShader;
-    Shader mSkyboxShader;
-    Shader mParticleShader;
     Camera mCamera;
 };
 

@@ -26,8 +26,10 @@ void from_json(const json &j, Skybox &skybox) {
 }
 
 bool Skybox::generate(std::string *paths) {
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
+
+    glGenTextures(1, &mTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -82,22 +84,27 @@ bool Skybox::generate(std::string *paths) {
 
     glBindVertexArray(0);
 
-    isInited = true;
+    mIsInited = true;
 
     return true;
 }
 
-void Skybox::render(const Shader &shader, const Camera &camera) const {
+void Skybox::render(const Camera &camera) const {
+    if (!mIsInited) {
+        return;
+	}
+
+	mSkyboxShader.use();
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
     glDisable(GL_DEPTH_TEST);
 
     glm::mat4 projection = glm::inverse(camera.get_projection());
     glm::mat3 view = glm::inverse(glm::mat3(camera.get_view()));
 
-    shader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE,
+    mSkyboxShader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE,
                                   glm::value_ptr(projection));
-    shader.set_uniform_matrix_3fv("uView", 1, GL_FALSE, glm::value_ptr(view));
+    mSkyboxShader.set_uniform_matrix_3fv("uView", 1, GL_FALSE, glm::value_ptr(view));
 
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -107,11 +114,11 @@ void Skybox::render(const Shader &shader, const Camera &camera) const {
 }
 
 void Skybox::free() {
-    if (isInited) {
+    if (mIsInited) {
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vbo);
         glDeleteBuffers(1, &ebo);
     }
 
-    isInited = false;
+    mIsInited = false;
 }

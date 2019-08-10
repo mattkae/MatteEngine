@@ -50,6 +50,7 @@ class Shader {
   void setUint(const GLchar* name, GLuint value) const;
   void setVec3(const GLchar* name, glm::vec3 value) const;
   void setVec4(const GLchar* name, glm::vec4 value) const;
+  void setMat4(const GLchar* name, glm::mat4 matrix) const;
 
  private:
   GLint get_uniform(const GLchar* name) const;

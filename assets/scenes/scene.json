@@ -1,5 +1,5 @@
 {
-  "useDeferredRendering": true,
+  "useDeferredRendering": false,
   "skybox": {
     "front": "assets/skybox/cloudy/bluecloud_ft.jpg",
     "back": "assets/skybox/cloudy/bluecloud_bk.jpg",
@@ -74,5 +74,32 @@
         ],
 	      "angleIncrements": 10.0
     }
-  ]
+  ],
+  "particleEmitters" : [
+    {
+        "model" : [
+            3, 0, 0, 0,
+            0, 3, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 1
+        ],
+        "volumeDimension" : [ 1, 1, 1 ],
+        "particleDimension" : [ 0.1, 0.1, 0.1 ],
+        "origin" : [ 0, 0, 0 ],
+        "rotationArray" : [ true, true, true ],
+        "numVertices" : 100,
+        "particleLifeRangeSeconds" : [ 1, 2 ],
+        "spawnFrequencyRangeSeconds" : [ 0.00001, 0.00002 ],
+        "colorFunction" : {
+            "initialVelocity" : [ 1, 0, 0, 1 ],
+            "linear" : [ -0.25, 0, 0, -1 ],
+            "quadratic" : [ 0, 0, 0, 0 ]
+        },
+        "movementFunction" : {
+            "initialVelocity" : [ 0, 0.5, 0 ],
+            "linear" : [ 1, -0.5, 0 ],
+            "quadratic" : [ 0, 0, 0 ]
+        }
+    }
+]
 }

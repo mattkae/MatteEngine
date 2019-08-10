@@ -13,10 +13,7 @@
 using json = nlohmann::json;
 
 Scene::Scene() {
-    // TODO: Load shaders from a JSON config
     mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
-    mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-    mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -33,6 +30,7 @@ void to_json(json &j, const Scene &scene) {
 }
 
 void from_json(const json &j, Scene &scene) {
+	scene.textRenderer.initialize(36, (GLchar*)"C:\\Windows\\Fonts\\Arial.ttf");
 	if (j.count("models") != 0) {
 		j.at("models").get_to<std::vector<Model>>(scene.models);
 	}
@@ -70,6 +68,7 @@ void from_json(const json &j, Scene &scene) {
         scene.mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
         scene.mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
     }
+
 }
 
 void Scene::loadFromJson(const char *jsonPath) {
@@ -159,13 +158,11 @@ void Scene::renderScene() const {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Skybox
+    mSkybox.render(mCamera);
 
-    // @TODO: Make particles be GPU accelerated, and work well
-    // mParticleShader.use();
-	// for (auto emitter : particleEmitters) {
-	// 	emitter.render(mParticleShader, mCamera);
-	// }
+	for (auto emitter : particleEmitters) {
+	 	emitter.render(mCamera);
+    }
 
     mSceneShader.use();
     mCamera.render(mSceneShader);
@@ -187,12 +184,9 @@ void Scene::renderScene() const {
         renderModels(mSceneShader);
     }
 
-    if (mSkybox.isInited) {
-        mSkyboxShader.use();
-        mSkybox.render(mSkyboxShader, mCamera);
-    }
-
     glDisable(GL_BLEND);
+
+	textRenderer.renderText("OpenGL is fun", glm::vec2(25, 25), 1, glm::vec3(1.0, 0, 0));
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {

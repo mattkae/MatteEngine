@@ -82,6 +82,8 @@ ParticleEmitter::ParticleEmitter()
 
 void ParticleEmitter::generate()
 {
+    mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
+
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
@@ -163,29 +165,30 @@ void ParticleEmitter::update(double deltaTime)
     }
 }
 
-void ParticleEmitter::render(const Shader& shader, const Camera& camera) const
+void ParticleEmitter::render(const Camera& camera) const
 {
     if (!isGenerated) {
         return;
     }
 
-    camera.render(shader);
+	mParticleShader.use();
+    camera.render(mParticleShader);
 
     glBindVertexArray(vao);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
-    shader.setVec3("uCameraUp", camera.get_up());
-    shader.setVec3("uCameraRight", camera.get_right());
+    mParticleShader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
+    mParticleShader.setVec3("uCameraUp", camera.get_up());
+    mParticleShader.setVec3("uCameraRight", camera.get_right());
     for (auto const& particlePair : particlePool.getConstValues()) {
         if (!particlePair.isTaken) {
             continue;
         }
 
         const Particle& particle = particlePair.value;
-        shader.set_uniform_3f("uPosition", particle.position.x, particle.position.y, particle.position.z);
-        shader.set_uniform_4f("uColor", particle.color[0], particle.color[1], particle.color[2], particle.color[3]);
+        mParticleShader.set_uniform_3f("uPosition", particle.position.x, particle.position.y, particle.position.z);
+        mParticleShader.set_uniform_4f("uColor", particle.color[0], particle.color[1], particle.color[2], particle.color[3]);
         glDrawElements(drawType, numVertices, GL_UNSIGNED_INT, 0);
     }
 

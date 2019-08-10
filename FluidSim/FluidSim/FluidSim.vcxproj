@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
-    <ClCompile Include="..\..\src\Horizon.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
@@ -38,6 +37,7 @@
     <ClCompile Include="..\..\src\Skybox.cpp" />
     <ClCompile Include="..\..\src\Sphere.cpp" />
     <ClCompile Include="..\..\src\Terrain.cpp" />
+    <ClCompile Include="..\..\src\TextRenderer.cpp" />
     <ClCompile Include="..\..\src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -47,7 +47,6 @@
     <ClInclude Include="..\..\src\Entity.h" />
     <ClInclude Include="..\..\src\FasterJsonParser.h" />
     <ClInclude Include="..\..\src\GlmUtility.h" />
-    <ClInclude Include="..\..\src\Horizon.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\input.h" />
     <ClInclude Include="..\..\src\Light.h" />
@@ -64,6 +63,7 @@
     <ClInclude Include="..\..\src\Skybox.h" />
     <ClInclude Include="..\..\src\Sphere.h" />
     <ClInclude Include="..\..\src\Terrain.h" />
+    <ClInclude Include="..\..\src\TextRenderer.h" />
     <ClInclude Include="..\..\src\Texture.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
   </ItemGroup>

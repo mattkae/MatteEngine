@@ -40,7 +40,7 @@ int main(int argc, const char* argv[])
         prevTime = currentTime;
 
         glfwPollEvents();
-        if (Input::getInstance()->is_down(GLFW_KEY_R)) {
+        if (Input::getInstance()->isKeyDown(GLFW_KEY_R)) {
             scene.loadFromJson("assets/scenes/scene.json");
         }
 
@@ -86,7 +86,9 @@ void initialize(int argc, const char* argv[])
         return;
     }
 
-    glfwSetKeyCallback(window, Input::glfw_key_callback);
+	Input::gWindow = window;
+    glfwSetKeyCallback(window, Input::glfwKeyCallback);
+    glfwSetMouseButtonCallback(window, Input::glfwMouseButtonCallback);
     glfwMakeContextCurrent(window);
 
     // GLEW

@@ -13,6 +13,8 @@
 using json = nlohmann::json;
 
 Scene::Scene() {
+	ui.generate();
+	ui.scene = this;
     mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
 
     GLenum err;
@@ -30,7 +32,6 @@ void to_json(json &j, const Scene &scene) {
 }
 
 void from_json(const json &j, Scene &scene) {
-	scene.textRenderer.initialize(36, (GLchar*)"C:\\Windows\\Fonts\\Arial.ttf");
 	if (j.count("models") != 0) {
 		j.at("models").get_to<std::vector<Model>>(scene.models);
 	}
@@ -108,6 +109,12 @@ void Scene::loadFromJson(const char *jsonPath) {
 void Scene::update(double dt) {
     moveCamera(dt, &mCamera);
     mCamera.update(dt);
+
+	Input* input = Input::getInstance();
+    const ClickState& leftClickState = input->getLeftClickState();
+    if (leftClickState.isDown) {
+        printf("%f, %f\n", leftClickState.x, leftClickState.y);
+	}
     
 	for (auto& emitter : particleEmitters) {
 		emitter.update(dt);
@@ -116,6 +123,8 @@ void Scene::update(double dt) {
     for (auto& light : lights) {
         light.update(dt);
     }
+
+	ui.update(dt);
 }
 
 void Scene::render() const {
@@ -186,7 +195,7 @@ void Scene::renderScene() const {
 
     glDisable(GL_BLEND);
 
-	textRenderer.renderText("OpenGL is fun", glm::vec2(25, 25), 1, glm::vec3(1.0, 0, 0));
+	ui.render();
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {

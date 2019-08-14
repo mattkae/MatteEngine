@@ -26,6 +26,8 @@ public:
     bool initialize(GLint size, GLchar* path);
     void renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color) const;
     void free();
+	inline GLint getFontSize() const { return mSize; }
+	GLfloat getStringWidth(std::string str, GLfloat scale) const;
 
 private:
     glm::mat4 mProjection;

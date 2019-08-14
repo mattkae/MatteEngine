@@ -96,34 +96,34 @@ void moveCamera(double dt, Camera* camera) {
   Input* input = Input::getInstance();
 
   // Move around
-  if (input->is_down(GLFW_KEY_W)) {
+  if (input->isKeyDown(GLFW_KEY_W)) {
     camera->set_movement_flag(MoveForward);
   }
-  if (input->is_down(GLFW_KEY_S)) {
+  if (input->isKeyDown(GLFW_KEY_S)) {
     camera->set_movement_flag(MoveBackward);
   }
-  if (input->is_down(GLFW_KEY_A)) {
+  if (input->isKeyDown(GLFW_KEY_A)) {
     camera->set_movement_flag(MoveLeft);
   }
-  if (input->is_down(GLFW_KEY_D)) {
+  if (input->isKeyDown(GLFW_KEY_D)) {
     camera->set_movement_flag(MoveRight);
   }
 
   // Look around
-  if (input->is_down(GLFW_KEY_UP)) {
+  if (input->isKeyDown(GLFW_KEY_UP)) {
     camera->set_movement_flag(PlusPitch);
   }
-  if (input->is_down(GLFW_KEY_DOWN)) {
+  if (input->isKeyDown(GLFW_KEY_DOWN)) {
     camera->set_movement_flag(MinusPitch);
   }
-  if (input->is_down(GLFW_KEY_LEFT)) {
+  if (input->isKeyDown(GLFW_KEY_LEFT)) {
     camera->set_movement_flag(MinusYaw);
   }
-  if (input->is_down(GLFW_KEY_RIGHT)) {
+  if (input->isKeyDown(GLFW_KEY_RIGHT)) {
     camera->set_movement_flag(PlusYaw);
   }
 
-  if (input->is_down(GLFW_KEY_5)) {
+  if (input->isKeyDown(GLFW_KEY_5)) {
     camera->set_position(glm::vec3(0, 100, 0));
   }
 }

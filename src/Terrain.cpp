@@ -111,11 +111,16 @@ bool Terrain::generate(const GenerationParameters& params)
     int halfMapSize = params.granularity / 2;
     mModel = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
     mModel = glm::translate(mModel, glm::vec3(-halfMapSize, -50, -halfMapSize));
+	mHasGenerated = true;
     return true;
 }
 
 void Terrain::render(const Shader& shader, bool withMaterial) const
 {
+	if (!mHasGenerated) {
+		return;
+	}
+
     shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
     mMesh.render(shader, withMaterial);
 }
@@ -123,4 +128,5 @@ void Terrain::render(const Shader& shader, bool withMaterial) const
 void Terrain::free()
 {
     mMesh.free_resources();
+	mHasGenerated = false;
 }

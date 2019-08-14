@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Button.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
@@ -39,8 +40,10 @@
     <ClCompile Include="..\..\src\Terrain.cpp" />
     <ClCompile Include="..\..\src\TextRenderer.cpp" />
     <ClCompile Include="..\..\src\Texture.cpp" />
+    <ClCompile Include="..\..\src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Button.h" />
     <ClInclude Include="..\..\src\Camera.h" />
     <ClInclude Include="..\..\src\Constants.h" />
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
@@ -65,6 +68,7 @@
     <ClInclude Include="..\..\src\Terrain.h" />
     <ClInclude Include="..\..\src\TextRenderer.h" />
     <ClInclude Include="..\..\src\Texture.h" />
+    <ClInclude Include="..\..\src\UI.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

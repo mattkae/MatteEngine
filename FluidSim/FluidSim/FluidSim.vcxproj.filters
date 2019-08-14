@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="UIElements">
+      <UniqueIdentifier>{f0d0fcc5-b132-4667-ba99-50ed16dbe7d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Camera.cpp">
@@ -70,6 +73,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\TextRenderer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Button.cpp">
+      <Filter>UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UI.cpp">
+      <Filter>UIElements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +156,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\TextRenderer.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Button.h">
+      <Filter>UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UI.h">
+      <Filter>UIElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

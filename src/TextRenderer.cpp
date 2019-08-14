@@ -146,3 +146,14 @@ void TextRenderer::free() {
 
 	// @TODO Free all da data
 }
+
+GLfloat TextRenderer::getStringWidth(std::string str, GLfloat scale) const {
+	GLfloat width = 0;
+
+	for (auto it = str.cbegin(); it != str.cend(); ++it) {
+        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(*it);
+		width += (renderInfo.bearing.x + renderInfo.size.x + (renderInfo.advance >> 6)) * scale;
+    }
+
+	return width;
+}

@@ -13,26 +13,26 @@ Input* Input::getInstance() {
   return mInstance;
 }
 
-bool Input::is_up(int key) {
+bool Input::isKeyUp(int key) {
   
-  return is_valid(key) && (!mKeysPressed[key].isDown);
+  return is_valid(key) && (!keyStates[key].isDown);
 }
 
-bool Input::is_just_down(int key) {
+bool Input::isKeyJustDown(int key) {
   // Consume the key change
-  bool result = is_valid(key) && (mKeysPressed[key].isDown && mKeysPressed[key].hasChanged);
-  mKeysPressed[key].hasChanged = false;
+  bool result = is_valid(key) && (keyStates[key].isDown && keyStates[key].hasChanged);
+  keyStates[key].hasChanged = false;
   return result;
 }
 
-bool Input::is_down(int key) {
-  return is_valid(key) && (mKeysPressed[key].isDown);
+bool Input::isKeyDown(int key) {
+  return is_valid(key) && (keyStates[key].isDown);
 }
 
-bool Input::is_just_up(int key) {
+bool Input::isKeyJustUp(int key) {
   // Consume the key change
-  bool result = is_valid(key) && (!mKeysPressed[key].isDown && mKeysPressed[key].hasChanged);
-  mKeysPressed[key].hasChanged = false;
+  bool result = is_valid(key) && (!keyStates[key].isDown && keyStates[key].hasChanged);
+  keyStates[key].hasChanged = false;
   return result;
 }
 
@@ -40,7 +40,7 @@ bool Input::is_valid(int key) {
   return key >= 0 && key < NUM_KEYS;
 }
 
-void Input::glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void Input::glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
   // Escape will always close the window
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
@@ -53,13 +53,41 @@ void Input::glfw_key_callback(GLFWwindow* window, int key, int scancode, int act
   switch (action) {
   case GLFW_REPEAT:
   case GLFW_PRESS:
-    instance->mKeysPressed[key].hasChanged = !instance->mKeysPressed[key].isDown;
-    instance->mKeysPressed[key].isDown = true;
+    instance->keyStates[key].hasChanged = !instance->keyStates[key].isDown;
+    instance->keyStates[key].isDown = true;
     break;
   case GLFW_RELEASE:
   default:
-    instance->mKeysPressed[key].hasChanged = instance->mKeysPressed[key].isDown;
-    instance->mKeysPressed[key].isDown = false;
+    instance->keyStates[key].hasChanged = instance->keyStates[key].isDown;
+    instance->keyStates[key].isDown = false;
     break;
   }
 }
+
+void Input::glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+    Input* instance = Input::getInstance();
+
+	if (button > GLFW_MOUSE_BUTTON_3) {
+		return;
+	}
+	
+	switch (action) {
+	case GLFW_PRESS:
+	case GLFW_REPEAT:
+		glfwGetCursorPos(window, &instance->clickStates[button].x, &instance->clickStates[button].y);
+		instance->clickStates[button].isDown = true;
+		break;
+	case GLFW_RELEASE:
+        glfwGetCursorPos(window, &instance->clickStates[button].x, &instance->clickStates[button].y);
+        instance->clickStates[button].isDown = false;
+		break;
+	}
+}
+
+MousePosition Input::getCursorPosition() {
+	MousePosition coords;
+	glfwGetCursorPos(Input::gWindow, &coords.x, &coords.y);
+	return coords;
+}
+
+GLFWwindow* Input::gWindow = nullptr;

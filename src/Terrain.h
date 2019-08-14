@@ -25,6 +25,7 @@ public:
     void render(const Shader& shader, bool withMaterial = true) const;
     void free();
 private:
+	bool mHasGenerated = false;
     Mesh mMesh;
     glm::mat4 mModel;
 };

@@ -110,12 +110,6 @@ void Scene::update(double dt) {
     moveCamera(dt, &mCamera);
     mCamera.update(dt);
 
-	Input* input = Input::getInstance();
-    const ClickState& leftClickState = input->getLeftClickState();
-    if (leftClickState.isDown) {
-        printf("%f, %f\n", leftClickState.x, leftClickState.y);
-	}
-    
 	for (auto& emitter : particleEmitters) {
 		emitter.update(dt);
 	}

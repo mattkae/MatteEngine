@@ -45,16 +45,26 @@ void Button::initialize() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	mBoundingRectangle = { xStart, yStart, width, height };
 }
 
 void Button::update() {
-	MousePosition position = Input::getInstance()->getCursorPosition();
-	printf("%f, %f\n", position.x, position.y);
+	const Input& input = Input::getInstance();
+	DoublePoint point = input.getCursorPosition();
+	mIsHovered = doesIntersectBox(mBoundingRectangle, point);
+
+	if (mIsHovered && !mIsClicked && input.isLeftClickDown()) {
+		this->onClickHandler();
+		mIsClicked = true;
+	} else if (!input.isLeftClickDown() && mIsClicked) {
+		mIsClicked = false;
+	}
 }
 
 void Button::render(const Shader& shader) const {
 	// Render the box
-	shader.setVec3("uColor", buttonColor);
+	shader.setVec3("uColor", mIsHovered ? hoverColor : buttonColor);
 
 	glBindVertexArray(mVao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

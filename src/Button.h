@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
+#include "BasicShapes.h"
 
 // A button needs: Text, Color, On Click Handler, Padding
 // It's basically a square around text
@@ -30,4 +31,7 @@ private:
 	GLuint mVbo = 0;
 	GLuint mEbo = 0;
 	glm::vec2 mTextPosition = glm::vec2(0);
+	Rectangle mBoundingRectangle;
+	bool mIsHovered = false;
+	bool mIsClicked = false;
 };

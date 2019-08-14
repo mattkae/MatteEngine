@@ -24,6 +24,7 @@ void UI::generate() {
 	mButton.buttonColor = glm::vec3(0.5, 0.5, 0.5);
 	mButton.textColor = glm::vec3(1.0, 0, 0);
 	mButton.textRenderer = &mTextRenderer;
+	mButton.onClickHandler = []{ printf("Clicked me!"); };
 	mButton.initialize();
 }
 

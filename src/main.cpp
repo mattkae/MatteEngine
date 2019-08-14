@@ -12,9 +12,7 @@
 
 using namespace std;
 
-// Window variables
-const char* WINDOWm_TITLE = "Matte 0.0.1";
-GLFWwindow* window = nullptr;
+static GLFWwindow* GlobalWindow = nullptr;
 
 void initialize(int argc, const char* argv[]);
 void cleanup();
@@ -34,20 +32,20 @@ int main(int argc, const char* argv[])
     glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;
     double frameTimerMs = 0;
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(GlobalWindow)) {
         currentTime = glfwGetTime();
         deltaTime = currentTime - prevTime;
         prevTime = currentTime;
 
         glfwPollEvents();
-        if (Input::getInstance()->isKeyDown(GLFW_KEY_R)) {
+        if (Input::getInstance().isKeyDown(GLFW_KEY_R)) {
             scene.loadFromJson("assets/scenes/scene.json");
         }
 
         scene.update(deltaTime);
         scene.render();
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(GlobalWindow);
         frameCount++;
         frameTimerMs += deltaTime;
         if (frameTimerMs > 1.0) {
@@ -79,17 +77,15 @@ void initialize(int argc, const char* argv[])
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(Constants.width, Constants.height,
+    GlobalWindow = glfwCreateWindow(Constants.width, Constants.height,
         Constants.title.c_str(), nullptr, nullptr);
-    if (!window) {
+    if (!GlobalWindow) {
         cerr << "Error initializing GLFW window" << endl;
         return;
     }
 
-	Input::gWindow = window;
-    glfwSetKeyCallback(window, Input::glfwKeyCallback);
-    glfwSetMouseButtonCallback(window, Input::glfwMouseButtonCallback);
-    glfwMakeContextCurrent(window);
+	Input::Initialize(GlobalWindow);
+    glfwMakeContextCurrent(GlobalWindow);
 
     // GLEW
     GLenum err = glewInit();
@@ -102,8 +98,8 @@ void initialize(int argc, const char* argv[])
 
 void cleanup()
 {
-    if (window) {
-        glfwDestroyWindow(window);
+    if (GlobalWindow) {
+        glfwDestroyWindow(GlobalWindow);
     }
 
     glfwTerminate();

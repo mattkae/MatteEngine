@@ -6,7 +6,6 @@
 // seems like the best option to get a functional UI up and
 // running quickly.
 #include <ft2build.h>
-#define FT_FREETYPE_H
 #include <freetype/freetype.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>

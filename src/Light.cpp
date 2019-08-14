@@ -320,7 +320,7 @@ void Light::render_point_light(const Shader &shader, const int index) const {
     float far = Constants.far;
     float diff = far - near;
     glm::vec2 uFarNear;
-    uFarNear.x = (far + near) / diff * 0.5 + 0.5;
+    uFarNear.x = (far + near) / diff * 0.5f + 0.5f;
     uFarNear.y = -(far * near) / diff;
     shader.set_uniform_2f("uFarNear", uFarNear.x, uFarNear.y);
     shader.set_uniform_1i(get_array_uniform(index, "uLights", "usesShadows").c_str(), usesShadows);

@@ -36,7 +36,7 @@ std::vector<Material> loadMtlFile(std::string path)
 
     Material current;
 
-    for (std::string line; std::getline(mtlFile, line); !mtlFile.eof()) {
+    for (std::string line; std::getline(mtlFile, line);) {
         std::istringstream iss(line);
         std::string type;
         if (!(iss >> type)) {
@@ -106,7 +106,7 @@ Model loadFromObj(std::string path)
 
     std::string activeMaterialName;
 
-    for (std::string line; std::getline(objFile, line); !objFile.eof()) {
+    for (std::string line; std::getline(objFile, line);) {
         std::istringstream iss(line);
         std::string type;
         if (!(iss >> type)) {
@@ -220,7 +220,7 @@ Model loadFromObj(std::string path)
         std::vector<Vertex> meshVertices;
         std::vector<GLint> indices;
 
-        for (int vertexIndex = 0; vertexIndex < face.vertices.size(); vertexIndex++) {
+        for (size_t vertexIndex = 0; vertexIndex < face.vertices.size(); vertexIndex++) {
             FaceVertex faceVertex = face.vertices.at(vertexIndex);
             Vertex vertex;
             if (faceVertex.vertexNormal > -1) {        

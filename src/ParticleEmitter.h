@@ -17,8 +17,8 @@ struct Particle {
     glm::mat4 rotation = glm::mat4(0);
     glm::vec4 color = glm::vec4(1.0);
 
-    double timeAliveSeconds = 0;
-    double deathTimeSeconds = 0;
+    float timeAliveSeconds = 0;
+    float deathTimeSeconds = 0;
 };
 
 template <typename T>
@@ -47,7 +47,7 @@ public:
     ParticleFunctionConfig<glm::vec3> movementFunction;
 
     void generate();
-    void update(double deltaTimeSec);
+    void update(float deltaTimeSec);
     void render(const Camera& camera) const;
     void free();
     void onGetParticle(ObjectPoolItem<Particle>& particle);

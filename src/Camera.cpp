@@ -13,63 +13,63 @@ using namespace std;
 const glm::vec3 WORLD_UP(0.0, 1.0, 0.0);
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
-  mPos = pos;
-  mUp = up;
-  mRight = right;
-  mForward = glm::normalize(glm::cross(up, right));
-  mPs.aspectRatio = Constants.aspectRatio;
+	mPos = pos;
+	mUp = up;
+	mRight = right;
+	mForward = glm::normalize(glm::cross(up, right));
+	mPs.aspectRatio = Constants.aspectRatio;
 }
 
 void Camera::set_movement_flag(MovementFlag flag) {
-  mMovementFlags = mMovementFlags | flag;
+	 mMovementFlags = mMovementFlags | flag;
 }
 
-void Camera::update(double dt) {
-  if (mMovementFlags & MovementFlag::MoveForward) {
-    mPos += ((float) dt) * mMs.speed * mForward;
-  }
-  if (mMovementFlags & MovementFlag::MoveBackward) {
-    mPos -= ((float) dt) * mMs.speed * mForward;
-  }
-  if (mMovementFlags & MovementFlag::MoveRight) {
-    mPos += ((float) dt) * mMs.speed * mRight;
-  }
-  if (mMovementFlags & MovementFlag::MoveLeft) {
-    mPos -= ((float) dt) * mMs.speed * mRight;
-  }
-  if (mMovementFlags & MovementFlag::PlusPitch) {
-    mVs.pitch += dt * mMs.sensitivity;
+void Camera::update(float dt) {
+	if (mMovementFlags & MovementFlag::MoveForward) {
+		mPos += ((float) dt) * mMs.speed * mForward;
+	}
+	if (mMovementFlags & MovementFlag::MoveBackward) {
+		mPos -= ((float) dt) * mMs.speed * mForward;
+	}
+	if (mMovementFlags & MovementFlag::MoveRight) {
+		mPos += ((float) dt) * mMs.speed * mRight;
+	}
+	if (mMovementFlags & MovementFlag::MoveLeft) {
+		mPos -= ((float) dt) * mMs.speed * mRight;
+	}
+	if (mMovementFlags & MovementFlag::PlusPitch) {
+		mVs.pitch += dt * mMs.sensitivity;
 
-    if (mVs.pitch > mVs.maxPitch) {
-      mVs.pitch = mVs.maxPitch;
-    }
-  }
-  if (mMovementFlags & MovementFlag::MinusPitch) {
-    mVs.pitch -= dt * mMs.sensitivity;
+		if (mVs.pitch > mVs.maxPitch) {
+			mVs.pitch = mVs.maxPitch;
+		}
+	}
+	if (mMovementFlags & MovementFlag::MinusPitch) {
+		mVs.pitch -= dt * mMs.sensitivity;
 
-    if (mVs.pitch < -mVs.maxPitch) {
-      mVs.pitch = -mVs.maxPitch;
-    }
-  }
-  if (mMovementFlags & MovementFlag::PlusYaw) {
-    mVs.yaw += dt * mMs.sensitivity;
-  }
-  if (mMovementFlags & MovementFlag::MinusYaw) {
-    mVs.yaw -= dt * mMs.sensitivity;
-  }
+		if (mVs.pitch < -mVs.maxPitch) {
+			mVs.pitch = -mVs.maxPitch;
+		}
+	}
+	if (mMovementFlags & MovementFlag::PlusYaw) {
+		mVs.yaw += dt * mMs.sensitivity;
+	}
+	if (mMovementFlags & MovementFlag::MinusYaw) {
+		mVs.yaw -= dt * mMs.sensitivity;
+	}
 
-  mMovementFlags = 0;
+	mMovementFlags = 0;
 
-  glm::vec3 frontTemp;
-  float pitch = mVs.pitch;
-  float yaw = mVs.yaw - 90.f;
-  frontTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-  frontTemp.y = sin(glm::radians(pitch));
-  frontTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	glm::vec3 frontTemp;
+	float pitch = mVs.pitch;
+	float yaw = mVs.yaw - 90.f;
+	frontTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	frontTemp.y = sin(glm::radians(pitch));
+	frontTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 
-  mForward = glm::normalize(frontTemp);
-  mRight = glm::normalize(glm::cross(mForward, WORLD_UP));
-  mUp = glm::normalize(glm::cross(mRight, mForward));
+	mForward = glm::normalize(frontTemp);
+	mRight = glm::normalize(glm::cross(mForward, WORLD_UP));
+	mUp = glm::normalize(glm::cross(mRight, mForward));
 }
 
 glm::mat4 Camera::get_view() const {

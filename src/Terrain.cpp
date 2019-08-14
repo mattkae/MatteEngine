@@ -81,13 +81,13 @@ bool Terrain::generate(const GenerationParameters& params)
     }
 
     // Calculate normals
-    for (int indexIndex = 0; indexIndex < indices.size(); indexIndex += 3) {
+    for (size_t indexIndex = 0; indexIndex < indices.size(); indexIndex += 3) {
         if (indexIndex + 2 >= indices.size()) {
             break;
         }
 
         auto thirdIndex = indices.at(indexIndex + 2);
-        if (thirdIndex >= vertices.size()) {
+        if (static_cast<size_t>(thirdIndex) >= vertices.size()) {
             break;
 		}
 

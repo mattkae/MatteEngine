@@ -8,7 +8,7 @@
 // A button needs: Text, Color, On Click Handler, Padding
 // It's basically a square around text
 
-class TextRenderer;
+struct TextRenderer;
 class Shader;
 class Button {
 public:

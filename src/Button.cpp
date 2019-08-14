@@ -1,5 +1,5 @@
-#include "Button.h";
-#include "TextRenderer.h";
+#include "Button.h"
+#include "TextRenderer.h"
 #include "Shader.h"
 #include "Input.h"
 

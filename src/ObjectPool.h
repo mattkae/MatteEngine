@@ -26,7 +26,7 @@ public:
     ObjectPoolItem<T>& get()
     {
         int foundIndex = -1;
-        for (int vIndex = 0; vIndex < values.size(); vIndex++) {
+        for (size_t vIndex = 0; vIndex < values.size(); vIndex++) {
             if (values[vIndex].isTaken == false) {
                 foundIndex = vIndex;
                 break;

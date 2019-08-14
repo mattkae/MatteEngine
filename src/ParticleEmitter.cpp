@@ -12,7 +12,7 @@
 
 using namespace std;
 
-#define PI 3.14159265
+#define PI 3.14159265f
 
 void to_json(nlohmann::json& j, const ParticleFunctionConfig<glm::vec3>& config)
 {
@@ -69,7 +69,7 @@ void ParticleEmitter::onGetParticle(ObjectPoolItem<Particle>& item)
     item.value.color = colorFunction.initialVelocity;
     item.value.rotation = glm::toMat4(glm::get_random_quaternion(rotationArray));
     item.value.timeAliveSeconds = 0;
-    item.value.deathTimeSeconds = lifeFrequencyDistribution(generator);
+    item.value.deathTimeSeconds = static_cast<float>(lifeFrequencyDistribution(generator));
 }
 
 void ParticleEmitter::onRetParticle(ObjectPoolItem<Particle>& particle)
@@ -134,7 +134,7 @@ void ParticleEmitter::generate()
     isGenerated = true;
 }
 
-void ParticleEmitter::update(double deltaTime)
+void ParticleEmitter::update(float deltaTime)
 {
     if (!isGenerated) {
         return;

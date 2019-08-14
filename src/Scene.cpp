@@ -107,11 +107,12 @@ void Scene::loadFromJson(const char *jsonPath) {
 }
 
 void Scene::update(double dt) {
+	float dtFloat = static_cast<float>(dt);
     moveCamera(dt, &mCamera);
-    mCamera.update(dt);
+    mCamera.update(static_cast<float>(dtFloat));
 
 	for (auto& emitter : particleEmitters) {
-		emitter.update(dt);
+		emitter.update(dtFloat);
 	}
 
     for (auto& light : lights) {
@@ -177,7 +178,7 @@ void Scene::renderScene() const {
     mSceneShader.set_uniform_3f("uAmbient", 0.3f, 0.3f, 0.3f);
     mSceneShader.set_uniform_1i("uNumLights", lights.size());
 
-    for (int lidx = 0; lidx < lights.size(); lidx++) {
+    for (size_t lidx = 0; lidx < lights.size(); lidx++) {
         lights[lidx].render(mSceneShader, lidx);
     }
 

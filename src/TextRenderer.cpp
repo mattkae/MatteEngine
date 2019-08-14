@@ -87,7 +87,7 @@ bool TextRenderer::loadChar(GLchar c)
         texture,
         glm::ivec2(bitmap.width, bitmap.rows),
         glm::ivec2(glyph->bitmap_left, glyph->bitmap_top),
-        glyph->advance.x
+        static_cast<GLuint>(glyph->advance.x)
     };
 
     mCharToRenderInfoMap.insert(std::pair<GLchar, CharacterRenderInfo>(c, renderInfo));
@@ -108,10 +108,10 @@ void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale
     for (auto it = str.cbegin(); it != str.cend(); ++it) {
         CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(*it);
 
-        int xStart = position.x + renderInfo.bearing.x * scale;
-        int yStart = position.y - (renderInfo.size.y - renderInfo.bearing.y) * scale;
-        int xEnd = xStart + renderInfo.size.x * scale;
-        int yEnd = yStart + renderInfo.size.y * scale;
+        GLfloat xStart = position.x + renderInfo.bearing.x * scale;
+        GLfloat yStart = position.y - (renderInfo.size.y - renderInfo.bearing.y) * scale;
+        GLfloat xEnd = xStart + renderInfo.size.x * scale;
+        GLfloat yEnd = yStart + renderInfo.size.y * scale;
 
 		mVertices[0] = xStart;
 		mVertices[1] = yEnd;

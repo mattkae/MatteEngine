@@ -6,7 +6,7 @@
 int* getSimplexArray(int permSize)
 {
     int* perm = new int[permSize];
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    unsigned seed = static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
     std::mt19937 generator(seed);
     std::uniform_int_distribution<int> dist(1, permSize);
     for (int p = 0; p < permSize; p++) {

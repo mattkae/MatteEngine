@@ -48,7 +48,7 @@ class Camera {
   void set_position(glm::vec3 pos) { mPos = pos; };
 
   void set_movement_flag(MovementFlag flag);
-  void update(double dt);
+  void update(float dt);
   void render(const Shader& shader, bool withEye = true) const;
  private:
   ProjectionSpec mPs;

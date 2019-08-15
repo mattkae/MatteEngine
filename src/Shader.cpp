@@ -280,6 +280,10 @@ void Shader::setUint(const GLchar* name, GLuint value) const {
     glUniform1ui(this->get_uniform(name), value);
 }
 
+void Shader::setVec2(const GLchar* name, glm::vec2 value) const {
+    glUniform2f(this->get_uniform(name), value.x, value.y);
+}
+
 void Shader::setVec3(const GLchar* name, glm::vec3 value) const {
     glUniform3f(this->get_uniform(name), value.x, value.y, value.z);
 }

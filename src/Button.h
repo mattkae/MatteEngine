@@ -3,7 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-#include "BasicShapes.h"
+#include "RenderableRectangle.h"
 
 // A button needs: Text, Color, On Click Handler, Padding
 // It's basically a square around text
@@ -27,11 +27,6 @@ public:
 	glm::vec3 hoverColor = glm::vec3(0);
 	glm::vec3 textColor = glm::vec3(0);
 private:
-	GLuint mVao = 0;
-	GLuint mVbo = 0;
-	GLuint mEbo = 0;
+	RenderableRectangle mRectangle;
 	glm::vec2 mTextPosition = glm::vec2(0);
-	Rectangle mBoundingRectangle;
-	bool mIsHovered = false;
-	bool mIsClicked = false;
 };

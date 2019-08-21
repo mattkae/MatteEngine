@@ -37,17 +37,15 @@ void initializeRenderableRectangle(RenderableRectangle& rect) {
 	glBindVertexArray(0);
 }
 
-bool isMouseHovered(const Input& input, const RenderableRectangle& rect) {
-	DoublePoint point = input.getCursorPosition();
+bool isMouseHovered(const RenderableRectangle& rect) {
+	DoublePoint point = getCursorPosition();
 	return doesIntersectBox(rect.r, point);
 }
 
 void updateRenderableRectangle(RenderableRectangle& rect) {
-	const Input& input = Input::getInstance();
+	bool isMouseClicked = isLeftClickDown();
 
-	bool isMouseClicked = input.isLeftClickDown();
-
-	rect.isHovered = isMouseHovered(input, rect);
+	rect.isHovered = isMouseHovered(rect);
 	bool nextIsClicked = isMouseClicked && rect.isHovered;
 
 	if (nextIsClicked) {

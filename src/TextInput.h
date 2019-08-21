@@ -12,9 +12,11 @@ struct TextInput {
 	glm::vec3 backgroundColor = glm::vec3(1, 1, 1);
 	glm::vec3 borderColor = glm::vec3(0, 0, 1);
 	glm::vec2 position = glm::vec2(0);
+	glm::vec2 dimensions = glm::vec2(128, 36);
 	GLfloat scale = 1;
 	std::string str = "";
 	RenderableRectangle r;
+	int focusToken = -1;
 };
 
 bool initializeTextInput(TextInput& input);

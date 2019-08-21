@@ -8,6 +8,7 @@ UI::UI() {
 
 void UI::update(double dt) {
 	mButton.update();
+	updateTextInput(mInput);
 }
 
 void UI::generate() {
@@ -26,9 +27,18 @@ void UI::generate() {
 	mButton.textRenderer = &mTextRenderer;
 	mButton.onClickHandler = []{ printf("Clicked me!"); };
 	mButton.initialize();
+
+	mInput.textRenderer = &mTextRenderer;
+	mInput.textColor = glm::vec3(1, 0, 0);
+	mInput.backgroundColor = glm::vec3(0, 1, 0);
+	mInput.borderColor = glm::vec3(1, 0, 0);
+	mInput.position = glm::vec2(250, 250);
+	mInput.str = "Enter text";
+	initializeTextInput(mInput);
 }
 
 void UI::render() const {
 	mOrthographicShader.use();
-	mButton.render(mOrthographicShader);
+	renderTextInput(mInput, mOrthographicShader);
+	//mButton.render(mOrthographicShader);
 }

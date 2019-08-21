@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
         prevTime = currentTime;
 
         glfwPollEvents();
-        if (Input::getInstance().isKeyDown(GLFW_KEY_R)) {
+        if (isKeyDown(GLFW_KEY_R, primaryFocusToken)) {
             scene.loadFromJson("assets/scenes/scene.json");
         }
 
@@ -84,7 +84,7 @@ void initialize(int argc, const char* argv[])
         return;
     }
 
-	Input::Initialize(GlobalWindow);
+	initializeInputSystem(GlobalWindow);
     glfwMakeContextCurrent(GlobalWindow);
 
     // GLEW

@@ -15,6 +15,7 @@ bool initializeTextInput(TextInput& input) {
 	input.r.borderColor = input.borderColor;
 	input.focusToken = getNextFocusToken();
 	initializeRenderableRectangle(input.r);
+	input.cursorPosition = input.str.size();
 	return true;
 }
 
@@ -30,20 +31,41 @@ void updateTextInput(TextInput& textInput) {
 	int scancode = getCurrentScancode(textInput.focusToken);
 
 	if (key > -1 && isKeyJustDown(key, textInput.focusToken)) {
-		if (key == GLFW_KEY_BACKSPACE) {
+		switch (key) {
+		case GLFW_KEY_LEFT:
+			textInput.cursorPosition = textInput.cursorPosition == 0 ? 0 : textInput.cursorPosition - 1;
+			break;
+		case GLFW_KEY_RIGHT:
+			textInput.cursorPosition = textInput.cursorPosition == textInput.str.size() ? textInput.str.size() : textInput.cursorPosition + 1;
+			break;
+		case GLFW_KEY_BACKSPACE:
 			if (!textInput.str.empty()) {
-				const size_t strSize = textInput.str.size();
-				if (strSize == 1) {
-					textInput.str = "";
-				} else {
-					textInput.str = textInput.str.substr(0, strSize - 1);
+				textInput.str.erase(textInput.cursorPosition - 1, textInput.cursorPosition);
+				if (textInput.cursorPosition != 0) {
+					textInput.cursorPosition--;
 				}
 			}
-		} else {
-			textInput.str += glfwGetKeyName(key, scancode);
+			break;
+		case GLFW_KEY_LEFT_SHIFT:
+		case GLFW_KEY_RIGHT_SHIFT:
+			break;
+		default: {
+			char c = (char) key;
+			
+			if (!isKeyDown(GLFW_KEY_LEFT_SHIFT, textInput.focusToken)) {
+				c = std::tolower(c);
+			}
+
+			if (textInput.cursorPosition == textInput.str.size()) {
+				textInput.str += c;
+			} else {
+				textInput.str.insert(textInput.cursorPosition, &c);
+			}
+
+			textInput.cursorPosition++;
+		}
 		}
 	}
-
 }
 
 void renderTextInput(const TextInput& textInput, const Shader& shader) {

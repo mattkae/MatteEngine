@@ -17,6 +17,7 @@ struct TextInput {
 	std::string str = "";
 	RenderableRectangle r;
 	int focusToken = -1;
+	size_t cursorPosition = 0;
 };
 
 bool initializeTextInput(TextInput& input);

@@ -1,73 +1,86 @@
 #include "Input.h"
 #include "Constants.h"
+#include "Logger.h"
 #include <iostream>
+#include <GLFW/glfw3.h>
 
-using namespace std;
+const int NUM_KEYS = 512;
+const int NUM_BUTTONS = 3;
 
-Input* Input::mInstance = nullptr;
-GLFWwindow* Input::mWindow = nullptr;
+struct KeyState {
+	bool hasChanged = false;
+	bool isDown = false;
+};
 
-void Input::Initialize(GLFWwindow* window) {
-	Input::mWindow = window;
-	glfwSetKeyCallback(window, Input::glfwKeyCallback);
-    glfwSetMouseButtonCallback(window, Input::glfwMouseButtonCallback);
-}
+struct InputState {
+	GLFWwindow* window = nullptr;
+	KeyState keyStates[NUM_KEYS];
+	bool clickStates[NUM_BUTTONS];
+	int focusToken = 0;
+	int nextFocusToken = -1;
+	int currentKeyDown = -1;
+	int currentScancode = -1;
+};
 
-const Input& Input::getInstance() {
-  if (!mInstance) {
-    mInstance = new Input();
-  }
-  
-  return *mInstance;
-}
+InputState globalInput;
 
-bool Input::isKeyUp(int key) const {
-  
-  return is_valid(key) && (!keyStates[key].isDown);
-}
-
-bool Input::isKeyJustDown(int key) const {
-  return is_valid(key) && (keyStates[key].isDown && keyStates[key].hasChanged);
-}
-
-bool Input::isKeyDown(int key) const {
-  return is_valid(key) && (keyStates[key].isDown);
-}
-
-bool Input::isKeyJustUp(int key) const {
-  return is_valid(key) && (!keyStates[key].isDown && keyStates[key].hasChanged);
-}
-
-bool Input::is_valid(int key) const {
+inline bool isKeyValid(int key) {
   return key >= 0 && key < NUM_KEYS;
 }
 
-void Input::glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  // Escape will always close the window
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
-    return;
-  }
-
-  if (!Input::mInstance->is_valid(key)) return;
-  
-  switch (action) {
-  case GLFW_REPEAT:
-  case GLFW_PRESS:
-    Input::mInstance->keyStates[key].hasChanged = !Input::mInstance->keyStates[key].isDown;
-    Input::mInstance->keyStates[key].isDown = true;
-    break;
-  case GLFW_RELEASE:
-  default:
-    Input::mInstance->keyStates[key].hasChanged = Input::mInstance->keyStates[key].isDown;
-    Input::mInstance->keyStates[key].isDown = false;
-    break;
-  }
+inline bool checkFocusToken(int focusToken) {
+	return focusToken == globalInput.focusToken;
 }
 
-void Input::glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    const Input& instance = Input::getInstance();
+int getNextFocusToken() {
+	return (++globalInput.nextFocusToken);
+}
 
+void setInputFocus(int focusToken) {
+	if (focusToken < 0) {
+		Logger::logWarning("Trying to set focus with a token less than zero");
+		return;
+	}
+
+	globalInput.focusToken = focusToken;
+}
+
+void resetInputFocus() {
+	globalInput.focusToken = 0;
+}
+
+int getInputFocus() {
+	return globalInput.focusToken;
+}
+
+void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	// Escape will always close the window
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+		return;
+	}
+
+	if (!isKeyValid(key)) return;
+  
+	switch (action) {
+		case GLFW_REPEAT:
+		case GLFW_PRESS:
+			globalInput.currentKeyDown = key;
+			globalInput.currentScancode = scancode;
+			globalInput.keyStates[key].hasChanged = !globalInput.keyStates[key].isDown;
+			globalInput.keyStates[key].isDown = true;
+			break;
+		case GLFW_RELEASE:
+		default:
+			globalInput.currentKeyDown = -1;
+			globalInput.currentScancode = -1;
+			globalInput.keyStates[key].hasChanged = globalInput.keyStates[key].isDown;
+			globalInput.keyStates[key].isDown = false;
+			break;
+	}
+}
+
+void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	if (button > GLFW_MOUSE_BUTTON_3) {
 		return;
 	}
@@ -75,19 +88,63 @@ void Input::glfwMouseButtonCallback(GLFWwindow* window, int button, int action, 
 	switch (action) {
 	case GLFW_PRESS:
 	case GLFW_REPEAT:
-		Input::mInstance->mClickStates[button] = true;
+		globalInput.clickStates[button] = true;
 		break;
 	case GLFW_RELEASE:
-		Input::mInstance->mClickStates[button] = false;
+		globalInput.clickStates[button] = false;
 		break;
 	}
 }
 
-DoublePoint Input::getCursorPosition() const {
+void initializeInputSystem(GLFWwindow* window) {
+	globalInput.window = window;
+	glfwSetKeyCallback(window, glfwKeyCallback);
+    glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
+}
+
+bool isKeyUp(int key, int focusToken) {
+	return checkFocusToken(focusToken) && isKeyValid(key) && (!globalInput.keyStates[key].isDown);
+}
+
+bool isKeyJustDown(int key, int focusToken) {
+	// Consume the "hasChanged" modifier on that key
+	if (checkFocusToken(focusToken) && isKeyValid(key) && (globalInput.keyStates[key].isDown && globalInput.keyStates[key].hasChanged)) {
+		 globalInput.keyStates[key].hasChanged = false;
+		 return true;
+	}
+
+	return false;
+}
+
+bool isKeyDown(int key, int focusToken) {
+	return checkFocusToken(focusToken) && isKeyValid(key) && (globalInput.keyStates[key].isDown);
+}
+
+bool isKeyJustUp(int key, int focusToken) {
+	return checkFocusToken(focusToken) && isKeyValid(key) && (!globalInput.keyStates[key].isDown && globalInput.keyStates[key].hasChanged);
+}
+
+bool isLeftClickDown() {
+	return globalInput.clickStates[GLFW_MOUSE_BUTTON_LEFT];
+}
+
+bool isRightClickDown() {
+	return globalInput.clickStates[GLFW_MOUSE_BUTTON_RIGHT];
+}
+
+DoublePoint getCursorPosition() {
 	DoublePoint point;
-	if (Input::mWindow) {
-		glfwGetCursorPos(Input::mWindow, &point.x, &point.y);
+	if (globalInput.window) {
+		glfwGetCursorPos(globalInput.window, &point.x, &point.y);
 	}
 	point.y = Constants.height - point.y;
 	return point;
+}
+
+int getCurrentKeyDown(int focusToken) {
+	return focusToken == globalInput.focusToken ? globalInput.currentKeyDown : -1;
+}
+
+int getCurrentScancode(int focusToken) {
+	return focusToken == globalInput.focusToken ? globalInput.currentScancode : -1;
 }

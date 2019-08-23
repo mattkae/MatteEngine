@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "Button.h"
 #include "TextRenderer.h"
+#include "TextInput.h"
 
 class Scene;
 
@@ -16,5 +17,6 @@ class Scene;
  private:
 	 Shader mOrthographicShader;
 	 Button mButton;
+	 TextInput mInput;
 	 TextRenderer mTextRenderer;
  };

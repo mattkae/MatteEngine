@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Input.h"
+#include <GLFW/glfw3.h>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -11,6 +12,7 @@
 using namespace std;
 
 const glm::vec3 WORLD_UP(0.0, 1.0, 0.0);
+extern int primaryFocusToken;
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
 	mPos = pos;
@@ -93,37 +95,35 @@ void moveCamera(double dt, Camera* camera) {
     return;
   }
 
-  const Input& input = Input::getInstance();
-
   // Move around
-  if (input.isKeyDown(GLFW_KEY_W)) {
+  if (isKeyDown(GLFW_KEY_W, primaryFocusToken)) {
     camera->set_movement_flag(MoveForward);
   }
-  if (input.isKeyDown(GLFW_KEY_S)) {
+  if (isKeyDown(GLFW_KEY_S, primaryFocusToken)) {
     camera->set_movement_flag(MoveBackward);
   }
-  if (input.isKeyDown(GLFW_KEY_A)) {
+  if (isKeyDown(GLFW_KEY_A, primaryFocusToken)) {
     camera->set_movement_flag(MoveLeft);
   }
-  if (input.isKeyDown(GLFW_KEY_D)) {
+  if (isKeyDown(GLFW_KEY_D, primaryFocusToken)) {
     camera->set_movement_flag(MoveRight);
   }
 
   // Look around
-  if (input.isKeyDown(GLFW_KEY_UP)) {
+  if (isKeyDown(GLFW_KEY_UP, primaryFocusToken)) {
     camera->set_movement_flag(PlusPitch);
   }
-  if (input.isKeyDown(GLFW_KEY_DOWN)) {
+  if (isKeyDown(GLFW_KEY_DOWN, primaryFocusToken)) {
     camera->set_movement_flag(MinusPitch);
   }
-  if (input.isKeyDown(GLFW_KEY_LEFT)) {
+  if (isKeyDown(GLFW_KEY_LEFT, primaryFocusToken)) {
     camera->set_movement_flag(MinusYaw);
   }
-  if (input.isKeyDown(GLFW_KEY_RIGHT)) {
+  if (isKeyDown(GLFW_KEY_RIGHT, primaryFocusToken)) {
     camera->set_movement_flag(PlusYaw);
   }
 
-  if (input.isKeyDown(GLFW_KEY_5)) {
+  if (isKeyDown(GLFW_KEY_5, primaryFocusToken)) {
     camera->set_position(glm::vec3(0, 100, 0));
   }
 }

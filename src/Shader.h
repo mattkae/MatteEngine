@@ -48,6 +48,7 @@ class Shader {
   void setFloat(const GLchar* name, GLfloat value) const;
   void setInt(const GLchar* name, GLint value) const;
   void setUint(const GLchar* name, GLuint value) const;
+  void setVec2(const GLchar* name, glm::vec2 value) const;
   void setVec3(const GLchar* name, glm::vec3 value) const;
   void setVec4(const GLchar* name, glm::vec4 value) const;
   void setMat4(const GLchar* name, glm::mat4 matrix) const;

@@ -1,5 +1,4 @@
 #include "ParticleEmitter.h"
-#include "Camera.h"
 #include "GlmUtility.h"
 #include "Shader.h"
 #include <array>
@@ -165,22 +164,22 @@ void ParticleEmitter::update(float deltaTime)
     }
 }
 
-void ParticleEmitter::render(const Camera& camera) const
+void ParticleEmitter::render(const BetterCamera& camera) const
 {
     if (!isGenerated) {
         return;
     }
 
 	mParticleShader.use();
-    camera.render(mParticleShader);
+    renderCamera(camera, mParticleShader);
 
     glBindVertexArray(vao);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     mParticleShader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
-    mParticleShader.setVec3("uCameraUp", camera.get_up());
-    mParticleShader.setVec3("uCameraRight", camera.get_right());
+    mParticleShader.setVec3("uCameraUp", camera.up);
+    mParticleShader.setVec3("uCameraRight", camera.right);
     for (auto const& particlePair : particlePool.getConstValues()) {
         if (!particlePair.isTaken) {
             continue;

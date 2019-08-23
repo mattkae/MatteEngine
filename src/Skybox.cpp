@@ -89,7 +89,7 @@ bool Skybox::generate(std::string *paths) {
     return true;
 }
 
-void Skybox::render(const Camera &camera) const {
+void Skybox::render(const BetterCamera &camera) const {
     if (!mIsInited) {
         return;
 	}
@@ -98,13 +98,9 @@ void Skybox::render(const Camera &camera) const {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
     glDisable(GL_DEPTH_TEST);
-
-    glm::mat4 projection = glm::inverse(camera.get_projection());
-    glm::mat3 view = glm::inverse(glm::mat3(camera.get_view()));
-
-    mSkyboxShader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE,
-                                  glm::value_ptr(projection));
-    mSkyboxShader.set_uniform_matrix_3fv("uView", 1, GL_FALSE, glm::value_ptr(view));
+	
+	mSkyboxShader.setMat3("uView", glm::inverse(glm::mat3(getCameraViewMatrix(camera))));
+	mSkyboxShader.setMat4("uProjection", getCameraProjection(camera));
 
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

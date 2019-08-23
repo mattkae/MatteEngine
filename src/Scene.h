@@ -46,7 +46,7 @@ class Scene {
     bool mUseShadows = true;
 
     Shader mShadowShader;
-    Camera mCamera;
+    BetterCamera mCamera;
 };
 
 #endif

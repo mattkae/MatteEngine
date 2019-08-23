@@ -1,5 +1,4 @@
 #include "DeferredGeometryBuffer.h"
-#include "Camera.h"
 #include "Constants.h"
 #include "Logger.h"
 #include "Scene.h"
@@ -79,7 +78,7 @@ void DeferredGeometryBuffer::free()
     }
 }
 
-void DeferredGeometryBuffer::renderToBuffer(const Camera& camera, const Scene* scene) const
+void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Scene* scene) const
 {
     if (!mHasGenerated) {
         return;
@@ -90,7 +89,7 @@ void DeferredGeometryBuffer::renderToBuffer(const Camera& camera, const Scene* s
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mShader.use();
-    camera.render(mShader, false);
+    renderCamera(camera, mShader);
     scene->renderModels(mShader, true);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

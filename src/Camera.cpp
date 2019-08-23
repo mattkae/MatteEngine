@@ -5,7 +5,6 @@
 #include "Input.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
@@ -14,116 +13,54 @@ using namespace std;
 const glm::vec3 WORLD_UP(0.0, 1.0, 0.0);
 extern int primaryFocusToken;
 
-Camera::Camera(glm::vec3 pos, glm::vec3 up, glm::vec3 right) {
-	mPos = pos;
-	mUp = up;
-	mRight = right;
-	mForward = glm::normalize(glm::cross(up, right));
-	mPs.aspectRatio = Constants.aspectRatio;
-}
+void updateCamera(BetterCamera& camera, float dt) {
+	if (isKeyDown(GLFW_KEY_W, primaryFocusToken)) {
+		camera.position += dt * camera.speed * camera.forward;
+	}
+	if (isKeyDown(GLFW_KEY_A, primaryFocusToken)) {
+		camera.position -= dt * camera.speed * camera.right;
+	}
+	if (isKeyDown(GLFW_KEY_S, primaryFocusToken)) {
+		camera.position -= dt * camera.speed * camera.forward;
+	}
+	if (isKeyDown(GLFW_KEY_D, primaryFocusToken)) {
+		camera.position += dt * camera.speed * camera.right;
+	}
+	if (isKeyDown(GLFW_KEY_LEFT, primaryFocusToken)) {
+		camera.yaw -= dt * camera.sensitivity;
+	}
+	if (isKeyDown(GLFW_KEY_UP, primaryFocusToken)) {
+		camera.pitch += dt * camera.sensitivity;
 
-void Camera::set_movement_flag(MovementFlag flag) {
-	 mMovementFlags = mMovementFlags | flag;
-}
-
-void Camera::update(float dt) {
-	if (mMovementFlags & MovementFlag::MoveForward) {
-		mPos += ((float) dt) * mMs.speed * mForward;
-	}
-	if (mMovementFlags & MovementFlag::MoveBackward) {
-		mPos -= ((float) dt) * mMs.speed * mForward;
-	}
-	if (mMovementFlags & MovementFlag::MoveRight) {
-		mPos += ((float) dt) * mMs.speed * mRight;
-	}
-	if (mMovementFlags & MovementFlag::MoveLeft) {
-		mPos -= ((float) dt) * mMs.speed * mRight;
-	}
-	if (mMovementFlags & MovementFlag::PlusPitch) {
-		mVs.pitch += dt * mMs.sensitivity;
-
-		if (mVs.pitch > mVs.maxPitch) {
-			mVs.pitch = mVs.maxPitch;
+		if (camera.pitch > camera.maxPitch) {
+			camera.pitch = camera.maxPitch;
 		}
 	}
-	if (mMovementFlags & MovementFlag::MinusPitch) {
-		mVs.pitch -= dt * mMs.sensitivity;
+	if (isKeyDown(GLFW_KEY_RIGHT, primaryFocusToken)) {
+		camera.yaw += dt * camera.sensitivity;
+	}
+	if (isKeyDown(GLFW_KEY_DOWN, primaryFocusToken)) {
+		camera.pitch -= dt * camera.sensitivity;
 
-		if (mVs.pitch < -mVs.maxPitch) {
-			mVs.pitch = -mVs.maxPitch;
+		if (camera.pitch < -camera.maxPitch) {
+			camera.pitch = -camera.maxPitch;
 		}
 	}
-	if (mMovementFlags & MovementFlag::PlusYaw) {
-		mVs.yaw += dt * mMs.sensitivity;
-	}
-	if (mMovementFlags & MovementFlag::MinusYaw) {
-		mVs.yaw -= dt * mMs.sensitivity;
-	}
-
-	mMovementFlags = 0;
 
 	glm::vec3 frontTemp;
-	float pitch = mVs.pitch;
-	float yaw = mVs.yaw - 90.f;
+	float pitch = camera.pitch;
+	float yaw = camera.yaw - 90.f;
 	frontTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 	frontTemp.y = sin(glm::radians(pitch));
 	frontTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-
-	mForward = glm::normalize(frontTemp);
-	mRight = glm::normalize(glm::cross(mForward, WORLD_UP));
-	mUp = glm::normalize(glm::cross(mRight, mForward));
+	camera.forward = glm::normalize(frontTemp);
+	camera.right = glm::normalize(glm::cross(camera.forward, WORLD_UP));
+	camera.up = glm::normalize(glm::cross(camera.right, camera.forward));
 }
 
-glm::mat4 Camera::get_view() const {
-  return glm::lookAt(mPos, mPos + mForward, mUp);
-}
-
-glm::mat4 Camera::get_projection() const {
-  return glm::perspective(glm::radians(mPs.fov), mPs.aspectRatio, mPs.near, mPs.far);
-}
-
-void Camera::render(const Shader& shader, bool withEye) const {
-  shader.set_uniform_matrix_4fv("uVp", 1, GL_FALSE, glm::value_ptr(get_projection() * get_view()));
-  if (withEye) {
-    shader.set_uniform_3f("uEye", mPos.x, mPos.y, mPos.z);
-  }
-}
-
-void moveCamera(double dt, Camera* camera) {
-  if (camera == nullptr) {
-    cerr << "Camera does not exist to be moved." << endl;
-    return;
-  }
-
-  // Move around
-  if (isKeyDown(GLFW_KEY_W, primaryFocusToken)) {
-    camera->set_movement_flag(MoveForward);
-  }
-  if (isKeyDown(GLFW_KEY_S, primaryFocusToken)) {
-    camera->set_movement_flag(MoveBackward);
-  }
-  if (isKeyDown(GLFW_KEY_A, primaryFocusToken)) {
-    camera->set_movement_flag(MoveLeft);
-  }
-  if (isKeyDown(GLFW_KEY_D, primaryFocusToken)) {
-    camera->set_movement_flag(MoveRight);
-  }
-
-  // Look around
-  if (isKeyDown(GLFW_KEY_UP, primaryFocusToken)) {
-    camera->set_movement_flag(PlusPitch);
-  }
-  if (isKeyDown(GLFW_KEY_DOWN, primaryFocusToken)) {
-    camera->set_movement_flag(MinusPitch);
-  }
-  if (isKeyDown(GLFW_KEY_LEFT, primaryFocusToken)) {
-    camera->set_movement_flag(MinusYaw);
-  }
-  if (isKeyDown(GLFW_KEY_RIGHT, primaryFocusToken)) {
-    camera->set_movement_flag(PlusYaw);
-  }
-
-  if (isKeyDown(GLFW_KEY_5, primaryFocusToken)) {
-    camera->set_position(glm::vec3(0, 100, 0));
-  }
+void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye) {
+	shader.setMat4("uVp", getCameraProjection(camera) * getCameraViewMatrix(camera));
+	if (withEye) {
+		shader.setVec3("uEye", camera.position);
+	}
 }

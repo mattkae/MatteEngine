@@ -3,13 +3,13 @@
 #include "GlmUtility.h"
 #include "ObjectPool.h"
 #include "Shader.h"
+#include "Camera.h"
 #include <GL/glew.h>
 #include <functional>
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 
 class Shader;
-class Camera;
 
 struct Particle {
     glm::vec3 position = glm::vec3(0);
@@ -48,7 +48,7 @@ public:
 
     void generate();
     void update(float deltaTimeSec);
-    void render(const Camera& camera) const;
+    void render(const BetterCamera& camera) const;
     void free();
     void onGetParticle(ObjectPoolItem<Particle>& particle);
     void onRetParticle(ObjectPoolItem<Particle>& particle);

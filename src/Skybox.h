@@ -11,7 +11,7 @@ using json = nlohmann::json;
 struct Skybox {
 public:
     bool generate(std::string* paths);
-    void render(const Camera &camera) const;
+    void render(const BetterCamera &camera) const;
     void free();
 
 private:

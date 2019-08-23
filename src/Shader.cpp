@@ -292,7 +292,10 @@ void Shader::setVec4(const GLchar* name, glm::vec4 value) const {
     glUniform4f(this->get_uniform(name), value.x, value.y, value.z, value.w);
 }
 
-void Shader::setMat4(const GLchar* name, glm::mat4 matrix) const
-{
+void Shader::setMat4(const GLchar* name, glm::mat4 matrix) const {
     glUniformMatrix4fv(this->get_uniform(name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void Shader::setMat3(const GLchar* name, glm::mat3 matrix) const {
+    glUniformMatrix3fv(this->get_uniform(name), 1, GL_FALSE, glm::value_ptr(matrix));
 }

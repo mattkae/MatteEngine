@@ -110,8 +110,7 @@ void Scene::loadFromJson(const char *jsonPath) {
 
 void Scene::update(double dt) {
 	float dtFloat = static_cast<float>(dt);
-    moveCamera(dt, &mCamera);
-    mCamera.update(static_cast<float>(dtFloat));
+    updateCamera(mCamera, dtFloat);
 
 	for (auto& emitter : particleEmitters) {
 		emitter.update(dtFloat);
@@ -171,7 +170,7 @@ void Scene::renderScene() const {
     }
 
     mSceneShader.use();
-    mCamera.render(mSceneShader);
+    renderCamera(mCamera, mSceneShader, true);
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);

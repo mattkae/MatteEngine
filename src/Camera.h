@@ -4,60 +4,27 @@
 
 #include "Constants.h"
 #include <glm/glm.hpp>
-
-enum MovementFlag {
-  MoveForward = 0x01,
-  MoveBackward = 0x02,
-  MoveRight = 0x04,
-  MoveLeft = 0x08,
-  PlusPitch = 0x10,
-  MinusPitch = 0x20,
-  PlusYaw = 0x40,
-  MinusYaw = 0x80
-};
-
-struct ProjectionSpec {
-  float fov    = 60.f;
-  float aspectRatio = Constants.aspectRatio;
-  float near   = Constants.near;
-  float far    = Constants.far;
-};
-
-struct ViewSpec {
-  float pitch    = 0.f;
-  float yaw      = 0.f;
-  float maxPitch   = 75.f;
-};
-
-struct MovementSpec {
-  float speed       = 5.f;
-  float sensitivity = 180.f;
-};
-
+#include <glm/gtc/matrix_transform.hpp>
 class Shader;
 
-class Camera {
- public:
-  Camera(glm::vec3 pos = glm::vec3(0, 2.5, 10), glm::vec3 up = glm::vec3(0, 1, 0), glm::vec3 right = glm::vec3(1, 0, 0));
-  glm::vec3 get_up() const { return mUp; };
-  glm::vec3 get_right() const { return mRight; };
-  glm::vec3 get_forward() const { return mForward; };
-  glm::vec3 get_position() const { return mPos; };
-  glm::mat4 get_view() const;
-  glm::mat4 get_projection() const;
-  void set_position(glm::vec3 pos) { mPos = pos; };
+struct BetterCamera {
+	glm::vec3 position = glm::vec3(0);
+	glm::vec3 up = glm::vec3(0, 1, 0);
+	glm::vec3 right = glm::vec3(1, 0, 0);
+	glm::vec3 forward = glm::vec3(0, 0, 1);
+	
+	float speed = 10.f;
+	float sensitivity = 145.f;
 
-  void set_movement_flag(MovementFlag flag);
-  void update(float dt);
-  void render(const Shader& shader, bool withEye = true) const;
- private:
-  ProjectionSpec mPs;
-  ViewSpec mVs;
-  MovementSpec mMs;
-  glm::vec3 mUp, mRight, mForward, mPos;
-  unsigned char mMovementFlags = 0;
+	float pitch = 0.f;
+	float yaw = 0.f;
+	float maxPitch = 75.f;
+
+	float fov = 60.f;
 };
 
-void moveCamera(double dt, Camera* camera);
-
+inline glm::mat4 getCameraViewMatrix(const BetterCamera& camera) { return glm::lookAt(camera.position, camera.position + camera.forward, camera.up);};
+inline glm::mat4 getCameraProjection(const BetterCamera& camera) { return glm::perspective(glm::radians(camera.fov), Constants.aspectRatio, Constants.near, Constants.far); };
+void updateCamera(BetterCamera& camera, float dt);
+void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye = false);
 #endif

@@ -5,12 +5,15 @@
 #include <GLFW/glfw3.h>
 
 bool initializeTextInput(TextInput& input) {
+	GLfloat padding = 2.f * input.padding;
+
 	input.r = {
 		input.position.x,
 		input.position.y,
-		input.dimensions.x,
-		input.dimensions.y
+		padding + input.width,
+		static_cast<double>(padding + input.textRenderer->getFontSize()),
 	};
+	input.position = input.position + input.padding;
 	input.r.backgroundColor = input.backgroundColor;
 	input.r.borderColor = input.borderColor;
 	input.focusToken = getNextFocusToken();
@@ -19,12 +22,18 @@ bool initializeTextInput(TextInput& input) {
 	return true;
 }
 
+void updateWidth(TextInput& textInput) {
+	textInput.textWidth = textInput.textRenderer->getStringWidth(textInput.str, textInput.scale);
+}
+
 void updateTextInput(TextInput& textInput) {
 	updateRenderableRectangle(textInput.r);
 	if (textInput.r.isFocused && textInput.r.isJustClicked) {
 		setInputFocus(textInput.focusToken);
+		textInput.r.backgroundColor = textInput.focusedBackgroundColor;
 	} else if (getInputFocus() == textInput.focusToken && !textInput.r.isFocused) {
 		resetInputFocus();
+		textInput.r.backgroundColor = textInput.backgroundColor;
 	}
 
 	int key = getCurrentKeyDown(textInput.focusToken);
@@ -44,26 +53,30 @@ void updateTextInput(TextInput& textInput) {
 				if (textInput.cursorPosition != 0) {
 					textInput.cursorPosition--;
 				}
+
+				updateTextInput(textInput);
 			}
 			break;
 		case GLFW_KEY_LEFT_SHIFT:
 		case GLFW_KEY_RIGHT_SHIFT:
 			break;
-		default: {
-			char c = (char) key;
+		default: 
+			{
+				char c = (char) key;
 			
-			if (!isKeyDown(GLFW_KEY_LEFT_SHIFT, textInput.focusToken)) {
-				c = std::tolower(c);
-			}
+				if (!isKeyDown(GLFW_KEY_LEFT_SHIFT, textInput.focusToken)) {
+					c = std::tolower(c);
+				}
 
-			if (textInput.cursorPosition == textInput.str.size()) {
-				textInput.str += c;
-			} else {
-				textInput.str.insert(textInput.cursorPosition, &c);
-			}
+				if (textInput.cursorPosition == textInput.str.size()) {
+					textInput.str += c;
+				} else {
+					textInput.str.insert(textInput.cursorPosition, &c);
+				}
 
-			textInput.cursorPosition++;
-		}
+				textInput.cursorPosition++;
+				updateTextInput(textInput);
+			}
 		}
 	}
 }

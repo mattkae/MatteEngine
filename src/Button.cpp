@@ -8,7 +8,6 @@ Button::Button() {
 
 void Button::initialize() {
 	mTextPosition = position + glm::vec2(2 * padding);
-	GLfloat width = textRenderer->getStringWidth(label, scale) + 2 * padding;
 	GLfloat height = (textRenderer->getFontSize() + 2 * padding) * scale;
 	mRectangle.backgroundColor = buttonColor;
 	mRectangle.r = { position.x, position.y, width, height };

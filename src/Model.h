@@ -11,14 +11,14 @@
 
 class Shader;
 
-class Model {
-public:
-    void render(const Shader& shader, bool withMaterial = true) const;
+struct Model {
     glm::mat4 model = glm::mat4(0);
-    std::vector<Mesh> mMeshes;
-    void generate();
-    void free();
+    std::vector<Mesh> meshes;
 };
+
+void initializeModel(Model& model);
+void renderModel(const Model& model, const Shader& shader, bool withMaterial = true);
+void freeModel(Model& model);
 
 void to_json(nlohmann::json& j, const Model& model);
 void from_json(const nlohmann::json& j, Model& model);

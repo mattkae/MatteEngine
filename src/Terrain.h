@@ -20,15 +20,13 @@ struct GenerationParameters {
 };
 
 struct Terrain {
-public:
-    bool generate(const GenerationParameters& params);
-    void render(const Shader& shader, bool withMaterial = true) const;
-    void free();
-private:
-	bool mHasGenerated = false;
+    glm::mat4 model = glm::mat4(1);
     Mesh mMesh;
-    glm::mat4 mModel;
 };
+
+void initializeTerrain(Terrain& terrain, const GenerationParameters& params);
+void renderTerrain(const Terrain& terrain, const Shader& shader, bool withMaterial = true);
+void freeTerrain(Terrain& terrain);
 
 void to_json(json& j, const Terrain& terrain);
 void from_json(const json& j, Terrain& terrain);

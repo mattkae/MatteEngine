@@ -4,41 +4,30 @@
 
 using namespace std;
 
-Mesh::Mesh() {
-    mVao = 0;
-    mVbo = 0;
-    mEbo = 0;
-    mHasGenerated = false;
+void freeMesh(Mesh& mesh) {
+    if (mesh.vao) glDeleteVertexArrays(1, &mesh.vao);
+	if (mesh.vbo) glDeleteBuffers(1, &mesh.vbo);
+    if (mesh.ebo) glDeleteBuffers(1, &mesh.ebo);
 }
 
-void Mesh::free_resources() {
-    if (mHasGenerated) {
-        glDeleteVertexArrays(1, &this->mVao);
-        glDeleteBuffers(1, &this->mVbo);
-        glDeleteBuffers(1, &this->mEbo);
-    }
-
-    mHasGenerated = false;
-}
-
-void Mesh::generate() {
+void initializeMesh(Mesh& mesh) {
     // Generate our buffers
-    glGenVertexArrays(1, &this->mVao);
-    glGenBuffers(1, &this->mVbo);
-    glGenBuffers(1, &this->mEbo);
+    glGenVertexArrays(1, &mesh.vao);
+    glGenBuffers(1, &mesh.vbo);
+    glGenBuffers(1, &mesh.ebo);
 
     // Bind data to VAO
-    glBindVertexArray(this->mVao);
+    glBindVertexArray(mesh.vao);
 
     // Put the vertex data into OpenGL
-    glBindBuffer(GL_ARRAY_BUFFER, this->mVbo);
-    glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(Vertex),
-                 &this->vertices[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+    glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(Vertex),
+                 &mesh.vertices[0], GL_STATIC_DRAW);
 
     // Put the index data into OpenGL
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->mEbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 this->indicies.size() * sizeof(GLuint), &this->indicies[0],
+                 mesh.indicies.size() * sizeof(GLuint), &mesh.indicies[0],
                  GL_STATIC_DRAW);
 
     // Position
@@ -58,16 +47,18 @@ void Mesh::generate() {
 
     // Unbind the VAO
     glBindVertexArray(0);
-
-    mHasGenerated = true;
 }
 
-void Mesh::render(const Shader &shader, bool withMaterial) const {
+void renderMesh(const Mesh& mesh, const Shader& shader, bool withMaterial) {
+	if (mesh.vao == 0) {
+		return;
+	}
+
     if (withMaterial) {
-        render_material(shader, material);
+        render_material(shader, mesh.material);
     }
 
-    glBindVertexArray(this->mVao);
-    glDrawElements(GL_TRIANGLES, this->indicies.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(mesh.vao);
+    glDrawElements(GL_TRIANGLES, mesh.indicies.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

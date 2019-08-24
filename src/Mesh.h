@@ -9,19 +9,17 @@
 #include <vector>
 
 class Shader;
-class Mesh {
-  public:
-    Mesh();
-    void generate();
-    void free_resources();
-    void render(const Shader &shader, bool withMaterial = true) const;
+struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<GLint> indicies;
     Material material;
-
-  private:
-    bool mHasGenerated;
-    GLuint mVao, mVbo, mEbo;
+    GLuint vao = 0;
+	GLuint vbo = 0;
+	GLuint ebo = 0;
 };
+
+void initializeMesh(Mesh& mesh);
+void renderMesh(const Mesh& mesh, const Shader& shader, bool withMaterial = true);
+void freeMesh(Mesh& mesh);
 
 #endif

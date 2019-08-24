@@ -7,38 +7,32 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-void Model::free()
-{
-    for (auto mesh : mMeshes) {
-        mesh.free_resources();
+void freeModel(Model& model) {
+    for (auto& mesh : model.meshes) {
+        freeMesh(mesh);
     }
 
-    mMeshes.clear();
+    model.meshes.clear();
 }
 
-void Model::render(const Shader& shader, bool withMaterial) const
-{
-    shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE,
-        glm::value_ptr(model));
-    for (auto mesh : mMeshes) {
-        mesh.render(shader, withMaterial);
+void renderModel(const Model& model, const Shader& shader, bool withMaterial) {
+    shader.setMat4("uModel", model.model);
+    for (auto& mesh : model.meshes) {
+		renderMesh(mesh, shader, withMaterial);
     }
 }
 
-void Model::generate()
-{
-    for (auto& mesh : mMeshes) {
-        mesh.generate();
+void initializeModel(Model& model) {
+    for (auto& mesh : model.meshes) {
+        initializeMesh(mesh);
     }
 }
 
-void to_json(nlohmann::json& j, const Model& model)
-{
+void to_json(nlohmann::json& j, const Model& model) {
     j = nlohmann::json { { "transform", glm::mat4ToArray(model.model) } };
 }
 
-void from_json(const nlohmann::json& j, Model& model)
-{
+void from_json(const nlohmann::json& j, Model& model) {
     std::string path;
     std::vector<float> matrixArray;
 

@@ -23,8 +23,7 @@
     do it.
 */
 
-std::vector<Material> loadMtlFile(std::string path)
-{
+std::vector<Material> loadMtlFile(std::string path) {
     std::vector<Material> materials;
     Logger::logInfo("Loading MTL file from " + path);
 
@@ -252,8 +251,8 @@ Model loadFromObj(std::string path)
         meshes.push_back(mesh);
     }
 
-	model.mMeshes = meshes;
-    model.generate();
+	model.meshes = meshes;
+    initializeModel(model);
     return model;
 }
 

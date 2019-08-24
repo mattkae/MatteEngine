@@ -76,11 +76,11 @@ void from_json(const json &j, Scene &scene) {
 
 void Scene::loadFromJson(const char *jsonPath) {
     for (auto model : models) {
-        model.free();
+        freeModel(model);
     }
     models.clear();
     for (auto mSphere : spheres) {
-        mSphere.free();
+        freeSphere(mSphere);
 	}
     spheres.clear();
 
@@ -95,7 +95,7 @@ void Scene::loadFromJson(const char *jsonPath) {
 	particleEmitters.clear();
 
     mSkybox.free();
-    mTerrain.free();
+    freeTerrain(mTerrain);
     mDeferredBuffer.free();
 
     std::ifstream sceneFile(jsonPath);
@@ -200,13 +200,13 @@ void Scene::renderScene() const {
 }
 
 void Scene::renderModels(const Shader &shader, bool withMaterial) const {
-    mTerrain.render(shader, withMaterial);
+    renderTerrain(mTerrain, shader, withMaterial);
 
     for (auto model : models) {
-        model.render(shader, withMaterial);
+        renderModel(model, shader, withMaterial);
     }
 
     for (auto sphere : spheres) {
-	    sphere.render(shader, withMaterial);
+	    renderSphere(sphere, shader, withMaterial);
     }
 }

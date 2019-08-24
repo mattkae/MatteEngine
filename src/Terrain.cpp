@@ -11,8 +11,7 @@ static float random_float(float min, float max)
     return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min))));
 }
 
-glm::vec3 calculateColor(float height, float max)
-{
+glm::vec3 calculateColor(float height, float max) {
     glm::vec3 color;
     if (height > max * 0.98f) {
         color = glm::vec3(random_float(0.95f, 1.0f));
@@ -29,13 +28,11 @@ glm::vec3 calculateColor(float height, float max)
     return color;
 }
 
-void to_json(json& j, const Terrain& terrain)
-{
+void to_json(json& j, const Terrain& terrain) {
     // TODO!
 }
 
-void from_json(const json& j, Terrain& terrain)
-{
+void from_json(const json& j, Terrain& terrain) {
     GenerationParameters genParams;
     j.at("size").get_to<int>(genParams.size);
     j.at("granularity").get_to<int>(genParams.granularity);
@@ -45,11 +42,10 @@ void from_json(const json& j, Terrain& terrain)
     j.at("ampFactor").get_to<float>(genParams.ampFactor);
     j.at("frequencyFactor").get_to<float>(genParams.frequencyFactor);
     j.at("numOctaves").get_to<int>(genParams.numOctaves);
-    terrain.generate(genParams);
+    initializeTerrain(terrain, genParams);
 }
 
-bool Terrain::generate(const GenerationParameters& params)
-{
+void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
     Logger::logInfo("Generating terrain...");
 
     float squareSize = ((float)params.size / (float)params.granularity) / 2.f;
@@ -103,30 +99,21 @@ bool Terrain::generate(const GenerationParameters& params)
 
     Logger::logInfo("Finished generating terrain!");
 
-    mMesh.indicies = indices;
-    mMesh.vertices = vertices;
-    mMesh.material.diffuse = glm::vec3(0, 0.2, 0);
-    mMesh.generate();
+    terrain.mMesh.indicies = indices;
+    terrain.mMesh.vertices = vertices;
+    terrain.mMesh.material.diffuse = glm::vec3(0, 0.2, 0);
+	initializeMesh(terrain.mMesh);
 
     int halfMapSize = params.granularity / 2;
-    mModel = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-    mModel = glm::translate(mModel, glm::vec3(-halfMapSize, -50, -halfMapSize));
-	mHasGenerated = true;
-    return true;
+    terrain.model = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    terrain.model = glm::translate(terrain.model, glm::vec3(-halfMapSize, -50, -halfMapSize));
 }
 
-void Terrain::render(const Shader& shader, bool withMaterial) const
-{
-	if (!mHasGenerated) {
-		return;
-	}
-
-    shader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(mModel));
-    mMesh.render(shader, withMaterial);
+void renderTerrain(const Terrain& terrain, const Shader& shader, bool withMaterial) {
+	shader.setMat4("uModel", terrain.model);
+	renderMesh(terrain.mMesh, shader, withMaterial);
 }
 
-void Terrain::free()
-{
-    mMesh.free_resources();
-	mHasGenerated = false;
+void freeTerrain(Terrain& terrain) {
+	freeMesh(terrain.mMesh);
 }

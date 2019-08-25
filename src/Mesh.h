@@ -3,12 +3,12 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Material.h"
+#include "Shader.h"
 #include "Vertex.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
 
-class Shader;
 struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<GLint> indicies;

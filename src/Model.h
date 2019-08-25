@@ -4,12 +4,11 @@
 
 #include "Material.h"
 #include "Mesh.h"
+#include "Shader.h"
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-
-class Shader;
 
 struct Model {
     glm::mat4 model = glm::mat4(0);

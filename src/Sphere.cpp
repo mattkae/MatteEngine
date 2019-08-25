@@ -1,5 +1,4 @@
 #include "Sphere.h"
-#include "Shader.h"
 #include "Vertex.h"
 #include "GlmUtility.h"
 #include <cmath>
@@ -76,7 +75,7 @@ void initializeSphere(Sphere& sphere) {
 }
 
 void renderSphere(const Sphere& sphere, const Shader& shader, bool withMaterial) {
-    shader.setMat4("uModel", sphere.model);
+	setShaderMat4(shader, "uModel", sphere.model);
 	renderMesh(sphere.mesh, shader, withMaterial);
 }
 

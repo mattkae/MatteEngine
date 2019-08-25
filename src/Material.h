@@ -3,11 +3,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Texture.h"
+#include "Shader.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
-
-class Shader;
 
 struct Material {
     std::string name;

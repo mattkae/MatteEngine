@@ -13,9 +13,9 @@ void UI::update(double dt) {
 
 void UI::generate() {
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(Constants.width), 0.0f, static_cast<float>(Constants.height));
-	mOrthographicShader = Shader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
-	mOrthographicShader.use();
-	mOrthographicShader.setMat4("uProjection", projection);
+	mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
+	useShader(mOrthographicShader);
+	setShaderMat4(mOrthographicShader, "uProjection", projection);
 
 	mTextRenderer.initialize(16, (GLchar*)"C:\\Windows\\Fonts\\Arial.ttf");
 
@@ -40,8 +40,8 @@ void UI::generate() {
 }
 
 void UI::render() const {
-	mOrthographicShader.use();
+	useShader(mOrthographicShader);
 	renderTextInput(mInput, mOrthographicShader);
-	mOrthographicShader.use();
+	useShader(mOrthographicShader);
 	mButton.render(mOrthographicShader);
 }

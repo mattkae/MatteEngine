@@ -4,7 +4,6 @@
 #include "GlmUtility.h"
 #include "ImageUtil.h"
 #include "Scene.h"
-#include "Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -14,16 +13,12 @@
 glm::mat4 get_light_projection(const Light &light) {
     switch (light.type) {
     case Directional:
-        return glm::ortho<float>(-10, 10, -10.f, 10, Constants.near,
-                                 Constants.far);
+        return glm::ortho<float>(-10, 10, -10.f, 10, Constants.near, Constants.far);
     case Spot:
-        return glm::perspective<float>(glm::radians(45.f),
-                                       Constants.aspectRatio, Constants.near,
-                                       Constants.far);
+        return glm::perspective<float>(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
     case Point:
     default:
-        cerr << "Attempting to get a view for unknown light: " << light.type
-             << endl;
+        std::cerr << "Attempting to get a view for unknown light: " << light.type << std::endl;
         return glm::mat4(0.0);
     }
 }
@@ -32,16 +27,13 @@ glm::mat4 get_light_view(const Light &light) {
     switch (light.type) {
     case Directional: {
         auto lightPosition = (-Constants.far / 2.0f) * light.direction;
-        return glm::lookAt(lightPosition, lightPosition + light.direction,
-                           light.up);
+        return glm::lookAt(lightPosition, lightPosition + light.direction, light.up);
     }
     case Spot:
-        return glm::lookAt(light.position, light.position + light.direction,
-                           light.up);
+        return glm::lookAt(light.position, light.position + light.direction, light.up);
     case Point:
     default:
-        cerr << "Attempting to get a view for unknown light: " << light.type
-             << endl;
+        std::cerr << "Attempting to get a view for unknown light: " << light.type << std::endl;
         return glm::mat4(0.0);
     }
 }
@@ -106,8 +98,7 @@ void Light::create_shadow_texture_for_omnidirectional_light(int width,
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE,
-                    GL_COMPARE_REF_TO_TEXTURE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 
     for (int fidx = 0; fidx < 6; fidx++) {
@@ -135,20 +126,17 @@ void Light::create_shadow_texture_for_directional_light(int width, int height) {
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE,
-                    GL_COMPARE_REF_TO_TEXTURE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0,
-                 GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glGenFramebuffers(1, &depthFbo);
     glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
-                           shadowTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowTexture, 0);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        cerr << "Shadow framebuffer is not okay for light." << endl;
+        std::cerr << "Shadow framebuffer is not okay for light." << std::endl;
     } else {
         shadowWidth = width;
         shadowHeight = height;
@@ -179,8 +167,7 @@ void Light::update(double dt) {
     
 }
 
-void Light::render_omindirectional_shadows(const Shader &shader,
-                                           const Scene &scene) const {
+void Light::render_omindirectional_shadows(const Shader &shader, const Scene &scene) const {
     glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -188,14 +175,12 @@ void Light::render_omindirectional_shadows(const Shader &shader,
     glClearDepth(1.0);
 
     for (int fidx = 0; fidx < 6; fidx++) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                               GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx,
-                               shadowTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + fidx, shadowTexture, 0);
         glClear(GL_DEPTH_BUFFER_BIT);
 
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE) {
-            cerr << "Shadow FBO is broken with code " << status << endl;
+            std::cerr << "Shadow FBO is broken with code " << status << std::endl;
         }
 
         glm::vec3 currentDirection;
@@ -226,16 +211,13 @@ void Light::render_omindirectional_shadows(const Shader &shader,
             up = glm::vec3(0, -1, 0);
             break;
         default:
-            cerr << "Invalid direction for cube map." << endl;
+            std::cerr << "Invalid direction for cube map." << std::endl;
             break;
         }
 
         glm::mat4 view = glm::lookAt(position, position + currentDirection, up);
-        glm::mat4 proj =
-            glm::perspective(glm::radians(45.f), Constants.aspectRatio,
-                             Constants.near, Constants.far);
-        shader.set_uniform_matrix_4fv("uViewProj", 1, GL_FALSE,
-                                      glm::value_ptr(proj * view));
+        glm::mat4 proj = glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
+		setShaderMat4(shader, "uViewProj", proj * view);
         scene.renderModels(shader);
     }
 
@@ -244,8 +226,7 @@ void Light::render_omindirectional_shadows(const Shader &shader,
     glViewport(0, 0, Constants.width, Constants.height);
 }
 
-void Light::render_directional_shadows(const Shader &shader,
-                                       const Scene &scene) const {
+void Light::render_directional_shadows(const Shader &shader, const Scene &scene) const {
     glBindFramebuffer(GL_FRAMEBUFFER, depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -253,9 +234,8 @@ void Light::render_directional_shadows(const Shader &shader,
     glClearDepth(1.0);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    shader.set_uniform_matrix_4fv("uView", 1, GL_FALSE, glm::value_ptr(view));
-    shader.set_uniform_matrix_4fv("uProjection", 1, GL_FALSE,
-                                  glm::value_ptr(projection));
+	setShaderMat4(shader, "uView", view);
+	setShaderMat4(shader, "uProjection", projection);
     scene.renderModels(shader, false);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -276,15 +256,13 @@ void Light::render_shadows(const Shader &shader, const Scene &scene) const {
         render_directional_shadows(shader, scene);
         break;
     default:
-        cerr << "Rendering shadows for invalid light type " << type << "."
-             << endl;
+        std::cerr << "Rendering shadows for invalid light type " << type << "." << std::endl;
         break;
     }
 }
 
-static string get_array_uniform(const int lightIndex, const char *attribute,
-                                const char *property = nullptr) {
-    ostringstream ss;
+static std::string getArrayUniform(const int lightIndex, const char *attribute, const char *property = nullptr) {
+    std::ostringstream ss;
     ss << attribute << "[" << lightIndex << "]";
 
     if (property) {
@@ -300,21 +278,13 @@ void Light::render_point_light(const Shader &shader, const int index) const {
         glBindTexture(GL_TEXTURE_2D, shadowTexture);
     }
 
-    shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "direction").c_str(), 0, 0, 0);
-    shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "position").c_str(), position.x,
-        position.y, position.z);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "constant").c_str(), constant);
-    shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(),
-                          linear);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "quadratic").c_str(), quadratic);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
+	setShaderVec3(shader, getArrayUniform(index, "uLights", "direction").c_str(), glm::vec3(0));
+	setShaderVec3(shader, getArrayUniform(index, "uLights", "position").c_str(), position);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "constant").c_str(), constant);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "linear").c_str(), linear);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "quadratic").c_str(), quadratic);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "cosineCutOff").c_str(), -1);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "dropOff").c_str(), -1);
 
     float near = Constants.near;
     float far = Constants.far;
@@ -322,59 +292,46 @@ void Light::render_point_light(const Shader &shader, const int index) const {
     glm::vec2 uFarNear;
     uFarNear.x = (far + near) / diff * 0.5f + 0.5f;
     uFarNear.y = -(far * near) / diff;
-    shader.set_uniform_2f("uFarNear", uFarNear.x, uFarNear.y);
-    shader.set_uniform_1i(get_array_uniform(index, "uLights", "usesShadows").c_str(), usesShadows);
+	setShaderVec2(shader, "uFarNear", uFarNear);
+	setShaderInt(shader, getArrayUniform(index, "uLights", "usesShadows").c_str(), usesShadows);
 }
 
-void Light::render_directional_light(const Shader &shader,
-                                     const int index) const {
+void Light::render_directional_light(const Shader &shader, const int index) const {
     if (usesShadows) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, shadowTexture);
-        shader.set_uniform_1i("uDirShadow", 0);
-        shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE,
-                                      glm::value_ptr(projection * view));
+		setShaderInt(shader, "uDirShader", 0);
+		setShaderMat4(shader, "uShadowMatrix", projection * view);
     }
 
     glm::vec3 position = glm::vec3(direction);
     position *= -Constants.far;
-    shader.set_uniform_3f( get_array_uniform(index, "uLights", "direction").c_str(), direction.x, direction.y, direction.z);
-    shader.set_uniform_3f(get_array_uniform(index, "uLights", "position").c_str(), position.x,position.y, position.z);
-    shader.set_uniform_1f(get_array_uniform(index, "uLights", "constant").c_str(), 1);
-    shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(), 0);
-    shader.set_uniform_1f(get_array_uniform(index, "uLights", "quadratic").c_str(), 0);
-    shader.set_uniform_1f(get_array_uniform(index, "uLights", "cosineCutOff").c_str(), -1);
-    shader.set_uniform_1f(get_array_uniform(index, "uLights", "dropOff").c_str(), 1);
-    shader.set_uniform_1i(get_array_uniform(index, "uLights", "usesShadows").c_str(), usesShadows);
+	setShaderVec3(shader, getArrayUniform(index, "uLights", "direction").c_str(), direction);
+	setShaderVec3(shader, getArrayUniform(index, "uLights", "position").c_str(), position);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "constant").c_str(), 1.f);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "linear").c_str(), 0.f);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "quadratic").c_str(), 0.f);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "cosineCutOff").c_str(), -1.f);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "dropOff").c_str(), 1.f);
+	setShaderInt(shader, getArrayUniform(index, "uLights", "usesShadows").c_str(), usesShadows);
 }
 
 void Light::render_spot_light(const Shader &shader, const int index) const {
     if (usesShadows) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, shadowTexture);
-        shader.set_uniform_1i("uDirShadow", 0);
-        shader.set_uniform_matrix_4fv("uShadowMatrix", 1, GL_FALSE,
-                                      glm::value_ptr(projection * view));
+		setShaderInt(shader, "uDirShadow", 0);
+		setShaderMat4(shader, "uShadowMatrix", projection * view);
     }
 
-    shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "direction").c_str(), direction.x,
-        direction.y, direction.z);
-    shader.set_uniform_3f(
-        get_array_uniform(index, "uLights", "position").c_str(), position.x,
-        position.y, position.z);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "constant").c_str(), constant);
-    shader.set_uniform_1f(get_array_uniform(index, "uLights", "linear").c_str(),
-                          linear);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "quadratic").c_str(), quadratic);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "cosineCutOff").c_str(),
-        cosineCutOff);
-    shader.set_uniform_1f(
-        get_array_uniform(index, "uLights", "dropOff").c_str(), dropOff);
-    shader.set_uniform_1i(get_array_uniform(index, "uLights", "usesShadows").c_str(), usesShadows);
+	setShaderVec3(shader, getArrayUniform(index, "uLights", "direction").c_str(), direction);
+	setShaderVec3(shader, getArrayUniform(index, "uLights", "position").c_str(), position);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "constant").c_str(), constant);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "linear").c_str(), linear);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "quadratic").c_str(), quadratic);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "cosineCutOff").c_str(), cosineCutOff);
+	setShaderFloat(shader, getArrayUniform(index, "uLights", "dropOff").c_str(), dropOff);
+	setShaderInt(shader, getArrayUniform(index, "uLights", "usesShadows").c_str(), usesShadows);
 }
 
 void Light::render(const Shader &shader, const int index) const {
@@ -382,8 +339,7 @@ void Light::render(const Shader &shader, const int index) const {
         return;
     }
 
-    shader.set_uniform_3f(get_array_uniform(index, "uLights", "color").c_str(),
-                          color.x, color.y, color.z);
+	setShaderVec3(shader, getArrayUniform(index, "uLights", "color").c_str(), color);
 
     switch (type) {
     case Directional:
@@ -396,7 +352,7 @@ void Light::render(const Shader &shader, const int index) const {
         render_spot_light(shader, index);
         break;
     default:
-        cerr << "Unknown light type: " << type << endl;
+        std::cerr << "Unknown light type: " << type << std::endl;
         break;
     }
 }

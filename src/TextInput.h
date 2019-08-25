@@ -3,9 +3,9 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "RenderableRectangle.h"
+#include "Shader.h"
 
 struct TextRenderer;
-class Shader;
 struct TextInput {
 	TextRenderer* textRenderer = nullptr;
 	glm::vec3 textColor = glm::vec3(0, 0, 0);

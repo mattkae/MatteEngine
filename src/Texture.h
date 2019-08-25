@@ -5,9 +5,6 @@
 #include <map>
 #include <string>
 
-using namespace std;
-
-
 enum MaterialType {
   TEX_DIFFUSE = 0,
   TEX_SPECULAR

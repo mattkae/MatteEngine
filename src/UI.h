@@ -5,7 +5,6 @@
 #include "TextInput.h"
 
 class Scene;
-
  class UI {
  public:
 	 UI();

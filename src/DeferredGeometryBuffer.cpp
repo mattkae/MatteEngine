@@ -3,7 +3,6 @@
 #include "Logger.h"
 #include "Scene.h"
 #include "OpenGLUtil.h"
-#include "Shader.h"
 
 void DeferredGeometryBuffer::generate()
 {
@@ -17,7 +16,7 @@ void DeferredGeometryBuffer::generate()
     delete dims;
 
     GLenum err;
-    mShader.load("src/shaders/GBufferShader.vert", "src/shaders/GBufferShader.frag");
+    mShader = loadShader("src/shaders/GBufferShader.vert", "src/shaders/GBufferShader.frag");
 
     glGenFramebuffers(1, &this->mBuffer);
 
@@ -88,7 +87,7 @@ void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Sc
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    mShader.use();
+	useShader(mShader);
     renderCamera(camera, mShader);
     scene->renderModels(mShader, true);
 

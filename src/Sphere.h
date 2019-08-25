@@ -2,11 +2,10 @@
 #define SPHERE_H
 
 #include "Mesh.h"
+#include "Shader.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
-
-class Shader;
 
 struct Sphere {
     int radius = 1;

@@ -3,9 +3,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Constants.h"
+#include "Shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-class Shader;
 
 struct BetterCamera {
 	glm::vec3 position = glm::vec3(0);

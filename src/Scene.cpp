@@ -17,7 +17,7 @@ using json = nlohmann::json;
 Scene::Scene() {
 	ui.generate();
 	ui.scene = this;
-    mShadowShader.load("src/shaders/shadows.vert", "src/shaders/shadows.frag");
+    mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -59,17 +59,17 @@ void from_json(const json &j, Scene &scene) {
 
     if (scene.useDefferredRendering) {
         scene.mDeferredBuffer.generate();
-        scene.mSceneShader.load("src/shaders/DefferedModel.vert", "src/shaders/DefferedModel.frag");
-        scene.mSceneShader.use();
-        scene.mSceneShader.set_uniform_1i("uPosition", 0);
-        scene.mSceneShader.set_uniform_1i("uNormal", 1);
-        scene.mSceneShader.set_uniform_1i("uAlbedoSpec", 2);
+        scene.mSceneShader = loadShader("src/shaders/DefferedModel.vert", "src/shaders/DefferedModel.frag");
+		useShader(scene.mSceneShader);
+		setShaderInt(scene.mSceneShader, "uPosition", 0);
+		setShaderInt(scene.mSceneShader, "uNormal", 1);
+		setShaderInt(scene.mSceneShader, "uAlbedoSpec", 2);
     } else {
-        scene.mSceneShader.load("src/shaders/model.vert", "src/shaders/model.frag");
-        scene.mSceneShader.use();
-        scene.mSceneShader.set_uniform_1i("uDirShadow", 0);
-        scene.mSceneShader.set_uniform_1i("uMaterial.diffuseTex", 8);
-        scene.mSceneShader.set_uniform_1i("uMaterial.specularTex", 9);
+        scene.mSceneShader = loadShader("src/shaders/model.vert", "src/shaders/model.frag");
+		useShader(scene.mSceneShader);
+		setShaderInt(scene.mSceneShader, "uDirShadow", 0);
+		setShaderInt(scene.mSceneShader, "uMaterial.diffuseTex", 8);
+		setShaderInt(scene.mSceneShader, "uMaterial.specularTex", 9);
     }
 
 }
@@ -133,7 +133,7 @@ void Scene::renderShadows() const {
     if (!mUseShadows)
         return;
 
-    mShadowShader.use();
+	useShader(mShadowShader);
 
     glCullFace(GL_FRONT);
     for (auto light : lights) {
@@ -169,15 +169,15 @@ void Scene::renderScene() const {
 	 	emitter.render(mCamera);
     }
 
-    mSceneShader.use();
+	useShader(mSceneShader);
     renderCamera(mCamera, mSceneShader, true);
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    mSceneShader.set_uniform_3f("uAmbient", 0.3f, 0.3f, 0.3f);
-    mSceneShader.set_uniform_1i("uNumLights", lights.size());
+	setShaderVec3(mSceneShader, "uAmbient", glm::vec3(0.3f));
+	setShaderInt(mSceneShader, "uNumLights", lights.size());
 
     for (size_t lidx = 0; lidx < lights.size(); lidx++) {
         lights[lidx].render(mSceneShader, lidx);

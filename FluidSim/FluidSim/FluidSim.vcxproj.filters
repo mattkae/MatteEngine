@@ -154,9 +154,6 @@
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\FasterJsonParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\TextRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

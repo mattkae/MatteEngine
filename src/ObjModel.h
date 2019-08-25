@@ -192,7 +192,7 @@ Model loadFromObj(std::string path)
             iss >> activeMaterialName;
         } else if (type == "mtllib") {
             // @TODO Use filesystem from the std lib
-            string directory;
+            std::string directory;
             const size_t last_slash_idx = path.rfind('/');
             if (std::string::npos != last_slash_idx) {
                 directory = path.substr(0, last_slash_idx);

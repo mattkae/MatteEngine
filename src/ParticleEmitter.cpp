@@ -1,6 +1,5 @@
 #include "ParticleEmitter.h"
 #include "GlmUtility.h"
-#include "Shader.h"
 #include <array>
 #include <cmath>
 #include <glm/gtc/quaternion.hpp>
@@ -81,7 +80,7 @@ ParticleEmitter::ParticleEmitter()
 
 void ParticleEmitter::generate()
 {
-    mParticleShader.load("src/shaders/particle.vert", "src/shaders/particle.frag");
+    mParticleShader = loadShader("src/shaders/particle.vert", "src/shaders/particle.frag");
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -164,30 +163,31 @@ void ParticleEmitter::update(float deltaTime)
     }
 }
 
-void ParticleEmitter::render(const BetterCamera& camera) const
-{
+void ParticleEmitter::render(const BetterCamera& camera) const {
     if (!isGenerated) {
         return;
     }
 
-	mParticleShader.use();
+	useShader(mParticleShader);
     renderCamera(camera, mParticleShader);
 
     glBindVertexArray(vao);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    mParticleShader.set_uniform_matrix_4fv("uModel", 1, GL_FALSE, glm::value_ptr(model));
-    mParticleShader.setVec3("uCameraUp", camera.up);
-    mParticleShader.setVec3("uCameraRight", camera.right);
+
+	setShaderMat4(mParticleShader, "uModel", model);
+	setShaderVec3(mParticleShader, "uCameraUp", camera.up);
+	setShaderVec3(mParticleShader, "uCameraRight", camera.right);
+
     for (auto const& particlePair : particlePool.getConstValues()) {
         if (!particlePair.isTaken) {
             continue;
         }
 
         const Particle& particle = particlePair.value;
-        mParticleShader.set_uniform_3f("uPosition", particle.position.x, particle.position.y, particle.position.z);
-        mParticleShader.set_uniform_4f("uColor", particle.color[0], particle.color[1], particle.color[2], particle.color[3]);
+		setShaderVec3(mParticleShader, "uPosition", particle.position);
+		setShaderVec4(mParticleShader, "uColor", particle.color);
         glDrawElements(drawType, numVertices, GL_UNSIGNED_INT, 0);
     }
 

@@ -9,8 +9,6 @@
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 
-class Shader;
-
 struct Particle {
     glm::vec3 position = glm::vec3(0);
     glm::vec3 velocity = glm::vec3(0, 1, 0);

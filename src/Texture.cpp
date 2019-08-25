@@ -36,7 +36,7 @@ Texture load_texture(const char* path) {
   GLint w, h;
   unsigned char* image = SOIL_load_image(path, &w, &h, 0, SOIL_LOAD_RGBA);
   if (!image) {
-    cerr << "Unable to load image from path " << path << endl;
+    std::cerr << "Unable to load image from path " << path << std::endl;
   }
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);

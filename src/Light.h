@@ -2,6 +2,7 @@
 #define LIGHT_H
 
 #include "Model.h"
+#include "Shader.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
@@ -9,7 +10,6 @@
 
 using json = nlohmann::json;
 
-class Shader;
 class Scene;
 
 enum LightType { Directional = 0, Point, Spot, Inactive };
@@ -46,10 +46,8 @@ struct Light {
   private:
     void create_shadow_texture_for_directional_light(int width, int height);
     void create_shadow_texture_for_omnidirectional_light(int width, int height);
-    void render_omindirectional_shadows(const Shader &shader,
-                                        const Scene &scene) const;
-    void render_directional_shadows(const Shader &shader,
-                                    const Scene &scene) const;
+    void render_omindirectional_shadows(const Shader &shader, const Scene &scene) const;
+    void render_directional_shadows(const Shader &shader, const Scene &scene) const;
     void render_point_light(const Shader &shader, const int index) const;
     void render_directional_light(const Shader &shader, const int index) const;
     void render_spot_light(const Shader &shader, const int index) const;

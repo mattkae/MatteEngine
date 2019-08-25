@@ -1,6 +1,5 @@
 #include "Button.h"
 #include "TextRenderer.h"
-#include "Shader.h"
 
 Button::Button() {
 

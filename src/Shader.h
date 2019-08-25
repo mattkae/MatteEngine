@@ -2,60 +2,49 @@
 #define SHADER_H
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-class Shader {
- public:
-  Shader();
-	Shader(const GLchar* vertexPath, const GLchar* fragmentPath = nullptr, const GLchar* geomPath = nullptr);
-  void load(const GLchar* vertexPath, const GLchar* fragmentPath = nullptr, const GLchar* geomPath = nullptr);
-  void use() const;
-  GLuint get_program();
+typedef GLuint Shader;
 
-  void set_uniform_1f(const GLchar* name, GLfloat v0) const;
-  void set_uniform_2f(const GLchar* name, GLfloat v0, GLfloat v1) const;
-  void set_uniform_3f(const GLchar* name, GLfloat v0, GLfloat v1, GLfloat v2) const;
-  void set_uniform_4f(const GLchar* name, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3) const;
-  void set_uniform_1i(const GLchar* name, GLint v0) const;
-  void set_uniform_2i(const GLchar* name, GLint v0, GLint v1) const;
-  void set_uniform_3i(const GLchar* name, GLint v0, GLint v1, GLint v2) const;
-  void set_uniform_4i(const GLchar* name, GLint v0, GLint v1, GLint v2, GLint v3) const;
-  void set_uniform_1ui(const GLchar* name, GLuint v0) const;
-  void set_uniform_2ui(const GLchar* name, GLuint v0, GLuint v1) const;
-  void set_uniform_3ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2) const;
-  void set_uniform_4ui(const GLchar* name, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const;
-  void set_uniform_1fv(const GLchar* name, GLsizei count, const GLfloat *v0) const;
-  void set_uniform_2fv(const GLchar* name, GLsizei count, const GLfloat *v0) const;
-  void set_uniform_3fv(const GLchar* name, GLsizei count, const GLfloat *v0) const;
-  void set_uniform_4fv(const GLchar* name, GLsizei count, const GLfloat *v0) const;
-  void set_uniform_1iv(const GLchar* name, GLsizei count, const GLint *v0) const;
-  void set_uniform_2iv(const GLchar* name, GLsizei count, const GLint *v0) const;
-  void set_uniform_3iv(const GLchar* name, GLsizei count, const GLint *v0) const;
-  void set_uniform_4iv(const GLchar* name, GLsizei count, const GLint *v0) const;
-  void set_uniform_1uiv(const GLchar* name, GLsizei count, const GLuint *v0) const;
-  void set_uniform_2uiv(const GLchar* name, GLsizei count, const GLuint *v0) const;
-  void set_uniform_3uiv(const GLchar* name, GLsizei count, const GLuint *v0) const;
-  void set_uniform_4uiv(const GLchar* name, GLsizei count, const GLuint *v0) const;
-  void set_uniform_matrix_2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_2x3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_3x2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_2x4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_4x2fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_3x4fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
-  void set_uniform_matrix_4x3fv(const GLchar* name, GLsizei count, GLboolean transpose, const GLfloat* v0) const;
- 
-  void setFloat(const GLchar* name, GLfloat value) const;
-  void setInt(const GLchar* name, GLint value) const;
-  void setUint(const GLchar* name, GLuint value) const;
-  void setVec2(const GLchar* name, glm::vec2 value) const;
-  void setVec3(const GLchar* name, glm::vec3 value) const;
-  void setVec4(const GLchar* name, glm::vec4 value) const;
-  void setMat3(const GLchar* name, glm::mat3 matrix) const;
-  void setMat4(const GLchar* name, glm::mat4 matrix) const;
+Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath = nullptr, const GLchar* geomPath = nullptr);
 
- private:
-  GLint get_uniform(const GLchar* name) const;
-  GLuint mProgram;
-};
+inline GLint getShaderUniform(const Shader& shader, const GLchar *name) {
+    return glGetUniformLocation(shader, name);
+}
+
+inline void useShader(const Shader& shader) {
+	glUseProgram(shader);
+}
+
+inline void setShaderFloat(const Shader& shader, const GLchar* name, GLfloat value) {
+    glUniform1f(getShaderUniform(shader, name), value);
+}
+
+inline void setShaderInt(const Shader& shader, const GLchar* name, GLint value) {
+	glUniform1i(getShaderUniform(shader, name), value);
+}
+
+inline void setShaderUint(const Shader& shader, const GLchar* name, GLuint value) {
+	glUniform1ui(getShaderUniform(shader, name), value);
+}
+
+inline void setShaderVec2(const Shader& shader, const GLchar* name, glm::vec2 value) {
+	glUniform2f(getShaderUniform(shader, name), value.x, value.y);
+}
+
+inline void setShaderVec3(const Shader& shader, const GLchar* name, glm::vec3 value) {
+	glUniform3f(getShaderUniform(shader, name), value.x, value.y, value.z);
+}
+
+inline void setShaderVec4(const Shader& shader, const GLchar* name, glm::vec4 value) {
+	glUniform4f(getShaderUniform(shader, name), value.x, value.y, value.z, value.w);
+}
+
+inline void setShaderMat3(const Shader& shader, const GLchar* name, glm::mat3 matrix) {
+	glUniformMatrix3fv(getShaderUniform(shader, name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+inline void setShaderMat4(const Shader& shader, const GLchar* name, glm::mat4 matrix) {
+	glUniformMatrix4fv(getShaderUniform(shader, name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
 #endif

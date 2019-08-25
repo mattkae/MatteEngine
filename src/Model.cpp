@@ -1,6 +1,5 @@
 #include "Model.h"
 #include "GlmUtility.h"
-#include "Shader.h"
 #include "ObjModel.h"
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,7 +15,7 @@ void freeModel(Model& model) {
 }
 
 void renderModel(const Model& model, const Shader& shader, bool withMaterial) {
-    shader.setMat4("uModel", model.model);
+    setShaderMat4(shader, "uModel", model.model);
     for (auto& mesh : model.meshes) {
 		renderMesh(mesh, shader, withMaterial);
     }

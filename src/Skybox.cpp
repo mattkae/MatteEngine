@@ -26,7 +26,7 @@ void from_json(const json &j, Skybox &skybox) {
 }
 
 bool Skybox::generate(std::string *paths) {
-    mSkyboxShader.load("src/shaders/skybox.vert", "src/shaders/skybox.frag");
+    mSkyboxShader = loadShader("src/shaders/skybox.vert", "src/shaders/skybox.frag");
 
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
@@ -94,13 +94,13 @@ void Skybox::render(const BetterCamera &camera) const {
         return;
 	}
 
-	mSkyboxShader.use();
+	useShader(mSkyboxShader);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
     glDisable(GL_DEPTH_TEST);
 	
-	mSkyboxShader.setMat3("uView", glm::inverse(glm::mat3(getCameraViewMatrix(camera))));
-	mSkyboxShader.setMat4("uProjection", getCameraProjection(camera));
+	setShaderMat3(mSkyboxShader, "uView", glm::inverse(glm::mat3(getCameraViewMatrix(camera))));
+	setShaderMat4(mSkyboxShader, "uProjection", getCameraProjection(camera));
 
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

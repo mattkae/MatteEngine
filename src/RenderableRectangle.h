@@ -2,8 +2,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include "BasicShapes.h"
+#include "Shader.h"
 
-class Shader;
 struct RenderableRectangle {
 	Rectangle r;
 	glm::vec3 backgroundColor = glm::vec3(1);

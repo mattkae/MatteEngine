@@ -6,7 +6,6 @@
 #include "Camera.h"
 
 class Scene;
-class Shader;
 class DeferredGeometryBuffer {
 public:
 	void generate();

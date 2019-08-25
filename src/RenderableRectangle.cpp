@@ -1,5 +1,4 @@
 #include "RenderableRectangle.h"
-#include "Shader.h"
 #include "Input.h"
 
 void initializeRenderableRectangle(RenderableRectangle& rect) {
@@ -67,7 +66,7 @@ void updateRenderableRectangle(RenderableRectangle& rect) {
 }
 
 void renderRenderableRectangle(const RenderableRectangle& rect, const Shader& shader) {
-	shader.setVec3("uColor", rect.backgroundColor);
+	setShaderVec3(shader, "uColor", rect.backgroundColor);
 
 	glBindVertexArray(rect.mVao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

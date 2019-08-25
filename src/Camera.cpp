@@ -1,7 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Camera.h"
-#include "Shader.h"
 #include "Input.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
@@ -59,8 +58,8 @@ void updateCamera(BetterCamera& camera, float dt) {
 }
 
 void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye) {
-	shader.setMat4("uVp", getCameraProjection(camera) * getCameraViewMatrix(camera));
+	setShaderMat4(shader, "uVp", getCameraProjection(camera) * getCameraViewMatrix(camera));
 	if (withEye) {
-		shader.setVec3("uEye", camera.position);
+		setShaderVec3(shader, "uEye", camera.position);
 	}
 }

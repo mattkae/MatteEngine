@@ -4,12 +4,9 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include "RenderableRectangle.h"
-
-// A button needs: Text, Color, On Click Handler, Padding
-// It's basically a square around text
+#include "Shader.h"
 
 struct TextRenderer;
-class Shader;
 class Button {
 public:
 	Button();

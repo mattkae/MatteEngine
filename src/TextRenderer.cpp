@@ -30,7 +30,7 @@ bool TextRenderer::initialize(GLint size, GLchar* path)
         this->loadChar(c);   
 	}
 
-	mShader = Shader("src/shaders/Text.vert", "src/shaders/Text.frag");
+	mShader = loadShader("src/shaders/Text.vert", "src/shaders/Text.frag");
 
 	// Initialize render VAO for a a single character
     glGenVertexArrays(1, &mVao);
@@ -99,9 +99,9 @@ void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 	
-	mShader.use();
-    mShader.setMat4("uProjection", mProjection);
-    mShader.setVec3("uColor", color);
+	useShader(mShader);
+	setShaderMat4(mShader, "uProjection", mProjection);
+	setShaderVec3(mShader, "uColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(mVao);
 

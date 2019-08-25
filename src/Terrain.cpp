@@ -110,7 +110,7 @@ void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
 }
 
 void renderTerrain(const Terrain& terrain, const Shader& shader, bool withMaterial) {
-	shader.setMat4("uModel", terrain.model);
+	setShaderMat4(shader, "uModel", terrain.model);
 	renderMesh(terrain.mMesh, shader, withMaterial);
 }
 

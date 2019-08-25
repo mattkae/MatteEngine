@@ -20,7 +20,10 @@ layout (location = 2) in vec2 texCoords;
 
 out vec4 oFragPos;
 out vec3 oNormal;
-out vec4 oAlbedoSpec;
+out vec3 oDiffuse;
+out vec3 oSpecular;
+out vec3 oEmissive;
+out vec3 oMaterialInfo;
 
 uniform mat4 uModel;
 uniform mat4 uVp;
@@ -31,7 +34,10 @@ void main()
     vec4 fragPos = uModel * vec4(position, 1.0);
     oFragPos = fragPos; 
     oNormal = normal;
-    oAlbedoSpec = vec4(uMaterial.diffuse, uMaterial.shininess);
+    oDiffuse = uMaterial.diffuse;
+    oSpecular = uMaterial.specular;
+    oEmissive = uMaterial.emissive;
+    oMaterialInfo = vec3(uMaterial.shininess, uMaterial.opacity, 1.0);
 
     gl_Position = uVp * fragPos;
 }

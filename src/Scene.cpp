@@ -63,7 +63,10 @@ void from_json(const json &j, Scene &scene) {
 		useShader(scene.mSceneShader);
 		setShaderInt(scene.mSceneShader, "uPosition", 0);
 		setShaderInt(scene.mSceneShader, "uNormal", 1);
-		setShaderInt(scene.mSceneShader, "uAlbedoSpec", 2);
+		setShaderInt(scene.mSceneShader, "uDiffuse", 2);
+		setShaderInt(scene.mSceneShader, "uSpecular", 3);
+		setShaderInt(scene.mSceneShader, "uEmissive", 4);
+		setShaderInt(scene.mSceneShader, "uMaterialInfo", 5);
     } else {
         scene.mSceneShader = loadShader("src/shaders/model.vert", "src/shaders/model.frag");
 		useShader(scene.mSceneShader);

@@ -16,7 +16,10 @@ private:
     GLuint mBuffer;
     GLuint mPositionTexture;
     GLuint mNormalTexture;
-    GLuint mColorTexture;
+    GLuint mDiffuseTexture;
+    GLuint mSpecularTexture;
+    GLuint mEmissiveTexture;
+    GLuint mMaterialInfoTexture;
     GLuint mDepth;
     bool mHasGenerated = false;
     GLuint* mAttachments;

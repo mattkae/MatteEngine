@@ -1,5 +1,5 @@
 {
-  "useDeferredRendering": false,
+  "useDeferredRendering": true,
   "skybox": {
     "front": "assets/skybox/cloudy/bluecloud_ft.jpg",
     "back": "assets/skybox/cloudy/bluecloud_bk.jpg",
@@ -91,5 +91,15 @@
             "quadratic" : [ 0, 0, 0 ]
         }
     }
-  ]
+  ],
+  "terrain": {
+    "size": 1000,
+    "granularity": 500,
+    "permSize": 1000,
+    "minMaxHeight": 32,
+    "scaleFactor": 0.004,
+    "ampFactor": 0.6,
+    "frequencyFactor": 1.5,
+    "numOctaves": 64
+}
 }

@@ -4,6 +4,16 @@
 #include "Scene.h"
 #include "OpenGLUtil.h"
 
+GLuint generateColorTexture(GLint width, GLint height) {
+	GLuint texture = 0;
+	glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	return texture;
+}
+
 void DeferredGeometryBuffer::generate()
 {
     if (mHasGenerated) {
@@ -22,7 +32,7 @@ void DeferredGeometryBuffer::generate()
 
     glGenTextures(1, &this->mPositionTexture);
     glBindTexture(GL_TEXTURE_2D, this->mPositionTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, this->width, this->height, 0, GL_RGB, GL_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, this->width, this->height, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -32,18 +42,21 @@ void DeferredGeometryBuffer::generate()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glGenTextures(1, &this->mColorTexture);
-    glBindTexture(GL_TEXTURE_2D, this->mColorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	mDiffuseTexture = generateColorTexture(width, height);
+	mSpecularTexture = generateColorTexture(width, height);
+	mEmissiveTexture = generateColorTexture(width, height);
+	mMaterialInfoTexture = generateColorTexture(width, height);
 
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->mPositionTexture, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, this->mNormalTexture, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, this->mColorTexture, 0);
-    mAttachments = new GLuint[3] { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    glDrawBuffers(3, mAttachments);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, this->mDiffuseTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, this->mSpecularTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, this->mEmissiveTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, this->mMaterialInfoTexture, 0);
+    mAttachments = new GLuint[6] { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, 
+		GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5 };
+    glDrawBuffers(6, mAttachments);
 
     glGenRenderbuffers(1, &this->mDepth);
     glBindRenderbuffer(GL_RENDERBUFFER, this->mDepth);
@@ -70,7 +83,10 @@ void DeferredGeometryBuffer::free()
         glDeleteFramebuffers(1, &this->mBuffer);
         glDeleteTextures(1, &this->mPositionTexture);
         glDeleteTextures(1, &this->mNormalTexture);
-        glDeleteTextures(1, &this->mColorTexture);
+        glDeleteTextures(1, &this->mDiffuseTexture);
+        glDeleteTextures(1, &this->mSpecularTexture);
+        glDeleteTextures(1, &this->mEmissiveTexture);
+        glDeleteTextures(1, &this->mMaterialInfoTexture);
         glDeleteBuffers(1, &this->mDepth);
         delete mAttachments;
         mHasGenerated = false;
@@ -83,7 +99,7 @@ void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Sc
         return;
     }
 
-    glClearColor(0, 0, 0, 1.0f);
+    glClearColor(0, 0, 0, 0.0f);
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -105,7 +121,13 @@ void DeferredGeometryBuffer::renderToScreen(const Shader& shader) const
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, mNormalTexture);
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, mColorTexture);
+    glBindTexture(GL_TEXTURE_2D, mDiffuseTexture);
+	glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, mSpecularTexture);
+	glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, mEmissiveTexture);
+	glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, mMaterialInfoTexture);
 
     mQuad.render();
 

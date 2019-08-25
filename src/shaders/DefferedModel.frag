@@ -21,7 +21,10 @@ in vec2 oTexCoords;
 
 uniform sampler2D uPosition;
 uniform sampler2D uNormal;
-uniform sampler2D uAlbedoSpec;
+uniform sampler2D uDiffuse;
+uniform sampler2D uSpecular;
+uniform sampler2D uEmissive;
+uniform sampler2D uMaterialInfo;
 
 uniform int uNumLights;
 uniform Light uLights[MAX_LIGHTS];
@@ -36,17 +39,19 @@ void main()
 {             
     vec3 fragPos = texture(uPosition, oTexCoords).rgb;
     vec3 normal = texture(uNormal, oTexCoords).rgb;
-    vec3 albedo = texture(uAlbedoSpec, oTexCoords).rgb;
-    float specular = texture(uAlbedoSpec, oTexCoords).a;
+    vec3 diffuse = texture(uDiffuse, oTexCoords).rgb;
+    vec3 specular = texture(uSpecular, oTexCoords).rgb;
+    vec3 emissive = texture(uEmissive, oTexCoords).rgb;
+    vec3 materialInfo = texture(uMaterialInfo, oTexCoords).rgb;
     vec3 viewDir = normalize(oEye - fragPos);
     
-    vec3 lighting = albedo * uAmbient;
+    vec3 lighting = emissive + diffuse * uAmbient;
     for(int i = 0; i < uNumLights; ++i)
     {
-        lighting += getColorFromLight(uLights[i], fragPos, normal, viewDir, albedo, vec3(specular, specular, specular));
+        lighting += getColorFromLight(uLights[i], fragPos, normal, viewDir, diffuse, specular);
     }
     
-    FragColor = vec4(lighting, 1.0);
+    FragColor = vec4(lighting, materialInfo.g);
 }  
 
 

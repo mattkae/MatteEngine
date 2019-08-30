@@ -113,6 +113,15 @@ namespace glm {
         return matrixArray;
     }
 
+	static glm::vec2 arrayToVec2(const std::vector<float>& vecArray)
+    {
+        glm::vec2 result(1.0);
+        for (size_t v = 0; v < 2; v++) {
+            result[v] = vecArray[v];
+        }
+        return result;
+    }
+
     static glm::vec3 arrayToVec3(const std::vector<float>& vecArray)
     {
         glm::vec3 result(1.0);
@@ -154,6 +163,14 @@ namespace glm {
         std::vector<float> temp;
         j.at(field).get_to(temp);
         result = glm::arrayToMat4(temp);
+    }
+
+	static void from_json(const nlohmann::json& j, const char* field,
+        glm::vec2& result)
+    {
+        std::vector<float> temp;
+        j.at(field).get_to(temp);
+        result = glm::arrayToVec2(temp);
     }
 
     static void from_json(const nlohmann::json& j, const char* field,

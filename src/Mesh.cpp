@@ -32,7 +32,7 @@ void initializeMesh(Mesh& mesh) {
 
     // Position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                           (GLvoid *)0);
 
     // Normal

@@ -26,12 +26,12 @@ int main(int argc, const char* argv[])
 {
     initialize(argc, argv);
 
-    double currentTime = 0, prevTime = 0, deltaTime;
     Scene scene("assets/scenes/scene.json");
 
     glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;
     double frameTimerMs = 0;
+    double currentTime = 0, prevTime = glfwGetTime(), deltaTime;
     while (!glfwWindowShouldClose(GlobalWindow)) {
         currentTime = glfwGetTime();
         deltaTime = currentTime - prevTime;

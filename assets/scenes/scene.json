@@ -1,5 +1,5 @@
 {
-  "useDeferredRendering": true,
+  "useDeferredRendering": false,
   "skybox": {
     "front": "assets/skybox/cloudy/bluecloud_ft.jpg",
     "back": "assets/skybox/cloudy/bluecloud_bk.jpg",
@@ -31,7 +31,7 @@
           1, 0, 0, 0,
           0, 1, 0, 0,
           0, 0, 1, 0,
-          0, 0, 0, 1
+          0, 5, 0, 1
         ]
     },
     {
@@ -67,39 +67,28 @@
   ],
   "particleEmitters" : [
     {
+        "maxParticles": 100000,
         "model" : [
             3, 0, 0, 0,
             0, 3, 0, 0,
             0, 0, 3, 0,
             0, 0, 0, 1
         ],
-        "volumeDimension" : [ 1, 1, 1 ],
+        "spawnSpread" : [ 1, 1, 1 ],
         "particleDimension" : [ 0.1, 0.1, 0.1 ],
-        "origin" : [ 0, 0, 0 ],
-        "rotationArray" : [ true, true, true ],
-        "numVertices" : 100,
-        "particleLifeRangeSeconds" : [ 1, 2 ],
-        "spawnFrequencyRangeSeconds" : [ 0.00001, 0.00002 ],
+        "numVertices" : 10,
+        "particleLifeRangeSeconds" : [ 5, 10 ],
+        "spawnFrequencyRangeSeconds" : [ 0.01, 0.02 ],
         "colorFunction" : {
             "initialVelocity" : [ 1, 0, 0, 1 ],
             "linear" : [ -0.25, 0, 0, -1 ],
-            "quadratic" : [ 0, 0, 0, 0 ]
+            "quadratic" : [ 0, 0.02, 0, 0 ]
         },
         "movementFunction" : {
-            "initialVelocity" : [ 0, 0.5, 0 ],
-            "linear" : [ 1, -0.5, 0 ],
-            "quadratic" : [ 0, 0, 0 ]
+            "initialVelocity" : [ 0.1, 5, 0.1 ],
+            "linear" : [ 0.5, 0.5, 0.5 ],
+            "quadratic" : [ 0.25, 1, 0.175 ]
         }
     }
-  ],
-  "terrain": {
-    "size": 1000,
-    "granularity": 500,
-    "permSize": 1000,
-    "minMaxHeight": 32,
-    "scaleFactor": 0.004,
-    "ampFactor": 0.6,
-    "frequencyFactor": 1.5,
-    "numOctaves": 64
-}
+  ]
 }

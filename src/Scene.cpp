@@ -93,7 +93,7 @@ void Scene::loadFromJson(const char *jsonPath) {
     lights.clear();
 
 	for (auto emitter : particleEmitters) {
-		emitter.free();
+		freeParticleEmitter(emitter);
 	}
 	particleEmitters.clear();
 
@@ -116,7 +116,7 @@ void Scene::update(double dt) {
     updateCamera(mCamera, dtFloat);
 
 	for (auto& emitter : particleEmitters) {
-		emitter.update(dtFloat);
+		updateParticleEmitter(emitter, dtFloat);
 	}
 
     for (auto& light : lights) {
@@ -166,11 +166,11 @@ void Scene::renderScene() const {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    mSkybox.render(mCamera);
+	mSkybox.render(mCamera);
 
-	for (auto emitter : particleEmitters) {
-	 	emitter.render(mCamera);
-    }
+	if (!useDefferredRendering) {
+		renderNonDeferred();
+	}
 
 	useShader(mSceneShader);
     renderCamera(mCamera, mSceneShader, true);
@@ -193,12 +193,19 @@ void Scene::renderScene() const {
     }
 
     glDisable(GL_BLEND);
+	renderNonDeferred();
 
 	ui.render();
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error during scene pass: %i, %s\n", err, glewGetErrorString(err));
+    }
+}
+
+void Scene::renderNonDeferred() const {
+	for (auto emitter : particleEmitters) {
+		renderParticleEmitter(emitter, mCamera);
     }
 }
 

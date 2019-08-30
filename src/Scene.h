@@ -39,6 +39,7 @@ class Scene {
 	UI ui;
 
   private:
+	void renderNonDeferred() const;
     void renderShadows() const;
     void renderGBuffer() const;
     void renderScene() const;

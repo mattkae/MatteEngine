@@ -31,9 +31,9 @@ uniform Light uLights[MAX_LIGHTS];
 uniform vec3 uAmbient;
 uniform vec3 oEye;
 
-vec3 getColorFromLight(Light directionalLight, vec3 fragPos, vec3 normal, vec3 viewDir, vec3 diffuse, vec3 specular);
+vec3 getColorFromLight(Light directionalLight, vec3 fragPos, vec3 normal, vec3 viewDir, vec3 diffuse, vec3 specular, float shininess);
 vec3 getDiffuse(vec3 normal, vec3 lightDir, vec3 color, vec3 diffuse);
-vec3 getSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec3 specular);
+vec3 getSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec3 specular, float shininess);
 
 void main()
 {             
@@ -46,16 +46,15 @@ void main()
     vec3 viewDir = normalize(oEye - fragPos);
     
     vec3 lighting = emissive + diffuse * uAmbient;
-    for(int i = 0; i < uNumLights; ++i)
-    {
-        lighting += getColorFromLight(uLights[i], fragPos, normal, viewDir, diffuse, specular);
+    for(int i = 0; i < uNumLights; ++i) {
+        lighting += getColorFromLight(uLights[i], fragPos, normal, viewDir, diffuse, specular, materialInfo.r);
     }
     
     FragColor = vec4(lighting, materialInfo.g);
 }  
 
 
-vec3 getColorFromLight(Light light, vec3 fragPos, vec3 normal, vec3 viewDir, vec3 diffuse, vec3 specular) {
+vec3 getColorFromLight(Light light, vec3 fragPos, vec3 normal, vec3 viewDir, vec3 diffuse, vec3 specular, float shininess) {
     // Get vector from the light, to the fragment
     vec3 posToFrag = light.position - fragPos;
     float delta = length(posToFrag);
@@ -84,7 +83,7 @@ vec3 getColorFromLight(Light light, vec3 fragPos, vec3 normal, vec3 viewDir, vec
 
     // Calculate diffuse and specular
     vec3 diffuseOut = getDiffuse(normal, direction, intensity, diffuse);
-    vec3 specularOut = getSpecular(normal, direction, viewDir, intensity, specular);
+    vec3 specularOut = getSpecular(normal, direction, viewDir, intensity, specular, shininess);
 
     return diffuseOut + specularOut;
 }
@@ -94,8 +93,8 @@ vec3 getDiffuse(vec3 normal, vec3 lightDir, vec3 color, vec3 diffuse) {
     return color * diffuseFactor;
 }
 
-vec3 getSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec3 specular) {
+vec3 getSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 color, vec3 specular, float shininess) {
     vec3 reflection = reflect(-lightDir, normal);
-    vec3 specularFactor = specular * 1.0 * pow(max(0.f, dot(viewDir, reflection)), 1);
+    vec3 specularFactor = specular * shininess * pow(max(0.f, dot(viewDir, reflection)), 1);
     return color * specularFactor;
 }

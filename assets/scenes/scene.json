@@ -67,28 +67,43 @@
   ],
   "particleEmitters" : [
     {
-        "maxParticles": 100000,
-        "model" : [
-            3, 0, 0, 0,
-            0, 3, 0, 0,
-            0, 0, 3, 0,
-            0, 0, 0, 1
-        ],
-        "spawnSpread" : [ 1, 1, 1 ],
-        "particleDimension" : [ 0.1, 0.1, 0.1 ],
-        "numVertices" : 10,
-        "particleLifeRangeSeconds" : [ 5, 10 ],
-        "spawnFrequencyRangeSeconds" : [ 0.01, 0.02 ],
-        "colorFunction" : {
-            "initialVelocity" : [ 1, 0, 0, 1 ],
-            "linear" : [ -0.25, 0, 0, -1 ],
-            "quadratic" : [ 0, 0.02, 0, 0 ]
-        },
-        "movementFunction" : {
-            "initialVelocity" : [ 0.1, 5, 0.1 ],
-            "linear" : [ 0.5, 0.5, 0.5 ],
-            "quadratic" : [ 0.25, 1, 0.175 ]
-        }
+      "model" : [
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 3, 0, 1
+      ],
+      "spawnFrequencySeconds": {
+        "baseValue": 0.001,
+        "randomOffset": 0.0005
+      },
+      "initialNumParticles": 0,
+      "maxParticles": 100000,
+      "colorFunction" : {
+          "initial" : [ 1, 0, 0, 1 ],
+          "linear" : [ -0.25, 0, 0, -1 ],
+          "quadratic" : [ 0, 0.02, 0, 0 ],
+          "sinValue": [0, 0, 0, 0],
+          "cosValue": [0, 1, 0, 0]
+      },
+      "movementFunction" : {
+          "initial" : [ 0, 5, 0 ],
+          "linear" : [ 0, 0, 0 ],
+          "quadratic" : [ 0, 0, 0 ],
+          "sinValue": [0, 0, 0],
+          "cosValue": [4, 0, 4]
+      },
+      "numVertices" : 48,
+      "particleDimension" : [ 0.1, 0.1, 0.1 ],
+
+      "particlePosition": {
+        "baseValue": [0, 0, 0],
+        "randomOffset": [1, 1, 1]
+      },
+      "particleTimeToLiveSeconds": {
+        "baseValue": 10.0,
+        "randomOffset": 0.5
+      }
     }
   ]
 }

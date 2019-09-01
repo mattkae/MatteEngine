@@ -12,53 +12,42 @@ using namespace std;
 
 #define PI 3.14159265f
 
-void to_json(nlohmann::json& j, const ParticleFunctionConfig<glm::vec3>& config) {
-}
-
-void from_json(const nlohmann::json& j, ParticleFunctionConfig<glm::vec3>& functionConfig)
-{
-    glm::from_json(j, "initialVelocity", functionConfig.initialVelocity);
-    glm::from_json(j, "linear", functionConfig.linear);
-    glm::from_json(j, "quadratic", functionConfig.quadratic);
-}
-
-void to_json(nlohmann::json& j, const ParticleFunctionConfig<glm::vec4>& config) {
-}
-
-void from_json(const nlohmann::json& j, ParticleFunctionConfig<glm::vec4>& functionConfig) {
-    glm::from_json(j, "initialVelocity", functionConfig.initialVelocity);
-    glm::from_json(j, "linear", functionConfig.linear);
-    glm::from_json(j, "quadratic", functionConfig.quadratic);
-}
-
 void to_json(nlohmann::json& j, const ParticleEmitter& emitter) {
 }
 
 void from_json(const nlohmann::json& j, ParticleEmitter& emitter) {
     glm::from_json(j, "model", emitter.model);
-    glm::from_json(j, "spawnSpread", emitter.spawnSpread);
-    glm::from_json(j, "particleDimension", emitter.particleDimension);
-    j.at("numVertices").get_to(emitter.numVertices);
-    glm::from_json(j, "particleLifeRangeSeconds", emitter.particleLifeSpreadSeconds);
-    glm::from_json(j, "spawnFrequencyRangeSeconds", emitter.spawnFrequencySpreadSeconds);
+    j.at("spawnFrequencySeconds").get_to(emitter.spawnFrequencySeconds);
+    j.at("maxParticles").get_to(emitter.maxParticles);
     j.at("colorFunction").get_to(emitter.colorFunction);
     j.at("movementFunction").get_to(emitter.movementFunction);
-    j.at("maxParticles").get_to(emitter.maxParticles);
+    j.at("numVertices").get_to(emitter.numVertices);
+    glm::from_json(j, "particleDimension", emitter.particleDimension);
 
-    initializeParticleEmitter(emitter);
+    j.at("particlePosition").get_to(emitter.particlePosition);
+    j.at("particleTimeToLiveSeconds").get_to(emitter.particleTimeToLiveSeconds);
+
+	int initialParticleCount = 0;
+	j.at("initialNumParticles").get_to(initialParticleCount);
+    initializeParticleEmitter(emitter, initialParticleCount);
 }
 
-template <typename T>
-T ParticleFunctionConfig<T>::calculate(float fractionComplete) const {
-    return initialVelocity + (linear * fractionComplete) + (quadratic * fractionComplete * fractionComplete);
+inline void spawnParticles(ParticleEmitter& emitter, int numParticlesToSpawn) {
+	while (numParticlesToSpawn > 0 && emitter.nextParticleIndex < emitter.maxParticles) {
+		emitter.particleRenderVariables[emitter.nextParticleIndex].color = emitter.colorFunction.initial;
+		emitter.particleRenderVariables[emitter.nextParticleIndex].position = getRandom(emitter.particlePosition);
+		emitter.particleUpdateVariables[emitter.nextParticleIndex].velocity = emitter.movementFunction.initial;;
+		emitter.particleUpdateVariables[emitter.nextParticleIndex].timeAliveSeconds = 0;
+		emitter.particleUpdateVariables[emitter.nextParticleIndex].deathTimeSeconds = getRandom(emitter.particleTimeToLiveSeconds);
+		emitter.nextParticleIndex++;
+		numParticlesToSpawn--;
+	}
 }
 
-void initializeParticleEmitter(ParticleEmitter& emitter) {
+void initializeParticleEmitter(ParticleEmitter& emitter, int initialParticleCount) {
 	emitter.particleUpdateVariables = new ParticleUpdateVariables[emitter.maxParticles];
 	emitter.particleRenderVariables = new ParticleRenderVariables[emitter.maxParticles];
     emitter.mParticleShader = loadShader("src/shaders/particle.vert", "src/shaders/particle.frag");
-	emitter.lifeFrequencyDistribution = std::uniform_real_distribution<double>(emitter.particleLifeSpreadSeconds.r, emitter.particleLifeSpreadSeconds.g);
-    emitter.spawnFrequencyDistribution = std::uniform_real_distribution<double>(emitter.spawnFrequencySpreadSeconds.r, emitter.spawnFrequencySpreadSeconds.g);
 
     int verticesCount = 6 * emitter.numVertices;
     GLfloat* vertices = new GLfloat[verticesCount];
@@ -90,28 +79,11 @@ void initializeParticleEmitter(ParticleEmitter& emitter) {
     glBindVertexArray(emitter.vao);
 
 	// Vertex data
-#if true
     glBindBuffer(GL_ARRAY_BUFFER, emitter.vbo);
     glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#else
-	float quadVertices[] = {
-        // positions     // colors
-        -0.05f,  0.05f,
-         0.05f, -0.05f,
-        -0.05f, -0.05f,
-
-        -0.05f,  0.05f,
-         0.05f, -0.05f,
-         0.05f,  0.05f
-    };
-    glBindBuffer(GL_ARRAY_BUFFER, emitter.vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-#endif
 
 	// Instance Data
 	glBindBuffer(GL_ARRAY_BUFFER, emitter.instanceVbo);
@@ -129,6 +101,7 @@ void initializeParticleEmitter(ParticleEmitter& emitter) {
 
     glBindVertexArray(0);
 
+	spawnParticles(emitter, initialParticleCount);
     delete[] vertices;
 }
 
@@ -140,17 +113,8 @@ void updateParticleEmitter(ParticleEmitter& emitter, float deltaTimeSec) {
 	float diffTime = emitter.timeUntilSpawnSeconds - deltaTimeSec;
 	if (diffTime < 0) {
 		int numParticlesToSpawn = static_cast<int>(ceil(diffTime / -emitter.timeUntilSpawnSeconds));
-		while (numParticlesToSpawn > 0 && emitter.nextParticleIndex < emitter.maxParticles) {
-			emitter.particleRenderVariables[emitter.nextParticleIndex].color = emitter.colorFunction.initialVelocity;
-			emitter.particleRenderVariables[emitter.nextParticleIndex].position = glm::get_random_within(glm::vec3(0), emitter.spawnSpread);
-			emitter.particleUpdateVariables[emitter.nextParticleIndex].velocity = emitter.movementFunction.initialVelocity;
-			emitter.particleUpdateVariables[emitter.nextParticleIndex].timeAliveSeconds = 0;
-			emitter.particleUpdateVariables[emitter.nextParticleIndex].deathTimeSeconds = static_cast<float>(emitter.lifeFrequencyDistribution(emitter.generator));
-			emitter.nextParticleIndex++;
-			numParticlesToSpawn--;
-		}
-
-        emitter.timeUntilSpawnSeconds += emitter.spawnFrequencySpreadSeconds.x;
+		spawnParticles(emitter, numParticlesToSpawn);
+        emitter.timeUntilSpawnSeconds = getRandom(emitter.spawnFrequencySeconds);
 	} else {
 		emitter.timeUntilSpawnSeconds = diffTime;
 	}
@@ -165,8 +129,8 @@ void updateParticleEmitter(ParticleEmitter& emitter, float deltaTimeSec) {
         } else {
 			ParticleRenderVariables& renderParticle = emitter.particleRenderVariables[activeIndex];
             renderParticle.position = renderParticle.position + updateParticle.velocity * deltaTimeSec;
-            renderParticle.color = emitter.colorFunction.calculate(updateParticle.timeAliveSeconds / updateParticle.deathTimeSeconds);
-            updateParticle.velocity = emitter.movementFunction.calculate(updateParticle.timeAliveSeconds / updateParticle.deathTimeSeconds);
+            renderParticle.color = calculateFunc(emitter.colorFunction, updateParticle.timeAliveSeconds / updateParticle.deathTimeSeconds);
+            updateParticle.velocity = calculateFunc(emitter.movementFunction, updateParticle.timeAliveSeconds / updateParticle.deathTimeSeconds);
 			updateParticle.timeAliveSeconds += deltaTimeSec;
         }
     }
@@ -212,8 +176,6 @@ void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& c
 	setShaderVec3(emitter.mParticleShader, "uCameraUp", camera.up);
 	setShaderVec3(emitter.mParticleShader, "uCameraRight", camera.right);
 
-	printf("%d\n", emitter.nextParticleIndex);
-
 	glBindVertexArray(emitter.vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, emitter.instanceVbo);
@@ -222,11 +184,7 @@ void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& c
 
 	//debugVAOState("error: ");
 
-#if true
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6 * emitter.numVertices, emitter.nextParticleIndex);
-#else
-	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
-#endif
     glBindVertexArray(0);
 
     glDisable(GL_BLEND);

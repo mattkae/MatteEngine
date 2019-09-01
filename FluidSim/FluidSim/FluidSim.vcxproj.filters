@@ -86,6 +86,12 @@
     <ClCompile Include="..\..\src\TextInput.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Randomizable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Functional.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">
@@ -173,6 +179,12 @@
       <Filter>UIElements</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RenderableRectangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Randomizable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Functional.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

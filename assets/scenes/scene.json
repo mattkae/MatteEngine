@@ -91,7 +91,7 @@
           "linear" : [ 0, 0, 0 ],
           "quadratic" : [ 0, 0, 0 ],
           "sinValue": [0, 0, 0],
-          "cosValue": [4, 0, 4]
+          "cosValue": [16, 0, 4]
       },
       "numVertices" : 48,
       "particleDimension" : [ 0.1, 0.1, 0.1 ],
@@ -101,7 +101,7 @@
         "randomOffset": [1, 1, 1]
       },
       "particleTimeToLiveSeconds": {
-        "baseValue": 10.0,
+        "baseValue": 3.0,
         "randomOffset": 0.5
       }
     }

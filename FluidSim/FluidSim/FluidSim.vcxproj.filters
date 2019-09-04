@@ -92,6 +92,9 @@
     <ClCompile Include="..\..\src\Functional.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\BoundText.cpp">
+      <Filter>UIElements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">
@@ -186,6 +189,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Functional.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BoundText.h">
+      <Filter>UIElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

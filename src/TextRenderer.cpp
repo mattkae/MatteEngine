@@ -95,11 +95,12 @@ bool TextRenderer::loadChar(GLchar c)
     return true;
 }
 
-void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color) const {
+void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLint scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 	
 	useShader(mShader);
+	setShaderInt(mShader, "scrollX", scrollX);
 	setShaderMat4(mShader, "uProjection", mProjection);
 	setShaderVec3(mShader, "uColor", color);
     glActiveTexture(GL_TEXTURE0);
@@ -152,7 +153,7 @@ GLfloat TextRenderer::getStringWidth(std::string str, GLfloat scale) const {
 
 	for (auto it = str.cbegin(); it != str.cend(); ++it) {
         CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(*it);
-		width += (renderInfo.bearing.x + renderInfo.size.x + (renderInfo.advance >> 6)) * scale;
+		width += renderInfo.size.x;
     }
 
 	return width;

@@ -65,8 +65,8 @@ void updateRenderableRectangle(RenderableRectangle& rect) {
 	}
 }
 
-void renderRenderableRectangle(const RenderableRectangle& rect, const Shader& shader) {
-	setShaderVec3(shader, "uColor", rect.backgroundColor);
+void renderRenderableRectangle(const RenderableRectangle& rect, const Shader& shader, glm::vec3 backgroundColor) {
+	setShaderVec3(shader, "uColor", backgroundColor);
 
 	glBindVertexArray(rect.mVao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

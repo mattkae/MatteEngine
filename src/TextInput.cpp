@@ -5,35 +5,21 @@
 #include <GLFW/glfw3.h>
 
 bool initializeTextInput(TextInput& input) {
-	GLfloat padding = 2.f * input.padding;
-
-	input.r = {
-		input.position.x,
-		input.position.y,
-		padding + input.width,
-		static_cast<double>(padding + input.textRenderer->getFontSize()),
-	};
-	input.position = input.position + input.padding;
-	input.r.backgroundColor = input.backgroundColor;
-	input.r.borderColor = input.borderColor;
 	input.focusToken = getNextFocusToken();
-	initializeRenderableRectangle(input.r);
 	input.cursorPosition = input.str.size();
+	input.currentBackgroundColor = input.backgroundColor;
+	initializeBoundText(input.bt);
 	return true;
 }
 
-void updateWidth(TextInput& textInput) {
-	textInput.textWidth = textInput.textRenderer->getStringWidth(textInput.str, textInput.scale);
-}
-
 void updateTextInput(TextInput& textInput) {
-	updateRenderableRectangle(textInput.r);
-	if (textInput.r.isFocused && textInput.r.isJustClicked) {
+	updateBoundText(textInput.bt);
+	if (textInput.bt.box.isFocused && textInput.bt.box.isJustClicked) {
 		setInputFocus(textInput.focusToken);
-		textInput.r.backgroundColor = textInput.focusedBackgroundColor;
-	} else if (getInputFocus() == textInput.focusToken && !textInput.r.isFocused) {
+		textInput.currentBackgroundColor = textInput.focusedBackgroundColor;
+	} else if (getInputFocus() == textInput.focusToken && !textInput.bt.box.isFocused) {
 		resetInputFocus();
-		textInput.r.backgroundColor = textInput.backgroundColor;
+		textInput.currentBackgroundColor = textInput.backgroundColor;
 	}
 
 	int key = getCurrentKeyDown(textInput.focusToken);
@@ -82,6 +68,5 @@ void updateTextInput(TextInput& textInput) {
 }
 
 void renderTextInput(const TextInput& textInput, const Shader& shader) {
-	renderRenderableRectangle(textInput.r, shader);
-	textInput.textRenderer->renderText(textInput.str, textInput.position, textInput.scale, textInput.textColor);
+	renderBoundText(textInput.bt, shader, textInput.str, textInput.currentBackgroundColor, textInput.textColor, textInput.cursorPosition);
 }

@@ -28,14 +28,18 @@ void UI::generate() {
 	mButton.onClickHandler = []{ printf("Clicked me!"); };
 	mButton.initialize();
 
-	mInput.textRenderer = &mTextRenderer;
-	mInput.padding = 2;
 	mInput.textColor = glm::vec3(1, 0, 0);
 	mInput.backgroundColor = glm::vec3(0, 1, 0);
 	mInput.focusedBackgroundColor = glm::vec3(0.5, 1, 0);
-	mInput.borderColor = glm::vec3(1, 0, 0);
-	mInput.position = glm::vec2(25, Constants.height - 75);
 	mInput.str = "Enter text";
+	mInput.bt.textRenderer = &mTextRenderer;
+	mInput.bt.padding = glm::vec2(1.f);
+	mInput.bt.scale = 1.f;;
+	mInput.bt.box.r.x = 25;
+	mInput.bt.box.r.y = Constants.height - 100.f;
+	mInput.bt.box.r.w = 128;
+	mInput.bt.box.r.h = mTextRenderer.getFontSize();
+	
 	initializeTextInput(mInput);
 }
 

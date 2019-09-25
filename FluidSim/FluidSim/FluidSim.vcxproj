@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\src\Logger.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Material.cpp" />
+    <ClCompile Include="..\..\src\Matrix4x4f.cpp" />
     <ClCompile Include="..\..\src\Mesh.cpp" />
     <ClCompile Include="..\..\src\Model.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
@@ -46,6 +47,8 @@
     <ClCompile Include="..\..\src\TextRenderer.cpp" />
     <ClCompile Include="..\..\src\Texture.cpp" />
     <ClCompile Include="..\..\src\UI.cpp" />
+    <ClCompile Include="..\..\src\Vector3f.cpp" />
+    <ClCompile Include="..\..\src\Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\BasicShapes.h" />
@@ -61,6 +64,9 @@
     <ClInclude Include="..\..\src\Input.h" />
     <ClInclude Include="..\..\src\Light.h" />
     <ClInclude Include="..\..\src\Material.h" />
+    <ClInclude Include="..\..\src\Matrix3x3f.h" />
+    <ClInclude Include="..\..\src\Matrix4x4f.h" />
+    <ClInclude Include="..\..\src\Vector3f.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\Model.h" />
     <ClInclude Include="..\..\src\ObjectPool.h" />
@@ -79,6 +85,7 @@
     <ClInclude Include="..\..\src\TextRenderer.h" />
     <ClInclude Include="..\..\src\Texture.h" />
     <ClInclude Include="..\..\src\UI.h" />
+    <ClInclude Include="..\..\src\Vector4f.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

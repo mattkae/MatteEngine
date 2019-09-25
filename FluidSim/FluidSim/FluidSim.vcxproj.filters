@@ -95,6 +95,15 @@
     <ClCompile Include="..\..\src\BoundText.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Vector4f.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Matrix4x4f.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Vector3f.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">
@@ -192,6 +201,18 @@
     </ClInclude>
     <ClInclude Include="..\..\src\BoundText.h">
       <Filter>UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Vector3f.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Vector4f.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Matrix3x3f.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Matrix4x4f.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

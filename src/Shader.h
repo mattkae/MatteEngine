@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Matrix4x4f.h"
+#include "Vector4f.h"
 
 typedef GLuint Shader;
 
@@ -46,5 +48,13 @@ inline void setShaderMat3(const Shader& shader, const GLchar* name, glm::mat3 ma
 
 inline void setShaderMat4(const Shader& shader, const GLchar* name, glm::mat4 matrix) {
 	glUniformMatrix4fv(getShaderUniform(shader, name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+inline void setShaderMat4(const Shader& shader, const GLchar* name, const Matrix4x4f& matrix) {
+	glUniformMatrix4fv(getShaderUniform(shader, name), 1, GL_FALSE, matrix.values);
+}
+
+inline void setShaderVec3(const Shader& shader, const GLchar* name, Vector3f value) {
+	glUniform3f(getShaderUniform(shader, name), value.x, value.y, value.z);
 }
 #endif

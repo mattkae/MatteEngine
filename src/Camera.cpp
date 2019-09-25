@@ -4,26 +4,25 @@
 #include "Input.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
-#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 using namespace std;
 
-const glm::vec3 WORLD_UP(0.0, 1.0, 0.0);
+const Vector3f WORLD_UP{0.0, 1.0, 0.0};
 extern int primaryFocusToken;
 
 void updateCamera(BetterCamera& camera, float dt) {
 	if (isKeyDown(GLFW_KEY_W, primaryFocusToken)) {
-		camera.position += dt * camera.speed * camera.forward;
+		camera.position = addVector(camera.position, scale(camera.forward, camera.speed * dt));
 	}
 	if (isKeyDown(GLFW_KEY_A, primaryFocusToken)) {
-		camera.position -= dt * camera.speed * camera.right;
+		camera.position = subtractVector(camera.position, scale(camera.right, camera.speed * dt));
 	}
 	if (isKeyDown(GLFW_KEY_S, primaryFocusToken)) {
-		camera.position -= dt * camera.speed * camera.forward;
+		camera.position = subtractVector(camera.position,scale(camera.forward, camera.speed * dt));
 	}
 	if (isKeyDown(GLFW_KEY_D, primaryFocusToken)) {
-		camera.position += dt * camera.speed * camera.right;
+		camera.position = addVector(camera.position, scale(camera.right, camera.speed * dt));
 	}
 	if (isKeyDown(GLFW_KEY_LEFT, primaryFocusToken)) {
 		camera.yaw -= dt * camera.sensitivity;
@@ -46,19 +45,32 @@ void updateCamera(BetterCamera& camera, float dt) {
 		}
 	}
 
-	glm::vec3 frontTemp;
-	float pitch = camera.pitch;
-	float yaw = camera.yaw - 90.f;
-	frontTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	frontTemp.y = sin(glm::radians(pitch));
-	frontTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	camera.forward = glm::normalize(frontTemp);
-	camera.right = glm::normalize(glm::cross(camera.forward, WORLD_UP));
-	camera.up = glm::normalize(glm::cross(camera.right, camera.forward));
+	Vector3f forwardTemp;
+	GLfloat pitch = camera.pitch;
+	GLfloat yaw = camera.yaw - 90.f;
+	forwardTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	forwardTemp.y = sin(glm::radians(pitch));
+	forwardTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+
+	camera.forward = normalize(forwardTemp);
+	camera.right = normalize(cross(camera.forward, WORLD_UP));
+	camera.up = normalize(cross(camera.right, camera.forward));
 }
 
+inline Matrix4x4f getCameraViewMatrix(const BetterCamera& camera) { 
+	return getLookAt(camera.position, addVector(camera.position, camera.forward), camera.up);
+};
+
+inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
+	return getProjection(Constants.near, Constants.far, camera.fov, Constants.aspectRatio);
+};
+
 void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye) {
-	setShaderMat4(shader, "uVp", getCameraProjection(camera) * getCameraViewMatrix(camera));
+	auto view = getCameraViewMatrix(camera);
+	auto proj = getCameraProjection(camera);
+	auto uVp = mult(view, proj);
+
+	setShaderMat4(shader, "uVp", uVp);
 	if (withEye) {
 		setShaderVec3(shader, "uEye", camera.position);
 	}

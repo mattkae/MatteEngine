@@ -9,7 +9,7 @@ struct ApplicationConstants {
   std::string title = "Flooids";
 
   float near = 1.f;
-  float far = 1000.f;
+  float far = 100.f;
 };
 
 static ApplicationConstants Constants;

@@ -7,7 +7,7 @@ UI::UI() {
 }
 
 void UI::update(double dt) {
-	mButton.update();
+	updateButton(mButton);
 	updateTextInput(mInput);
 }
 
@@ -30,9 +30,8 @@ void UI::generate() {
 	mButton.position = glm::vec2(25, Constants.height - 25);
 	mButton.buttonColor = glm::vec3(0.5, 0.5, 0.5);
 	mButton.textColor = glm::vec3(1.0, 0, 0);
-	mButton.textRenderer = &mTextRenderer;
 	mButton.onClickHandler = []{ printf("Clicked me!"); };
-	mButton.initialize();
+	initializeButton(mButton, mTextRenderer);
 
 	mInput.textColor = glm::vec3(1, 0, 0);
 	mInput.backgroundColor = glm::vec3(0, 1, 0);
@@ -42,10 +41,9 @@ void UI::generate() {
 	mInput.bt.padding = glm::vec2(1.f);
 	mInput.bt.scale = 1.f;;
 	mInput.bt.box.r.x = 25;
-	mInput.bt.box.r.y = Constants.height - 100.f;
+	mInput.bt.box.r.y = static_cast<GLfloat>(Constants.height) - 100.f;
 	mInput.bt.box.r.w = 128;
 	mInput.bt.box.r.h = mTextRenderer.getFontSize();
-	
 	initializeTextInput(mInput);
 }
 
@@ -53,7 +51,7 @@ void UI::render() const {
 	useShader(mOrthographicShader);
 	renderTextInput(mInput, mOrthographicShader);
 	useShader(mOrthographicShader);
-	mButton.render(mOrthographicShader);
+	renderButton(mButton, mOrthographicShader, mTextRenderer);
 	useShader(mOrthographicShader);
 	renderPanel(mPanel, mOrthographicShader);
 }

@@ -7,14 +7,8 @@
 #include "Shader.h"
 
 struct TextRenderer;
-class Button {
-public:
-	Button();
-	void initialize();
-	void update();
-	void render(const Shader& shader) const;
 
-	TextRenderer* textRenderer = nullptr;
+struct Button {
 	std::function<void(void)> onClickHandler;
 	std::string label = "";
 	GLfloat padding = 0;
@@ -24,7 +18,11 @@ public:
 	glm::vec3 hoverColor = glm::vec3(0);
 	glm::vec3 textColor = glm::vec3(0);
 	GLfloat width = 128.f;
-private:
+
 	RenderableRectangle mRectangle;
 	glm::vec2 mTextPosition = glm::vec2(0);
 };
+
+void initializeButton(Button& button, const TextRenderer& textRenderer);
+void updateButton(Button& button);
+void renderButton(const Button& button, const Shader& shader, const TextRenderer& textRenderer);

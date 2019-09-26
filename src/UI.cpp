@@ -19,6 +19,12 @@ void UI::generate() {
 
 	mTextRenderer.initialize(16, (GLchar*)"C:\\Windows\\Fonts\\Arial.ttf");
 
+	mPanel.percentageHeight = 0.5f;
+	mPanel.percentageWidth = 0.5f;
+	mPanel.horizontal = UIPositioning::CENTER;
+	mPanel.vertical = UIPositioning::CENTER;
+	initializePanel(mPanel);
+
 	mButton.label = "Hello!";
 	mButton.padding = 2;
 	mButton.position = glm::vec2(25, Constants.height - 25);
@@ -48,4 +54,6 @@ void UI::render() const {
 	renderTextInput(mInput, mOrthographicShader);
 	useShader(mOrthographicShader);
 	mButton.render(mOrthographicShader);
+	useShader(mOrthographicShader);
+	renderPanel(mPanel, mOrthographicShader);
 }

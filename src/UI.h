@@ -3,6 +3,7 @@
 #include "Button.h"
 #include "TextRenderer.h"
 #include "TextInput.h"
+#include "Panel.h"
 
 class Scene;
  class UI {
@@ -18,4 +19,5 @@ class Scene;
 	 Button mButton;
 	 TextInput mInput;
 	 TextRenderer mTextRenderer;
+	 Panel mPanel;
  };

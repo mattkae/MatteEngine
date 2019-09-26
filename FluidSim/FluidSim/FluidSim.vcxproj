@@ -33,6 +33,7 @@
     <ClCompile Include="..\..\src\Matrix4x4f.cpp" />
     <ClCompile Include="..\..\src\Mesh.cpp" />
     <ClCompile Include="..\..\src\Model.cpp" />
+    <ClCompile Include="..\..\src\Panel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Physics.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\Matrix3x3f.h" />
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
+    <ClInclude Include="..\..\src\Panel.h" />
     <ClInclude Include="..\..\src\Vector3f.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\Model.h" />

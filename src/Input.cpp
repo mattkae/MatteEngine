@@ -148,3 +148,7 @@ int getCurrentKeyDown(int focusToken) {
 int getCurrentScancode(int focusToken) {
 	return focusToken == globalInput.focusToken ? globalInput.currentScancode : -1;
 }
+
+void getWindowDimensions(int& width, int& height) {
+	glfwGetWindowSize(globalInput.window, &width, &height);
+}

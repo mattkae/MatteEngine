@@ -7,7 +7,6 @@
 #include <iostream>
 
 using namespace std;
-
 const Vector3f WORLD_UP{0.0, 1.0, 0.0};
 extern int primaryFocusToken;
 
@@ -62,7 +61,11 @@ inline Matrix4x4f getCameraViewMatrix(const BetterCamera& camera) {
 };
 
 inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
-	return getProjection(Constants.near, Constants.far, camera.fov, Constants.aspectRatio);
+	int width = 0;
+	int height = 0;
+	getWindowDimensions(width, height);
+	GLfloat aspectRatio = static_cast<GLfloat>(width) / static_cast<GLfloat>(height);
+	return getProjection(Constants.near, Constants.far, camera.fov, aspectRatio);
 };
 
 void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye) {

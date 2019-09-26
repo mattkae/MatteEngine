@@ -104,6 +104,9 @@
     <ClCompile Include="..\..\src\Vector3f.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Panel.cpp">
+      <Filter>UIElements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">
@@ -213,6 +216,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Matrix4x4f.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Panel.h">
+      <Filter>UIElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

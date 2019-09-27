@@ -113,6 +113,7 @@ void Scene::loadFromJson(const char *jsonPath) {
 
 void Scene::update(double dt) {
 	float dtFloat = static_cast<float>(dt);
+
     updateCamera(mCamera, dtFloat);
 
 	for (auto& emitter : particleEmitters) {

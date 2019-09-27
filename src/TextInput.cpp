@@ -67,6 +67,6 @@ void updateTextInput(TextInput& textInput) {
 	}
 }
 
-void renderTextInput(const TextInput& textInput, const Shader& shader) {
-	renderBoundText(textInput.bt, shader, textInput.str, textInput.currentBackgroundColor, textInput.textColor, textInput.cursorPosition);
+void renderTextInput(const TextInput& textInput, const Shader& shader, const TextRenderer& textRenderer) {
+	renderBoundText(textInput.bt, shader, textRenderer, textInput.str, textInput.currentBackgroundColor, textInput.textColor, textInput.cursorPosition);
 }

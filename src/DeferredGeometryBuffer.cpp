@@ -1,5 +1,5 @@
 #include "DeferredGeometryBuffer.h"
-#include "Constants.h"
+#include "GlobalApplicationState.h"
 #include "Logger.h"
 #include "Scene.h"
 #include "OpenGLUtil.h"

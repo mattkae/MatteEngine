@@ -1,6 +1,6 @@
 #include "Light.h"
 #include "Camera.h"
-#include "Constants.h"
+#include "GlobalApplicationState.h"
 #include "GlmUtility.h"
 #include "ImageUtil.h"
 #include "Scene.h"
@@ -13,9 +13,9 @@
 glm::mat4 get_light_projection(const Light &light) {
     switch (light.type) {
     case Directional:
-        return glm::ortho<float>(-10, 10, -10.f, 10, Constants.near, Constants.far);
+        return glm::ortho<float>(-10, 10, -10.f, 10, GlobalAppState.near, GlobalAppState.far);
     case Spot:
-        return glm::perspective<float>(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
+        return glm::perspective<float>(glm::radians(45.f), GlobalAppState.aspectRatio, GlobalAppState.near, GlobalAppState.far);
     case Point:
     default:
         std::cerr << "Attempting to get a view for unknown light: " << light.type << std::endl;
@@ -26,7 +26,7 @@ glm::mat4 get_light_projection(const Light &light) {
 glm::mat4 get_light_view(const Light &light) {
     switch (light.type) {
     case Directional: {
-        auto lightPosition = (-Constants.far / 2.0f) * light.direction;
+        auto lightPosition = (-GlobalAppState.far / 2.0f) * light.direction;
         return glm::lookAt(lightPosition, lightPosition + light.direction, light.up);
     }
     case Spot:
@@ -63,7 +63,7 @@ void from_json(const json &j, Light &light) {
     j.at("color").get_to<std::vector<float>>(color);
     j.at("usesShadows").get_to(light.usesShadows);
     if (light.usesShadows) {
-        light.generate(Constants.width, Constants.height);
+        light.generate(GlobalAppState.floatWidth, GlobalAppState.floatHeight);
     }
     j.at("isOn").get_to(light.isOn);
     light.color = glm::arrayToVec3(color);
@@ -216,14 +216,14 @@ void Light::render_omindirectional_shadows(const Shader &shader, const Scene &sc
         }
 
         glm::mat4 view = glm::lookAt(position, position + currentDirection, up);
-        glm::mat4 proj = glm::perspective(glm::radians(45.f), Constants.aspectRatio, Constants.near, Constants.far);
+        glm::mat4 proj = glm::perspective(glm::radians(45.f), GlobalAppState.aspectRatio, GlobalAppState.near, GlobalAppState.far);
 		setShaderMat4(shader, "uViewProj", proj * view);
         scene.renderModels(shader);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
-    glViewport(0, 0, Constants.width, Constants.height);
+    glViewport(0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight);
 }
 
 void Light::render_directional_shadows(const Shader &shader, const Scene &scene) const {
@@ -240,7 +240,7 @@ void Light::render_directional_shadows(const Shader &shader, const Scene &scene)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
-    glViewport(0, 0, Constants.width, Constants.height);
+    glViewport(0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight);
 }
 
 void Light::render_shadows(const Shader &shader, const Scene &scene) const {
@@ -286,8 +286,8 @@ void Light::render_point_light(const Shader &shader, const int index) const {
 	setShaderFloat(shader, getArrayUniform(index, "uLights", "cosineCutOff").c_str(), -1);
 	setShaderFloat(shader, getArrayUniform(index, "uLights", "dropOff").c_str(), -1);
 
-    float near = Constants.near;
-    float far = Constants.far;
+    float near = GlobalAppState.near;
+    float far = GlobalAppState.far;
     float diff = far - near;
     glm::vec2 uFarNear;
     uFarNear.x = (far + near) / diff * 0.5f + 0.5f;
@@ -305,7 +305,7 @@ void Light::render_directional_light(const Shader &shader, const int index) cons
     }
 
     glm::vec3 position = glm::vec3(direction);
-    position *= -Constants.far;
+    position *= -GlobalAppState.far;
 	setShaderVec3(shader, getArrayUniform(index, "uLights", "direction").c_str(), direction);
 	setShaderVec3(shader, getArrayUniform(index, "uLights", "position").c_str(), position);
 	setShaderFloat(shader, getArrayUniform(index, "uLights", "constant").c_str(), 1.f);

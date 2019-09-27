@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 #include <map>
 #include "Shader.h"
-#include "Constants.h"
+#include "GlobalApplicationState.h"
 
 struct CharacterRenderInfo {
     GLuint textureId = 0;

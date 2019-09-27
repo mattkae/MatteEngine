@@ -2,7 +2,7 @@
 #define CAMERA_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "Constants.h"
+#include "GlobalApplicationState.h"
 #include "Shader.h"
 #include "Vector4f.h"
 #include "Matrix4x4f.h"

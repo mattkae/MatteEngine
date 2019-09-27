@@ -1,7 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "Camera.h"
-#include "Constants.h"
+#include "GlobalApplicationState.h"
 #include "Light.h"
 #include "Model.h"
 #include "ParticleEmitter.h"

@@ -58,7 +58,7 @@ bool TextRenderer::initialize(GLint size, GLchar* path)
     mVertices[22] = 1;
     mVertices[23] = 0;
 
-	mProjection = glm::ortho(0.0f, static_cast<GLfloat>(Constants.width), 0.0f, static_cast<GLfloat>(Constants.height));
+	mProjection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 
 	return true;
 }

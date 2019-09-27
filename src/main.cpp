@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Constants.h"
+#include "GlobalApplicationState.h"
 #include "Input.h"
 #include "Scene.h"
 #include "Sphere.h"
@@ -77,8 +77,8 @@ void initialize(int argc, const char* argv[])
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GlobalWindow = glfwCreateWindow(Constants.width, Constants.height,
-        Constants.title.c_str(), nullptr, nullptr);
+    GlobalWindow = glfwCreateWindow(GlobalAppState.width, GlobalAppState.height,
+        GlobalAppState.title.c_str(), nullptr, nullptr);
     if (!GlobalWindow) {
         cerr << "Error initializing GLFW window" << endl;
         return;
@@ -86,6 +86,7 @@ void initialize(int argc, const char* argv[])
 
 	initializeInputSystem(GlobalWindow);
     glfwMakeContextCurrent(GlobalWindow);
+	glfwSetWindowSizeCallback(GlobalWindow, setApplicationDimensions);
 
     // GLEW
     GLenum err = glewInit();

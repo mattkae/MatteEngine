@@ -107,12 +107,12 @@
     <ClCompile Include="..\..\src\Panel.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\GlobalApplicationState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Entity.h">
@@ -219,6 +219,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Panel.h">
       <Filter>UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GlobalApplicationState.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

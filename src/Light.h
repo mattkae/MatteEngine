@@ -3,6 +3,7 @@
 
 #include "Model.h"
 #include "Shader.h"
+#include "GlobalApplicationState.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
@@ -30,8 +31,8 @@ struct Light {
     float dropOff = 1.0f;
 
     bool usesShadows = false;
-    int shadowWidth = 800;
-    int shadowHeight = 600;
+    int shadowWidth = GlobalAppState.width;
+    int shadowHeight = GlobalAppState.height;
 
     bool isOn = true;
     glm::mat4 projection;

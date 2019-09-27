@@ -7,6 +7,6 @@ uniform mat4 uProjection;
 uniform int scrollX;
 
 void main() {
-    gl_Position = uProjection * vec4(vertex.x - scrollX, vertex.y, 0, 1);
+    gl_Position = uProjection * vec4(vertex.x - scrollX, vertex.y, 0.1, 1);
     oTexCoords = vertex.zw;
 }

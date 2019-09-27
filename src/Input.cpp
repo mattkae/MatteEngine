@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "Constants.h"
+#include "GlobalApplicationState.h"
 #include "Logger.h"
 #include <iostream>
 #include <GLFW/glfw3.h>
@@ -137,7 +137,7 @@ DoublePoint getCursorPosition() {
 	if (globalInput.window) {
 		glfwGetCursorPos(globalInput.window, &point.x, &point.y);
 	}
-	point.y = Constants.height - point.y;
+	point.y = GlobalAppState.floatHeight - point.y;
 	return point;
 }
 

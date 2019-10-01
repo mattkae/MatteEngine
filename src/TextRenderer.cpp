@@ -95,12 +95,12 @@ bool TextRenderer::loadChar(GLchar c)
     return true;
 }
 
-void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLint scrollX) const {
+void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 	
 	useShader(mShader);
-	setShaderInt(mShader, "scrollX", scrollX);
+	setShaderFloat(mShader, "scrollX", scrollX);
 	setShaderMat4(mShader, "uProjection", mProjection);
 	setShaderVec3(mShader, "uColor", color);
     glActiveTexture(GL_TEXTURE0);

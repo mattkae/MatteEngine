@@ -4,7 +4,7 @@
 #include <cmath>
 
 constexpr float getTwoPi() {
-	return 2 * M_PI;
+	return static_cast<float>(2 * M_PI);
 }
 
 float calculateFunc(const FunctionFloat& f, float fractionComplete) {

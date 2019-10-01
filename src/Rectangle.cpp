@@ -1,5 +1,11 @@
-#include "RenderableRectangle.h"
+#include "Rectangle.h"
 #include "Input.h"
+
+struct RenderableRectangle {
+	Rectangle r;
+	GLuint mVao = 0;
+	GLuint mVbo = 0;
+};
 
 void initializeRenderableRectangle(RenderableRectangle& rect, bool isDynamic) {
 	glGenVertexArrays(1, &rect.mVao);
@@ -29,36 +35,6 @@ void initializeRenderableRectangle(RenderableRectangle& rect, bool isDynamic) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-}
-
-template <typename T>
-bool isMouseHovered(const RenderableRectangle& rect) {
-	Point<double> point = getCursorPosition();
-	return doesIntersectBox(rect.r, point);
-}
-
-void updateRenderableRectangle(RenderableRectangle& rect) {
-	bool isMouseClicked = isLeftClickDown();
-
-	rect.isHovered = isMouseHovered(rect);
-	bool nextIsClicked = isMouseClicked && rect.isHovered;
-
-	if (nextIsClicked) {
-		if (!rect.isClicked) {
-			rect.isJustClicked = true;
-			rect.isClicked = true;
-			rect.isFocused = true;
-		} else {
-			rect.isJustClicked = false;
-		}
-	} else {
-		if (isMouseClicked) {
-			rect.isFocused = false;
-		}
-
-		rect.isJustClicked = false;
-		rect.isClicked = false;
-	}
 }
 
 void renderRenderableRectangle(const RenderableRectangle& rect, const Shader& shader, glm::vec4 backgroundColor) {

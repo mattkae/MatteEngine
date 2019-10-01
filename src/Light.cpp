@@ -16,7 +16,7 @@ glm::mat4 get_light_projection(const Light &light) {
         return glm::ortho<float>(-10, 10, -10.f, 10, GlobalAppState.near, GlobalAppState.far);
     case Spot:
         return glm::perspective<float>(glm::radians(45.f), GlobalAppState.aspectRatio, GlobalAppState.near, GlobalAppState.far);
-    case Point:
+    case PointLight:
     default:
         std::cerr << "Attempting to get a view for unknown light: " << light.type << std::endl;
         return glm::mat4(0.0);
@@ -31,7 +31,7 @@ glm::mat4 get_light_view(const Light &light) {
     }
     case Spot:
         return glm::lookAt(light.position, light.position + light.direction, light.up);
-    case Point:
+    case PointLight:
     default:
         std::cerr << "Attempting to get a view for unknown light: " << light.type << std::endl;
         return glm::mat4(0.0);
@@ -63,12 +63,12 @@ void from_json(const json &j, Light &light) {
     j.at("color").get_to<std::vector<float>>(color);
     j.at("usesShadows").get_to(light.usesShadows);
     if (light.usesShadows) {
-        light.generate(GlobalAppState.floatWidth, GlobalAppState.floatHeight);
+        light.generate(GlobalAppState.width, GlobalAppState.height);
     }
     j.at("isOn").get_to(light.isOn);
     light.color = glm::arrayToVec3(color);
 
-    if (light.type != LightType::Point) {
+    if (light.type != LightType::PointLight) {
         j.at("direction").get_to<std::vector<float>>(direction);
         light.direction = glm::arrayToVec3(direction);
         j.at("up").get_to<std::vector<float>>(up);
@@ -152,7 +152,7 @@ bool Light::generate(int width, int height) {
     case Directional:
         create_shadow_texture_for_directional_light(width, height);
         break;
-    case Point:
+    case PointLight:
         create_shadow_texture_for_omnidirectional_light(width, height);
         break;
     default:
@@ -223,7 +223,7 @@ void Light::render_omindirectional_shadows(const Shader &shader, const Scene &sc
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
-    glViewport(0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight);
+    glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }
 
 void Light::render_directional_shadows(const Shader &shader, const Scene &scene) const {
@@ -240,7 +240,7 @@ void Light::render_directional_shadows(const Shader &shader, const Scene &scene)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
-    glViewport(0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight);
+    glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }
 
 void Light::render_shadows(const Shader &shader, const Scene &scene) const {
@@ -248,7 +248,7 @@ void Light::render_shadows(const Shader &shader, const Scene &scene) const {
         return;
 
     switch (this->type) {
-    case Point:
+    case PointLight:
         // render_omindirectional_shadows(light, shader, scene);
         break;
     case Spot:
@@ -345,7 +345,7 @@ void Light::render(const Shader &shader, const int index) const {
     case Directional:
         render_directional_light(shader, index);
         break;
-    case Point:
+    case PointLight:
         render_point_light(shader, index);
         break;
     case Spot:

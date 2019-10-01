@@ -3,7 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-#include "RenderableRectangle.h"
+#include "InteractableRectangle.h"
 #include "Shader.h"
 
 struct TextRenderer;
@@ -14,12 +14,13 @@ struct Button {
 	GLfloat padding = 0;
 	glm::vec2 position = glm::vec2(0);
 	GLfloat scale = 1.0;
-	glm::vec3 buttonColor = glm::vec3(0);
-	glm::vec3 hoverColor = glm::vec3(0);
-	glm::vec3 textColor = glm::vec3(0);
+	glm::vec4 buttonColor = glm::vec4(0);
+	glm::vec4 hoverColor = glm::vec4(0);
+	glm::vec4 textColor = glm::vec4(0);
+	glm::vec4 borderColor = glm::vec4(0);
 	GLfloat width = 128.f;
 
-	RenderableRectangle mRectangle;
+	InteractableRectangle rect;
 	glm::vec2 mTextPosition = glm::vec2(0);
 };
 

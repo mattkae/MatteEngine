@@ -32,7 +32,7 @@ void from_json(const nlohmann::json& j, ParticleEmitter& emitter) {
     initializeParticleEmitter(emitter, initialParticleCount);
 }
 
-inline void spawnParticles(ParticleEmitter& emitter, int numParticlesToSpawn) {
+inline void spawnParticles(ParticleEmitter& emitter, size_t numParticlesToSpawn) {
 	while (numParticlesToSpawn > 0 && emitter.nextParticleIndex < emitter.maxParticles) {
 		emitter.particleRenderVariables[emitter.nextParticleIndex].color = emitter.colorFunction.initial;
 		emitter.particleRenderVariables[emitter.nextParticleIndex].position = getRandom(emitter.particlePosition);
@@ -44,7 +44,7 @@ inline void spawnParticles(ParticleEmitter& emitter, int numParticlesToSpawn) {
 	}
 }
 
-void initializeParticleEmitter(ParticleEmitter& emitter, int initialParticleCount) {
+void initializeParticleEmitter(ParticleEmitter& emitter, size_t initialParticleCount) {
 	emitter.particleUpdateVariables = new ParticleUpdateVariables[emitter.maxParticles];
 	emitter.particleRenderVariables = new ParticleRenderVariables[emitter.maxParticles];
     emitter.mParticleShader = loadShader("src/shaders/particle.vert", "src/shaders/particle.frag");
@@ -112,14 +112,14 @@ void updateParticleEmitter(ParticleEmitter& emitter, float deltaTimeSec) {
 
 	float diffTime = emitter.timeUntilSpawnSeconds - deltaTimeSec;
 	if (diffTime < 0) {
-		int numParticlesToSpawn = static_cast<int>(ceil(diffTime / -emitter.timeUntilSpawnSeconds));
+		size_t numParticlesToSpawn = static_cast<size_t>(ceil(diffTime / -emitter.timeUntilSpawnSeconds));
 		spawnParticles(emitter, numParticlesToSpawn);
         emitter.timeUntilSpawnSeconds = getRandom(emitter.spawnFrequencySeconds);
 	} else {
 		emitter.timeUntilSpawnSeconds = diffTime;
 	}
 
-    for (int activeIndex = 0; activeIndex < emitter.nextParticleIndex; activeIndex++) {
+    for (size_t activeIndex = 0; activeIndex < emitter.nextParticleIndex; activeIndex++) {
         ParticleUpdateVariables& updateParticle = emitter.particleUpdateVariables[activeIndex];
         if (updateParticle.timeAliveSeconds > updateParticle.deathTimeSeconds) {
 			emitter.particleUpdateVariables[activeIndex] = emitter.particleUpdateVariables[emitter.nextParticleIndex - 1];

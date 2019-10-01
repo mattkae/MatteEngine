@@ -13,7 +13,7 @@ using json = nlohmann::json;
 
 class Scene;
 
-enum LightType { Directional = 0, Point, Spot, Inactive };
+enum LightType { Directional = 0, PointLight, Spot, Inactive };
 
 struct Light {
   public:

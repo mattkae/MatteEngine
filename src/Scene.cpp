@@ -165,7 +165,7 @@ void Scene::renderGBuffer() const {
 
 void Scene::renderScene() const {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	mSkybox.render(mCamera);
 
@@ -178,6 +178,10 @@ void Scene::renderScene() const {
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+	glClearDepth(1.0f);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	setShaderVec3(mSceneShader, "uAmbient", glm::vec3(0.3f));
@@ -202,6 +206,7 @@ void Scene::renderScene() const {
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error during scene pass: %i, %s\n", err, glewGetErrorString(err));
     }
+	glDisable(GL_DEPTH_TEST);
 }
 
 void Scene::renderNonDeferred() const {

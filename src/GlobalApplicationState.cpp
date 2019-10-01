@@ -13,5 +13,5 @@ void setApplicationDimensions(GLFWwindow* window, int width, int height) {
 	GlobalAppState.floatWidth = static_cast<GLfloat>(width);
 	GlobalAppState.floatHeight = static_cast<GLfloat>(height);
 	GlobalAppState.aspectRatio = GlobalAppState.floatWidth / GlobalAppState.floatHeight;
-	glViewport(0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight);
+	glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }

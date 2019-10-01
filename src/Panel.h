@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include "Shader.h"
-#include "RenderableRectangle.h"
+#include "Rectangle.h"
 #include "GlobalApplicationState.h"
 
 enum UIPositioning {
@@ -25,8 +25,6 @@ struct Panel {
 	GLfloat borderWidth = 1.f;
 	GLfloat padding = 2.f;
 	glm::vec2 margin = glm::vec2(0.f);
-
-	RenderableRectangle rect;
 };
 
 void initializePanel(Panel& panel);

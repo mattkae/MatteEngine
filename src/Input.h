@@ -1,6 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-#include "BasicShapes.h"
+#include "Point.h"
 
 struct GLFWwindow;
 void initializeInputSystem(GLFWwindow* window);
@@ -10,7 +10,7 @@ bool isKeyDown(int key, int focusToken);
 bool isKeyJustUp(int key, int focusToken);
 bool isLeftClickDown();
 bool isRightClickDown();
-DoublePoint getCursorPosition();
+Point getCursorPosition();
 int getNextFocusToken();
 void setInputFocus(int focusToken);
 void resetInputFocus();

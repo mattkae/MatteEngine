@@ -8,7 +8,6 @@ bool initializeTextInput(TextInput& input) {
 	input.focusToken = getNextFocusToken();
 	input.cursorPosition = input.str.size();
 	input.currentBackgroundColor = input.backgroundColor;
-	initializeBoundText(input.bt);
 	return true;
 }
 

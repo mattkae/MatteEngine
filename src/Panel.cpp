@@ -1,6 +1,7 @@
 #pragma once
 #include "Panel.h"
 #include "GlobalApplicationState.h"
+#include "Rectangle.h"
 
 GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfloat windowDimension, GLfloat panelDimension) {
 	switch (positioning) {
@@ -12,6 +13,8 @@ GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfl
 		return 0;
 	case UIPositioning::RIGHT: // DOWN
 		return windowDimension - panelDimension;
+	default:
+		return 0;
 	}
 }
 
@@ -22,12 +25,11 @@ void initializePanel(Panel& panel) {
 	GLfloat x = getPositioning(panel.horizontal, panel.absolutePositioning.x, panel.boundingRect.w, panelWidth);
 	GLfloat y = getPositioning(panel.vertical, panel.absolutePositioning.y, panel.boundingRect.h, panelHeight);
 
-	panel.rect.r = { x, y, panelWidth, panelHeight };
-	initializeRenderableRectangle(panel.rect);
+	panel.boundingRect = { x, y, panelWidth, panelHeight };
 }
 
 void renderPanel(const Panel& panel, const Shader& shader) {
-	renderRenderableRectangle(panel.rect, shader, glm::vec3(panel.backgroundColor.x, panel.backgroundColor.y, panel.backgroundColor.z));
+	renderRectangle(panel.boundingRect, shader, panel.backgroundColor, panel.borderColor, panel.borderWidth);
 }
 
 // Window

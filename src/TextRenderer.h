@@ -23,7 +23,7 @@ struct CharacterRenderInfo {
 struct TextRenderer {
 public:
     bool initialize(GLint size, GLchar* path);
-    void renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLint scrollX = 0) const;
+    void renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLfloat scrollX = 0) const;
     void free();
 	inline GLint getFontSize() const { return mSize; }
 	GLfloat getStringWidth(std::string str, GLfloat scale) const;

@@ -26,7 +26,7 @@ public:
 	// Group variables
     glm::mat4 model = glm::mat4(1.0f);
 	RandomizableFloat spawnFrequencySeconds;
-	int maxParticles = 500;
+	size_t maxParticles = 500;
 	FunctionVec4 colorFunction;
     FunctionVec3 movementFunction;
     int numVertices = 3;
@@ -47,7 +47,7 @@ public:
 	GLuint instanceVbo = 0;
 };
 
-void initializeParticleEmitter(ParticleEmitter& emitter, int initialParticleCount);
+void initializeParticleEmitter(ParticleEmitter& emitter, size_t initialParticleCount);
 void updateParticleEmitter(ParticleEmitter& emitter, float deltaTimeSec);
 void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& camera);
 void freeParticleEmitter(ParticleEmitter& emitter);

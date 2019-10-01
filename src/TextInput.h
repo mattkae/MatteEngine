@@ -8,13 +8,13 @@
 struct TextRenderer;
 struct TextInput {
 	glm::vec3 textColor = glm::vec3(0, 0, 0);
-	glm::vec3 backgroundColor = glm::vec3(1, 1, 1);
-	glm::vec3 focusedBackgroundColor = glm::vec3(1, 1, 1);
+	glm::vec4 backgroundColor = glm::vec4(1, 1, 1, 1);
+	glm::vec4 focusedBackgroundColor = glm::vec4(1, 1, 1, 1);
 	std::string str = "";
 	BoundText bt;
 	int focusToken = -1;
 	size_t cursorPosition = 0;
-	glm::vec3 currentBackgroundColor = glm::vec3(1.f);
+	glm::vec4 currentBackgroundColor = glm::vec4(1.f);
 };
 
 bool initializeTextInput(TextInput& input);

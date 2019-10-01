@@ -27,6 +27,7 @@
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
+    <ClCompile Include="..\..\src\InteractableRectangle.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
     <ClCompile Include="..\..\src\Logger.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
@@ -38,7 +39,7 @@
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Physics.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
-    <ClCompile Include="..\..\src\RenderableRectangle.cpp" />
+    <ClCompile Include="..\..\src\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\Shader.cpp" />
     <ClCompile Include="..\..\src\OpenSimplexNoise.cpp" />
@@ -53,7 +54,6 @@
     <ClCompile Include="..\..\src\Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\BasicShapes.h" />
     <ClInclude Include="..\..\src\BoundText.h" />
     <ClInclude Include="..\..\src\Button.h" />
     <ClInclude Include="..\..\src\Camera.h" />
@@ -64,11 +64,14 @@
     <ClInclude Include="..\..\src\GlmUtility.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\Input.h" />
+    <ClInclude Include="..\..\src\InteractableRectangle.h" />
     <ClInclude Include="..\..\src\Light.h" />
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\Matrix3x3f.h" />
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
     <ClInclude Include="..\..\src\Panel.h" />
+    <ClInclude Include="..\..\src\Point.h" />
+    <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\Vector3f.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\Model.h" />
@@ -77,7 +80,6 @@
     <ClInclude Include="..\..\src\ParticleEmitter.h" />
     <ClInclude Include="..\..\src\Physics.h" />
     <ClInclude Include="..\..\src\Randomizable.h" />
-    <ClInclude Include="..\..\src\RenderableRectangle.h" />
     <ClInclude Include="..\..\src\Scene.h" />
     <ClInclude Include="..\..\src\Shader.h" />
     <ClInclude Include="..\..\src\OpenSimplexNoise.h" />

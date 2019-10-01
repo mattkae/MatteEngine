@@ -12,6 +12,9 @@
     <Filter Include="UIElements">
       <UniqueIdentifier>{f0d0fcc5-b132-4667-ba99-50ed16dbe7d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Primitives">
+      <UniqueIdentifier>{11e4572c-513d-4047-9afa-d050868d4c2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Camera.cpp">
@@ -80,9 +83,6 @@
     <ClCompile Include="..\..\src\UI.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\RenderableRectangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\TextInput.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
@@ -109,6 +109,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InteractableRectangle.cpp">
+      <Filter>Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Rectangle.cpp">
+      <Filter>Primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,14 +193,8 @@
     <ClInclude Include="..\..\src\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\BasicShapes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\TextInput.h">
       <Filter>UIElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\RenderableRectangle.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Randomizable.h">
       <Filter>Header Files</Filter>
@@ -222,6 +222,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\GlobalApplicationState.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Rectangle.h">
+      <Filter>Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Point.h">
+      <Filter>Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InteractableRectangle.h">
+      <Filter>Primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

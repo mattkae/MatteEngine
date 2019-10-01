@@ -10,7 +10,7 @@
 #include "Sphere.h"
 #include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
-#include "UI.h"
+#include "UI/UI.h"
 #include <iostream>
 #include <string>
 #include <vector>

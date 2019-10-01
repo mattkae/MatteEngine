@@ -3,8 +3,8 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-#include "InteractableRectangle.h"
-#include "Shader.h"
+#include "../Primitives/InteractableRectangle.h"
+#include "../Shader.h"
 
 struct TextRenderer;
 

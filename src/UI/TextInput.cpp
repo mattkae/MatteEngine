@@ -1,7 +1,7 @@
 #include "TextInput.h"
-#include "Input.h"
-#include "TextRenderer.h"
-#include "Logger.h"
+#include "../Input.h"
+#include "../TextRenderer.h"
+#include "../Logger.h"
 #include <GLFW/glfw3.h>
 
 bool initializeTextInput(TextInput& input) {

@@ -1,9 +1,9 @@
 #pragma once
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include "Shader.h"
-#include "Rectangle.h"
-#include "GlobalApplicationState.h"
+#include "../Shader.h"
+#include "../Primitives/Rectangle.h"
+#include "../GlobalApplicationState.h"
 
 enum UIPositioning {
 	ABSOLUTE = 0,

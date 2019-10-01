@@ -1,5 +1,5 @@
 #include "InteractableRectangle.h"
-#include "Input.h"
+#include "../Input.h"
 #include "Point.h"
 
 bool isMouseHovered(const InteractableRectangle& rect) {

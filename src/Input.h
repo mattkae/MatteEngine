@@ -1,6 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-#include "Point.h"
+#include "Primitives/Point.h"
 
 struct GLFWwindow;
 void initializeInputSystem(GLFWwindow* window);

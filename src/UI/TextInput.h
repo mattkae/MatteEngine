@@ -1,5 +1,5 @@
 #pragma once
-#include "Shader.h"
+#include "../Shader.h"
 #include "BoundText.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>

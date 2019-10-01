@@ -1,7 +1,7 @@
 #pragma once
-#include "Shader.h"
+#include "../Shader.h"
 #include "Button.h"
-#include "TextRenderer.h"
+#include "../TextRenderer.h"
 #include "TextInput.h"
 #include "Panel.h"
 

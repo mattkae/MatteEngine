@@ -1,5 +1,5 @@
 #include "Button.h"
-#include "TextRenderer.h"
+#include "../TextRenderer.h"
 
 void initializeButton(Button& button, const TextRenderer& textRenderer) {
 	button.mTextPosition = button.position + glm::vec2(2 * button.padding);

@@ -2,7 +2,7 @@
 #define RECTANGLE_H
 
 #include "Point.h"
-#include "Shader.h"
+#include "../Shader.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 

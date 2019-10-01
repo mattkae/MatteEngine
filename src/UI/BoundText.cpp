@@ -1,5 +1,5 @@
 #include "BoundText.h"
-#include "TextRenderer.h"
+#include "../TextRenderer.h"
 
 void updateBoundText(BoundText& bt) {
 	updateRectangle(bt.box);

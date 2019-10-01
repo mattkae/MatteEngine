@@ -1,6 +1,6 @@
 #pragma once
-#include "InteractableRectangle.h"
-#include "Shader.h"
+#include "../Primitives/InteractableRectangle.h"
+#include "../Shader.h"
 #include <glm/glm.hpp>
 #include <string>
 

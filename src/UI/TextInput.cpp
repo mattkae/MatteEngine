@@ -12,13 +12,18 @@ bool initializeTextInput(TextInput& input) {
 }
 
 void updateTextInput(TextInput& textInput) {
-	updateBoundText(textInput.bt);
-	if (textInput.bt.box.isFocused && textInput.bt.box.isJustClicked) {
-		setInputFocus(textInput.focusToken);
-		textInput.currentBackgroundColor = textInput.focusedBackgroundColor;
-	} else if (getInputFocus() == textInput.focusToken && !textInput.bt.box.isFocused) {
-		resetInputFocus();
-		textInput.currentBackgroundColor = textInput.backgroundColor;
+	if (!textInput.isFocused) {
+		if (isClicked(textInput.bt.rect)) {
+			setInputFocus(textInput.focusToken);
+			textInput.currentBackgroundColor = textInput.focusedBackgroundColor;
+			textInput.isFocused = true;
+		}
+	} else if (textInput.isFocused) {
+		if (isLeftClickDown() && !isClicked(textInput.bt.rect)) {
+			resetInputFocus();
+			textInput.currentBackgroundColor = textInput.backgroundColor;
+			textInput.isFocused = false;
+		}
 	}
 
 	int key = getCurrentKeyDown(textInput.focusToken);

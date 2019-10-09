@@ -1,20 +1,26 @@
 #include "Button.h"
 #include "../TextRenderer.h"
+#include "../Primitives/Rectangle.h"
 
-void initializeButton(Button& button, const TextRenderer& textRenderer) {
-	button.mTextPosition = button.position + glm::vec2(2 * button.padding);
-	GLfloat height = (textRenderer.getFontSize() + 2 * button.padding) * button.scale;
-	button.rect.rect = { button.position.x, button.position.y, button.width, height };
+Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
+	return { button.position.x, button.position.y, button.width, getButtonHeight(button, textRenderer) };
 }
 
-void updateButton(Button& button) {
-	updateRectangle(button.rect);
-	if (button.rect.isJustClicked) {
-		button.onClickHandler();
+void updateButton(Button& button, const TextRenderer& textRenderer) {
+	Rectangle rect = getRectangle(button, textRenderer);
+	if (!button.isClicked) {
+		if (isClicked(rect)) {
+			button.onClickHandler();
+			button.isClicked = true;
+		}
+	} else if (!isClicked(rect)) {
+		button.isClicked = false;
 	}
 }
 
 void renderButton(const Button& button, const Shader& shader, const TextRenderer& textRenderer) {
-	renderRectangle(button.rect.rect, shader,button. rect.isHovered ? button.hoverColor : button.buttonColor);
-	textRenderer.renderText(button.label, button.mTextPosition, button.scale, button.textColor);
+	glm::vec2 textPosition = button.position + glm::vec2(2 * button.padding);
+	Rectangle rect = getRectangle(button, textRenderer);
+	renderRectangle(rect, shader, button.isClicked ? button.hoverColor : button.buttonColor);
+	textRenderer.renderText(shader, button.label, textPosition, button.scale, button.textColor);
 }

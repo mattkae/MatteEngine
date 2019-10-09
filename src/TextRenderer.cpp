@@ -58,8 +58,6 @@ bool TextRenderer::initialize(GLint size, GLchar* path)
     mVertices[22] = 1;
     mVertices[23] = 0;
 
-	mProjection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
-
 	return true;
 }
 
@@ -95,13 +93,14 @@ bool TextRenderer::loadChar(GLchar c)
     return true;
 }
 
-void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLfloat scrollX) const {
+void TextRenderer::renderText(Shader originalShader, std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glm::mat4 projection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	
 	useShader(mShader);
 	setShaderFloat(mShader, "scrollX", scrollX);
-	setShaderMat4(mShader, "uProjection", mProjection);
+	setShaderMat4(mShader, "uProjection", projection);
 	setShaderVec3(mShader, "uColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(mVao);
@@ -139,6 +138,8 @@ void TextRenderer::renderText(std::string str, glm::vec2 position, GLfloat scale
 	glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_BLEND);
+
+	useShader(originalShader);
 }
 
 void TextRenderer::free() {

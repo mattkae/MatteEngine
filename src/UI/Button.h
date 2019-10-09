@@ -3,8 +3,8 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-#include "../Primitives/InteractableRectangle.h"
 #include "../Shader.h"
+#include "../TextRenderer.h"
 
 struct TextRenderer;
 
@@ -19,11 +19,11 @@ struct Button {
 	glm::vec4 textColor = glm::vec4(0);
 	glm::vec4 borderColor = glm::vec4(0);
 	GLfloat width = 128.f;
-
-	InteractableRectangle rect;
-	glm::vec2 mTextPosition = glm::vec2(0);
+	bool isClicked = false;
 };
 
-void initializeButton(Button& button, const TextRenderer& textRenderer);
-void updateButton(Button& button);
+void updateButton(Button& button, const TextRenderer& textRenderer);
 void renderButton(const Button& button, const Shader& shader, const TextRenderer& textRenderer);
+inline GLfloat getButtonHeight(const Button& button, const TextRenderer& textRenderer) {
+	return (textRenderer.getFontSize() + 2 * button.padding) * button.scale;
+}

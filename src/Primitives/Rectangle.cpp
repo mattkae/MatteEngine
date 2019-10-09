@@ -71,11 +71,11 @@ void renderRectangle(const Rectangle& rect, const Shader& shader, glm::vec4 back
 		initializeRenderableRectangle(globalRect, true);
 	}
 
-	Rectangle borderRect = rect;
-	borderRect.x -= borderWidth;
-	borderRect.y -= borderWidth;
-	borderRect.h += 2.f * borderWidth;
-	borderRect.w += 2.f * borderWidth;
+	Rectangle borderRect;
+	borderRect.x = rect.x - borderWidth;
+	borderRect.y = rect.y - borderWidth;
+	borderRect.h = rect.h + 2.f * borderWidth;
+	borderRect.w = rect.w + 2.f * borderWidth;
 	setShaderVec4(shader, "uColor", borderColor);
 	bufferRect(borderRect);
 	glBindVertexArray(globalRect.mVao);

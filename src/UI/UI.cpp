@@ -7,16 +7,11 @@ UI::UI() {
 }
 
 void UI::update(double dt) {
-	updateButton(mButton);
-	updateTextInput(mInput);
+	updateUIContext(mContext, mTextRenderer);
 }
 
 void UI::generate() {
-	glm::mat4 projection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
-	useShader(mOrthographicShader);
-	setShaderMat4(mOrthographicShader, "uProjection", projection);
-
 	mTextRenderer.initialize(16, (GLchar*)"C:\\Windows\\Fonts\\Arial.ttf");
 
 	mPanel.percentageHeight = 0.5f;
@@ -26,7 +21,7 @@ void UI::generate() {
 	mPanel.borderColor = glm::vec4(1, 0, 0, 1);
 	mPanel.backgroundColor = glm::vec4(0, 0, 1, 1);
 	mPanel.borderWidth = 4;
-	initializePanel(mPanel);
+	setPanelPosition(mPanel);
 
 	mButton.label = "Hello!";
 	mButton.padding = 2;
@@ -34,26 +29,38 @@ void UI::generate() {
 	mButton.buttonColor = glm::vec4(0.5, 0.5, 0.5, 1);
 	mButton.textColor = glm::vec4(1.0, 0, 0, 1);
 	mButton.onClickHandler = []{ printf("Clicked me!"); };
-	initializeButton(mButton, mTextRenderer);
 
 	mInput.textColor = glm::vec3(1, 0, 0);
 	mInput.backgroundColor = glm::vec4(0, 1, 0, 1);
 	mInput.focusedBackgroundColor = glm::vec4(0.5, 1, 0, 1);
 	mInput.str = "Enter text";
-	mInput.bt.padding = glm::vec2(1.f);
+	mInput.bt.padding = 1.f;
 	mInput.bt.scale = 1.f;;
-	mInput.bt.box.rect.x = 25;
-	mInput.bt.box.rect.y = GlobalAppState.floatHeight - 100.f;
-	mInput.bt.box.rect.w = 128;
-	mInput.bt.box.rect.h = static_cast<GLfloat>(mTextRenderer.getFontSize());
+	mInput.bt.rect.x = 25;
+	mInput.bt.rect.y = GlobalAppState.floatHeight - 100.f;
+	mInput.bt.rect.w = 128;
+	mInput.bt.rect.h = static_cast<GLfloat>(mTextRenderer.getFontSize());
 	initializeTextInput(mInput);
+
+	std::vector<Button> buttons;
+	buttons.push_back(mButton);
+	buttons.push_back(mButton);
+	buttons.push_back(mButton);
+	buttons.push_back(mButton);
+	mContext.buttons = buttons;
+	mContext.panel = mPanel;
+
+	std::vector<TextInput> inputs;
+	inputs.push_back(mInput);
+	inputs.push_back(mInput);
+	inputs.push_back(mInput);
+	inputs.push_back(mInput);
+	mContext.inputs = inputs;
 }
 
 void UI::render() const {
 	useShader(mOrthographicShader);
-	renderTextInput(mInput, mOrthographicShader, mTextRenderer);
-	useShader(mOrthographicShader);
-	renderButton(mButton, mOrthographicShader, mTextRenderer);
-	useShader(mOrthographicShader);
-	renderPanel(mPanel, mOrthographicShader);
+	glm::mat4 projection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
+	setShaderMat4(mOrthographicShader, "uProjection", projection);
+	renderUIContext(mContext, mOrthographicShader, mTextRenderer);
 }

@@ -27,5 +27,5 @@ struct Panel {
 	glm::vec2 margin = glm::vec2(0.f);
 };
 
-void initializePanel(Panel& panel);
+void setPanelPosition(Panel& panel);
 void renderPanel(const Panel& panel, const Shader& shader);

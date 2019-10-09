@@ -95,9 +95,6 @@
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Primitives\InteractableRectangle.cpp">
-      <Filter>Primitives</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Primitives\Rectangle.cpp">
       <Filter>Primitives</Filter>
     </ClCompile>
@@ -114,6 +111,12 @@
       <Filter>UIElements</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\UI\UI.cpp">
+      <Filter>UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Containers\Stack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UI\UIContext.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
   </ItemGroup>
@@ -208,9 +211,6 @@
     <ClInclude Include="..\..\src\GlobalApplicationState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Primitives\InteractableRectangle.h">
-      <Filter>Primitives</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Primitives\Point.h">
       <Filter>Primitives</Filter>
     </ClInclude>
@@ -230,6 +230,12 @@
       <Filter>UIElements</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\UI\UI.h">
+      <Filter>UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Containers\Stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UI\UIContext.h">
       <Filter>UIElements</Filter>
     </ClInclude>
   </ItemGroup>

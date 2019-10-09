@@ -1,5 +1,6 @@
 #pragma once
 #include "Panel.h"
+#include "../Input.h"
 #include "../GlobalApplicationState.h"
 #include "../Primitives/Rectangle.h"
 
@@ -8,7 +9,7 @@ GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfl
 	case UIPositioning::ABSOLUTE:
 		return absolutePosition;
 	case UIPositioning::CENTER:
-		return windowDimension / 2.f - panelDimension / 2.f;
+		return (windowDimension - panelDimension) / 2.f;
 	case UIPositioning::LEFT: // TOP
 		return 0;
 	case UIPositioning::RIGHT: // DOWN
@@ -18,12 +19,12 @@ GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfl
 	}
 }
 
-void initializePanel(Panel& panel) {
-	GLfloat panelWidth = panel.boundingRect.w * panel.percentageWidth;
-	GLfloat panelHeight = panel.boundingRect.h * panel.percentageHeight;
+void setPanelPosition(Panel& panel) {
+	GLfloat panelWidth = GlobalAppState.floatWidth * panel.percentageWidth;
+	GLfloat panelHeight = GlobalAppState.floatHeight * panel.percentageHeight;
 
-	GLfloat x = getPositioning(panel.horizontal, panel.absolutePositioning.x, panel.boundingRect.w, panelWidth);
-	GLfloat y = getPositioning(panel.vertical, panel.absolutePositioning.y, panel.boundingRect.h, panelHeight);
+	GLfloat x = getPositioning(panel.horizontal, panel.absolutePositioning.x, GlobalAppState.floatWidth, panelWidth);
+	GLfloat y = getPositioning(panel.vertical, panel.absolutePositioning.y, GlobalAppState.floatHeight, panelHeight);
 
 	panel.boundingRect = { x, y, panelWidth, panelHeight };
 }
@@ -31,10 +32,3 @@ void initializePanel(Panel& panel) {
 void renderPanel(const Panel& panel, const Shader& shader) {
 	renderRectangle(panel.boundingRect, shader, panel.backgroundColor, panel.borderColor, panel.borderWidth);
 }
-
-// Window
-	// Panel 100% 50% 
-		// Button 50% 50% xOffset -> Panel.x + mX
-		// TextInput 50% 50%
-		// Panel 100% 50% xOffset -> Panel.xOffset = mX
-			// Button 100% 100%

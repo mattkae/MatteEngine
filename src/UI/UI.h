@@ -21,13 +21,8 @@ class Scene;
 	 void generate();
 	 void update(double dt);
 	 void render() const;
-	 Scene* scene = nullptr;
-
+	 UIContext mContext;
  private:
 	 Shader mOrthographicShader;
-	 Button mButton;
-	 TextInput mInput;
 	 TextRenderer mTextRenderer;
-	 Panel mPanel;
-	 UIContext mContext;
  };

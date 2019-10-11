@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "SceneUI.h"
 #include "Camera.h"
 #include "GlmUtility.h"
 #include "ImageUtil.h"
@@ -16,7 +17,6 @@ using json = nlohmann::json;
 
 Scene::Scene() {
 	ui.generate();
-	ui.scene = this;
     mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
 
     GLenum err;
@@ -36,6 +36,7 @@ void to_json(json &j, const Scene &scene) {
 void from_json(const json &j, Scene &scene) {
 	if (j.count("models") != 0) {
 		j.at("models").get_to<std::vector<Model>>(scene.models);
+		scene.ui.mContext = getModelSelector(scene);
 	}
 	if (j.count("lights") != 0) {
 		j.at("lights").get_to<std::vector<Light>>(scene.lights);

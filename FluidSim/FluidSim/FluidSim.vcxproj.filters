@@ -119,6 +119,9 @@
     <ClCompile Include="..\..\src\UI\UIContext.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\SceneUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">
@@ -237,6 +240,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\UI\UIContext.h">
       <Filter>UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LightweightArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\SceneUI.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

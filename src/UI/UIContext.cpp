@@ -3,35 +3,53 @@
 
 void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 	setPanelPosition(context.panel);
-	GLfloat yOffset = context.panel.boundingRect.y;
+	GLfloat yOffset = GlobalAppState.floatHeight - context.panel.boundingRect.y - context.panel.padding;
 	GLfloat xPosition = context.panel.boundingRect.x + context.panel.padding;
+	
+	for (size_t elementIndex = 0; elementIndex < context.uiElements.numElements; elementIndex++) {
+		UIElement& element = context.uiElements.elements[elementIndex];
+		switch (element.type) {
+		case UIElement::BUTTON: {
+			Button& button = std::get<Button>(element.element);
+			if (elementIndex == 0) {
+				yOffset -= getButtonHeight(button, textRenderer);
+			}
+			button.position = glm::vec2(xPosition, yOffset);
+			button.width = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * button.padding;
+			updateButton(button, textRenderer);
+			yOffset -= getButtonHeight(button, textRenderer);
+			break;
+		}
+		case UIElement::TEXT_INPUT: {
+			TextInput& textInput = std::get<TextInput>(element.element);
+			if (elementIndex == 0) {
+				yOffset -= getTextInputHeight(textInput, textRenderer);
+			}
+			textInput.bt.rect.x = xPosition;
+			textInput.bt.rect.y = yOffset;
+			textInput.bt.rect.w = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * textInput.bt.padding;
+			updateTextInput(textInput);
+			yOffset -= getTextInputHeight(textInput, textRenderer);
+			break;
+		}
+		}
 
-	for (Button &button : context.buttons) {
-		button.position = glm::vec2(xPosition, yOffset);
-		button.width = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * button.padding;
-		updateButton(button, textRenderer);
-		yOffset += getButtonHeight(button, textRenderer);
-		yOffset += context.spaceBetweenElements;
-	}
-
-	for (TextInput &input: context.inputs) {
-		input.bt.rect.x = xPosition;
-		input.bt.rect.y = yOffset;
-		input.bt.rect.w = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * input.bt.padding;
-		updateTextInput(input);
-		yOffset += getTextInputHeight(input, textRenderer);
-		yOffset += context.spaceBetweenElements;
+		yOffset -= context.spaceBetweenElements;
 	}
 }
 
 void renderUIContext(const UIContext& context, const Shader& shader, const TextRenderer& textRenderer) {
 	renderPanel(context.panel, shader);
 
-	for (const Button &button : context.buttons) {
-		renderButton(button, shader, textRenderer);
-	}
-
-	for (const TextInput &input: context.inputs) {
-		renderTextInput(input, shader, textRenderer);
+	for (size_t elementIndex = 0; elementIndex < context.uiElements.numElements; elementIndex++) {
+		const UIElement& element = context.uiElements.elements[elementIndex];
+		switch (element.type) {
+		case UIElement::BUTTON:
+			renderButton(std::get<Button>(element.element), shader, textRenderer);
+			break;
+		case UIElement::TEXT_INPUT:
+			renderTextInput(std::get<TextInput>(element.element), shader, textRenderer);
+			break;
+		}
 	}
 }

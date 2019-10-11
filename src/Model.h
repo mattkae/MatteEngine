@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "UI/UIContext.h"
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 #include <string>

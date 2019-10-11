@@ -38,6 +38,7 @@
     <ClCompile Include="..\..\src\Primitives\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
+    <ClCompile Include="..\..\src\SceneUI.cpp" />
     <ClCompile Include="..\..\src\Shader.cpp" />
     <ClCompile Include="..\..\src\OpenSimplexNoise.cpp" />
     <ClCompile Include="..\..\src\Skybox.cpp" />
@@ -65,11 +66,13 @@
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\Input.h" />
     <ClInclude Include="..\..\src\Light.h" />
+    <ClInclude Include="..\..\src\LightweightArray.h" />
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\Matrix3x3f.h" />
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
     <ClInclude Include="..\..\src\Primitives\Point.h" />
     <ClInclude Include="..\..\src\Primitives\Rectangle.h" />
+    <ClInclude Include="..\..\src\SceneUI.h" />
     <ClInclude Include="..\..\src\UI\BoundText.h" />
     <ClInclude Include="..\..\src\UI\Button.h" />
     <ClInclude Include="..\..\src\UI\Panel.h" />

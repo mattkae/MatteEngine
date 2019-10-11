@@ -20,13 +20,15 @@ GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfl
 }
 
 void setPanelPosition(Panel& panel) {
-	GLfloat panelWidth = GlobalAppState.floatWidth * panel.percentageWidth;
-	GLfloat panelHeight = GlobalAppState.floatHeight * panel.percentageHeight;
+	panel.maxWidth = GlobalAppState.floatWidth;
+	panel.maxHeight = GlobalAppState.floatHeight;
+	GLfloat panelWidth = panel.maxWidth * panel.percentageWidth;
+	GLfloat panelHeight = panel.maxHeight * panel.percentageHeight;
 
-	GLfloat x = getPositioning(panel.horizontal, panel.absolutePositioning.x, GlobalAppState.floatWidth, panelWidth);
-	GLfloat y = getPositioning(panel.vertical, panel.absolutePositioning.y, GlobalAppState.floatHeight, panelHeight);
+	GLfloat x = getPositioning(panel.horizontal, panel.absolutePositioning.x, panel.maxWidth, panelWidth);
+	GLfloat y = getPositioning(panel.vertical, panel.absolutePositioning.y, panel.maxHeight, panelHeight);
 
-	panel.boundingRect = { x, y, panelWidth, panelHeight };
+	panel.boundingRect = { x + panel.padding, y, panelWidth, panelHeight };
 }
 
 void renderPanel(const Panel& panel, const Shader& shader) {

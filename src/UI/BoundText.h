@@ -7,7 +7,7 @@
 struct TextRenderer;
 struct BoundText {
 	GLfloat scale = 1.f;
-	GLfloat padding;
+	GLfloat padding = 0.f;
 	Rectangle rect;
 };
 

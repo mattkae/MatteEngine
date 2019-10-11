@@ -5,12 +5,27 @@
 #include "TextInput.h"
 #include "Panel.h"
 #include "../Shader.h"
+#include "../LightweightArray.h"
 #include <vector>
+#include <variant>
+
+struct UIElement {
+	std::variant<TextInput, Button> element;
+	enum {
+		BUTTON = 0,
+		TEXT_INPUT = 1
+	} type = UIElement::BUTTON;
+};
+
+// TODO: Implement directional contexts, and nested Panels
+enum ContextDirection {
+	VERTICAL = 0,
+	HORIZONTAL = 1
+};
 
 struct UIContext {
 	Panel panel;
-	std::vector<Button> buttons;
-	std::vector<TextInput> inputs;
+	LightweightArray<UIElement> uiElements;
 	GLfloat spaceBetweenElements = 2.f;
 };
 

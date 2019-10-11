@@ -13,8 +13,10 @@ enum UIPositioning {
 };
 
 struct Panel {
-	Rectangle boundingRect = { 0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight };
+	GLfloat maxWidth = GlobalAppState.floatWidth;
+	GLfloat maxHeight = GlobalAppState.floatHeight;
 
+	Rectangle boundingRect = { 0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight };
 	GLfloat percentageWidth = 0.25f;
 	GLfloat percentageHeight = 0.90f;
 	UIPositioning horizontal = UIPositioning::ABSOLUTE;
@@ -24,7 +26,6 @@ struct Panel {
 	glm::vec4 borderColor = glm::vec4(1.0);
 	GLfloat borderWidth = 1.f;
 	GLfloat padding = 2.f;
-	glm::vec2 margin = glm::vec2(0.f);
 };
 
 void setPanelPosition(Panel& panel);

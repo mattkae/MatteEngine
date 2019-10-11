@@ -1,5 +1,6 @@
 #include "SceneUI.h"
 #include "Scene.h"
+#include "Logger.h"
 #include <string> 
 
 UIContext getModelSelector(const Scene& scene) {
@@ -18,6 +19,7 @@ UIContext getModelSelector(const Scene& scene) {
 	for (size_t elementIndex = 0; elementIndex < retval.uiElements.numElements; elementIndex++) {
 		Button button;
 		button.label = std::to_string(elementIndex);
+		button.onClickHandler = [button]() { Logger::logInfo(button.label); };
 		button.buttonColor = glm::vec4(0, 1, 0, 1);
 		button.padding = 2.f;
 		retval.uiElements.elements[elementIndex].element = button;

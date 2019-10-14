@@ -36,7 +36,8 @@ void to_json(json &j, const Scene &scene) {
 void from_json(const json &j, Scene &scene) {
 	if (j.count("models") != 0) {
 		j.at("models").get_to<std::vector<Model>>(scene.models);
-		scene.ui.mContext = getModelSelector(scene);
+		scene.ui.contexts.push_back(UIContext());
+		getModelSelector(scene, scene.ui.contexts.at(0));
 	}
 	if (j.count("lights") != 0) {
 		j.at("lights").get_to<std::vector<Light>>(scene.lights);

@@ -26,6 +26,7 @@ struct Panel {
 	glm::vec4 borderColor = glm::vec4(1.0);
 	GLfloat borderWidth = 1.f;
 	GLfloat padding = 2.f;
+	bool isClosable = true;
 };
 
 void setPanelPosition(Panel& panel);

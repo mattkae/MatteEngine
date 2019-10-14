@@ -28,13 +28,20 @@ void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 			textInput.bt.rect.x = xPosition;
 			textInput.bt.rect.y = yOffset;
 			textInput.bt.rect.w = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * textInput.bt.padding;
-			updateTextInput(textInput);
+			updateTextInput(textInput, textRenderer);
 			yOffset -= getTextInputHeight(textInput, textRenderer);
 			break;
 		}
 		}
 
 		yOffset -= context.spaceBetweenElements;
+	}
+
+	for (size_t contextIndex = 0; contextIndex < context.dependentContexts.numElements; contextIndex++) {
+		UIContext& dependentContext = context.dependentContexts.elements[contextIndex];
+		if (dependentContext.isActive) {
+			updateUIContext(dependentContext, textRenderer);
+		}
 	}
 }
 
@@ -50,6 +57,13 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 		case UIElement::TEXT_INPUT:
 			renderTextInput(std::get<TextInput>(element.element), shader, textRenderer);
 			break;
+		}
+	}
+
+	for (size_t contextIndex = 0; contextIndex < context.dependentContexts.numElements; contextIndex++) {
+		const UIContext& dependentContext = context.dependentContexts.elements[contextIndex];
+		if (dependentContext.isActive) {
+			renderUIContext(dependentContext, shader, textRenderer);
 		}
 	}
 }

@@ -25,8 +25,10 @@ enum ContextDirection {
 
 struct UIContext {
 	Panel panel;
+	bool isActive = true;
 	LightweightArray<UIElement> uiElements;
 	GLfloat spaceBetweenElements = 2.f;
+	LightweightArray<UIContext> dependentContexts;
 };
 
 void updateUIContext(UIContext& context, const TextRenderer& textRenderer);

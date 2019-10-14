@@ -2,4 +2,4 @@
 #include "UI//UIContext.h"
 
 class Scene;
-UIContext getModelSelector(const Scene& scene);
+void getModelSelector(Scene& scene, UIContext &retval);

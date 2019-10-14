@@ -11,7 +11,14 @@ bool initializeTextInput(TextInput& input) {
 	return true;
 }
 
-void updateTextInput(TextInput& textInput) {
+Rectangle getRectangle(const TextInput& input, const TextRenderer& textRenderer) {
+	return { input.bt.rect.x, input.bt.rect.y, input.bt.rect.w, getTextInputHeight(input, textRenderer) };
+}
+
+
+void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
+	textInput.bt.rect = getRectangle(textInput, textRenderer);
+
 	if (!textInput.isFocused) {
 		if (isClicked(textInput.bt.rect)) {
 			setInputFocus(textInput.focusToken);
@@ -38,14 +45,12 @@ void updateTextInput(TextInput& textInput) {
 			textInput.cursorPosition = textInput.cursorPosition == textInput.str.size() ? textInput.str.size() : textInput.cursorPosition + 1;
 			break;
 		case GLFW_KEY_BACKSPACE:
-			if (!textInput.str.empty()) {
+			if (!textInput.str.empty() && textInput.cursorPosition != 0) {
 				textInput.str.erase(textInput.cursorPosition - 1, textInput.cursorPosition);
-				if (textInput.cursorPosition != 0) {
-					textInput.cursorPosition--;
-				}
-
-				updateTextInput(textInput);
+				textInput.cursorPosition--;
 			}
+
+			textInput.onChangeHandler(textInput.str);
 			break;
 		case GLFW_KEY_LEFT_SHIFT:
 		case GLFW_KEY_RIGHT_SHIFT:
@@ -65,7 +70,7 @@ void updateTextInput(TextInput& textInput) {
 				}
 
 				textInput.cursorPosition++;
-				updateTextInput(textInput);
+				textInput.onChangeHandler(textInput.str);
 			}
 		}
 	}

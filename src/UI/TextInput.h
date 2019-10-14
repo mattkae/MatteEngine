@@ -21,7 +21,7 @@ struct TextInput {
 };
 
 bool initializeTextInput(TextInput& input);
-void updateTextInput(TextInput& input);
+void updateTextInput(TextInput& input, const TextRenderer& textRenderer);
 void renderTextInput(const TextInput& input, const Shader& shader, const TextRenderer& textRenderer);
 inline GLfloat getTextInputHeight(const TextInput& input, const TextRenderer& textRenderer) {
 	return (textRenderer.getFontSize() + 2 * input.bt.padding) * input.bt.scale;

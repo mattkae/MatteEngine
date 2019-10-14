@@ -5,6 +5,7 @@
 #include "TextInput.h"
 #include "Panel.h"
 #include "UIContext.h"
+#include <vector>
 
 // Plan:
 // (1) UI Contexts that will have:
@@ -21,7 +22,7 @@ class Scene;
 	 void generate();
 	 void update(double dt);
 	 void render() const;
-	 UIContext mContext;
+	 std::vector<UIContext> contexts;
  private:
 	 Shader mOrthographicShader;
 	 TextRenderer mTextRenderer;

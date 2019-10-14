@@ -15,7 +15,8 @@ void allocateArray(LightweightArray<T>& arr, size_t size) {
 template <typename T>
 void deallocateArray(LightweightArray<T>& arr) {
 	if (arr.elements != nullptr) {
-		delete arr.elements;
+		delete []arr.elements;
 		arr.numElements = 0;
+		arr.elements = nullptr;
 	}
 }

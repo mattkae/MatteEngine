@@ -8,35 +8,34 @@
 
 using namespace std;
 const Vector3f WORLD_UP{0.0, 1.0, 0.0};
-extern int primaryFocusToken;
 
 void updateCamera(BetterCamera& camera, float dt) {
-	if (isKeyDown(GLFW_KEY_W, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_W, DEFAULT_FOCUS_TOKEN)) {
 		camera.position = addVector(camera.position, scale(camera.forward, camera.speed * dt));
 	}
-	if (isKeyDown(GLFW_KEY_A, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_A, DEFAULT_FOCUS_TOKEN)) {
 		camera.position = subtractVector(camera.position, scale(camera.right, camera.speed * dt));
 	}
-	if (isKeyDown(GLFW_KEY_S, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_S, DEFAULT_FOCUS_TOKEN)) {
 		camera.position = subtractVector(camera.position,scale(camera.forward, camera.speed * dt));
 	}
-	if (isKeyDown(GLFW_KEY_D, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_D, DEFAULT_FOCUS_TOKEN)) {
 		camera.position = addVector(camera.position, scale(camera.right, camera.speed * dt));
 	}
-	if (isKeyDown(GLFW_KEY_LEFT, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_LEFT, DEFAULT_FOCUS_TOKEN)) {
 		camera.yaw -= dt * camera.sensitivity;
 	}
-	if (isKeyDown(GLFW_KEY_UP, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_UP, DEFAULT_FOCUS_TOKEN)) {
 		camera.pitch += dt * camera.sensitivity;
 
 		if (camera.pitch > camera.maxPitch) {
 			camera.pitch = camera.maxPitch;
 		}
 	}
-	if (isKeyDown(GLFW_KEY_RIGHT, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_RIGHT, DEFAULT_FOCUS_TOKEN)) {
 		camera.yaw += dt * camera.sensitivity;
 	}
-	if (isKeyDown(GLFW_KEY_DOWN, primaryFocusToken)) {
+	if (isKeyDown(GLFW_KEY_DOWN, DEFAULT_FOCUS_TOKEN)) {
 		camera.pitch -= dt * camera.sensitivity;
 
 		if (camera.pitch < -camera.maxPitch) {

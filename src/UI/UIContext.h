@@ -4,16 +4,18 @@
 #include "../TextRenderer.h"
 #include "TextInput.h"
 #include "Panel.h"
+#include "Label.h"
 #include "../Shader.h"
 #include "../LightweightArray.h"
 #include <vector>
 #include <variant>
 
 struct UIElement {
-	std::variant<TextInput, Button> element;
+	std::variant<TextInput, Button, Label> element;
 	enum {
 		BUTTON = 0,
-		TEXT_INPUT = 1
+		TEXT_INPUT = 1,
+		LABEL = 2
 	} type = UIElement::BUTTON;
 };
 

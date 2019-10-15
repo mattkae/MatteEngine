@@ -48,6 +48,7 @@
     <ClCompile Include="..\..\src\Texture.cpp" />
     <ClCompile Include="..\..\src\UI\BoundText.cpp" />
     <ClCompile Include="..\..\src\UI\Button.cpp" />
+    <ClCompile Include="..\..\src\UI\Label.cpp" />
     <ClCompile Include="..\..\src\UI\Panel.cpp" />
     <ClCompile Include="..\..\src\UI\TextInput.cpp" />
     <ClCompile Include="..\..\src\UI\UI.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="..\..\src\SceneUI.h" />
     <ClInclude Include="..\..\src\UI\BoundText.h" />
     <ClInclude Include="..\..\src\UI\Button.h" />
+    <ClInclude Include="..\..\src\UI\Label.h" />
     <ClInclude Include="..\..\src\UI\Panel.h" />
     <ClInclude Include="..\..\src\UI\TextInput.h" />
     <ClInclude Include="..\..\src\UI\UI.h" />

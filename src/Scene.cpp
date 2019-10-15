@@ -11,8 +11,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <nlohmann/json.hpp>
 
-int primaryFocusToken = getNextFocusToken();
-
 using json = nlohmann::json;
 
 Scene::Scene() {

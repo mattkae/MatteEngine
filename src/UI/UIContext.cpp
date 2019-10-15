@@ -23,13 +23,27 @@ void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 		case UIElement::TEXT_INPUT: {
 			TextInput& textInput = std::get<TextInput>(element.element);
 			if (elementIndex == 0) {
-				yOffset -= getTextInputHeight(textInput, textRenderer);
+				yOffset -= getBoundTextHeight(textInput.bt, textRenderer);
 			}
 			textInput.bt.rect.x = xPosition;
 			textInput.bt.rect.y = yOffset;
 			textInput.bt.rect.w = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * textInput.bt.padding;
 			updateTextInput(textInput, textRenderer);
-			yOffset -= getTextInputHeight(textInput, textRenderer);
+			yOffset -= getBoundTextHeight(textInput.bt, textRenderer);
+			break;
+		}
+		case UIElement::LABEL: {
+			Label& label = std::get<Label>(element.element);
+			GLfloat btHeight = getBoundTextHeight(label.bt, textRenderer);
+			if (elementIndex == 0) {
+				yOffset -= btHeight;
+			}
+
+			label.bt.rect.x = xPosition;
+			label.bt.rect.y = yOffset;
+			label.bt.rect.w = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * label.bt.padding;
+			label.bt.rect.h = btHeight;
+			yOffset -= btHeight;
 			break;
 		}
 		}
@@ -56,6 +70,9 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 			break;
 		case UIElement::TEXT_INPUT:
 			renderTextInput(std::get<TextInput>(element.element), shader, textRenderer);
+			break;
+		case UIElement::LABEL:
+			renderLabel(std::get<Label>(element.element), shader, textRenderer);
 			break;
 		}
 	}

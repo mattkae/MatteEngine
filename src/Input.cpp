@@ -17,7 +17,7 @@ struct InputState {
 	KeyState keyStates[NUM_KEYS];
 	bool clickStates[NUM_BUTTONS];
 	int focusToken = 0;
-	int nextFocusToken = -1;
+	int nextFocusToken = 1;
 	int currentKeyDown = -1;
 	int currentScancode = -1;
 };
@@ -32,21 +32,13 @@ inline bool checkFocusToken(int focusToken) {
 	return focusToken == globalInput.focusToken;
 }
 
-int getNextFocusToken() {
-	return (++globalInput.nextFocusToken);
+int grabFocus() {
+	globalInput.focusToken = globalInput.nextFocusToken++;
+	return globalInput.focusToken;
 }
 
-void setInputFocus(int focusToken) {
-	if (focusToken < 0) {
-		Logger::logWarning("Trying to set focus with a token less than zero");
-		return;
-	}
-
-	globalInput.focusToken = focusToken;
-}
-
-void resetInputFocus() {
-	globalInput.focusToken = 0;
+void returnFocus() {
+	globalInput.focusToken = DEFAULT_FOCUS_TOKEN;
 }
 
 int getInputFocus() {

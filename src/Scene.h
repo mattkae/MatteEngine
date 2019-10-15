@@ -15,8 +15,6 @@
 #include <string>
 #include <vector>
 
-extern int primaryFocusToken;
-
 class Scene {
   public:
     Scene();

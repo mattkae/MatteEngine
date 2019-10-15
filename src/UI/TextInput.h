@@ -15,14 +15,9 @@ struct TextInput {
 	BoundText bt;
 	int focusToken = -1;
 	size_t cursorPosition = 0;
-	glm::vec4 currentBackgroundColor = glm::vec4(1.f);
 	std::function<void(std::string str)> onChangeHandler;
 	bool isFocused = false;
 };
 
-bool initializeTextInput(TextInput& input);
 void updateTextInput(TextInput& input, const TextRenderer& textRenderer);
 void renderTextInput(const TextInput& input, const Shader& shader, const TextRenderer& textRenderer);
-inline GLfloat getTextInputHeight(const TextInput& input, const TextRenderer& textRenderer) {
-	return (textRenderer.getFontSize() + 2 * input.bt.padding) * input.bt.scale;
-}

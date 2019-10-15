@@ -122,6 +122,9 @@
     <ClCompile Include="..\..\src\SceneUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\UI\Label.cpp">
+      <Filter>UIElements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">
@@ -246,6 +249,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\SceneUI.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UI\Label.h">
+      <Filter>UIElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

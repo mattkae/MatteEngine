@@ -2,6 +2,8 @@
 #define INPUT_H
 #include "Primitives/Point.h"
 
+const int DEFAULT_FOCUS_TOKEN = 0;
+
 struct GLFWwindow;
 void initializeInputSystem(GLFWwindow* window);
 bool isKeyUp(int key, int focusToken);
@@ -11,9 +13,8 @@ bool isKeyJustUp(int key, int focusToken);
 bool isLeftClickDown();
 bool isRightClickDown();
 Point getCursorPosition();
-int getNextFocusToken();
-void setInputFocus(int focusToken);
-void resetInputFocus();
+int grabFocus();
+void returnFocus();
 int getInputFocus();
 int getCurrentKeyDown(int focusToken);
 int getCurrentScancode(int focusToken);

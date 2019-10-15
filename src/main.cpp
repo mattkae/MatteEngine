@@ -38,7 +38,7 @@ int main(int argc, const char* argv[])
         prevTime = currentTime;
 
         glfwPollEvents();
-        if (isKeyDown(GLFW_KEY_R, primaryFocusToken)) {
+        if (isKeyDown(GLFW_KEY_R, DEFAULT_FOCUS_TOKEN)) {
             scene.loadFromJson("assets/scenes/scene.json");
         }
 

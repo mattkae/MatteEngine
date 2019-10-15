@@ -4,31 +4,21 @@
 #include "../Logger.h"
 #include <GLFW/glfw3.h>
 
-bool initializeTextInput(TextInput& input) {
-	input.focusToken = getNextFocusToken();
-	input.cursorPosition = input.str.size();
-	input.currentBackgroundColor = input.backgroundColor;
-	return true;
-}
-
 Rectangle getRectangle(const TextInput& input, const TextRenderer& textRenderer) {
-	return { input.bt.rect.x, input.bt.rect.y, input.bt.rect.w, getTextInputHeight(input, textRenderer) };
+	return { input.bt.rect.x, input.bt.rect.y, input.bt.rect.w, getBoundTextHeight(input.bt, textRenderer) };
 }
-
 
 void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 	textInput.bt.rect = getRectangle(textInput, textRenderer);
 
 	if (!textInput.isFocused) {
 		if (isClicked(textInput.bt.rect)) {
-			setInputFocus(textInput.focusToken);
-			textInput.currentBackgroundColor = textInput.focusedBackgroundColor;
+			textInput.focusToken = grabFocus();
 			textInput.isFocused = true;
 		}
 	} else if (textInput.isFocused) {
 		if (isLeftClickDown() && !isClicked(textInput.bt.rect)) {
-			resetInputFocus();
-			textInput.currentBackgroundColor = textInput.backgroundColor;
+			returnFocus();
 			textInput.isFocused = false;
 		}
 	}
@@ -66,7 +56,7 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 				if (textInput.cursorPosition == textInput.str.size()) {
 					textInput.str += c;
 				} else {
-					textInput.str.insert(textInput.cursorPosition, &c);
+					textInput.str = textInput.str.substr(0, textInput.cursorPosition) + c + textInput.str.substr(textInput.cursorPosition);
 				}
 
 				textInput.cursorPosition++;
@@ -77,5 +67,5 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 }
 
 void renderTextInput(const TextInput& textInput, const Shader& shader, const TextRenderer& textRenderer) {
-	renderBoundText(textInput.bt, shader, textRenderer, textInput.str, textInput.currentBackgroundColor, textInput.textColor, textInput.cursorPosition);
+	renderBoundText(textInput.bt, shader, textRenderer, textInput.str, textInput.isFocused ? textInput.focusedBackgroundColor : textInput.backgroundColor, textInput.textColor, textInput.cursorPosition);
 }

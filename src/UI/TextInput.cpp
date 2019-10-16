@@ -36,7 +36,7 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 			break;
 		case GLFW_KEY_BACKSPACE:
 			if (!textInput.str.empty() && textInput.cursorPosition != 0) {
-				textInput.str.erase(textInput.cursorPosition - 1, textInput.cursorPosition);
+				textInput.str.erase(textInput.cursorPosition - 1, 1);
 				textInput.cursorPosition--;
 			}
 
@@ -47,13 +47,19 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 			break;
 		default: 
 			{
+				// @TODO: Don't hardcode the key range that we support
+				if (key > 128) {
+					break;
+				}
 				char c = (char) key;
 			
 				if (!isKeyDown(GLFW_KEY_LEFT_SHIFT, textInput.focusToken)) {
 					c = std::tolower(c);
 				}
 
-				if (textInput.cursorPosition == textInput.str.size()) {
+				if (textInput.cursorPosition == 0) {
+					textInput.str = c + textInput.str;
+				} else if (textInput.cursorPosition == textInput.str.size()) {
 					textInput.str += c;
 				} else {
 					textInput.str = textInput.str.substr(0, textInput.cursorPosition) + c + textInput.str.substr(textInput.cursorPosition);
@@ -68,4 +74,10 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 
 void renderTextInput(const TextInput& textInput, const Shader& shader, const TextRenderer& textRenderer) {
 	renderBoundText(textInput.bt, shader, textRenderer, textInput.str, textInput.isFocused ? textInput.focusedBackgroundColor : textInput.backgroundColor, textInput.textColor, textInput.cursorPosition);
+	
+	if (textInput.isFocused) {
+		GLfloat cursorOffset = textRenderer.getStringWidth(textInput.str.substr(0, textInput.cursorPosition), textInput.bt.scale);
+		Rectangle cursorRect = { textInput.bt.rect.x + textInput.bt.padding + cursorOffset, textInput.bt.rect.y, 2, textRenderer.getFontSize() };
+		renderRectangle(cursorRect, shader, glm::vec4(1, 0, 0, 1));
+	}
 }

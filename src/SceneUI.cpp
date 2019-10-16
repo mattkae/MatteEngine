@@ -28,9 +28,10 @@ UIContext getModelEditor(Scene& scene, UIContext& modelContext, size_t elementIn
 		TextInput textInput;
 
 		textInput.str = std::to_string(scene.models.at(elementIndex).model[3][translationComponentIndex]);
-		textInput.textColor = glm::vec4(0, 0, 1, 1);
-		textInput.backgroundColor = glm::vec4(0, 1, 0, 1);
-		textInput.focusedBackgroundColor = glm::vec4(1, 0, 0, 1);
+		textInput.textColor = glm::vec4(0, 0, 0, 1);
+		textInput.backgroundColor = glm::vec4(0.9, 0.9, 0.9, 1);
+		textInput.focusedBackgroundColor = glm::vec4(1, 1, 1, 1);
+		textInput.bt.padding = 2.f;
 		textInput.onChangeHandler = [&scene, elementIndex, translationComponentIndex](std::string value) mutable { onChange(scene, elementIndex, translationComponentIndex, value); };
 
 		retval.uiElements.elements[translationComponentIndex].element = textInput;
@@ -72,7 +73,8 @@ void getModelSelector(Scene& scene, UIContext &retval) {
 		Button button;
 		button.label = std::to_string(elementIndex - 1);
 		button.onClickHandler = [&scene, elementIndex, &retval]() mutable { getModelEditor(scene, retval, elementIndex - 1); };
-		button.buttonColor = glm::vec4(0, 1, 0, 1);
+		button.buttonColor = glm::vec4(0.9, 0.9, 0.9, 1);
+		button.hoverColor = glm::vec4(1, 1, 1, 1);
 		button.padding = 2.f;
 		retval.uiElements.elements[elementIndex].element = button;
 		retval.uiElements.elements[elementIndex].type = UIElement::BUTTON;

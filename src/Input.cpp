@@ -37,8 +37,10 @@ int grabFocus() {
 	return globalInput.focusToken;
 }
 
-void returnFocus() {
-	globalInput.focusToken = DEFAULT_FOCUS_TOKEN;
+void returnFocus(int focusToken) {
+	if (globalInput.focusToken == focusToken) {
+		globalInput.focusToken = DEFAULT_FOCUS_TOKEN;
+	}
 }
 
 int getInputFocus() {

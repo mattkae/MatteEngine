@@ -27,6 +27,7 @@ UIContext getModelEditor(Scene& scene, UIContext& modelContext, size_t elementIn
 	for (size_t translationComponentIndex = 0; translationComponentIndex < retval.uiElements.numElements; translationComponentIndex++) {
 		TextInput textInput;
 
+		textInput.isFocused = false;
 		textInput.str = std::to_string(scene.models.at(elementIndex).model[3][translationComponentIndex]);
 		textInput.textColor = glm::vec4(0, 0, 0, 1);
 		textInput.backgroundColor = glm::vec4(0.9, 0.9, 0.9, 1);

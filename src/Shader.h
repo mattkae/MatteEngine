@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Matrix4x4f.h"
+#include "Matrix3x3f.h"
 #include "Vector4f.h"
 
 typedef GLuint Shader;
@@ -44,6 +45,10 @@ inline void setShaderVec4(const Shader& shader, const GLchar* name, glm::vec4 va
 
 inline void setShaderMat3(const Shader& shader, const GLchar* name, glm::mat3 matrix) {
 	glUniformMatrix3fv(getShaderUniform(shader, name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+inline void setShaderMat3(const Shader& shader, const GLchar* name, const Matrix3x3f& matrix) {
+	glUniformMatrix3fv(getShaderUniform(shader, name), 1, GL_FALSE, matrix.values);
 }
 
 inline void setShaderMat4(const Shader& shader, const GLchar* name, glm::mat4 matrix) {

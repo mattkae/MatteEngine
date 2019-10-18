@@ -6,7 +6,7 @@
 constexpr int DIM_OF_MAT = 4;
 constexpr int SIZE_OF_4_X_4 = DIM_OF_MAT * DIM_OF_MAT;
 
-// Using row major, so every fourth value is the beginning of a new row
+// Using coumn major, because OpenGL uses it internally, and we don't need that confusion
 struct Matrix4x4f {
 	GLfloat values[SIZE_OF_4_X_4] = {0};
 };
@@ -24,3 +24,4 @@ Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate);
 Matrix4x4f transpose(const Matrix4x4f& matrix);
 Matrix4x4f getLookAt(const Vector3f& eye, const Vector3f& pointToLookAt, const Vector3f& up);
 Matrix4x4f getProjection(GLfloat near,  GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio);
+Matrix4x4f inverse(const Matrix4x4f& matrix);

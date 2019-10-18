@@ -18,9 +18,9 @@ Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale) {
 }
 
 Matrix4x4f mult(const Matrix4x4f& first, const Matrix4x4f& second) {
-	/*Matrix4x4f result;
+	Matrix4x4f result;
 	for (int i = 0; i < 4; ++i) { 
-        for (int j = 0; j < 4; ++j) { 
+		for (int j = 0; j < 4; ++j) { 
 			int row = i * 4;
             result.values[row + j] = first.values[row + 0] * second.values[0 + j] + 
                          first.values[row + 1] * second.values[4 + j] + 
@@ -29,32 +29,7 @@ Matrix4x4f mult(const Matrix4x4f& first, const Matrix4x4f& second) {
         } 
     } 
 
-	return result;*/
-
-	return {
-		{
-			// First row
-			first.values[0] * second.values[0] + first.values[1] * second.values[4] + first.values[2] * second.values[8] + first.values[3] * second.values[12],
-			first.values[0] * second.values[1] + first.values[1] * second.values[5] + first.values[2] * second.values[9] + first.values[3] * second.values[13],
-			first.values[0] * second.values[2] + first.values[1] * second.values[6] + first.values[2] * second.values[10] + first.values[3] * second.values[14],
-			first.values[0] * second.values[3] + first.values[1] * second.values[7] + first.values[2] * second.values[11] + first.values[3] * second.values[15],
-			// Second row
-			first.values[4] * second.values[0] + first.values[5] * second.values[4] + first.values[6] * second.values[8] + first.values[7] * second.values[12],
-			first.values[4] * second.values[1] + first.values[5] * second.values[5] + first.values[6] * second.values[9] + first.values[7] * second.values[13],
-			first.values[4] * second.values[2] + first.values[5] * second.values[6] + first.values[6] * second.values[10] + first.values[7] * second.values[14],
-			first.values[4] * second.values[3] + first.values[5] * second.values[7] + first.values[6] * second.values[11] + first.values[7] * second.values[15],
-			// Third row
-			first.values[8] * second.values[0] + first.values[9] * second.values[4] + first.values[10] * second.values[8] + first.values[11] * second.values[12],
-			first.values[8] * second.values[1] + first.values[9] * second.values[5] + first.values[10] * second.values[9] + first.values[11] * second.values[13],
-			first.values[8] * second.values[2] + first.values[9] * second.values[6] + first.values[10] * second.values[10] + first.values[11] * second.values[14],
-			first.values[8] * second.values[3] + first.values[9] * second.values[7] + first.values[10] * second.values[11] + first.values[11] * second.values[15],
-			// Fourth row
-			first.values[12] * second.values[0] + first.values[13] * second.values[4] + first.values[14] * second.values[8] + first.values[15] * second.values[12],
-			first.values[12] * second.values[1] + first.values[13] * second.values[5] + first.values[14] * second.values[9] + first.values[15] * second.values[13],
-			first.values[12] * second.values[2] + first.values[13] * second.values[6] + first.values[14] * second.values[10] + first.values[15] * second.values[14],
-			first.values[12] * second.values[3] + first.values[13] * second.values[7] + first.values[14] * second.values[11] + first.values[15] * second.values[15],
-		}
-	};
+	return result;
 }
 
 Matrix4x4f getScalarMatrix(const GLfloat scale) {
@@ -175,4 +150,9 @@ Matrix4x4f getProjection(GLfloat near,  GLfloat far, GLfloat fieldOfViewRadians,
 			0, 0,  (-2 * far * near) / (far - near), 0
 		}
 	};
+}
+
+// @TODO
+Matrix4x4f inverse(const Matrix4x4f& matrix) {
+	return matrix;
 }

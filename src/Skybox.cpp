@@ -99,7 +99,7 @@ void Skybox::render(const BetterCamera &camera) const {
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
     glDisable(GL_DEPTH_TEST);
 	
-	//setShaderMat3(mSkyboxShader, "uView", glm::inverse(glm::mat3(getCameraViewMatrix(camera))));
+	setShaderMat3(mSkyboxShader, "uView", fromMat4(getCameraViewMatrix(camera)));
 	setShaderMat4(mSkyboxShader, "uProjection", getCameraProjection(camera));
 
     glBindVertexArray(vao);

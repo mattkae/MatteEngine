@@ -18,7 +18,7 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 		}
 	} else if (textInput.isFocused) {
 		if (isLeftClickDown() && !isClicked(textInput.bt.rect)) {
-			returnFocus();
+			returnFocus(textInput.focusToken);
 			textInput.isFocused = false;
 		}
 	}

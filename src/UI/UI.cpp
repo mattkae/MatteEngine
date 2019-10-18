@@ -14,7 +14,7 @@ void UI::update(double dt) {
 
 void UI::generate() {
 	mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
-	mTextRenderer.initialize(16, (GLchar*)"C:\\Windows\\Fonts\\Arial.ttf");
+	mTextRenderer.initialize(16, (GLchar*)"assets/fonts/consola.ttf");
 }
 
 void UI::render() const {

@@ -14,7 +14,7 @@ bool isLeftClickDown();
 bool isRightClickDown();
 Point getCursorPosition();
 int grabFocus();
-void returnFocus();
+void returnFocus(int focusToken);
 int getInputFocus();
 int getCurrentKeyDown(int focusToken);
 int getCurrentScancode(int focusToken);

@@ -125,6 +125,9 @@
     <ClCompile Include="..\..\src\UI\Label.cpp">
       <Filter>UIElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Matrix3x3f.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h">

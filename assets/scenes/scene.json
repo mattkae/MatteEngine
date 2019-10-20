@@ -10,8 +10,8 @@
   },
   "lights": [
       {
-          "type": 0,
-          "color": [1, 1, 1],
+          "type": 1,
+          "color": [0.3, 0.3, 0.3],
           "direction": [0, -1, 0],
           "position": [0, 10, 0],
           "up": [0, 0, 1],
@@ -55,14 +55,14 @@
   ],
   "spheres": [
     {
-	      "radius": 1,
-	      "transform": [
-	        1, 0, 0, 0,
-	        0, 1, 0, 0,
-	        0, 0, 1, 0,
-	        0, 0, 0, 1
-        ],
-	      "angleIncrements": 10.0
+      "radius": 1,
+      "transform": [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+      ],
+      "angleIncrements": 10.0
     }
   ],
   "particleEmitters" : [

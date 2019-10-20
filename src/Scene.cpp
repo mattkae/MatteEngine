@@ -88,7 +88,7 @@ void Scene::loadFromJson(const char *jsonPath) {
     spheres.clear();
 
     for (auto light : lights) {
-        light.free();
+		freeLight(light);
     }
     lights.clear();
 
@@ -120,10 +120,6 @@ void Scene::update(double dt) {
 		updateParticleEmitter(emitter, dtFloat);
 	}
 
-    for (auto& light : lights) {
-        light.update(dt);
-    }
-
 	ui.update(dt);
 }
 
@@ -141,7 +137,7 @@ void Scene::renderShadows() const {
 
     glCullFace(GL_FRONT);
     for (auto light : lights) {
-        light.render_shadows(mShadowShader, *this);
+		renderLightShadows(light, mShadowShader, *this);
     }
     glCullFace(GL_BACK);
 
@@ -188,7 +184,7 @@ void Scene::renderScene() const {
 	setShaderInt(mSceneShader, "uNumLights", lights.size());
 
     for (size_t lidx = 0; lidx < lights.size(); lidx++) {
-        lights[lidx].render(mSceneShader, lidx);
+		renderLight(lights.at(lidx), mSceneShader, lidx);
     }
 
     if (useDefferredRendering) {

@@ -16,47 +16,36 @@ class Scene;
 enum LightType { Directional = 0, PointLight, Spot, Inactive };
 
 struct Light {
-  public:
-    LightType type;
+	LightType type;
     glm::vec3 color = glm::vec3(1.0);
     glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
     glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
     glm::vec3 position = glm::vec3(0.0);
 
-    float constant = 1.0f;
-    float linear = 0.0f;
-    float quadratic = 0.f;
+    GLfloat constant = 1.0f;
+    GLfloat linear = 0.0f;
+    GLfloat quadratic = 0.f;
 
-    float cosineCutOff = 1.0f;
-    float dropOff = 1.0f;
+    GLfloat cosineCutOff = 1.0f;
+    GLfloat dropOff = 1.0f;
 
     bool usesShadows = false;
-    int shadowWidth = GlobalAppState.width;
-    int shadowHeight = GlobalAppState.height;
 
-    bool isOn = true;
-    glm::mat4 projection;
-    glm::mat4 view;
+	GLint shadowWidth = GlobalAppState.width;
+    GLint shadowHeight = GlobalAppState.height;
 
-    bool generate(int width, int height);
-    void update(double dt);
-    void render_shadows(const Shader &shader, const Scene &scene) const;
-    void render(const Shader &shader, const int index) const;
-    void free();
+	GLuint shadowTexture = 0;
+	GLuint depthFbo = 0;
+	bool isOn = true;
 
-  private:
-    void create_shadow_texture_for_directional_light(int width, int height);
-    void create_shadow_texture_for_omnidirectional_light(int width, int height);
-    void render_omindirectional_shadows(const Shader &shader, const Scene &scene) const;
-    void render_directional_shadows(const Shader &shader, const Scene &scene) const;
-    void render_point_light(const Shader &shader, const int index) const;
-    void render_directional_light(const Shader &shader, const int index) const;
-    void render_spot_light(const Shader &shader, const int index) const;
-
-    GLuint shadowTexture = 0;
-    GLuint depthFbo = 0;
-    bool hasGenerated = false;
+	glm::mat4 projection;
+	glm::mat4 view;
 };
+
+bool initLight(Light& light);
+void renderLightShadows(const Light& light, const Shader shader, const Scene& scene);
+void renderLight(const Light& light, const Shader shader, const int index);
+void freeLight(Light& light);
 
 void to_json(json &j, const Light &light);
 void from_json(const json &j, Light &light);

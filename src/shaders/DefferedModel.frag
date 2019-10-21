@@ -2,21 +2,9 @@
 
 #define MAX_LIGHTS 2
 #define MAX_DIR_LIGHT_SHADOWS 2
-
-struct Light {
-    vec3 direction;
-    vec3 position;
-    vec3 color;
-    float constant;
-    float linear;
-    float quadratic;
-    float cosineCutOff;
-    float dropOff;
-    bool usesShadows;
-};
+#include Light.glsl
 
 out vec4 FragColor;
-  
 in vec2 oTexCoords;
 
 uniform sampler2D uPosition;

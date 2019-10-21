@@ -1,34 +1,9 @@
 #version 410
+#include Light.glsl
+#include Material.glsl
 
 #define MAX_LIGHTS 2
 #define MAX_DIR_LIGHT_SHADOWS 2
-
-// Data types
-struct Material {
-    vec3 diffuse;
-    vec3 specular;
-    vec3 emissive;
-    vec3 diffuseProperty;
-    vec3 specularProperty;
-    float shininess;
-    float opacity;
-
-    int texCount;
-    sampler2D diffuseTex;
-    sampler2D specularTex;
-};
-
-struct Light {
-    vec3 direction;
-    vec3 position;
-    vec3 color;
-    float constant;
-    float linear;
-    float quadratic;
-    float cosineCutOff;
-    float dropOff;
-    bool usesShadows;
-};
 
 // Output color
 out vec4 Color;
@@ -122,8 +97,7 @@ vec3 getColorFromLight(Light light, vec3 normal, vec3 viewDir, vec3 diffuse, vec
 }
 
 vec3 getDiffuse(vec3 normal, vec3 lightDir, vec3 color, vec3 diffuse) {
-    vec3 diffuseFactor = diffuse * uMaterial.diffuseProperty *
-                         max(0.f, dot(normal, lightDir));
+    vec3 diffuseFactor = diffuse * uMaterial.diffuseProperty * max(0.f, dot(normal, lightDir));
     return color * diffuseFactor;
 }
 

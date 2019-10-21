@@ -60,6 +60,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Camera.h" />
     <ClInclude Include="..\..\src\Containers\Stack.h" />
+    <ClInclude Include="..\..\src\DirectoryUtil.h" />
     <ClInclude Include="..\..\src\GlobalApplicationState.h" />
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
     <ClInclude Include="..\..\src\Entity.h" />

@@ -256,5 +256,8 @@
     <ClInclude Include="..\..\src\UI\Label.h">
       <Filter>UIElements</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\DirectoryUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

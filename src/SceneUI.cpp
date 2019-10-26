@@ -3,7 +3,7 @@
 #include "Logger.h"
 #include <string>
 
-void onChange(Scene& scene, size_t elementIndex, size_t translationComponentIndex, std::string value) {
+void onChange(BetterScene& scene, size_t elementIndex, size_t translationComponentIndex, std::string value) {
 	if (value.length() == 0) {
 		return;
 	}
@@ -11,7 +11,7 @@ void onChange(Scene& scene, size_t elementIndex, size_t translationComponentInde
 	scene.models.at(elementIndex).model[3][translationComponentIndex] = std::stof(value);
 }
 
-UIContext getModelEditor(Scene& scene, UIContext& modelContext, size_t elementIndex) {
+UIContext getModelEditor(BetterScene& scene, UIContext& modelContext, size_t elementIndex) {
 	UIContext retval;
 	retval.panel.backgroundColor = glm::vec4(0.1, 0.1, 0.1, 1);
 	retval.panel.borderColor = glm::vec4(0.3, 0.3, 0.3, 1);
@@ -50,7 +50,7 @@ UIContext getModelEditor(Scene& scene, UIContext& modelContext, size_t elementIn
 	return retval;
 }
 
-void getModelSelector(Scene& scene, UIContext &retval) {
+void getModelSelector(BetterScene& scene, UIContext &retval) {
 	retval.panel.backgroundColor = glm::vec4(0.1, 0.1, 0.1, 1);
 	retval.panel.borderColor = glm::vec4(0.3, 0.3, 0.3, 1);
 	retval.panel.percentageWidth = 0.15f;

@@ -14,18 +14,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <thread>
 
-class Scene {
-  public:
-    Scene();
-    Scene(const char *json);
-    ~Scene();
-
-    void loadFromJson(const char *json);
-    void render() const;
-    void renderModels(const Shader &shader, bool withMaterial = true) const;
-    void update(double dt);
-    std::vector<Model> models;
+struct BetterScene {
+	std::vector<Model> models;
     std::vector<Light> lights;
     std::vector<Sphere> spheres;
     std::vector<ParticleEmitter> particleEmitters;
@@ -36,16 +28,19 @@ class Scene {
     DeferredGeometryBuffer mDeferredBuffer;
 	UI ui;
 
-  private:
-	void renderNonDeferred() const;
-    void renderShadows() const;
-    void renderGBuffer() const;
-    void renderScene() const;
-
+	std::thread mHotreloadThreader;
     bool mUseShadows = true;
-
     Shader mShadowShader;
     BetterCamera mCamera;
+	std::vector<Shader> shadersToReload;
+	bool isDying = false;
 };
+
+void loadSceneFromJson(const char* jsonPath, BetterScene& scene);
+void reloadScene(BetterScene& scene);
+void updateScene(BetterScene& scene, double dt);
+void renderScene(const BetterScene& scene);
+void freeScene(BetterScene& scene);
+void renderModels(const BetterScene& scene, const Shader &shader, bool withMaterial = true);
 
 #endif

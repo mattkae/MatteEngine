@@ -93,7 +93,7 @@ void DeferredGeometryBuffer::free()
     }
 }
 
-void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Scene* scene) const
+void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const BetterScene& scene) const
 {
     if (!mHasGenerated) {
         return;
@@ -105,7 +105,7 @@ void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Sc
 
 	useShader(mShader);
     renderCamera(camera, mShader);
-    scene->renderModels(mShader, true);
+	renderModels(scene, mShader, true);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

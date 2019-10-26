@@ -161,7 +161,7 @@ bool initLight(Light& light) {
     return true;
 }
 
-void renderPointShadows(const Light& light, const Shader &shader, const Scene &scene) {
+void renderPointShadows(const Light& light, const Shader &shader, const BetterScene &scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -212,7 +212,7 @@ void renderPointShadows(const Light& light, const Shader &shader, const Scene &s
         glm::mat4 view = glm::lookAt(light.position, light.position + currentDirection, up);
         glm::mat4 proj = glm::perspective(glm::radians(45.f), GlobalAppState.aspectRatio, GlobalAppState.near, GlobalAppState.far);
 		setShaderMat4(shader, "uViewProj", proj * view);
-        scene.renderModels(shader);
+		renderModels(scene, shader);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -220,7 +220,7 @@ void renderPointShadows(const Light& light, const Shader &shader, const Scene &s
     glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }
 
-void renderDirectionalShadows(const Light& light, const Shader shader, const Scene &scene) {
+void renderDirectionalShadows(const Light& light, const Shader shader, const BetterScene &scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -230,14 +230,14 @@ void renderDirectionalShadows(const Light& light, const Shader shader, const Sce
 
 	setShaderMat4(shader, "uView", light.view);
 	setShaderMat4(shader, "uProjection", light.projection);
-    scene.renderModels(shader, false);
+    renderModels(scene, shader, false);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
     glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }
 
-void renderLightShadows(const Light& light, const Shader shader, const Scene& scene) {
+void renderLightShadows(const Light& light, const Shader shader, const BetterScene& scene) {
     if (!light.isOn || !light.usesShadows) {
         return;
 	}

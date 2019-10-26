@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
+#include <vector>
 #include "Matrix4x4f.h"
 #include "Matrix3x3f.h"
 #include "Vector4f.h"
@@ -10,6 +12,8 @@
 typedef GLuint Shader;
 
 Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath = nullptr, const GLchar* geomPath = nullptr);
+Shader reloadShader(Shader shader);
+void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& isDying);
 
 inline GLint getShaderUniform(const Shader& shader, const GLchar *name) {
     return glGetUniformLocation(shader, name);

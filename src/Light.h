@@ -11,7 +11,7 @@
 
 using json = nlohmann::json;
 
-class Scene;
+struct BetterScene;
 
 enum LightType { Directional = 0, PointLight, Spot, Inactive };
 
@@ -43,7 +43,7 @@ struct Light {
 };
 
 bool initLight(Light& light);
-void renderLightShadows(const Light& light, const Shader shader, const Scene& scene);
+void renderLightShadows(const Light& light, const Shader shader, const BetterScene& scene);
 void renderLight(const Light& light, const Shader shader, const int index);
 void freeLight(Light& light);
 

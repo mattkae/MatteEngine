@@ -26,7 +26,8 @@ int main(int argc, const char* argv[])
 {
     initialize(argc, argv);
 
-    Scene scene("assets/scenes/scene.json");
+    BetterScene scene;
+	loadSceneFromJson("assets/scenes/scene.json", scene);
 
     glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;
@@ -38,12 +39,9 @@ int main(int argc, const char* argv[])
         prevTime = currentTime;
 
         glfwPollEvents();
-        if (isKeyDown(GLFW_KEY_R, DEFAULT_FOCUS_TOKEN)) {
-            scene.loadFromJson("assets/scenes/scene.json");
-        }
 
-        scene.update(deltaTime);
-        scene.render();
+		updateScene(scene, deltaTime);
+		renderScene(scene);
 
         glfwSwapBuffers(GlobalWindow);
         frameCount++;
@@ -55,12 +53,12 @@ int main(int argc, const char* argv[])
 		}
     }
 
+	freeScene(scene);
     cleanup();
     return 0;
 }
 
-void initialize(int argc, const char* argv[])
-{
+void initialize(int argc, const char* argv[]) {
     // GLFW
     if (!glfwInit()) {
         cerr << "Failed to initialize glfw." << endl;
@@ -97,8 +95,7 @@ void initialize(int argc, const char* argv[])
     }
 }
 
-void cleanup()
-{
+void cleanup() {
     if (GlobalWindow) {
         glfwDestroyWindow(GlobalWindow);
     }

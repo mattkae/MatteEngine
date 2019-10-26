@@ -1,12 +1,88 @@
 #include "Shader.h"
+#include "Logger.h"
 #include "DirectoryUtil.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <windows.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <tchar.h>
+#include <map>
+
 
 const std::string INCLUDE_STRING = "#include ";
+
+enum ShaderDependencyType {
+	VERTEX,
+	FRAGMENT,
+	GEOMETRY,
+	DEPENDENCY
+};
+
+struct ShaderDependency {
+	ShaderDependencyType dependencyType;
+	std::string path;
+};
+
+std::map<Shader, std::vector<ShaderDependency>> GlobalShaderRegistry;
+
+void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& isDying) {
+	BYTE info[1024 * 64];
+	OVERLAPPED overlapped = {0};
+
+	HANDLE handle = CreateFileW(L"src/shaders", 
+		FILE_LIST_DIRECTORY | GENERIC_READ,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+		NULL);
+	overlapped.hEvent = CreateEvent(nullptr, true, false, nullptr);
+	while (!isDying) {
+		BOOL rdc = ReadDirectoryChangesW(handle, info, std::size(info), TRUE, 
+			FILE_NOTIFY_CHANGE_FILE_NAME| FILE_NOTIFY_CHANGE_DIR_NAME|
+            FILE_NOTIFY_CHANGE_ATTRIBUTES|FILE_NOTIFY_CHANGE_SIZE|
+            FILE_NOTIFY_CHANGE_LAST_WRITE| FILE_NOTIFY_CHANGE_LAST_ACCESS|
+            FILE_NOTIFY_CHANGE_CREATION| FILE_NOTIFY_CHANGE_SECURITY,
+			NULL, &overlapped, NULL);
+
+		DWORD dwBytesReturned = 0;
+		if (GetOverlappedResult(handle, &overlapped, &dwBytesReturned, FALSE)) {
+			if (dwBytesReturned == 0) {
+				continue;
+			}
+
+			FILE_NOTIFY_INFORMATION *fni = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&info[0]);
+			do {
+                if (fni->Action != 0) {
+					if (fni->Action == FILE_ACTION_MODIFIED) {
+						std::wstring wideFileName = std::wstring{ fni->FileName,fni->FileName + fni->FileNameLength / sizeof(wchar_t) };
+						std::string filename = "src/shaders/" + std::string(wideFileName.begin(), wideFileName.end());
+ 
+						for (std::pair<Shader, std::vector<ShaderDependency>> pair: GlobalShaderRegistry) {
+							Shader shader = pair.first;
+							for (const ShaderDependency& dependency: pair.second) {
+								if (dependency.path.compare(filename) == 0) {
+									shadersToReload.push_back(shader);
+									break;
+								}
+							}
+						}
+
+					}
+                }
+
+                if (fni->NextEntryOffset == 0)
+                    break;
+
+                fni = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<BYTE*>(fni) + fni->NextEntryOffset);
+            } while (true);
+		}
+	}
+}
 
 std::string readGlslFile(const GLchar* path) {
     std::string shaderCode = "";
@@ -56,20 +132,24 @@ GLuint loadIndividualShader(GLenum shaderType, const GLchar *path) {
     return shader;
 }
 
-Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath) {
-	Shader retVal = glCreateProgram();
+void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath) {
+	std::vector<ShaderDependency> dependencies;
+
 	GLuint vertex = 0, fragment = 0, geometry = 0;
 	if (vertexPath) {
+		dependencies.push_back({ ShaderDependencyType::VERTEX, std::string(vertexPath) });
         vertex = loadIndividualShader(GL_VERTEX_SHADER, vertexPath);
         glAttachShader(retVal, vertex);
     }
 
     if (fragmentPath) {
+		dependencies.push_back({ ShaderDependencyType::FRAGMENT, std::string(fragmentPath) });
         fragment = loadIndividualShader(GL_FRAGMENT_SHADER, fragmentPath);
         glAttachShader(retVal, fragment);
     }
 
     if (geomPath) {
+		dependencies.push_back({ ShaderDependencyType::GEOMETRY, std::string(geomPath) });
         geometry = loadIndividualShader(GL_GEOMETRY_SHADER, geomPath);
         glAttachShader(retVal, geometry);
     }
@@ -92,5 +172,64 @@ Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
     if (fragmentPath) glDeleteShader(fragment);
     if (geomPath) glDeleteShader(geometry);
 
+	if (GlobalShaderRegistry.find(retVal) != GlobalShaderRegistry.end()) {
+		GlobalShaderRegistry[retVal] = dependencies;
+	} else {
+		GlobalShaderRegistry.insert(std::make_pair(retVal, dependencies));
+	}
+}
+
+Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath) {
+	Shader retVal;
+	retVal = glCreateProgram();
+	
+	attachShaders(retVal, vertexPath, fragmentPath, geomPath);
+
 	return retVal;
+}
+
+Shader reloadShader(Shader shader) {
+	GLsizei count;
+	GLuint shaders[3];
+	glGetAttachedShaders(shader, 3, &count, shaders);
+	GLenum error = glGetError();
+	switch(error) {
+	case GL_INVALID_VALUE:
+		printf("not a valid program!");
+		return shader;
+	case GL_INVALID_OPERATION:
+		printf("not a program object");
+		return shader;
+	}
+
+	for (int shaderIdx = 0; shaderIdx < count; shaderIdx++) {
+		glDetachShader(shader, shaders[shaderIdx]);
+	}
+
+	if (GlobalShaderRegistry.find(shader) != GlobalShaderRegistry.end()) {
+		const GLchar* vertexPath = nullptr;
+		const GLchar* fragmentPath = nullptr;
+		const GLchar* geometryPath = nullptr;
+
+		for (const auto& dependency: GlobalShaderRegistry[shader]) {
+			switch (dependency.dependencyType) {
+			case ShaderDependencyType::DEPENDENCY:
+			case ShaderDependencyType::GEOMETRY:
+				geometryPath = dependency.path.c_str();
+				break;
+			case ShaderDependencyType::VERTEX:
+				vertexPath = dependency.path.c_str();
+				break;
+			case ShaderDependencyType::FRAGMENT:
+				fragmentPath = dependency.path.c_str();
+				break;
+			}
+		}
+
+		attachShaders(shader, vertexPath, fragmentPath, geometryPath);
+	} else {
+		Logger::logWarning("Unable to reload shader, because it does not exist in the registry");
+	}
+
+	return shader;
 }

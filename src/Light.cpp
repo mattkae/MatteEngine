@@ -38,59 +38,6 @@ glm::mat4 get_light_view(const Light &light) {
     }
 }
 
-void to_json(json &j, const Light &light) {
-    j = json{{"type", light.type},
-             {"color", glm::vec3ToArray(light.color)},
-             {"direction", glm::vec3ToArray(light.direction)},
-             {"up", glm::vec3ToArray(light.up)},
-             {"position", glm::vec3ToArray(light.position)},
-             {"constant", light.constant},
-             {"linear", light.linear},
-             {"quadratic", light.quadratic},
-             {"cosineCutOff", light.cosineCutOff},
-             {"dropOff", light.dropOff},
-             {"usesShadows", light.usesShadows},
-             {"isOn", light.isOn}};
-}
-
-void from_json(const json &j, Light &light) {
-    std::vector<float> color;
-    std::vector<float> direction;
-    std::vector<float> up;
-    std::vector<float> position;
-
-    j.at("type").get_to(light.type);
-    j.at("color").get_to<std::vector<float>>(color);
-    j.at("usesShadows").get_to(light.usesShadows);
-    if (light.usesShadows) {
-		light.shadowWidth = GlobalAppState.width;
-		light.shadowHeight = GlobalAppState.height;
-		initLight(light);
-    }
-    j.at("isOn").get_to(light.isOn);
-    light.color = glm::arrayToVec3(color);
-
-    if (light.type != LightType::PointLight) {
-        j.at("direction").get_to<std::vector<float>>(direction);
-        light.direction = glm::arrayToVec3(direction);
-        j.at("up").get_to<std::vector<float>>(up);
-        light.up = glm::arrayToVec3(up);
-    }
-
-    if (light.type != LightType::Directional) {
-        j.at("constant").get_to(light.constant);
-        j.at("linear").get_to(light.linear);
-        j.at("quadratic").get_to(light.quadratic);
-        j.at("cosineCutOff").get_to(light.cosineCutOff);
-        j.at("dropOff").get_to(light.dropOff);
-        j.at("position").get_to<std::vector<float>>(position);
-        light.position = glm::arrayToVec3(position);
-    }
-
-    light.projection = get_light_projection(light);
-    light.view = get_light_view(light);
-}
-
 void createShadowTextureForPointLight(Light& light) {
     glGenTextures(1, &light.shadowTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, light.shadowTexture);
@@ -145,7 +92,18 @@ void createShadowTextureForDirectionalLight(Light& light) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-bool initLight(Light& light) {
+static GLint getArrayUniform(const Shader& shader, const int lightIndex, const char *attribute, const char *property = nullptr) {
+    std::ostringstream ss;
+    ss << attribute << "[" << lightIndex << "]";
+
+    if (property) {
+        ss << "." << property;
+    }
+
+    return getShaderUniform(shader, ss.str().c_str());
+}
+
+bool initLight(Light& light, const Shader& shader) {
     switch (light.type) {
     case Spot:
     case Directional:
@@ -157,6 +115,21 @@ bool initLight(Light& light) {
     default:
         break;
     }
+
+	useShader(shader);
+	light.colorUniform = getArrayUniform(shader, light.index, "uLights", "color");
+	light.directionUniform = getArrayUniform(shader, light.index, "uLights", "direction");
+	light.positionUniform = getArrayUniform(shader, light.index, "uLights", "position");
+	light.constantUniform = getArrayUniform(shader, light.index, "uLights", "constant");
+	light.linearUniform = getArrayUniform(shader, light.index, "uLights", "linear");
+	light.quadraticUniform = getArrayUniform(shader, light.index, "uLights", "quadratic");
+	light.cosineCutoffUniform = getArrayUniform(shader, light.index, "uLights", "cosineCutOff");
+	light.dropOffUniform = getArrayUniform(shader, light.index, "uLights", "dropOff");
+	light.usesShadowsUniform = getArrayUniform(shader, light.index, "uLights", "usesShadows");
+	if (light.usesShadows) {
+		light.dirShadowUniform = getArrayUniform(shader, light.index, "uDirShadow");
+		light.shadowMatrixUniform = getArrayUniform(shader, light.index, "uLights", "shadowMatrix");
+	}
 
     return true;
 }
@@ -256,43 +229,12 @@ void renderLightShadows(const Light& light, const Shader shader, const BetterSce
     }
 }
 
-static std::string getArrayUniform(const int lightIndex, const char *attribute, const char *property = nullptr) {
-    std::ostringstream ss;
-    ss << attribute << "[" << lightIndex << "]";
-
-    if (property) {
-        ss << "." << property;
-    }
-
-    return ss.str();
-}
-
 void renderLight(const Light& light, const Shader shader, const int index) {
     if (!light.isOn) {
         return;
     }
 
-	setShaderVec3(shader, getArrayUniform(index, "uLights", "color").c_str(), light.color);
-
-	// Render shadow map
-	if (light.usesShadows) {
-		switch (light.type) {
-		case PointLight:
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-			break;
-		case Directional:
-		case Spot:
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-			setShaderInt(shader, "uDirShader", 0);
-			setShaderMat4(shader, "uShadowMatrix", light.projection * light.view);
-			break;
-		default:
-			std::cerr << "Unknown light type: " << light.type << std::endl;
-			break;
-		}
-	}
+	setShaderVec3WithUniform(shader, light.colorUniform, light.color);
 
 	// Render the light
 	bool isDirectional = light.type == LightType::Directional;
@@ -300,14 +242,33 @@ void renderLight(const Light& light, const Shader shader, const int index) {
 
 	glm::vec3 position = isDirectional ? glm::vec3(light.direction) * -GlobalAppState.far : light.position;
 	glm::vec3 direction = isPoint ? glm::vec3(0) : light.direction;
-	setShaderVec3(shader, getArrayUniform(index, "uLights", "direction").c_str(), direction);
-	setShaderVec3(shader, getArrayUniform(index, "uLights", "position").c_str(), position);
-	setShaderFloat(shader, getArrayUniform(index, "uLights", "constant").c_str(), isDirectional ? 1.f : light.constant);
-	setShaderFloat(shader, getArrayUniform(index, "uLights", "linear").c_str(), isDirectional ? 0.f : light.linear);
-	setShaderFloat(shader, getArrayUniform(index, "uLights", "quadratic").c_str(), isDirectional ? 0.f : light.quadratic);
-	setShaderFloat(shader, getArrayUniform(index, "uLights", "cosineCutOff").c_str(), isPoint || isDirectional ? -1.f : light.cosineCutOff);
-	setShaderFloat(shader, getArrayUniform(index, "uLights", "dropOff").c_str(), isPoint || isDirectional ? 1.f : light.dropOff);
-	setShaderInt(shader, getArrayUniform(index, "uLights", "usesShadows").c_str(), light.usesShadows);
+	setShaderVec3WithUniform(shader, light.directionUniform, direction);
+	setShaderVec3WithUniform(shader, light.positionUniform, position);
+	setShaderFloatWithUniform(shader, light.constantUniform, isDirectional ? 1.f : light.constant);
+	setShaderFloatWithUniform(shader, light.linearUniform, isDirectional ? 0.f : light.linear);
+	setShaderFloatWithUniform(shader, light.quadraticUniform, isDirectional ? 0.f : light.quadratic);
+	setShaderFloatWithUniform(shader, light.cosineCutoffUniform, isPoint || isDirectional ? -1.f : light.cosineCutOff);
+	setShaderFloatWithUniform(shader, light.dropOffUniform, isPoint || isDirectional ? 1.f : light.dropOff);
+	setShaderIntWithUniform(shader, light.usesShadowsUniform, light.usesShadows);
+
+	// Render shadow map
+	if (light.usesShadows) {
+		switch (light.type) {
+		case PointLight:
+			// @TODO: Point light shadows
+			break;
+		case Directional:
+		case Spot:
+			glActiveTexture(GL_TEXTURE0 + light.index);
+			glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
+			setShaderIntWithUniform(shader, light.dirShadowUniform, light.index);
+			setShaderMat4WithUniform(shader, light.shadowMatrixUniform, light.projection * light.view);
+			break;
+		default:
+			std::cerr << "Unknown light type: " << light.type << std::endl;
+			break;
+		}
+	}
 
 	if (isPoint) {
 		float near = GlobalAppState.near;

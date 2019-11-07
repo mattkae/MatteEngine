@@ -6,16 +6,14 @@
 #include "GlobalApplicationState.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include <nlohmann/json.hpp>
 #include <vector>
-
-using json = nlohmann::json;
 
 struct BetterScene;
 
 enum LightType { Directional = 0, PointLight, Spot, Inactive };
 
 struct Light {
+	GLsizei index = 0;
 	LightType type;
     glm::vec3 color = glm::vec3(1.0);
     glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
@@ -40,13 +38,22 @@ struct Light {
 
 	glm::mat4 projection;
 	glm::mat4 view;
+	
+	GLint colorUniform;
+	GLint directionUniform;
+	GLint positionUniform;
+	GLint constantUniform;
+	GLint linearUniform;
+	GLint quadraticUniform;
+	GLint cosineCutoffUniform;
+	GLint dropOffUniform;
+	GLint usesShadowsUniform;
+	GLint dirShadowUniform;
+	GLint shadowMatrixUniform;
 };
 
-bool initLight(Light& light);
+bool initLight(Light& light, const Shader& shader);
 void renderLightShadows(const Light& light, const Shader shader, const BetterScene& scene);
 void renderLight(const Light& light, const Shader shader, const int index);
 void freeLight(Light& light);
-
-void to_json(json &j, const Light &light);
-void from_json(const json &j, Light &light);
 #endif

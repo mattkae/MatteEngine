@@ -28,23 +28,6 @@ glm::vec3 calculateColor(float height, float max) {
     return color;
 }
 
-void to_json(json& j, const Terrain& terrain) {
-    // TODO!
-}
-
-void from_json(const json& j, Terrain& terrain) {
-    GenerationParameters genParams;
-    j.at("size").get_to<int>(genParams.size);
-    j.at("granularity").get_to<int>(genParams.granularity);
-    j.at("permSize").get_to<int>(genParams.permSize);
-    j.at("scaleFactor").get_to<float>(genParams.scaleFactor);
-    j.at("minMaxHeight").get_to<float>(genParams.minMaxHeight);
-    j.at("ampFactor").get_to<float>(genParams.ampFactor);
-    j.at("frequencyFactor").get_to<float>(genParams.frequencyFactor);
-    j.at("numOctaves").get_to<int>(genParams.numOctaves);
-    initializeTerrain(terrain, genParams);
-}
-
 void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
     Logger::logInfo("Generating terrain...");
 

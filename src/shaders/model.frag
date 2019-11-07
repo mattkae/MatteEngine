@@ -1,9 +1,7 @@
 #version 410
 #include Light.glsl
 #include Material.glsl
-
-#define MAX_LIGHTS 2
-#define MAX_DIR_LIGHT_SHADOWS 2
+#include Light.shared.cpp
 
 // Output color
 out vec4 Color;
@@ -20,8 +18,7 @@ uniform int uNumLights;
 uniform Light uLights[MAX_LIGHTS];
 uniform vec3 uAmbient;
 uniform vec2 uFarNear;
-uniform sampler2DShadow uDirShadow;
-uniform mat4 uShadowMatrix;
+uniform sampler2DShadow uDirShadow[MAX_LIGHTS];
 // uniform samplerCubeShadow uOmniShadows[MAX_POINT_LIGHT_SHADOWS];
 
 // Helper functions
@@ -42,12 +39,12 @@ void main() {
         //specular = texture(uMaterial.specularTex, oTexCoords);
     }
 
-    vec4 fragPosInLightSpace = uShadowMatrix * vec4(oFragPos, 1);
     vec3 finalColor = uAmbient * diffuse + emissive;
     for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {
         float visibility = 1.0;
 
         Light light = uLights[lightIndex];
+        vec4 fragPosInLightSpace = light.shadowMatrix * vec4(oFragPos, 1);
         if (light.usesShadows) {
             if (light.direction == vec3(0.0)) {
                 visibility = getOmniVisibility(light);
@@ -123,5 +120,5 @@ float getOmniVisibility(const in Light light) {
 
 float getDirVisibility(const in int lightIndex, vec4 fragPosInLightSpace) {
     vec3 lP = (fragPosInLightSpace.xyz / fragPosInLightSpace.w) * 0.5 + 0.5f;
-    return texture(uDirShadow, lP);
+    return texture(uDirShadow[lightIndex], lP);
 }

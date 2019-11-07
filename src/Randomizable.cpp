@@ -26,27 +26,3 @@ glm::vec4 getRandom(const RandomizableVec4& randomizable) {
 		randomizable.baseValue.w + getRandomFloat(randomizable.randomOffset.w)
 	);
 }
-
-void to_json(nlohmann::json& j, const RandomizableFloat& r) {
-}
-
-void from_json(const nlohmann::json& j, RandomizableFloat& r) {
-	j.at("baseValue").get_to(r.baseValue);
-	j.at("randomOffset").get_to(r.randomOffset);
-}
-
-void to_json(nlohmann::json& j, const RandomizableVec3& r) {
-}
-
-void from_json(const nlohmann::json& j, RandomizableVec3& r) {
-	glm::from_json(j, "baseValue", r.baseValue);
-	glm::from_json(j, "randomOffset", r.randomOffset);
-}
-
-void to_json(nlohmann::json& j, const RandomizableVec4& r) {
-}
-
-void from_json(const nlohmann::json& j, RandomizableVec4& r) {
-	glm::from_json(j, "baseValue", r.baseValue);
-	glm::from_json(j, "randomOffset", r.randomOffset);
-}

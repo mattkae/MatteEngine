@@ -21,10 +21,3 @@ struct RandomizableVec4 {
 float getRandom(const RandomizableFloat& randomizable);
 glm::vec3 getRandom(const RandomizableVec3& randomizable);
 glm::vec4 getRandom(const RandomizableVec4& randomizable);
-
-void to_json(nlohmann::json& j, const RandomizableFloat& r);
-void from_json(const nlohmann::json& j, RandomizableFloat& r);
-void to_json(nlohmann::json& j, const RandomizableVec3& r);
-void from_json(const nlohmann::json& j, RandomizableVec3& r);
-void to_json(nlohmann::json& j, const RandomizableVec4& r);
-void from_json(const nlohmann::json& j, RandomizableVec4& r);

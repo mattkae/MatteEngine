@@ -11,7 +11,8 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <map>
-
+#include <thread>
+#include <chrono>
 
 const std::string INCLUDE_STRING = "#include ";
 
@@ -30,7 +31,7 @@ struct ShaderDependency {
 std::map<Shader, std::vector<ShaderDependency>> GlobalShaderRegistry;
 
 void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& isDying) {
-	BYTE info[1024 * 64];
+	BYTE info[1024 * 8];
 	OVERLAPPED overlapped = {0};
 
 	HANDLE handle = CreateFileW(L"src/shaders", 
@@ -56,31 +57,31 @@ void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& 
 			}
 
 			FILE_NOTIFY_INFORMATION *fni = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&info[0]);
-			do {
-                if (fni->Action != 0) {
-					if (fni->Action == FILE_ACTION_MODIFIED) {
-						std::wstring wideFileName = std::wstring{ fni->FileName,fni->FileName + fni->FileNameLength / sizeof(wchar_t) };
-						std::string filename = "src/shaders/" + std::string(wideFileName.begin(), wideFileName.end());
+
+            if (fni->Action == 0) {
+				continue;
+			}
+
+			if (fni->Action != FILE_ACTION_MODIFIED) {
+				continue;
+			}
+
+			std::wstring wideFileName = std::wstring{ fni->FileName,fni->FileName + fni->FileNameLength / sizeof(wchar_t) };
+			std::string filename = "src/shaders/" + std::string(wideFileName.begin(), wideFileName.end());
  
-						for (std::pair<Shader, std::vector<ShaderDependency>> pair: GlobalShaderRegistry) {
-							Shader shader = pair.first;
-							for (const ShaderDependency& dependency: pair.second) {
-								if (dependency.path.compare(filename) == 0) {
-									shadersToReload.push_back(shader);
-									break;
-								}
-							}
-						}
-
+			for (std::pair<Shader, std::vector<ShaderDependency>> pair: GlobalShaderRegistry) {
+				Shader shader = pair.first;
+				for (const ShaderDependency& dependency: pair.second) {
+					if (dependency.path.compare(filename) == 0) {
+						shadersToReload.push_back(shader);
+						dwBytesReturned = 0;
+						break;
 					}
-                }
-
-                if (fni->NextEntryOffset == 0)
-                    break;
-
-                fni = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<BYTE*>(fni) + fni->NextEntryOffset);
-            } while (true);
+				}
+			}
 		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 }
 

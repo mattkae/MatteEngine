@@ -15,12 +15,19 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include "shaders/Light.shared.cpp"
+
 
 struct BetterScene {
-	std::vector<Model> models;
-    std::vector<Light> lights;
-    std::vector<Sphere> spheres;
-    std::vector<ParticleEmitter> particleEmitters;
+	Model betterModels[32];
+	size_t numModels;
+    Light lights[MAX_LIGHTS];
+	size_t numLightsUsed = 0;
+	Sphere betterSpheres[32];
+	size_t numSpheres;
+	ParticleEmitter emitters[32];
+	size_t numEmitters;
+
     Terrain mTerrain;
     Skybox mSkybox;
     Shader mSceneShader;
@@ -36,7 +43,6 @@ struct BetterScene {
 	bool isDying = false;
 };
 
-void loadSceneFromJson(const char* jsonPath, BetterScene& scene);
 void reloadScene(BetterScene& scene);
 void updateScene(BetterScene& scene, double dt);
 void renderScene(const BetterScene& scene);

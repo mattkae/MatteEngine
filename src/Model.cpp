@@ -26,18 +26,3 @@ void initializeModel(Model& model) {
         initializeMesh(mesh);
     }
 }
-
-void to_json(nlohmann::json& j, const Model& model) {
-    j = nlohmann::json { { "transform", glm::mat4ToArray(model.model) } };
-}
-
-void from_json(const nlohmann::json& j, Model& model) {
-    std::string path;
-    std::vector<float> matrixArray;
-
-    j.at("path").get_to(path);
-	model = loadFromObj(path);
-
-    j.at("transform").get_to<std::vector<float>>(matrixArray);
-    model.model = glm::arrayToMat4(matrixArray);
-}

@@ -8,7 +8,7 @@ void onChange(BetterScene& scene, size_t elementIndex, size_t translationCompone
 		return;
 	}
 
-	scene.models.at(elementIndex).model[3][translationComponentIndex] = std::stof(value);
+	scene.betterModels[elementIndex].model[3][translationComponentIndex] = std::stof(value);
 }
 
 UIContext getModelEditor(BetterScene& scene, UIContext& modelContext, size_t elementIndex) {
@@ -28,7 +28,7 @@ UIContext getModelEditor(BetterScene& scene, UIContext& modelContext, size_t ele
 		TextInput textInput;
 
 		textInput.isFocused = false;
-		textInput.str = std::to_string(scene.models.at(elementIndex).model[3][translationComponentIndex]);
+		textInput.str = std::to_string(scene.betterModels[elementIndex].model[3][translationComponentIndex]);
 		textInput.textColor = glm::vec4(0, 0, 0, 1);
 		textInput.backgroundColor = glm::vec4(0.9, 0.9, 0.9, 1);
 		textInput.focusedBackgroundColor = glm::vec4(1, 1, 1, 1);
@@ -59,7 +59,7 @@ void getModelSelector(BetterScene& scene, UIContext &retval) {
 	retval.panel.vertical = UIPositioning::CENTER;
 	retval.panel.borderWidth = 1.f;
 
-	allocateArray(retval.uiElements, scene.models.size() + 1);
+	allocateArray(retval.uiElements, scene.numModels + 1);
 	allocateArray(retval.dependentContexts, 1);
 
 	retval.uiElements.elements[0].type = UIElement::LABEL;

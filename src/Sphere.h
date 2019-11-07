@@ -18,7 +18,4 @@ void initializeSphere(Sphere& sphere);
 void renderSphere(const Sphere& sphere, const Shader& shader, bool withMaterial = true);
 void freeSphere(Sphere& sphere);
 
-void to_json(nlohmann::json &j, const Sphere &sphere);
-void from_json(const nlohmann::json &j, Sphere &sphere);
-
 #endif

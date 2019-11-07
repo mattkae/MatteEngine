@@ -8,7 +8,6 @@
 #include <GL/glew.h>
 #include <functional>
 #include <glm/glm.hpp>
-#include <nlohmann/json.hpp>
 
 struct ParticleRenderVariables {
     glm::vec3 position = glm::vec3(0);
@@ -51,8 +50,5 @@ void initializeParticleEmitter(ParticleEmitter& emitter, size_t initialParticleC
 void updateParticleEmitter(ParticleEmitter& emitter, float deltaTimeSec);
 void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& camera);
 void freeParticleEmitter(ParticleEmitter& emitter);
-
-void to_json(nlohmann::json& j, const ParticleEmitter& emitter);
-void from_json(const nlohmann::json& j, ParticleEmitter& emitter);
 
 #endif

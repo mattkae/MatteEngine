@@ -28,7 +28,4 @@ void initializeTerrain(Terrain& terrain, const GenerationParameters& params);
 void renderTerrain(const Terrain& terrain, const Shader& shader, bool withMaterial = true);
 void freeTerrain(Terrain& terrain);
 
-void to_json(json& j, const Terrain& terrain);
-void from_json(const json& j, Terrain& terrain);
-
 #endif

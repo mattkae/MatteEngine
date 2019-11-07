@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "Scene.h"
 #include "Sphere.h"
+#include "SceneLoader.h"
 #include "Logger.h"
 #include <iostream>
 #include <string>
@@ -22,12 +23,11 @@ void glfw_error_callback(int error, const char* message)
     cerr << "GLFW error #" << error << ": " << message << endl;
 }
 
-int main(int argc, const char* argv[])
-{
+int main(int argc, const char* argv[]) {
     initialize(argc, argv);
 
     BetterScene scene;
-	loadSceneFromJson("assets/scenes/scene.json", scene);
+	loadScene("assets/scenes/scene.matte", scene);
 
     glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;

@@ -28,25 +28,3 @@ glm::vec4 calculateFunc(const FunctionVec4& f, float fractionComplete) {
 		+ f.cosValue * glm::vec4(cos(fractionComplete * getTwoPi()))
 		+ f.sinValue * glm::vec4(sin(fractionComplete * getTwoPi()));
 }
-
-void to_json(nlohmann::json& j, const FunctionVec3& config) {
-}
-
-void from_json(const nlohmann::json& j, FunctionVec3& functionConfig) {
-    glm::from_json(j, "initial", functionConfig.initial);
-    glm::from_json(j, "linear", functionConfig.linear);
-    glm::from_json(j, "quadratic", functionConfig.quadratic);
-    glm::from_json(j, "sinValue", functionConfig.sinValue);
-    glm::from_json(j, "cosValue", functionConfig.cosValue);
-}
-
-void to_json(nlohmann::json& j, const FunctionVec4& config) {
-}
-
-void from_json(const nlohmann::json& j, FunctionVec4& functionConfig) {
-    glm::from_json(j, "initial", functionConfig.initial);
-    glm::from_json(j, "linear", functionConfig.linear);
-    glm::from_json(j, "quadratic", functionConfig.quadratic);
-	glm::from_json(j, "sinValue", functionConfig.sinValue);
-    glm::from_json(j, "cosValue", functionConfig.cosValue);
-}

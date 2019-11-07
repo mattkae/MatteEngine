@@ -6,20 +6,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 
-void to_json(nlohmann::json& j, const Sphere& sphere) {
-    j = {
-		{"radius", sphere.radius},
-		{"transform", glm::mat4ToArray(sphere.model)}
-    };
-}
-
-void from_json(const nlohmann::json& j, Sphere& sphere) {
-    j.at("radius").get_to(sphere.radius);
-    glm::from_json(j, "transform", sphere.model);
-    j.at("angleIncrements").get_to(sphere.angleIncrements);
-    initializeSphere(sphere);
-}
-
 void initializeSphere(Sphere& sphere) {
     std::vector<Vertex> vertices;
     std::vector<GLint> indices;

@@ -8,4 +8,5 @@ struct Light {
     float cosineCutOff;
     float dropOff;
     bool usesShadows;
+    mat4 shadowMatrix;
 };

@@ -1,0 +1,87 @@
+useDeferredRendering    false
+
+::skybox
+    front   assets/skybox/cloudy/bluecloud_ft.jpg
+    back    assets/skybox/cloudy/bluecloud_bk.jpg
+    up      assets/skybox/cloudy/bluecloud_up.jpg
+    down    assets/skybox/cloudy/bluecloud_dn.jpg
+    right   assets/skybox/cloudy/bluecloud_rt.jpg
+    left    assets/skybox/cloudy/bluecloud_lf.jpg
+;;
+
+::lights
+    ::
+        type            0
+        color           0.3 0.3 0.3
+        direction       0 -1 0
+        position        0 10 0
+        up              0 0 1
+        usesShadows     true
+        isOn            true
+        constant        1
+        linear          0
+        quadratic       0
+        cosineCutOff    0.5
+        dropOff         24
+    ;;
+;;
+
+::models
+    ::
+        path        assets/sword/sword.obj
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 5 0 1
+    ;;
+    ::
+        path        assets/floor.obj
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+    ;;
+    ::
+        path        assets/Transparent.obj
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 3 1
+    ;;
+;;
+
+::spheres
+    ::
+        radius          1
+        transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+        angleIncrements 10
+    ;;
+;; 
+
+::particleEmitters
+    ::
+        model               1 0 0 0 0 1 0 0 0 0 1 0 0 3 0 1
+        ::spawnFrequencySeconds
+            baseValue       0.001
+            randomOffset    0.0005
+        ;;
+        initialNumParticles 0
+        maxParticles        100000
+        ::colorFunction
+            initial         1 0 0 1
+            linear          -0.25 0 0 -1
+            quadratic       0 0.02 0 0
+            sinValue        0 0 0 0
+            cosValue        0 1 0 0
+        ;;
+        ::movementFunction
+            initial     0 5 0
+            linear      0 0 0
+            quadratic   0 0 0
+            sinValue    0 0 0
+            cosValue    16 0 4
+        ;;
+        numVertices         48
+        particleDimension   0.1 0.1
+        ::particlePosition
+            baseValue   0 0 0
+            randomOffset 1 1 1
+        ;;
+        ::particleTimeToLiveSeconds
+            baseValue       3.0
+            randomOffset    0.5
+        ;;
+    ;;
+;;
+        

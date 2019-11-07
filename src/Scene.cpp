@@ -9,82 +9,7 @@
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <nlohmann/json.hpp>
 #include <GLFW/glfw3.h>
-
-using json = nlohmann::json;
-
-void to_json(json &j, const BetterScene &scene) {
-	// @TODO
-}
-
-void from_json(const json &j, BetterScene &scene) {
-	if (j.count("models") != 0) {
-		j.at("models").get_to<std::vector<Model>>(scene.models);
-		scene.ui.contexts.push_back(UIContext());
-		getModelSelector(scene, scene.ui.contexts.at(0));
-	}
-	if (j.count("lights") != 0) {
-		j.at("lights").get_to<std::vector<Light>>(scene.lights);
-	}
-	if (j.count("spheres") != 0) {
-		j.at("spheres").get_to<std::vector<Sphere>>(scene.spheres);
-	}
-	if (j.count("particleEmitters") != 0) {
-		j.at("particleEmitters").get_to<std::vector<ParticleEmitter>>(scene.particleEmitters);
-	}
-    if (j.count("terrain") == 1) {
-        j.at("terrain").get_to<Terrain>(scene.mTerrain);
-    }
-    if (j.count("skybox") == 1) {
-        j.at("skybox").get_to<Skybox>(scene.mSkybox);
-    }
-
-    if (j.count("useDeferredRendering") == 1) {
-        j.at("useDeferredRendering").get_to<bool>(scene.useDefferredRendering);
-    }
-
-    if (scene.useDefferredRendering) {
-        scene.mDeferredBuffer.generate();
-        scene.mSceneShader = loadShader("src/shaders/DefferedModel.vert", "src/shaders/DefferedModel.frag");
-		useShader(scene.mSceneShader);
-		setShaderInt(scene.mSceneShader, "uPosition", 0);
-		setShaderInt(scene.mSceneShader, "uNormal", 1);
-		setShaderInt(scene.mSceneShader, "uDiffuse", 2);
-		setShaderInt(scene.mSceneShader, "uSpecular", 3);
-		setShaderInt(scene.mSceneShader, "uEmissive", 4);
-		setShaderInt(scene.mSceneShader, "uMaterialInfo", 5);
-    } else {
-        scene.mSceneShader = loadShader("src/shaders/model.vert", "src/shaders/model.frag");
-		useShader(scene.mSceneShader);
-		setShaderInt(scene.mSceneShader, "uDirShadow", 0);
-		setShaderInt(scene.mSceneShader, "uMaterial.diffuseTex", 8);
-		setShaderInt(scene.mSceneShader, "uMaterial.specularTex", 9);
-    }
-
-}
-
-void loadSceneFromJson(const char* jsonPath, BetterScene& scene) {
-    std::ifstream sceneFile(jsonPath);
-
-	try {
-		json sceneJson = json::parse(sceneFile);
-		from_json(sceneJson, scene);
-
-		scene.ui.generate();
-		scene.isDying = false;
-		scene.mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
-		scene.mHotreloadThreader = std::thread(watchForDirectorychanges, std::ref(scene.shadersToReload), std::ref(scene.isDying));
-
-		 GLenum err;
-		while ((err = glGetError()) != GL_NO_ERROR) {
-			printf("Error DURING setup: %d\n", err);
-		}
-
-	} catch (std::exception e) {
-        std::cerr << "Scene::load_from_json - " << e.what() << "\n";
-	}
-}
 
 void updateScene(BetterScene& scene, double dt) {
 	float dtFloat = static_cast<float>(dt);
@@ -99,8 +24,8 @@ void updateScene(BetterScene& scene, double dt) {
 
     updateCamera(scene.mCamera, dtFloat);
 
-	for (auto& emitter : scene.particleEmitters) {
-		updateParticleEmitter(emitter, dtFloat);
+	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
+		updateParticleEmitter(scene.emitters[eIdx], dtFloat);
 	}
 
 	scene.ui.update(dt);
@@ -137,29 +62,28 @@ void renderGBUffer(const BetterScene& scene) {
 }
 
 void renderNonDeferred(const BetterScene& scene) {
-	for (auto emitter : scene.particleEmitters) {
-		renderParticleEmitter(emitter, scene.mCamera);
-    }
+	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
+		renderParticleEmitter(scene.emitters[eIdx], scene.mCamera);
+	}
 }
 
 void renderModels(const BetterScene& scene, const Shader &shader, bool withMaterial) {
     renderTerrain(scene.mTerrain, shader, withMaterial);
 
-    for (auto model : scene.models) {
-        renderModel(model, shader, withMaterial);
+    for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
+        renderModel(scene.betterModels[modelIdx], shader, withMaterial);
     }
 
-    for (auto sphere : scene.spheres) {
-	    renderSphere(sphere, shader, withMaterial);
+    for (size_t sphereIdx = 0; sphereIdx < scene.numSpheres; sphereIdx++) {
+	    renderSphere(scene.betterSpheres[sphereIdx], shader, withMaterial);
     }
 }
-
 
 void renderDirect(const BetterScene& scene) {
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	scene.mSkybox.render(scene.mCamera);
+	renderSkybox(scene.mSkybox, scene.mCamera);
 
 	if (!scene.useDefferredRendering) {
 		renderNonDeferred(scene);
@@ -177,10 +101,10 @@ void renderDirect(const BetterScene& scene) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	setShaderVec3(scene.mSceneShader, "uAmbient", glm::vec3(0.3f));
-	setShaderInt(scene.mSceneShader, "uNumLights", scene.lights.size());
+	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
 
-    for (size_t lidx = 0; lidx < scene.lights.size(); lidx++) {
-		renderLight(scene.lights.at(lidx), scene.mSceneShader, lidx);
+    for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
+		renderLight(scene.lights[lidx], scene.mSceneShader, lidx);
     }
 
     if (scene.useDefferredRendering) {
@@ -209,26 +133,27 @@ void renderScene(const BetterScene& scene) {
 
 void freeScene(BetterScene& scene) {
 	scene.isDying = true;
-	for (auto model : scene.models) {
-        freeModel(model);
+	for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
+        freeModel(scene.betterModels[modelIdx]);
     }
-    scene.models.clear();
-    for (auto mSphere : scene.spheres) {
-        freeSphere(mSphere);
-	}
-    scene.spheres.clear();
+	scene.numModels = 0;
 
-    for (auto light : scene.lights) {
-		freeLight(light);
+    for (size_t sphereIdx = 0; sphereIdx < scene.numSpheres; sphereIdx++) {
+	    freeSphere(scene.betterSpheres[sphereIdx]);
     }
-    scene.lights.clear();
+	scene.numSpheres = 0;
+	
+	for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
+		freeLight(scene.lights[lidx]);
+    }
+	scene.numLightsUsed = 0;
 
-	for (auto emitter : scene.particleEmitters) {
-		freeParticleEmitter(emitter);
+	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
+		freeParticleEmitter(scene.emitters[eIdx]);
 	}
-	scene.particleEmitters.clear();
+	scene.numEmitters = 0;
 
-    scene.mSkybox.free();
+	freeSkybox(scene.mSkybox);
     freeTerrain(scene.mTerrain);
     scene.mDeferredBuffer.free();
 	scene.mHotreloadThreader.join();

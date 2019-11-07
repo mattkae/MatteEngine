@@ -12,26 +12,6 @@ using namespace std;
 
 #define PI 3.14159265f
 
-void to_json(nlohmann::json& j, const ParticleEmitter& emitter) {
-}
-
-void from_json(const nlohmann::json& j, ParticleEmitter& emitter) {
-    glm::from_json(j, "model", emitter.model);
-    j.at("spawnFrequencySeconds").get_to(emitter.spawnFrequencySeconds);
-    j.at("maxParticles").get_to(emitter.maxParticles);
-    j.at("colorFunction").get_to(emitter.colorFunction);
-    j.at("movementFunction").get_to(emitter.movementFunction);
-    j.at("numVertices").get_to(emitter.numVertices);
-    glm::from_json(j, "particleDimension", emitter.particleDimension);
-
-    j.at("particlePosition").get_to(emitter.particlePosition);
-    j.at("particleTimeToLiveSeconds").get_to(emitter.particleTimeToLiveSeconds);
-
-	int initialParticleCount = 0;
-	j.at("initialNumParticles").get_to(initialParticleCount);
-    initializeParticleEmitter(emitter, initialParticleCount);
-}
-
 inline void spawnParticles(ParticleEmitter& emitter, size_t numParticlesToSpawn) {
 	while (numParticlesToSpawn > 0 && emitter.nextParticleIndex < emitter.maxParticles) {
 		emitter.particleRenderVariables[emitter.nextParticleIndex].color = emitter.colorFunction.initial;

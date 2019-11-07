@@ -1,7 +1,6 @@
 #pragma once
 #include "GlmUtility.h"
 #include <glm/glm.hpp>
-#include <nlohmann/json.hpp>
 
 struct FunctionFloat {
 	float initial = 0.f;
@@ -30,8 +29,3 @@ struct FunctionVec4 {
 float calculateFunc(const FunctionFloat& f, float fractionComplete);
 glm::vec3 calculateFunc(const FunctionVec3& f, float fractionComplete);
 glm::vec4 calculateFunc(const FunctionVec4& f, float fractionComplete);
-
-void to_json(nlohmann::json& j, const FunctionVec3& config);
-void from_json(const nlohmann::json& j, FunctionVec3& functionConfig);
-void to_json(nlohmann::json& j, const FunctionVec4& config);
-void from_json(const nlohmann::json& j, FunctionVec4& functionConfig);

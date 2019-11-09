@@ -71,11 +71,11 @@ void renderModels(const BetterScene& scene, const Shader &shader, bool withMater
     renderTerrain(scene.mTerrain, shader, withMaterial);
 
     for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
-        renderModel(scene.betterModels[modelIdx], shader, withMaterial);
+        renderModel(scene.models[modelIdx], shader, withMaterial);
     }
 
     for (size_t sphereIdx = 0; sphereIdx < scene.numSpheres; sphereIdx++) {
-	    renderSphere(scene.betterSpheres[sphereIdx], shader, withMaterial);
+	    renderSphere(scene.spheres[sphereIdx], shader, withMaterial);
     }
 }
 
@@ -134,12 +134,12 @@ void renderScene(const BetterScene& scene) {
 void freeScene(BetterScene& scene) {
 	scene.isDying = true;
 	for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
-        freeModel(scene.betterModels[modelIdx]);
+        freeModel(scene.models[modelIdx]);
     }
 	scene.numModels = 0;
 
     for (size_t sphereIdx = 0; sphereIdx < scene.numSpheres; sphereIdx++) {
-	    freeSphere(scene.betterSpheres[sphereIdx]);
+	    freeSphere(scene.spheres[sphereIdx]);
     }
 	scene.numSpheres = 0;
 	

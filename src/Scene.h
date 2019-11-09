@@ -19,11 +19,11 @@
 
 
 struct BetterScene {
-	Model betterModels[32];
+	Model models[32];
 	size_t numModels;
     Light lights[MAX_LIGHTS];
 	size_t numLightsUsed = 0;
-	Sphere betterSpheres[32];
+	Sphere spheres[32];
 	size_t numSpheres;
 	ParticleEmitter emitters[32];
 	size_t numEmitters;

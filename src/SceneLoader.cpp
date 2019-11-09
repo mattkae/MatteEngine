@@ -1,5 +1,6 @@
 #include "SceneLoader.h"
 #include "ObjModel.h"
+#include "SceneUI.h"
 
 const char* START_OBJECT_TOKEN = "::";
 const char* END_OBJECT_TOKEN = ";;";
@@ -30,9 +31,9 @@ void loadScene(const char* filepath, BetterScene& scene) {
 			} else if (startsWith(ptr, "lights")) {
 				loadLights(file, scene.lights, scene.numLightsUsed, buffer, scene.mSceneShader);
 			} else if (startsWith(ptr, "models")) {
-				loadModels(file, scene.betterModels, scene.numModels, buffer);
+				loadModels(file, scene.models, scene.numModels, buffer);
 			} else if (startsWith(ptr, "spheres")) {
-				loadSpheres(file, scene.betterSpheres, scene.numSpheres, buffer);
+				loadSpheres(file, scene.spheres, scene.numSpheres, buffer);
 			} else if (startsWith(ptr, "particleEmitters")) {
 				loadParticleEmitters(file, scene.emitters, scene.numEmitters, buffer);
 			}
@@ -58,6 +59,9 @@ void loadScene(const char* filepath, BetterScene& scene) {
 	}
 
 	scene.ui.generate();
+
+	getSceneUI(scene, scene.ui);
+
 	scene.isDying = false;
 	scene.mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
 	scene.mHotreloadThreader = std::thread(watchForDirectorychanges, std::ref(scene.shadersToReload), std::ref(scene.isDying));

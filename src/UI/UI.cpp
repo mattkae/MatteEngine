@@ -7,8 +7,8 @@ UI::UI() {
 }
 
 void UI::update(double dt) {
-	for (UIContext& context: contexts) {
-		updateUIContext(context, mTextRenderer);
+	for (size_t idx = 0; idx < context.size; idx++) {
+		updateUIContext(context.elements[idx], mTextRenderer);
 	}
 }
 
@@ -21,7 +21,7 @@ void UI::render() const {
 	useShader(mOrthographicShader);
 	glm::mat4 projection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	setShaderMat4(mOrthographicShader, "uProjection", projection);
-	for (const UIContext& context: contexts) {
-		renderUIContext(context, mOrthographicShader, mTextRenderer);
+	for (size_t idx = 0; idx < context.size; idx++) {
+		renderUIContext(context.elements[idx], mOrthographicShader, mTextRenderer);
 	}
 }

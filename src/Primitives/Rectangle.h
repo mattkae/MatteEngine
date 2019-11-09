@@ -27,6 +27,10 @@ inline bool isClicked(const Rectangle& rect) {
 	return isLeftClickDown() && isMouseHovered(rect);
 }
 
+inline bool isClickedOutside(const Rectangle& rect) {
+	return isLeftClickDown() && !isMouseHovered(rect);
+}
+
 void renderRectangle(const Rectangle& rect, const Shader& shader, glm::vec4 backgroundColor, glm::vec4 borderColor = glm::vec4(0), GLfloat borderWidth = 0);
 
 #endif

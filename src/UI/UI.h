@@ -5,15 +5,8 @@
 #include "TextInput.h"
 #include "Panel.h"
 #include "UIContext.h"
+#include "../LightweightArray.h"
 #include <vector>
-
-// Plan:
-// (1) UI Contexts that will have:
-//		(a) Panel for position (or Window)
-//		(b) Buttons with callbacks
-//		(c) Textboxes with callbacks
-//		(d) Other UI elements with callbacks
-// (2) A list of UI contexts to show
 
 class Scene;
  class UI {
@@ -22,7 +15,8 @@ class Scene;
 	 void generate();
 	 void update(double dt);
 	 void render() const;
-	 std::vector<UIContext> contexts;
+
+	 LightweightArray<UIContext> context;
  private:
 	 Shader mOrthographicShader;
 	 TextRenderer mTextRenderer;

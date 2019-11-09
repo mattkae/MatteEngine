@@ -9,7 +9,6 @@
 struct TextRenderer;
 
 struct Button {
-	std::function<void(void)> onClickHandler;
 	std::string label = "";
 	GLfloat padding = 0;
 	glm::vec2 position = glm::vec2(0);
@@ -19,7 +18,7 @@ struct Button {
 	glm::vec4 textColor = glm::vec4(0);
 	glm::vec4 borderColor = glm::vec4(0);
 	GLfloat width = 128.f;
-	bool isClicked = false;
+	bool* isClicked = nullptr;
 };
 
 void updateButton(Button& button, const TextRenderer& textRenderer);

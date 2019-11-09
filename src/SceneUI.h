@@ -1,5 +1,5 @@
 #pragma once
-#include "UI//UIContext.h"
 
 struct BetterScene;
-void getModelSelector(BetterScene& scene, UIContext &retval);
+class UI;
+void getSceneUI(BetterScene& scene, UI& ui);

@@ -8,19 +8,20 @@ Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 
 void updateButton(Button& button, const TextRenderer& textRenderer) {
 	Rectangle rect = getRectangle(button, textRenderer);
-	if (!button.isClicked) {
-		if (isClicked(rect)) {
-			button.onClickHandler();
-			button.isClicked = true;
+	if (button.isClicked != nullptr) {
+		if (!*button.isClicked) {
+			if (isClicked(rect)) {
+				*button.isClicked = true;
+			}
+		} else if (!isClicked(rect)) {
+			*button.isClicked = false;
 		}
-	} else if (!isClicked(rect)) {
-		button.isClicked = false;
 	}
 }
 
 void renderButton(const Button& button, const Shader& shader, const TextRenderer& textRenderer) {
 	glm::vec2 textPosition = button.position + glm::vec2(2 * button.padding);
 	Rectangle rect = getRectangle(button, textRenderer);
-	renderRectangle(rect, shader, button.isClicked ? button.hoverColor : button.buttonColor);
+	renderRectangle(rect, shader, *button.isClicked ? button.hoverColor : button.buttonColor);
 	textRenderer.renderText(shader, button.label, textPosition, button.scale, button.textColor);
 }

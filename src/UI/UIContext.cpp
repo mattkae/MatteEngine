@@ -2,11 +2,23 @@
 #include "../GlobalApplicationState.h"
 
 void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
+	if (context.shouldOpen && !context.isActive) {
+		// Shutdown UIContexts that would interfere with thie context
+		for (size_t dIdx = 0; dIdx < context.deactivationDeps.size; dIdx++) {
+			context.deactivationDeps.elements[dIdx]->isActive = false;
+		}
+		context.isActive = true;
+	}
+
+	if (!context.isActive) {
+		return;
+	}
+
 	setPanelPosition(context.panel);
 	GLfloat yOffset = GlobalAppState.floatHeight - context.panel.boundingRect.y - context.panel.padding;
 	GLfloat xPosition = context.panel.boundingRect.x + context.panel.padding;
 	
-	for (size_t elementIndex = 0; elementIndex < context.uiElements.numElements; elementIndex++) {
+	for (size_t elementIndex = 0; elementIndex < context.uiElements.size; elementIndex++) {
 		UIElement& element = context.uiElements.elements[elementIndex];
 		switch (element.type) {
 		case UIElement::BUTTON: {
@@ -50,19 +62,16 @@ void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 
 		yOffset -= context.spaceBetweenElements;
 	}
-
-	for (size_t contextIndex = 0; contextIndex < context.dependentContexts.numElements; contextIndex++) {
-		UIContext& dependentContext = context.dependentContexts.elements[contextIndex];
-		if (dependentContext.isActive) {
-			updateUIContext(dependentContext, textRenderer);
-		}
-	}
 }
 
 void renderUIContext(const UIContext& context, const Shader& shader, const TextRenderer& textRenderer) {
+	if (!context.isActive) {
+		return;
+	}
+
 	renderPanel(context.panel, shader);
 
-	for (size_t elementIndex = 0; elementIndex < context.uiElements.numElements; elementIndex++) {
+	for (size_t elementIndex = 0; elementIndex < context.uiElements.size; elementIndex++) {
 		const UIElement& element = context.uiElements.elements[elementIndex];
 		switch (element.type) {
 		case UIElement::BUTTON:
@@ -74,13 +83,6 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 		case UIElement::LABEL:
 			renderLabel(std::get<Label>(element.element), shader, textRenderer);
 			break;
-		}
-	}
-
-	for (size_t contextIndex = 0; contextIndex < context.dependentContexts.numElements; contextIndex++) {
-		const UIContext& dependentContext = context.dependentContexts.elements[contextIndex];
-		if (dependentContext.isActive) {
-			renderUIContext(dependentContext, shader, textRenderer);
 		}
 	}
 }

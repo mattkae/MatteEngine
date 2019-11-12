@@ -4,6 +4,7 @@
 
 const char* START_OBJECT_TOKEN = "::";
 const char* END_OBJECT_TOKEN = ";;";
+const char* IGNORE_OBJECT_TOKEN = "//";
 
 inline void loadSkybox(FILE* file, Skybox& skybox, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader);
@@ -11,6 +12,14 @@ inline void loadModels(FILE* file, Model* models, size_t& numModels, char buffer
 inline void loadSpheres(FILE* file, Sphere* spheres, size_t& numSpheres, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE]);
+inline void ignoreObject(FILE* file, char buffer[SCENE_FILE_BUFFER_SIZE]) {
+	char* ptr;
+	while (processLine(file, buffer, ptr)) {
+		if (startsWith(ptr, END_OBJECT_TOKEN)) {
+			break;
+		}
+	}
+}
 
 void loadScene(const char* filepath, BetterScene& scene) {
 	FILE* file;
@@ -58,6 +67,8 @@ void loadScene(const char* filepath, BetterScene& scene) {
 				setShaderInt(scene.mSceneShader, "uMaterial.diffuseTex", 8);
 				setShaderInt(scene.mSceneShader, "uMaterial.specularTex", 9);
 			}
+		} else if (startsWith(ptr, IGNORE_OBJECT_TOKEN)) {
+			ignoreObject(file, buffer);
 		}
 	}
 

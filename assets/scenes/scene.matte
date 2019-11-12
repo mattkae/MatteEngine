@@ -85,7 +85,7 @@ useDeferredRendering    false
     ;;
 ;;
 
-::terrain
+//::terrain
     size            1000
     granularity     500
     permSize        1000

@@ -39,6 +39,10 @@ useDeferredRendering    false
         path        assets/Transparent.obj
         transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 3 1
     ;;
+    ::
+        path        assets/simple_arrow.obj
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1
+    ;;
 ;;
 
 ::spheres

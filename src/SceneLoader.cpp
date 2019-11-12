@@ -10,6 +10,7 @@ inline void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer
 inline void loadModels(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadSpheres(FILE* file, Sphere* spheres, size_t& numSpheres, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[SCENE_FILE_BUFFER_SIZE]);
+inline void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE]);
 
 void loadScene(const char* filepath, BetterScene& scene) {
 	FILE* file;
@@ -36,6 +37,8 @@ void loadScene(const char* filepath, BetterScene& scene) {
 				loadSpheres(file, scene.spheres, scene.numSpheres, buffer);
 			} else if (startsWith(ptr, "particleEmitters")) {
 				loadParticleEmitters(file, scene.emitters, scene.numEmitters, buffer);
+			} else if (startsWith(ptr, "terrain")) {
+				loadTerrain(file, scene.mTerrain, buffer);
 			}
 		} else if (ifEqualWalkToValue(ptr, "useDeferredRendering")) {
 			strToBool(ptr, scene.useDefferredRendering);
@@ -341,4 +344,32 @@ void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmit
 			break;
 		}
 	}
+}
+
+void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE]) {
+	GenerationParameters gp;
+	char* ptr;
+	while (processLine(file, buffer, ptr)) {
+		if (ifEqualWalkToValue(ptr, "size")) {
+			strToInt(ptr, gp.size);
+		} else if (ifEqualWalkToValue(ptr, "granularity")) {
+			strToInt(ptr, gp.granularity);
+		} else if (ifEqualWalkToValue(ptr, "permSize")) {
+			strToInt(ptr, gp.permSize);
+		} else if (ifEqualWalkToValue(ptr, "minMaxHeight")) {
+			strToFloat(ptr, gp.minMaxHeight);
+		} else if (ifEqualWalkToValue(ptr, "scaleFactor")) {
+			strToFloat(ptr, gp.scaleFactor);
+		} else if (ifEqualWalkToValue(ptr, "ampFactor")) {
+			strToFloat(ptr, gp.ampFactor);
+		} else if (ifEqualWalkToValue(ptr, "frequencyFactor")) {
+			strToFloat(ptr, gp.frequencyFactor);
+		} else if (ifEqualWalkToValue(ptr, "numOctaves")) {
+			strToInt(ptr, gp.numOctaves);
+		} else if (startsWith(ptr, END_OBJECT_TOKEN)) {
+			break;
+		}
+	}
+
+	initializeTerrain(terrain, gp);
 }

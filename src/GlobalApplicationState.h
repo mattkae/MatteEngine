@@ -16,7 +16,7 @@ struct GlobalApplicationState {
   std::string title = "Matte";
 
   GLfloat near = 1.f;
-  GLfloat far = 100.f;
+  GLfloat far = 1000.f;
 };
 
 extern GlobalApplicationState GlobalAppState;

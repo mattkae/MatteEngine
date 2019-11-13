@@ -11,6 +11,36 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 
+size_t castRayToModel(BetterScene& scene) {
+	Point cursorPosition = getCursorPosition();
+	
+	Vector4f ndcPoint;
+	ndcPoint.x = (2.f * cursorPosition.x) / GlobalAppState.floatWidth - 1.0f;
+	ndcPoint.y = 1.0f - (2.f * cursorPosition.y) / GlobalAppState.floatHeight;
+	ndcPoint.z = -1.0f;
+	ndcPoint.w = 1.0f;
+
+	Matrix4x4f inverseProj;
+	if (!inverse(getCameraProjection(scene.mCamera), inverseProj)) {
+		return -1;
+	}
+
+	Matrix4x4f inverseView;
+	if (!inverse(getCameraViewMatrix(scene.mCamera), inverseView)) {
+		return -1;
+	}
+
+	Vector4f rayEye = mult(inverseProj, ndcPoint);
+	Vector4f rayWorld = normalize(mult(inverseView, rayEye));
+
+	for (size_t mIdx = 0; mIdx < scene.numModels; mIdx++) {
+		const Model& model = scene.models[mIdx];
+		
+		// @TODO: Need a bounding box for each model
+	}
+	return -1;
+}
+
 void updateScene(BetterScene& scene, double dt) {
 	float dtFloat = static_cast<float>(dt);
 
@@ -32,6 +62,7 @@ void updateScene(BetterScene& scene, double dt) {
 
 	if (isLeftClickDown() && isDefaultFocused()) {
 		// @TODO: Cast a ray into the scene, and select an item
+		castRayToModel(scene);
 	}
 }
 

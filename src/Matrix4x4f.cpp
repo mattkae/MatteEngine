@@ -152,7 +152,132 @@ Matrix4x4f getProjection(GLfloat near,  GLfloat far, GLfloat fieldOfViewRadians,
 	};
 }
 
-// @TODO
-Matrix4x4f inverse(const Matrix4x4f& matrix) {
-	return matrix;
+// Honestly, this is too much of a pain to write myself. I stole it from here:
+// https://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
+bool inverse(const Matrix4x4f& m, Matrix4x4f& result) {
+	int i;
+
+	result.values[0] = m.values[5]  * m.values[10] * m.values[15] - 
+				m.values[5]  * m.values[11] * m.values[14] - 
+				m.values[9]  * m.values[6]  * m.values[15] + 
+				m.values[9]  * m.values[7]  * m.values[14] +
+				m.values[13] * m.values[6]  * m.values[11] - 
+				m.values[13] * m.values[7]  * m.values[10];
+
+	result.values[4] = -m.values[4]  * m.values[10] * m.values[15] + 
+				m.values[4]  * m.values[11] * m.values[14] + 
+				m.values[8]  * m.values[6]  * m.values[15] - 
+				m.values[8]  * m.values[7]  * m.values[14] - 
+				m.values[12] * m.values[6]  * m.values[11] + 
+				m.values[12] * m.values[7]  * m.values[10];
+
+	result.values[8] = m.values[4]  * m.values[9] * m.values[15] - 
+				m.values[4]  * m.values[11] * m.values[13] - 
+				m.values[8]  * m.values[5] * m.values[15] + 
+				m.values[8]  * m.values[7] * m.values[13] + 
+				m.values[12] * m.values[5] * m.values[11] - 
+				m.values[12] * m.values[7] * m.values[9];
+
+	result.values[12] = -m.values[4]  * m.values[9] * m.values[14] + 
+				m.values[4]  * m.values[10] * m.values[13] +
+				m.values[8]  * m.values[5] * m.values[14] - 
+				m.values[8]  * m.values[6] * m.values[13] - 
+				m.values[12] * m.values[5] * m.values[10] + 
+				m.values[12] * m.values[6] * m.values[9];
+
+	result.values[1] = -m.values[1]  * m.values[10] * m.values[15] + 
+				m.values[1]  * m.values[11] * m.values[14] + 
+				m.values[9]  * m.values[2] * m.values[15] - 
+				m.values[9]  * m.values[3] * m.values[14] - 
+				m.values[13] * m.values[2] * m.values[11] + 
+				m.values[13] * m.values[3] * m.values[10];
+
+	result.values[5] = m.values[0]  * m.values[10] * m.values[15] - 
+				m.values[0]  * m.values[11] * m.values[14] - 
+				m.values[8]  * m.values[2] * m.values[15] + 
+				m.values[8]  * m.values[3] * m.values[14] + 
+				m.values[12] * m.values[2] * m.values[11] - 
+				m.values[12] * m.values[3] * m.values[10];
+
+	result.values[9] = -m.values[0]  * m.values[9] * m.values[15] + 
+				m.values[0]  * m.values[11] * m.values[13] + 
+				m.values[8]  * m.values[1] * m.values[15] - 
+				m.values[8]  * m.values[3] * m.values[13] - 
+				m.values[12] * m.values[1] * m.values[11] + 
+				m.values[12] * m.values[3] * m.values[9];
+
+	result.values[13] = m.values[0]  * m.values[9] * m.values[14] - 
+				m.values[0]  * m.values[10] * m.values[13] - 
+				m.values[8]  * m.values[1] * m.values[14] + 
+				m.values[8]  * m.values[2] * m.values[13] + 
+				m.values[12] * m.values[1] * m.values[10] - 
+				m.values[12] * m.values[2] * m.values[9];
+
+	result.values[2] = m.values[1]  * m.values[6] * m.values[15] - 
+				m.values[1]  * m.values[7] * m.values[14] - 
+				m.values[5]  * m.values[2] * m.values[15] + 
+				m.values[5]  * m.values[3] * m.values[14] + 
+				m.values[13] * m.values[2] * m.values[7] - 
+				m.values[13] * m.values[3] * m.values[6];
+
+	result.values[6] = -m.values[0]  * m.values[6] * m.values[15] + 
+				m.values[0]  * m.values[7] * m.values[14] + 
+				m.values[4]  * m.values[2] * m.values[15] - 
+				m.values[4]  * m.values[3] * m.values[14] - 
+				m.values[12] * m.values[2] * m.values[7] + 
+				m.values[12] * m.values[3] * m.values[6];
+
+	result.values[10] = m.values[0]  * m.values[5] * m.values[15] - 
+				m.values[0]  * m.values[7] * m.values[13] - 
+				m.values[4]  * m.values[1] * m.values[15] + 
+				m.values[4]  * m.values[3] * m.values[13] + 
+				m.values[12] * m.values[1] * m.values[7] - 
+				m.values[12] * m.values[3] * m.values[5];
+
+	result.values[14] = -m.values[0]  * m.values[5] * m.values[14] + 
+				m.values[0]  * m.values[6] * m.values[13] + 
+				m.values[4]  * m.values[1] * m.values[14] - 
+				m.values[4]  * m.values[2] * m.values[13] - 
+				m.values[12] * m.values[1] * m.values[6] + 
+				m.values[12] * m.values[2] * m.values[5];
+
+	result.values[3] = -m.values[1] * m.values[6] * m.values[11] + 
+				m.values[1] * m.values[7] * m.values[10] + 
+				m.values[5] * m.values[2] * m.values[11] - 
+				m.values[5] * m.values[3] * m.values[10] - 
+				m.values[9] * m.values[2] * m.values[7] + 
+				m.values[9] * m.values[3] * m.values[6];
+
+	result.values[7] = m.values[0] * m.values[6] * m.values[11] - 
+				m.values[0] * m.values[7] * m.values[10] - 
+				m.values[4] * m.values[2] * m.values[11] + 
+				m.values[4] * m.values[3] * m.values[10] + 
+				m.values[8] * m.values[2] * m.values[7] - 
+				m.values[8] * m.values[3] * m.values[6];
+
+	result.values[11] = -m.values[0] * m.values[5] * m.values[11] + 
+				m.values[0] * m.values[7] * m.values[9] + 
+				m.values[4] * m.values[1] * m.values[11] - 
+				m.values[4] * m.values[3] * m.values[9] - 
+				m.values[8] * m.values[1] * m.values[7] + 
+				m.values[8] * m.values[3] * m.values[5];
+
+	result.values[15] = m.values[0] * m.values[5] * m.values[10] - 
+				m.values[0] * m.values[6] * m.values[9] - 
+				m.values[4] * m.values[1] * m.values[10] + 
+				m.values[4] * m.values[2] * m.values[9] + 
+				m.values[8] * m.values[1] * m.values[6] - 
+				m.values[8] * m.values[2] * m.values[5];
+
+	float det = m.values[0] *result.values[0] + m.values[1] *result.values[4] + m.values[2] *result.values[8] + m.values[3] *result.values[12];
+
+	if (det == 0)
+		return false;
+
+	det = 1.0 / det;
+
+	for (i = 0; i < 16; i++)
+		result.values[i] = result.values[i] * det;
+
+	return true;
 }

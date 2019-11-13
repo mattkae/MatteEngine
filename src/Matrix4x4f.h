@@ -24,4 +24,4 @@ Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate);
 Matrix4x4f transpose(const Matrix4x4f& matrix);
 Matrix4x4f getLookAt(const Vector3f& eye, const Vector3f& pointToLookAt, const Vector3f& up);
 Matrix4x4f getProjection(GLfloat near,  GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio);
-Matrix4x4f inverse(const Matrix4x4f& matrix);
+bool inverse(const Matrix4x4f& matrix, Matrix4x4f& result);

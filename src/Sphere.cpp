@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 
-void initializeSphere(Sphere& sphere) {
+void initializeSphere(const Sphere& sphere, Model& model) {
     std::vector<Vertex> vertices;
     std::vector<GLint> indices;
 
@@ -55,16 +55,10 @@ void initializeSphere(Sphere& sphere) {
         }
     }
 
-    sphere.mesh.vertices = vertices;
-    sphere.mesh.indicies = indices;
-    initializeMesh(sphere.mesh);
-}
-
-void renderSphere(const Sphere& sphere, const Shader& shader, bool withMaterial) {
-	setShaderMat4(shader, "uModel", sphere.model);
-	renderMesh(sphere.mesh, shader, withMaterial);
-}
-
-void freeSphere(Sphere& sphere) {
-	freeMesh(sphere.mesh);
+	model.model = sphere.model;
+	model.meshes.push_back({
+		vertices,
+		indices
+	});
+    initializeModel(model);
 }

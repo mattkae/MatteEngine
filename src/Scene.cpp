@@ -29,6 +29,10 @@ void updateScene(BetterScene& scene, double dt) {
 	}
 
 	scene.ui.update(dt);
+
+	if (isLeftClickDown() && isDefaultFocused()) {
+		// @TODO: Cast a ray into the scene, and select an item
+	}
 }
 
 void renderShadows(const BetterScene& scene) {
@@ -72,10 +76,6 @@ void renderModels(const BetterScene& scene, const Shader &shader, bool withMater
 
     for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
         renderModel(scene.models[modelIdx], shader, withMaterial);
-    }
-
-    for (size_t sphereIdx = 0; sphereIdx < scene.numSpheres; sphereIdx++) {
-	    renderSphere(scene.spheres[sphereIdx], shader, withMaterial);
     }
 }
 
@@ -137,11 +137,6 @@ void freeScene(BetterScene& scene) {
         freeModel(scene.models[modelIdx]);
     }
 	scene.numModels = 0;
-
-    for (size_t sphereIdx = 0; sphereIdx < scene.numSpheres; sphereIdx++) {
-	    freeSphere(scene.spheres[sphereIdx]);
-    }
-	scene.numSpheres = 0;
 	
 	for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
 		freeLight(scene.lights[lidx]);

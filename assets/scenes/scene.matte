@@ -41,7 +41,7 @@ useDeferredRendering    false
     ;;
     ::
         path        assets/simple_arrow.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 10 1
+        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 10 1
     ;;
 ;;
 

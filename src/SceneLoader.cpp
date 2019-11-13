@@ -1,6 +1,7 @@
 #include "SceneLoader.h"
 #include "ObjModel.h"
 #include "SceneUI.h"
+#include "Sphere.h"
 
 const char* START_OBJECT_TOKEN = "::";
 const char* END_OBJECT_TOKEN = ";;";
@@ -9,7 +10,7 @@ const char* IGNORE_OBJECT_TOKEN = "//";
 inline void loadSkybox(FILE* file, Skybox& skybox, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader);
 inline void loadModels(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
-inline void loadSpheres(FILE* file, Sphere* spheres, size_t& numSpheres, char buffer[SCENE_FILE_BUFFER_SIZE]);
+inline void loadSpheres(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void ignoreObject(FILE* file, char buffer[SCENE_FILE_BUFFER_SIZE]) {
@@ -43,7 +44,7 @@ void loadScene(const char* filepath, BetterScene& scene) {
 			} else if (startsWith(ptr, "models")) {
 				loadModels(file, scene.models, scene.numModels, buffer);
 			} else if (startsWith(ptr, "spheres")) {
-				loadSpheres(file, scene.spheres, scene.numSpheres, buffer);
+				loadSpheres(file, scene.models, scene.numModels, buffer);
 			} else if (startsWith(ptr, "particleEmitters")) {
 				loadParticleEmitters(file, scene.emitters, scene.numEmitters, buffer);
 			} else if (startsWith(ptr, "terrain")) {
@@ -185,7 +186,6 @@ inline void loadModel(FILE* file, Model& model, char buffer[SCENE_FILE_BUFFER_SI
 }
 
 void loadModels(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
-	numModels = 0;
 	char* ptr;
 	while (processLine(file,buffer,  ptr)) {
 		if (startsWith(ptr, START_OBJECT_TOKEN)) {
@@ -197,8 +197,9 @@ void loadModels(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_
 	}
 }
 
-inline void loadSphere(FILE* file, Sphere& sphere, char buffer[SCENE_FILE_BUFFER_SIZE]) {
+inline void loadSphere(FILE* file, Model& model, char buffer[SCENE_FILE_BUFFER_SIZE]) {
 	char* ptr;
+	Sphere sphere;
 	while (processLine(file,buffer,  ptr)) {
 		if (ifEqualWalkToValue(ptr, "radius")) {
 			strToInt(ptr, sphere.radius);
@@ -211,16 +212,15 @@ inline void loadSphere(FILE* file, Sphere& sphere, char buffer[SCENE_FILE_BUFFER
 		}
 	}
 
-	initializeSphere(sphere);
+	initializeSphere(sphere, model);
 }
 
-void loadSpheres(FILE* file, Sphere* spheres, size_t& numSpheres, char buffer[SCENE_FILE_BUFFER_SIZE]) {
-	numSpheres = 0;
+void loadSpheres(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
 	char* ptr;
 	while (processLine(file,buffer,  ptr)) {
 		if (startsWith(ptr, START_OBJECT_TOKEN)) {
-			loadSphere(file, spheres[numSpheres], buffer);
-			numSpheres++;
+			loadSphere(file, models[numModels], buffer);
+			numModels++;
 		} else if (startsWith(ptr, END_OBJECT_TOKEN)) {
 			break;
 		}

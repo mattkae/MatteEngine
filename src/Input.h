@@ -19,5 +19,6 @@ int getInputFocus();
 int getCurrentKeyDown(int focusToken);
 int getCurrentScancode(int focusToken);
 void getWindowDimensions(int& width, int& height);
+bool isDefaultFocused();
 
 #endif

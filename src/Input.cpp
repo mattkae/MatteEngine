@@ -149,3 +149,7 @@ int getCurrentScancode(int focusToken) {
 void getWindowDimensions(int& width, int& height) {
 	glfwGetWindowSize(globalInput.window, &width, &height);
 }
+
+bool isDefaultFocused() {
+	return checkFocusToken(DEFAULT_FOCUS_TOKEN);
+}

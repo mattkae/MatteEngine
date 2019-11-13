@@ -1,7 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "Mesh.h"
+#include "Model.h"
 #include "Shader.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -11,11 +11,8 @@ struct Sphere {
     int radius = 1;
 	float angleIncrements = 5.f;
     glm::mat4 model = glm::mat4(1.0);
-    Mesh mesh;
 };
 
-void initializeSphere(Sphere& sphere);
-void renderSphere(const Sphere& sphere, const Shader& shader, bool withMaterial = true);
-void freeSphere(Sphere& sphere);
+void initializeSphere(const Sphere& sphere, Model& model);
 
 #endif

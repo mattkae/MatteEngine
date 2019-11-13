@@ -7,7 +7,6 @@
 #include "ParticleEmitter.h"
 #include "Shader.h"
 #include "Skybox.h"
-#include "Sphere.h"
 #include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
 #include "UI/UI.h"
@@ -20,11 +19,9 @@
 
 struct BetterScene {
 	Model models[32];
-	size_t numModels;
+	size_t numModels = 0;
     Light lights[MAX_LIGHTS];
 	size_t numLightsUsed = 0;
-	Sphere spheres[32];
-	size_t numSpheres;
 	ParticleEmitter emitters[32];
 	size_t numEmitters;
 

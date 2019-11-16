@@ -8,6 +8,29 @@ Rectangle getRectangle(const TextInput& input, const TextRenderer& textRenderer)
 	return { input.bt.rect.x, input.bt.rect.y, input.bt.rect.w, getBoundTextHeight(input.bt, textRenderer) };
 }
 
+inline void setInternalRepresentation(TextInput& textInput, bool force) {
+	if (textInput.representation.size() != 0 && !force) {
+		return;
+	}
+
+	switch (textInput.inputType) {
+	case TextInputType::TEXT: 
+		textInput.representation = *textInput.value.sVal;
+		break;
+	case TextInputType::INT:
+		textInput.representation = std::to_string(*textInput.value.iVal);
+		break;
+	case TextInputType::FLOAT: 
+		textInput.representation = std::to_string(*textInput.value.fVal);
+		break;
+	default:
+		// @TODO: Log error
+		break;
+	}
+
+	textInput.cursorPosition = textInput.representation.length();
+}
+
 inline void onStrChange(TextInput& textInput, std::string v) {
 	switch (textInput.inputType) {
 	case TextInputType::TEXT: {
@@ -26,31 +49,12 @@ inline void onStrChange(TextInput& textInput, std::string v) {
 		// @TODO: Log error
 		break;
 	}
-}
 
-inline void setInternalRepresentation(TextInput& textInput) {
-	if (textInput.representation.size() != 0) {
-		return;
-	}
-
-	switch (textInput.inputType) {
-	case TextInputType::TEXT: 
-		textInput.representation = *textInput.value.sVal;
-		break;
-	case TextInputType::INT:
-		textInput.representation = std::to_string(*textInput.value.iVal);
-		break;
-	case TextInputType::FLOAT: 
-		textInput.representation = std::to_string(*textInput.value.fVal);
-		break;
-	default:
-		// @TODO: Log error
-		break;
-	}
+	setInternalRepresentation(textInput, true);
 }
 
 void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
-	setInternalRepresentation(textInput);
+	setInternalRepresentation(textInput, false);
 	textInput.bt.rect = getRectangle(textInput, textRenderer);
 
 	if (!textInput.isFocused) {
@@ -62,6 +66,7 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 		if (isLeftClickDown() && !isClicked(textInput.bt.rect)) {
 			returnFocus(textInput.focusToken);
 			textInput.isFocused = false;
+			onStrChange(textInput, textInput.representation);
 		}
 	}
 
@@ -70,11 +75,14 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 
 	if (key > -1 && isKeyJustDown(key, textInput.focusToken)) {
 		switch (key) {
+		case GLFW_KEY_ENTER:
+			onStrChange(textInput, textInput.representation);
+			break;
 		case GLFW_KEY_LEFT:
 			textInput.cursorPosition = textInput.cursorPosition == 0 ? 0 : textInput.cursorPosition - 1;
 			break;
 		case GLFW_KEY_RIGHT: {
-			textInput.cursorPosition = textInput.cursorPosition == textInput.representation.size() ? textInput.representation.size() : textInput.cursorPosition + 1;
+			textInput.cursorPosition = textInput.cursorPosition == textInput.representation.length() ? textInput.representation.length() : textInput.cursorPosition + 1;
 			break;
 		}
 		case GLFW_KEY_BACKSPACE:
@@ -82,8 +90,6 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 				textInput.representation.erase(textInput.cursorPosition - 1, 1);
 				textInput.cursorPosition--;
 			}
-
-			onStrChange(textInput, textInput.representation);
 			break;
 		case GLFW_KEY_LEFT_SHIFT:
 		case GLFW_KEY_RIGHT_SHIFT:
@@ -109,7 +115,6 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 				}
 
 				textInput.cursorPosition++;
-				onStrChange(textInput, textInput.representation);
 			}
 		}
 	}

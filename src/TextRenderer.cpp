@@ -155,6 +155,7 @@ GLfloat TextRenderer::getStringWidth(std::string str, GLfloat scale) const {
 	for (auto it = str.cbegin(); it != str.cend(); ++it) {
         CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(*it);
 		width += renderInfo.size.x;
+		width += renderInfo.bearing.x;
     }
 
 	return width;

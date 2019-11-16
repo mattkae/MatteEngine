@@ -8,16 +8,13 @@
 #include "../LightweightArray.h"
 #include <vector>
 
-class Scene;
- class UI {
- public:
-	 UI();
-	 void generate();
-	 void update(double dt);
-	 void render() const;
-
-	 LightweightArray<UIContext> context;
- private:
+struct UI {
 	 Shader mOrthographicShader;
 	 TextRenderer mTextRenderer;
- };
+	 LightweightArray<UIContext> context;
+};
+
+void initUI(UI& ui);
+void updateUI(UI& ui, double dt);
+void renderUI(const UI& ui);
+void freeUI(UI& ui);

@@ -73,8 +73,7 @@ void loadScene(const char* filepath, BetterScene& scene) {
 		}
 	}
 
-	scene.ui.generate();
-
+	initUI(scene.ui);
 	getSceneUI(scene, scene.ui);
 
 	scene.isDying = false;

@@ -29,10 +29,11 @@ struct UIContext {
 	Panel panel;
 	bool isActive = true;
 	bool shouldOpen = false;
+	bool shouldClose = true;
 	LightweightArray<UIElement> uiElements;
-	LightweightArray<UIContext*> deactivationDeps;
 	GLfloat spaceBetweenElements = 2.f;
 };
 
 void updateUIContext(UIContext& context, const TextRenderer& textRenderer);
 void renderUIContext(const UIContext& context, const Shader& shader, const TextRenderer& renderer);
+void freeUIContext(UIContext& context);

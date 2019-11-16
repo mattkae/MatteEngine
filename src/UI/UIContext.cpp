@@ -2,11 +2,8 @@
 #include "../GlobalApplicationState.h"
 
 void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
+
 	if (context.shouldOpen && !context.isActive) {
-		// Shutdown UIContexts that would interfere with thie context
-		for (size_t dIdx = 0; dIdx < context.deactivationDeps.size; dIdx++) {
-			context.deactivationDeps.elements[dIdx]->isActive = false;
-		}
 		context.isActive = true;
 	}
 
@@ -85,4 +82,8 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 			break;
 		}
 	}
+}
+
+void freeUIContext(UIContext& context) {
+	deallocateArray(context.uiElements);
 }

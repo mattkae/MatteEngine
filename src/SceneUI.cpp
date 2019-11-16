@@ -18,11 +18,6 @@ void getSceneUI(BetterScene& scene, UI& ui) {
 	// Model editor panels
 	for (size_t mIdx = 0; mIdx < scene.numModels; mIdx++) {
 		UIContext& modelContext = ui.context.elements[uiContextIndex];
-		allocateArray(modelContext.deactivationDeps, numRightPanels);
-		for (size_t dIdx = 1; dIdx <= numRightPanels; dIdx++) {
-			modelContext.deactivationDeps.elements[dIdx - 1] = &ui.context.elements[dIdx];
-		}
-
 		getModelEditor(scene.models[mIdx], modelContext, mIdx);
 		uiContextIndex++;
 	}

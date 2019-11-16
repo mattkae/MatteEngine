@@ -58,7 +58,7 @@ void updateScene(BetterScene& scene, double dt) {
 		updateParticleEmitter(scene.emitters[eIdx], dtFloat);
 	}
 
-	scene.ui.update(dt);
+	updateUI(scene.ui, dt);
 
 	if (isLeftClickDown() && isDefaultFocused()) {
 		// @TODO: Cast a ray into the scene, and select an item
@@ -147,7 +147,7 @@ void renderDirect(const BetterScene& scene) {
     glDisable(GL_BLEND);
 	renderNonDeferred(scene);
 
-	scene.ui.render();
+	renderUI(scene.ui);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -179,6 +179,7 @@ void freeScene(BetterScene& scene) {
 	}
 	scene.numEmitters = 0;
 
+	freeUI(scene.ui);
 	freeSkybox(scene.mSkybox);
     freeTerrain(scene.mTerrain);
     scene.mDeferredBuffer.free();

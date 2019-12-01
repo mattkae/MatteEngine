@@ -1,11 +1,11 @@
 #pragma once
-#include <GL/GL.h>
 #include "../Vector3f.h"
 #include "../Vector4f.h"
 #include "../Matrix4x4f.h"
 #include "../Camera.h"
 #include <algorithm>
 #include "../Shader.h"
+#include <GL/glew.h>
 
 struct Box {
 	Vector4f lowerLeft;
@@ -51,3 +51,5 @@ inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Vector
 
 	return max >= std::max(min, 0.f);
 }
+
+void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader);

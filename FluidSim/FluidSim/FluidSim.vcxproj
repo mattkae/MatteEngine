@@ -37,6 +37,7 @@
     <ClCompile Include="..\..\src\ObjModel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Physics.cpp" />
+    <ClCompile Include="..\..\src\Primitives\Box.cpp" />
     <ClCompile Include="..\..\src\Primitives\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />

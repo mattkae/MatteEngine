@@ -26,14 +26,14 @@ useDeferredRendering    false
     ;;
 ;;
 
-::models
+//::models
     ::
         path        assets/Transparent.obj
         transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
     ;;
 ;;
 
-//::spheres
+::spheres
     ::
         radius          1
         transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1

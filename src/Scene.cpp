@@ -119,7 +119,9 @@ void renderModels(const BetterScene& scene, const Shader &shader, bool withMater
 }
 
 void renderDebug(const BetterScene& scene) {
-
+	for (size_t boxIndex = 0; boxIndex < scene.numModels; boxIndex++) {
+		renderBoxOutline(scene.modelBoundingBoxes[boxIndex], scene.models[boxIndex].model, scene.mSceneShader);
+	}
 }
 
 void renderDirect(const BetterScene& scene) {
@@ -158,10 +160,10 @@ void renderDirect(const BetterScene& scene) {
 
     glDisable(GL_BLEND);
 	renderNonDeferred(scene);
+	renderDebug(scene);
 
 	renderUI(scene.ui);
 
-	renderDebug(scene);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {

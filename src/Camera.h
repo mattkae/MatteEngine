@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 
 struct BetterCamera {
-	Vector3f position = { 0, 0, 1 };
+	Vector3f position = { 0, 0, 5 };
 	Vector3f up = { 0, 1, 0 };
 	Vector3f right = { 1, 0, 0 };
 	Vector3f forward = { 0, 0, 1 };

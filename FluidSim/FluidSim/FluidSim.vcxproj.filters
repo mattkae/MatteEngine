@@ -268,5 +268,8 @@
     <ClInclude Include="..\..\src\SceneLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Primitives\Box.h">
+      <Filter>Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

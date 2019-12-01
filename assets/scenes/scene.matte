@@ -28,24 +28,12 @@ useDeferredRendering    false
 
 ::models
     ::
-        path        assets/sword/sword.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 5 0 1
-    ;;
-    ::
-        path        assets/floor.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
-    ;;
-    ::
         path        assets/Transparent.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 3 1
-    ;;
-    ::
-        path        assets/simple_arrow.obj
-        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 10 1
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
     ;;
 ;;
 
-::spheres
+//::spheres
     ::
         radius          1
         transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
@@ -53,7 +41,7 @@ useDeferredRendering    false
     ;;
 ;; 
 
-::particleEmitters
+//::particleEmitters
     ::
         model               1 0 0 0 0 1 0 0 0 0 1 0 0 3 0 1
         ::spawnFrequencySeconds

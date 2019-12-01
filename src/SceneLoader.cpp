@@ -9,8 +9,8 @@ const char* IGNORE_OBJECT_TOKEN = "//";
 
 inline void loadSkybox(FILE* file, Skybox& skybox, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader);
-inline void loadModels(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
-inline void loadSpheres(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
+inline void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
+inline void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void ignoreObject(FILE* file, char buffer[SCENE_FILE_BUFFER_SIZE]) {
@@ -42,9 +42,9 @@ void loadScene(const char* filepath, BetterScene& scene) {
 			} else if (startsWith(ptr, "lights")) {
 				loadLights(file, scene.lights, scene.numLightsUsed, buffer, scene.mSceneShader);
 			} else if (startsWith(ptr, "models")) {
-				loadModels(file, scene.models, scene.numModels, buffer);
+				loadModels(file, scene.models, scene.modelBoundingBoxes, scene.numModels, buffer);
 			} else if (startsWith(ptr, "spheres")) {
-				loadSpheres(file, scene.models, scene.numModels, buffer);
+				loadSpheres(file, scene.models, scene.modelBoundingBoxes, scene.numModels, buffer);
 			} else if (startsWith(ptr, "particleEmitters")) {
 				loadParticleEmitters(file, scene.emitters, scene.numEmitters, buffer);
 			} else if (startsWith(ptr, "terrain")) {
@@ -169,26 +169,26 @@ void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_
 	}
 }
 
-inline void loadModel(FILE* file, Model& model, char buffer[SCENE_FILE_BUFFER_SIZE]) {
+inline void loadModel(FILE* file, Model& model, Box& box, char buffer[SCENE_FILE_BUFFER_SIZE]) {
 	char* ptr;
 	while (processLine(file,buffer,  ptr)) {
 		if (ifEqualWalkToValue(ptr, "path")) {
 			loadFromObj(ptr, model);
 		} else if (ifEqualWalkToValue(ptr, "transform")) {
-			strToMat4(ptr, model.model);
+			strToMyMat4(ptr, model.model);
 		} else if (startsWith(ptr, END_OBJECT_TOKEN)) {
 			break;
 		}
 	}
 
-	initializeModel(model);
+	initializeModel(model, box);
 }
 
-void loadModels(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
+void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
 	char* ptr;
 	while (processLine(file,buffer,  ptr)) {
 		if (startsWith(ptr, START_OBJECT_TOKEN)) {
-			loadModel(file, models[numModels], buffer);
+			loadModel(file, models[numModels], boxes[numModels], buffer);
 			numModels++;
 		} else if (startsWith(ptr, END_OBJECT_TOKEN)) {
 			break;
@@ -196,7 +196,7 @@ void loadModels(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_
 	}
 }
 
-inline void loadSphere(FILE* file, Model& model, char buffer[SCENE_FILE_BUFFER_SIZE]) {
+inline void loadSphere(FILE* file, Model& model, Box& box, char buffer[SCENE_FILE_BUFFER_SIZE]) {
 	char* ptr;
 	Sphere sphere;
 	while (processLine(file,buffer,  ptr)) {
@@ -205,20 +205,20 @@ inline void loadSphere(FILE* file, Model& model, char buffer[SCENE_FILE_BUFFER_S
 		} else if (ifEqualWalkToValue(ptr, "radius")) {
 			strToFloat(ptr, sphere.angleIncrements);
 		} else if (ifEqualWalkToValue(ptr, "transform")) {
-			strToMat4(ptr, sphere.model);
+			strToMyMat4(ptr, sphere.model);
 		} else if (startsWith(ptr, END_OBJECT_TOKEN)) {
 			break;
 		}
 	}
 
-	initializeSphere(sphere, model);
+	initializeSphere(sphere, model, box);
 }
 
-void loadSpheres(FILE* file, Model* models, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
+void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
 	char* ptr;
 	while (processLine(file,buffer,  ptr)) {
 		if (startsWith(ptr, START_OBJECT_TOKEN)) {
-			loadSphere(file, models[numModels], buffer);
+			loadSphere(file, models[numModels], boxes[numModels], buffer);
 			numModels++;
 		} else if (startsWith(ptr, END_OBJECT_TOKEN)) {
 			break;

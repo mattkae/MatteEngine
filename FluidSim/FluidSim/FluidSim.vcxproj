@@ -75,6 +75,7 @@
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\Matrix3x3f.h" />
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
+    <ClInclude Include="..\..\src\Primitives\Box.h" />
     <ClInclude Include="..\..\src\Primitives\Point.h" />
     <ClInclude Include="..\..\src\Primitives\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />

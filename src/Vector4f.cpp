@@ -1,4 +1,5 @@
 #include "Vector4f.h"
+#include "Logger.h"
 
 Vector4f addVector(const Vector4f& first, const Vector4f& second) {
 	return {
@@ -70,4 +71,8 @@ Vector4f cross(const Vector4f& first, const Vector4f& second) {
 		first.x * second.y - first.y * second.x,
 		1.f
 	};
+}
+
+void logVector4f(const Vector4f& v, std::string variableName) {
+	Logger::logInfo(variableName + " = (" + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " + std::to_string(v.z) + ", " + std::to_string(v.w) + ")");
 }

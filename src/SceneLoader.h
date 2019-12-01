@@ -154,6 +154,20 @@ inline void strToMat4(char* ptr, glm::mat4& v) {
 	}
 }
 
+inline void strToMyMat4(char* ptr, Matrix4x4f& v) {
+	size_t index = 0;
+	char value[32];
+	while (index < 16 && ptr[0] != '\0' && ptr[0] != '\n') {
+		size_t toSpace = getLengthToSpace(ptr);
+		substring(value, ptr, toSpace);
+		ptr += toSpace + 1;
+		float fvalue = std::stof(value);
+
+		v.values[index] = fvalue;
+		index++;
+	}
+}
+
 inline void strToBool(char* ptr, bool& value) {
 	if (startsWith(ptr, "true")) {
 		value = true;

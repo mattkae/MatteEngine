@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 
-void initializeSphere(const Sphere& sphere, Model& model) {
+void initializeSphere(const Sphere& sphere, Model& model, Box& box) {
     std::vector<Vertex> vertices;
     std::vector<GLint> indices;
 
@@ -60,5 +60,5 @@ void initializeSphere(const Sphere& sphere, Model& model) {
 		vertices,
 		indices
 	});
-    initializeModel(model);
+    initializeModel(model, box);
 }

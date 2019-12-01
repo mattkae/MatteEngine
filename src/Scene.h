@@ -15,15 +15,18 @@
 #include <vector>
 #include <thread>
 #include "shaders/Light.shared.cpp"
-
+#include "Primitives/Box.h"
 
 struct BetterScene {
 	Model models[32];
+	Box modelBoundingBoxes[32];
 	size_t numModels = 0;
+
+
     Light lights[MAX_LIGHTS];
 	size_t numLightsUsed = 0;
 	ParticleEmitter emitters[32];
-	size_t numEmitters;
+	size_t numEmitters = 0;
 
     Terrain mTerrain;
     Skybox mSkybox;

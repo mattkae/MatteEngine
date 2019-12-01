@@ -14,10 +14,12 @@
 size_t castRayToModel(BetterScene& scene) {
 	Point cursorPosition = getCursorPosition();
 	
+	// Most of my understanding of how I was to get the ray from the point clicked
+	// on screen comes from here: http://antongerdelan.net/opengl/raycasting.html
 	Vector4f ndcPoint;
 	ndcPoint.x = (2.f * cursorPosition.x) / GlobalAppState.floatWidth - 1.0f;
 	ndcPoint.y = 1.0f - (2.f * cursorPosition.y) / GlobalAppState.floatHeight;
-	ndcPoint.z = -1.0f;
+	ndcPoint.z = 1.0f;
 	ndcPoint.w = 1.0f;
 
 	Matrix4x4f inverseProj;
@@ -31,12 +33,18 @@ size_t castRayToModel(BetterScene& scene) {
 	}
 
 	Vector4f rayEye = mult(inverseProj, ndcPoint);
+	rayEye.z = -1.f;
+	rayEye.w = 0.f;
 	Vector4f rayWorld = normalize(mult(inverseView, rayEye));
+	logVector4f(rayWorld, "rayWorld");
 
 	for (size_t mIdx = 0; mIdx < scene.numModels; mIdx++) {
+		const Box& box = scene.modelBoundingBoxes[mIdx];
 		const Model& model = scene.models[mIdx];
-		
-		// @TODO: Need a bounding box for each model
+
+		if (isBoxInRayPath(box, model.model, rayWorld, scene.mCamera)) {
+			printf("Here\n");
+		}
 	}
 	return -1;
 }
@@ -110,6 +118,10 @@ void renderModels(const BetterScene& scene, const Shader &shader, bool withMater
     }
 }
 
+void renderDebug(const BetterScene& scene) {
+
+}
+
 void renderDirect(const BetterScene& scene) {
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -148,6 +160,8 @@ void renderDirect(const BetterScene& scene) {
 	renderNonDeferred(scene);
 
 	renderUI(scene.ui);
+
+	renderDebug(scene);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {

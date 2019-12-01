@@ -10,13 +10,15 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
+#include "Primitives/Box.h"
+#include "Matrix4x4f.h"
 
 struct Model {
-    glm::mat4 model = glm::mat4(0);
+    Matrix4x4f model;
     std::vector<Mesh> meshes;
 };
 
-void initializeModel(Model& model);
+void initializeModel(Model& model, Box& box);
 void renderModel(const Model& model, const Shader& shader, bool withMaterial = true);
 void freeModel(Model& model);
 

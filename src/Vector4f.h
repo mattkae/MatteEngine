@@ -1,6 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <cmath>
+#include <string>
 
 struct Vector4f {
 	GLfloat x = 0;
@@ -18,3 +19,4 @@ Vector4f negate(const Vector4f& v);
 Vector4f toCartesian(const Vector4f& v);
 Vector4f normalize(const Vector4f& v);
 Vector4f cross(const Vector4f& first, const Vector4f& second);
+void logVector4f(const Vector4f& v, std::string variableName);

@@ -88,7 +88,7 @@ void getModelEditor(Model& model, UIContext& retval, size_t elementIdx) {
 
 		textInput.isFocused = false;
 		textInput.inputType = TextInputType::FLOAT;
-		textInput.value.fVal = &model.model[3][translationComponentIndex];
+		textInput.value.fVal = &model.model.values[12 + translationComponentIndex];
 		textInput.textColor = glm::vec4(0, 0, 0, 1);
 		textInput.backgroundColor = glm::vec4(0.9, 0.9, 0.9, 1);
 		textInput.focusedBackgroundColor = glm::vec4(1, 1, 1, 1);

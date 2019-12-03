@@ -63,10 +63,17 @@ void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& sha
 		initializeRenderableBox();
 	}
 
+	Vector3f scale = {
+		fabsf(box.upperRight.x - box.lowerLeft.x) / 2.f,
+		fabsf(box.upperRight.y - box.lowerLeft.y) / 2.f,
+		fabsf(box.upperRight.z - box.lowerLeft.z) / 2.f,
+	};
+
+	Matrix4x4f scaledModel = scaleMatrix(model, scale);
+
 	glBindVertexArray(globalBox.vao);
-	setShaderMat4(shader, "uModel", model);
+	setShaderMat4(shader, "uModel", scaledModel);
 	setShaderVec3(shader, "uMaterial.emissive", glm::vec3(1, 0, 0));
-	glLineWidth(4);
 	glDrawArrays(GL_LINE_LOOP, 0, 36);
 	glBindVertexArray(0);
 }

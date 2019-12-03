@@ -9,11 +9,25 @@ constexpr Matrix4x4f getIdentity() {
 	return result;
 }
 
+inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {
+	Matrix4x4f result;
+	memcpy(result.values, matrix.values,  16 * sizeof(GLfloat));
+	return result;
+}
+
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale) {
-	Matrix4x4f result = matrix;
+	Matrix4x4f result = copyMatrix(matrix);;
 	result.values[0] *= scale;
 	result.values[5] *= scale;
 	result.values[10] *= scale;
+	return result;
+}
+
+Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale) {
+	Matrix4x4f result = copyMatrix(matrix);
+	result.values[0] *= scale.x;
+	result.values[5] *= scale.y;
+	result.values[10] *= scale.z;
 	return result;
 }
 
@@ -79,7 +93,7 @@ Matrix4x4f getZRotationMatrix(GLfloat angleRadians) {
 }
 
 Matrix4x4f rotate(const Matrix4x4f matrix, GLfloat xRadians, GLfloat yRadians, GLfloat zRadians) {
-	Matrix4x4f result = matrix;
+	Matrix4x4f result = copyMatrix(matrix);;
 	Matrix4x4f rotationMatrix;
 	if (xRadians != 0) {
 		rotationMatrix = getXRotationMatrix(xRadians);
@@ -100,7 +114,7 @@ Matrix4x4f rotate(const Matrix4x4f matrix, GLfloat xRadians, GLfloat yRadians, G
 }
 
 Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate) {
-	Matrix4x4f result = matrix;
+	Matrix4x4f result = copyMatrix(matrix);;
 	result.values[12] += translate.x;
 	result.values[13] += translate.y;
 	result.values[14] += translate.z;

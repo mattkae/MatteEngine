@@ -28,7 +28,7 @@ useDeferredRendering    false
 
 //::models
     ::
-        path        assets/Transparent.obj
+        path        assets/sword/sword.obj
         transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
     ;;
 ;;
@@ -36,7 +36,7 @@ useDeferredRendering    false
 ::spheres
     ::
         radius          1
-        transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+        transform       1 0 0 0 0 1 0 0 0 0 1 0 0 3 0 1
         angleIncrements 10
     ;;
 ;; 

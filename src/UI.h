@@ -1,11 +1,11 @@
 #pragma once
-#include "../Shader.h"
+#include "Shader.h"
 #include "Button.h"
-#include "../TextRenderer.h"
+#include "TextRenderer.h"
 #include "TextInput.h"
 #include "Panel.h"
 #include "UIContext.h"
-#include "../LightweightArray.h"
+#include "LightweightArray.h"
 #include <vector>
 
 struct UI {

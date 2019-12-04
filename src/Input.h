@@ -1,6 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-#include "Primitives/Point.h"
+#include "Point.h"
 
 const int DEFAULT_FOCUS_TOKEN = 0;
 

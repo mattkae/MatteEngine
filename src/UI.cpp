@@ -1,6 +1,6 @@
 #include "UI.h"
-#include "../Scene.h"
-#include "../GlobalApplicationState.h"
+#include "Scene.h"
+#include "GlobalApplicationState.h"
 #include <glm/glm.hpp>
 
 void initUI(UI& ui) {

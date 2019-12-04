@@ -9,12 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="UIElements">
-      <UniqueIdentifier>{f0d0fcc5-b132-4667-ba99-50ed16dbe7d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Primitives">
-      <UniqueIdentifier>{11e4572c-513d-4047-9afa-d050868d4c2e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Camera.cpp">
@@ -95,35 +89,8 @@
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Primitives\Rectangle.cpp">
-      <Filter>Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\BoundText.cpp">
-      <Filter>UIElements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\Button.cpp">
-      <Filter>UIElements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\Panel.cpp">
-      <Filter>UIElements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\TextInput.cpp">
-      <Filter>UIElements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\UI.cpp">
-      <Filter>UIElements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Containers\Stack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\UIContext.cpp">
-      <Filter>UIElements</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\SceneUI.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\Label.cpp">
-      <Filter>UIElements</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Matrix3x3f.cpp">
       <Filter>Source Files</Filter>
@@ -134,8 +101,35 @@
     <ClCompile Include="..\..\src\ObjModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Primitives\Box.cpp">
-      <Filter>Primitives</Filter>
+    <ClCompile Include="..\..\src\BoundText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Box.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Label.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Rectangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TextInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UIContext.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,41 +223,11 @@
     <ClInclude Include="..\..\src\GlobalApplicationState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Primitives\Point.h">
-      <Filter>Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Primitives\Rectangle.h">
-      <Filter>Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\BoundText.h">
-      <Filter>UIElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\Button.h">
-      <Filter>UIElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\Panel.h">
-      <Filter>UIElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\TextInput.h">
-      <Filter>UIElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\UI.h">
-      <Filter>UIElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Containers\Stack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\UIContext.h">
-      <Filter>UIElements</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\LightweightArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\SceneUI.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\Label.h">
-      <Filter>UIElements</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DirectoryUtil.h">
       <Filter>Header Files</Filter>
@@ -271,8 +235,47 @@
     <ClInclude Include="..\..\src\SceneLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Primitives\Box.h">
-      <Filter>Primitives</Filter>
+    <ClInclude Include="..\..\src\BoundText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Box.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Label.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\OpenGLUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Point.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Quad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Rectangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\TextInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UIContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\UIEvent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

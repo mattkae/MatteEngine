@@ -1,5 +1,5 @@
 #include "BoundText.h"
-#include "../TextRenderer.h"
+#include "TextRenderer.h"
 
 void renderBoundText(const BoundText& bt, const Shader& shader, const TextRenderer& textRenderer, std::string text, glm::vec4 backgroundColor, glm::vec3 textColor, GLint scrollOffset) {
 	renderRectangle(bt.rect, shader, backgroundColor);

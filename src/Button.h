@@ -3,8 +3,8 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-#include "../Shader.h"
-#include "../TextRenderer.h"
+#include "Shader.h"
+#include "TextRenderer.h"
 
 struct TextRenderer;
 

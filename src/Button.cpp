@@ -1,6 +1,6 @@
 #include "Button.h"
-#include "../TextRenderer.h"
-#include "../Primitives/Rectangle.h"
+#include "TextRenderer.h"
+#include "Rectangle.h"
 
 Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 	return { button.position.x, button.position.y, button.width, getButtonHeight(button, textRenderer) };

@@ -1,6 +1,6 @@
 #pragma once
-#include "../Shader.h"
-#include "../TextRenderer.h"
+#include "Shader.h"
+#include "TextRenderer.h"
 #include "UIEvent.h"
 #include "BoundText.h"
 #include <GL/glew.h>

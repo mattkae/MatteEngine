@@ -1,7 +1,7 @@
 #pragma once
-#include "../Primitives/Rectangle.h"
-#include "../Shader.h"
-#include "../TextRenderer.h"
+#include "Rectangle.h"
+#include "Shader.h"
+#include "TextRenderer.h"
 #include <glm/glm.hpp>
 #include <string>
 

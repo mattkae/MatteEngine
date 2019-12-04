@@ -1,8 +1,8 @@
 #pragma once
 #include "Panel.h"
-#include "../Input.h"
-#include "../GlobalApplicationState.h"
-#include "../Primitives/Rectangle.h"
+#include "Input.h"
+#include "GlobalApplicationState.h"
+#include "Rectangle.h"
 
 GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfloat windowDimension, GLfloat panelDimension) {
 	switch (positioning) {

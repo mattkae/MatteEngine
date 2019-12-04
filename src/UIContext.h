@@ -1,12 +1,12 @@
 #pragma once
-#include "../Shader.h"
+#include "Shader.h"
 #include "Button.h"
-#include "../TextRenderer.h"
+#include "TextRenderer.h"
 #include "TextInput.h"
 #include "Panel.h"
 #include "Label.h"
-#include "../Shader.h"
-#include "../LightweightArray.h"
+#include "Shader.h"
+#include "LightweightArray.h"
 #include <vector>
 #include <variant>
 

@@ -1,5 +1,5 @@
 #include "Rectangle.h"
-#include "../Input.h"
+#include "Input.h"
 
 struct RenderableRectangle {
 	Rectangle r;

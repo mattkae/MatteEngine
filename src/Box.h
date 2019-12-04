@@ -1,10 +1,10 @@
 #pragma once
-#include "../Vector3f.h"
-#include "../Vector4f.h"
-#include "../Matrix4x4f.h"
-#include "../Camera.h"
+#include "Vector3f.h"
+#include "Vector4f.h"
+#include "Matrix4x4f.h"
+#include "Camera.h"
 #include <algorithm>
-#include "../Shader.h"
+#include "Shader.h"
 #include <GL/glew.h>
 
 struct Box {

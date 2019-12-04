@@ -5,12 +5,12 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "Shader.h"
-#include "UI/UIContext.h"
+#include "UIContext.h"
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-#include "Primitives/Box.h"
+#include "Box.h"
 #include "Matrix4x4f.h"
 
 struct Model {

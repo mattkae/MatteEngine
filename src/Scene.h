@@ -9,13 +9,13 @@
 #include "Skybox.h"
 #include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
-#include "UI/UI.h"
+#include "UI.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <thread>
 #include "shaders/Light.shared.cpp"
-#include "Primitives/Box.h"
+#include "Box.h"
 
 struct BetterScene {
 	Model models[32];

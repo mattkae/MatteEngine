@@ -1,6 +1,6 @@
 #pragma once
 #include "BoundText.h"
-#include "../Shader.h"
+#include "Shader.h"
 
 struct TextRenderer;
 struct Label {

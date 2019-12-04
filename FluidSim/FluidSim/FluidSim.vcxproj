@@ -19,13 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\BoundText.cpp" />
+    <ClCompile Include="..\..\src\Box.cpp" />
+    <ClCompile Include="..\..\src\Button.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
-    <ClCompile Include="..\..\src\Containers\Stack.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
+    <ClCompile Include="..\..\src\Entity.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
+    <ClCompile Include="..\..\src\Label.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
     <ClCompile Include="..\..\src\Logger.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
@@ -35,11 +39,11 @@
     <ClCompile Include="..\..\src\Mesh.cpp" />
     <ClCompile Include="..\..\src\Model.cpp" />
     <ClCompile Include="..\..\src\ObjModel.cpp" />
+    <ClCompile Include="..\..\src\Panel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Physics.cpp" />
-    <ClCompile Include="..\..\src\Primitives\Box.cpp" />
-    <ClCompile Include="..\..\src\Primitives\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
+    <ClCompile Include="..\..\src\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\SceneLoader.cpp" />
     <ClCompile Include="..\..\src\SceneUI.cpp" />
@@ -48,21 +52,19 @@
     <ClCompile Include="..\..\src\Skybox.cpp" />
     <ClCompile Include="..\..\src\Sphere.cpp" />
     <ClCompile Include="..\..\src\Terrain.cpp" />
+    <ClCompile Include="..\..\src\TextInput.cpp" />
     <ClCompile Include="..\..\src\TextRenderer.cpp" />
     <ClCompile Include="..\..\src\Texture.cpp" />
-    <ClCompile Include="..\..\src\UI\BoundText.cpp" />
-    <ClCompile Include="..\..\src\UI\Button.cpp" />
-    <ClCompile Include="..\..\src\UI\Label.cpp" />
-    <ClCompile Include="..\..\src\UI\Panel.cpp" />
-    <ClCompile Include="..\..\src\UI\TextInput.cpp" />
-    <ClCompile Include="..\..\src\UI\UI.cpp" />
-    <ClCompile Include="..\..\src\UI\UIContext.cpp" />
+    <ClCompile Include="..\..\src\UI.cpp" />
+    <ClCompile Include="..\..\src\UIContext.cpp" />
     <ClCompile Include="..\..\src\Vector3f.cpp" />
     <ClCompile Include="..\..\src\Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\BoundText.h" />
+    <ClInclude Include="..\..\src\Box.h" />
+    <ClInclude Include="..\..\src\Button.h" />
     <ClInclude Include="..\..\src\Camera.h" />
-    <ClInclude Include="..\..\src\Containers\Stack.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
     <ClInclude Include="..\..\src\GlobalApplicationState.h" />
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
@@ -71,23 +73,24 @@
     <ClInclude Include="..\..\src\GlmUtility.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\Input.h" />
+    <ClInclude Include="..\..\src\Label.h" />
     <ClInclude Include="..\..\src\Light.h" />
     <ClInclude Include="..\..\src\LightweightArray.h" />
+    <ClInclude Include="..\..\src\Logger.h" />
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\Matrix3x3f.h" />
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
-    <ClInclude Include="..\..\src\Primitives\Box.h" />
-    <ClInclude Include="..\..\src\Primitives\Point.h" />
-    <ClInclude Include="..\..\src\Primitives\Rectangle.h" />
+    <ClInclude Include="..\..\src\OpenGLUtil.h" />
+    <ClInclude Include="..\..\src\Panel.h" />
+    <ClInclude Include="..\..\src\Point.h" />
+    <ClInclude Include="..\..\src\Quad.h" />
+    <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />
     <ClInclude Include="..\..\src\SceneUI.h" />
-    <ClInclude Include="..\..\src\UI\BoundText.h" />
-    <ClInclude Include="..\..\src\UI\Button.h" />
-    <ClInclude Include="..\..\src\UI\Label.h" />
-    <ClInclude Include="..\..\src\UI\Panel.h" />
-    <ClInclude Include="..\..\src\UI\TextInput.h" />
-    <ClInclude Include="..\..\src\UI\UI.h" />
-    <ClInclude Include="..\..\src\UI\UIContext.h" />
+    <ClInclude Include="..\..\src\TextInput.h" />
+    <ClInclude Include="..\..\src\UI.h" />
+    <ClInclude Include="..\..\src\UIContext.h" />
+    <ClInclude Include="..\..\src\UIEvent.h" />
     <ClInclude Include="..\..\src\Vector3f.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\Model.h" />

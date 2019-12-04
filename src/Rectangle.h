@@ -2,8 +2,8 @@
 #define RECTANGLE_H
 
 #include "Point.h"
-#include "../Shader.h"
-#include "../Input.h"
+#include "Shader.h"
+#include "Input.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 

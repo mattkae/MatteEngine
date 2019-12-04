@@ -1,5 +1,5 @@
 #include "UIContext.h"
-#include "../GlobalApplicationState.h"
+#include "GlobalApplicationState.h"
 
 void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 

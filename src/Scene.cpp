@@ -18,7 +18,7 @@ size_t castRayToModel(BetterScene& scene) {
 	// on screen comes from here: http://antongerdelan.net/opengl/raycasting.html
 	Vector4f ndcPoint;
 	ndcPoint.x = (2.f * cursorPosition.x) / GlobalAppState.floatWidth - 1.0f;
-	ndcPoint.y = 1.0f - (2.f * cursorPosition.y) / GlobalAppState.floatHeight;
+	ndcPoint.y = 1.0f - (2.f * (GlobalAppState.floatHeight - cursorPosition.y)) / GlobalAppState.floatHeight;
 	ndcPoint.z = 1.0f;
 	ndcPoint.w = 1.0f;
 

@@ -5,16 +5,20 @@
 #include "TextInput.h"
 #include "Panel.h"
 #include "UIContext.h"
-#include "LightweightArray.h"
 #include <vector>
 
 struct UI {
 	 Shader mOrthographicShader;
 	 TextRenderer mTextRenderer;
-	 LightweightArray<UIContext> context;
+	 UIContext* panels = nullptr;
+	 size_t numPanels = 0;
+
+	 int modelOffset = 0;
 };
 
 void initUI(UI& ui);
 void updateUI(UI& ui, double dt);
 void renderUI(const UI& ui);
 void freeUI(UI& ui);
+
+void openModelPanel(UI& ui, size_t index);

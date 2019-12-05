@@ -6,7 +6,6 @@
 #include "Panel.h"
 #include "Label.h"
 #include "Shader.h"
-#include "LightweightArray.h"
 #include <vector>
 #include <variant>
 
@@ -29,8 +28,9 @@ struct UIContext {
 	Panel panel;
 	bool isActive = true;
 	bool shouldOpen = false;
-	bool shouldClose = true;
-	LightweightArray<UIElement> uiElements;
+	bool shouldClose = false;
+	UIElement* uiElements = nullptr;
+	size_t numUiElements = 0;
 	GLfloat spaceBetweenElements = 2.f;
 };
 

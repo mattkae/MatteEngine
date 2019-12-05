@@ -9,12 +9,10 @@ Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 void updateButton(Button& button, const TextRenderer& textRenderer) {
 	Rectangle rect = getRectangle(button, textRenderer);
 	if (button.isClicked != nullptr) {
-		if (!*button.isClicked) {
+		if (!(*button.isClicked)) {
 			if (isClicked(rect)) {
 				*button.isClicked = true;
 			}
-		} else if (!isClicked(rect)) {
-			*button.isClicked = false;
 		}
 	}
 }

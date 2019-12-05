@@ -223,9 +223,6 @@
     <ClInclude Include="..\..\src\GlobalApplicationState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\LightweightArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\SceneUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>

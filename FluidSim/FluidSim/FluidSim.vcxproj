@@ -75,7 +75,6 @@
     <ClInclude Include="..\..\src\Input.h" />
     <ClInclude Include="..\..\src\Label.h" />
     <ClInclude Include="..\..\src\Light.h" />
-    <ClInclude Include="..\..\src\LightweightArray.h" />
     <ClInclude Include="..\..\src\Logger.h" />
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\Matrix3x3f.h" />

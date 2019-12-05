@@ -36,17 +36,19 @@ size_t castRayToModel(BetterScene& scene) {
 	rayEye.z = -1.f;
 	rayEye.w = 0.f;
 	Vector4f rayWorld = normalize(mult(inverseView, rayEye));
-	logVector4f(rayWorld, "rayWorld");
+
+	GLfloat distanceFromEye = -1;
+	size_t retval = -1;
 
 	for (size_t mIdx = 0; mIdx < scene.numModels; mIdx++) {
 		const Box& box = scene.modelBoundingBoxes[mIdx];
 		const Model& model = scene.models[mIdx];
 
 		if (isBoxInRayPath(box, model.model, rayWorld, scene.mCamera)) {
-			printf("Here\n");
+			retval = mIdx;
 		}
 	}
-	return -1;
+	return retval;
 }
 
 void updateScene(BetterScene& scene, double dt) {
@@ -66,12 +68,15 @@ void updateScene(BetterScene& scene, double dt) {
 		updateParticleEmitter(scene.emitters[eIdx], dtFloat);
 	}
 
+	if (isLeftClickDown() && isDefaultFocused()) {
+		int modelIdx = castRayToModel(scene);
+		if (modelIdx > -1) {
+			openModelPanel(scene.ui, modelIdx);
+		}
+	}
+
 	updateUI(scene.ui, dt);
 
-	if (isLeftClickDown() && isDefaultFocused()) {
-		// @TODO: Cast a ray into the scene, and select an item
-		castRayToModel(scene);
-	}
 }
 
 void renderShadows(const BetterScene& scene) {

@@ -2,21 +2,25 @@
 #include "GlobalApplicationState.h"
 
 void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
-
 	if (context.shouldOpen && !context.isActive) {
 		context.isActive = true;
+		context.shouldOpen = false;
+	} else if (context.shouldClose && context.isActive) {
+		context.shouldClose = false;
+		context.isActive = false;
 	}
 
 	if (!context.isActive) {
 		return;
 	}
 
+
 	setPanelPosition(context.panel);
 	GLfloat yOffset = GlobalAppState.floatHeight - context.panel.boundingRect.y - context.panel.padding;
 	GLfloat xPosition = context.panel.boundingRect.x + context.panel.padding;
 	
-	for (size_t elementIndex = 0; elementIndex < context.uiElements.size; elementIndex++) {
-		UIElement& element = context.uiElements.elements[elementIndex];
+	for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
+		UIElement& element = context.uiElements[elementIndex];
 		switch (element.type) {
 		case UIElement::BUTTON: {
 			Button& button = std::get<Button>(element.element);
@@ -68,8 +72,8 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 
 	renderPanel(context.panel, shader);
 
-	for (size_t elementIndex = 0; elementIndex < context.uiElements.size; elementIndex++) {
-		const UIElement& element = context.uiElements.elements[elementIndex];
+	for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
+		const UIElement& element = context.uiElements[elementIndex];
 		switch (element.type) {
 		case UIElement::BUTTON:
 			renderButton(std::get<Button>(element.element), shader, textRenderer);
@@ -85,5 +89,6 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 }
 
 void freeUIContext(UIContext& context) {
-	deallocateArray(context.uiElements);
+	delete[] context.uiElements;
+	context.numUiElements = 0;
 }

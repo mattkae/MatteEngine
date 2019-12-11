@@ -84,7 +84,7 @@ void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
 
     terrain.mMesh.indicies = indices;
     terrain.mMesh.vertices = vertices;
-    terrain.mMesh.material.diffuse = glm::vec3(0, 0.2, 0);
+	terrain.mMesh.material.diffuse = { 0, 0.2, 0 };
 	initializeMesh(terrain.mMesh);
 
     int halfMapSize = params.granularity / 2;

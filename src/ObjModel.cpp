@@ -46,11 +46,11 @@ std::vector<Material> loadMtlFile(std::string path) {
             }
             iss >> current.name;
         } else if (type == "Ka") {
-            iss >> current.ambient.r >> current.ambient.g >> current.ambient.b;
+            iss >> current.ambient.x >> current.ambient.y >> current.ambient.z;
         } else if (type == "Kd") {
-            iss >> current.diffuse.r >> current.diffuse.g >> current.diffuse.b;
+            iss >> current.diffuse.x >> current.diffuse.y >> current.diffuse.z;
         } else if (type == "Ks") {
-            iss >> current.specular.r >> current.specular.g >> current.specular.b;
+            iss >> current.specular.x >> current.specular.y >> current.specular.z;
         } else if (type == "Ns") {
             iss >> current.specularComponent;
         } else if (type == "d") {

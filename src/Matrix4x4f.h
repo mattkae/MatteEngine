@@ -11,6 +11,12 @@ struct Matrix4x4f {
 	GLfloat values[SIZE_OF_4_X_4] = {0};
 };
 
+inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {
+	Matrix4x4f result;
+	memcpy(result.values, matrix.values,  16 * sizeof(GLfloat));
+	return result;
+}
+
 constexpr Matrix4x4f getIdentity();
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale);
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale);

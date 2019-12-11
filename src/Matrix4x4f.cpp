@@ -9,12 +9,6 @@ constexpr Matrix4x4f getIdentity() {
 	return result;
 }
 
-inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {
-	Matrix4x4f result;
-	memcpy(result.values, matrix.values,  16 * sizeof(GLfloat));
-	return result;
-}
-
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale) {
 	Matrix4x4f result = copyMatrix(matrix);;
 	result.values[0] *= scale;
@@ -63,8 +57,8 @@ Matrix4x4f getXRotationMatrix(GLfloat angleRadians) {
 	return {
 		{
 			1, 0, 0, 0,
-			0, cos(angleRadians), sin(angleRadians), 0,
-			0, -sin(angleRadians), cos(angleRadians), 0,
+			0, cos(angleRadians), -sin(angleRadians), 0,
+			0, sin(angleRadians), cos(angleRadians), 0,
 			0, 0, 0, 1
 		}
 	};
@@ -73,9 +67,9 @@ Matrix4x4f getXRotationMatrix(GLfloat angleRadians) {
 Matrix4x4f getYRotationMatrix(GLfloat angleRadians) {
 	return {
 		{
-			cos(angleRadians), 0, -sin(angleRadians), 0,
+			cos(angleRadians), 0, sin(angleRadians), 0,
 			0, 1, 0, 0,
-			sin(angleRadians), 0, cos(angleRadians), 0,
+			-sin(angleRadians), 0, cos(angleRadians), 0,
 			0, 0, 0, 1
 		}
 	};
@@ -84,8 +78,8 @@ Matrix4x4f getYRotationMatrix(GLfloat angleRadians) {
 Matrix4x4f getZRotationMatrix(GLfloat angleRadians) {
 	return {
 		{
-			cos(angleRadians), sin(angleRadians), 0, 0
-			-sin(angleRadians), cos(angleRadians), 0, 0,
+			cos(angleRadians), -sin(angleRadians), 0, 0,
+			sin(angleRadians), cos(angleRadians), 0, 0,
 			0, 0, 1, 0,
 			0, 0, 0, 1
 		}
@@ -101,12 +95,12 @@ Matrix4x4f rotate(const Matrix4x4f matrix, GLfloat xRadians, GLfloat yRadians, G
 	}
 
 	if (yRadians != 0) {
-		rotationMatrix = getYRotationMatrix(xRadians);
+		rotationMatrix = getYRotationMatrix(yRadians);
 		result = mult(result, rotationMatrix);
 	}
 
 	if (zRadians != 0) {
-		rotationMatrix = getZRotationMatrix(xRadians);
+		rotationMatrix = getZRotationMatrix(zRadians);
 		result = mult(result, rotationMatrix);
 	}
 

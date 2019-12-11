@@ -32,6 +32,14 @@ Vector3f subtractVector(const Vector3f& first, const Vector3f& second) {
 	};
 }
 
+Vector3f subtractVector(const Vector3f& first, const Vector4f& second) {
+	return {
+		first.x - second.x,
+		first.y - second.y,
+		first.z - second.z
+	};
+}
+
 Vector3f negate(const Vector3f& v) {
 	return {
 		-v.x,

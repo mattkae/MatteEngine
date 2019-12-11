@@ -11,7 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 
-size_t castRayToModel(BetterScene& scene) {
+int castRayToModel(BetterScene& scene) {
 	Point cursorPosition = getCursorPosition();
 	
 	// Most of my understanding of how I was to get the ray from the point clicked
@@ -38,14 +38,21 @@ size_t castRayToModel(BetterScene& scene) {
 	Vector4f rayWorld = normalize(mult(inverseView, rayEye));
 
 	GLfloat distanceFromEye = -1;
-	size_t retval = -1;
+	int retval = -1;
 
 	for (size_t mIdx = 0; mIdx < scene.numModels; mIdx++) {
 		const Box& box = scene.modelBoundingBoxes[mIdx];
 		const Model& model = scene.models[mIdx];
 
 		if (isBoxInRayPath(box, model.model, rayWorld, scene.mCamera)) {
-			retval = mIdx;
+			GLfloat distanceFromLowerLeft = length(subtractVector(scene.mCamera.position, box.lowerLeft));
+			GLfloat distanceFromUpperRight = length(subtractVector(scene.mCamera.position, box.upperRight));
+
+			GLfloat nextDistanceFromEye = std::min(distanceFromLowerLeft, distanceFromUpperRight);
+			if (distanceFromEye < 0 || nextDistanceFromEye < distanceFromEye) {
+				distanceFromEye = nextDistanceFromEye;
+				retval = mIdx;
+			}
 		}
 	}
 	return retval;
@@ -72,6 +79,7 @@ void updateScene(BetterScene& scene, double dt) {
 		int modelIdx = castRayToModel(scene);
 		if (modelIdx > -1) {
 			openModelPanel(scene.ui, modelIdx);
+			scene.selectedModelIndex = modelIdx;
 		}
 	}
 
@@ -119,13 +127,14 @@ void renderModels(const BetterScene& scene, const Shader &shader, bool withMater
     renderTerrain(scene.mTerrain, shader, withMaterial);
 
     for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
-        renderModel(scene.models[modelIdx], shader, withMaterial);
+		if (scene.selectedModelIndex != modelIdx)
+			renderModel(scene.models[modelIdx], shader, withMaterial);
     }
 }
 
 void renderDebug(const BetterScene& scene) {
-	for (size_t boxIndex = 0; boxIndex < scene.numModels; boxIndex++) {
-		renderBoxOutline(scene.modelBoundingBoxes[boxIndex], scene.models[boxIndex].model, scene.mSceneShader);
+	if (scene.selectedModelIndex > -1) {
+		renderDebugBox(scene.modelBoundingBoxes[scene.selectedModelIndex], scene.models[scene.selectedModelIndex].model, scene.mSceneShader);
 	}
 }
 

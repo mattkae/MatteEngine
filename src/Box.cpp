@@ -1,4 +1,7 @@
+#define _USE_MATH_DEFINES
 #include "Box.h"
+#include "DebugArrow.h"
+#include <cmath>
 
 struct RenderableBox {
 	GLuint vao;
@@ -76,4 +79,24 @@ void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& sha
 	setShaderVec3(shader, "uMaterial.emissive", glm::vec3(1, 0, 0));
 	glDrawArrays(GL_LINE_LOOP, 0, 36);
 	glBindVertexArray(0);
+}
+
+void updateDebugDebug(Box& box, Matrix4x4f& model) {
+
+}
+
+void renderDebugBox(const Box& box, const Matrix4x4f& model, const Shader& shader) {
+	renderBoxOutline(box, model, shader);
+
+	Vector3f rotation = { 0, 0, M_PI / 2 };
+	Vector3f color = { 1, 0, 0 };
+	renderDebugArrow(rotation, color, model, shader); 
+
+	rotation = { 0, 0, 0 };
+	color = { 0, 1, 0};
+	renderDebugArrow(rotation, color, model, shader); 
+
+	rotation = { M_PI / 2, 0, 0 };
+	color = { 0, 0, 1 };
+	renderDebugArrow(rotation, color, model, shader);
 }

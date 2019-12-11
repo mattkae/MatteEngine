@@ -18,6 +18,7 @@ struct Model {
     std::vector<Mesh> meshes;
 };
 
+void initializeModel(Model& model);
 void initializeModel(Model& model, Box& box);
 void renderModel(const Model& model, const Shader& shader, bool withMaterial = true);
 void freeModel(Model& model);

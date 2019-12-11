@@ -40,6 +40,12 @@ inline void trySetBoxBounds(Box& box, Mesh& mesh, bool& hasBoxBeenSet) {
 	}
 }
 
+void initializeModel(Model& model) {
+    for (auto& mesh : model.meshes) {
+        initializeMesh(mesh);
+    }
+}
+
 void initializeModel(Model& model, Box& box) {
 	bool hasBoxBeenSet = false;
 

@@ -27,11 +27,9 @@ inline bool isInBox(const Box& box, const Vector4f& v, const Matrix4x4f& model) 
 // Most of my understanding of this algorithm comes form here:
 // https://tavianator.com/fast-branchless-raybounding-box-intersections-part-2-nans/
 inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Vector4f& rayDirection, const BetterCamera& camera) {
-	const Vector4f& lowerLeft = box.lowerLeft;
-	const Vector4f& upperRight = box.upperRight;
-	Matrix4x4f inverseModel;
-	inverse(model, inverseModel);
-	const Vector4f& modelRayDirection = (mult(inverseModel, rayDirection));
+	const Vector4f& lowerLeft = mult(model, box.lowerLeft);
+	const Vector4f& upperRight = mult(model, box.upperRight);
+	const Vector4f& modelRayDirection = rayDirection;
 	const Vector3f& rayPosition = camera.position;
 
 	float xMin = (lowerLeft.x - rayPosition.x) / (modelRayDirection.x);
@@ -53,3 +51,5 @@ inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Vector
 }
 
 void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader);
+void updateDebugDebug(Box& box, Matrix4x4f& model);
+void renderDebugBox(const Box& box, const Matrix4x4f& model, const Shader& shader);

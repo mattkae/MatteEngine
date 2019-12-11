@@ -14,7 +14,6 @@ void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 		return;
 	}
 
-
 	setPanelPosition(context.panel);
 	GLfloat yOffset = GlobalAppState.floatHeight - context.panel.boundingRect.y - context.panel.padding;
 	GLfloat xPosition = context.panel.boundingRect.x + context.panel.padding;

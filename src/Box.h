@@ -51,5 +51,4 @@ inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Vector
 }
 
 void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader);
-void updateDebugDebug(Box& box, Matrix4x4f& model);
-void renderDebugBox(const Box& box, const Matrix4x4f& model, const Shader& shader);
+GLfloat getDistanceFromCamera(const Box& box, const BetterCamera& camera, const Matrix4x4f& model);

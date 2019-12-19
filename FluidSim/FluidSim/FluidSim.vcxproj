@@ -23,7 +23,7 @@
     <ClCompile Include="..\..\src\Box.cpp" />
     <ClCompile Include="..\..\src\Button.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
-    <ClCompile Include="..\..\src\DebugArrow.cpp" />
+    <ClCompile Include="..\..\src\DebugRender.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
     <ClCompile Include="..\..\src\Entity.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
@@ -44,6 +44,7 @@
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Physics.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
+    <ClCompile Include="..\..\src\Ray.cpp" />
     <ClCompile Include="..\..\src\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\SceneLoader.cpp" />
@@ -66,7 +67,7 @@
     <ClInclude Include="..\..\src\Box.h" />
     <ClInclude Include="..\..\src\Button.h" />
     <ClInclude Include="..\..\src\Camera.h" />
-    <ClInclude Include="..\..\src\DebugArrow.h" />
+    <ClInclude Include="..\..\src\DebugRender.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
     <ClInclude Include="..\..\src\GlobalApplicationState.h" />
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />

@@ -16,12 +16,14 @@
 #include <thread>
 #include "shaders/Light.shared.cpp"
 #include "Box.h"
+#include "DebugRender.h"
 
 struct BetterScene {
 	Model models[32];
 	Box modelBoundingBoxes[32];
 	size_t numModels = 0;
 	int selectedModelIndex = -1;
+	DebugModel debugModel;
 
     Light lights[MAX_LIGHTS];
 	size_t numLightsUsed = 0;

@@ -131,7 +131,10 @@
     <ClCompile Include="..\..\src\UIContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\DebugArrow.cpp">
+    <ClCompile Include="..\..\src\DebugRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Ray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -277,7 +280,7 @@
     <ClInclude Include="..\..\src\UIEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DebugArrow.h">
+    <ClInclude Include="..\..\src\DebugRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

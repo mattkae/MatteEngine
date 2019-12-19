@@ -6,36 +6,14 @@
 #include "Input.h"
 #include "Physics.h"
 #include "Logger.h"
+#include "Ray.h"
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 
 int castRayToModel(BetterScene& scene) {
-	Point cursorPosition = getCursorPosition();
-	
-	// Most of my understanding of how I was to get the ray from the point clicked
-	// on screen comes from here: http://antongerdelan.net/opengl/raycasting.html
-	Vector4f ndcPoint;
-	ndcPoint.x = (2.f * cursorPosition.x) / GlobalAppState.floatWidth - 1.0f;
-	ndcPoint.y = 1.0f - (2.f * (GlobalAppState.floatHeight - cursorPosition.y)) / GlobalAppState.floatHeight;
-	ndcPoint.z = 1.0f;
-	ndcPoint.w = 1.0f;
-
-	Matrix4x4f inverseProj;
-	if (!inverse(getCameraProjection(scene.mCamera), inverseProj)) {
-		return -1;
-	}
-
-	Matrix4x4f inverseView;
-	if (!inverse(getCameraViewMatrix(scene.mCamera), inverseView)) {
-		return -1;
-	}
-
-	Vector4f rayEye = mult(inverseProj, ndcPoint);
-	rayEye.z = -1.f;
-	rayEye.w = 0.f;
-	Vector4f rayWorld = normalize(mult(inverseView, rayEye));
+	Vector4f rayWorld = clickToRay(scene.mCamera);
 
 	GLfloat distanceFromEye = -1;
 	int retval = -1;
@@ -45,10 +23,7 @@ int castRayToModel(BetterScene& scene) {
 		const Model& model = scene.models[mIdx];
 
 		if (isBoxInRayPath(box, model.model, rayWorld, scene.mCamera)) {
-			GLfloat distanceFromLowerLeft = length(subtractVector(scene.mCamera.position, box.lowerLeft));
-			GLfloat distanceFromUpperRight = length(subtractVector(scene.mCamera.position, box.upperRight));
-
-			GLfloat nextDistanceFromEye = std::min(distanceFromLowerLeft, distanceFromUpperRight);
+			GLfloat nextDistanceFromEye = getDistanceFromCamera(box, scene.mCamera, model.model);
 			if (distanceFromEye < 0 || nextDistanceFromEye < distanceFromEye) {
 				distanceFromEye = nextDistanceFromEye;
 				retval = mIdx;
@@ -80,7 +55,12 @@ void updateScene(BetterScene& scene, double dt) {
 		if (modelIdx > -1) {
 			openModelPanel(scene.ui, modelIdx);
 			scene.selectedModelIndex = modelIdx;
+			scene.debugModel.debugBox = scene.modelBoundingBoxes[modelIdx];
 		}
+	}
+
+	if (scene.selectedModelIndex > -1) {
+		updateDebugModel(scene.debugModel, scene.models[scene.selectedModelIndex].model, scene.mCamera);
 	}
 
 	updateUI(scene.ui, dt);
@@ -134,7 +114,7 @@ void renderModels(const BetterScene& scene, const Shader &shader, bool withMater
 
 void renderDebug(const BetterScene& scene) {
 	if (scene.selectedModelIndex > -1) {
-		renderDebugBox(scene.modelBoundingBoxes[scene.selectedModelIndex], scene.models[scene.selectedModelIndex].model, scene.mSceneShader);
+		renderDebugModel(scene.debugModel, scene.models[scene.selectedModelIndex].model, scene.mSceneShader);
 	}
 }
 

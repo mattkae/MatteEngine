@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 #include "Box.h"
-#include "DebugArrow.h"
+#include "DebugRender.h"
 #include <cmath>
 
 struct RenderableBox {
@@ -81,22 +81,8 @@ void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& sha
 	glBindVertexArray(0);
 }
 
-void updateDebugDebug(Box& box, Matrix4x4f& model) {
-
-}
-
-void renderDebugBox(const Box& box, const Matrix4x4f& model, const Shader& shader) {
-	renderBoxOutline(box, model, shader);
-
-	Vector3f rotation = { 0, 0, M_PI / 2 };
-	Vector3f color = { 1, 0, 0 };
-	renderDebugArrow(rotation, color, model, shader); 
-
-	rotation = { 0, 0, 0 };
-	color = { 0, 1, 0};
-	renderDebugArrow(rotation, color, model, shader); 
-
-	rotation = { M_PI / 2, 0, 0 };
-	color = { 0, 0, 1 };
-	renderDebugArrow(rotation, color, model, shader);
+GLfloat getDistanceFromCamera(const Box& box, const BetterCamera& camera, const Matrix4x4f& model) {
+	GLfloat distanceFromLowerLeft = length(subtractVector(camera.position, mult(model, box.lowerLeft)));
+	GLfloat distanceFromUpperRight = length(subtractVector(camera.position, mult(model, box.upperRight)));
+	return std::min(distanceFromLowerLeft, distanceFromUpperRight);
 }

@@ -1,7 +1,6 @@
 #include "Matrix4x4f.h"
 
-constexpr Matrix4x4f getIdentity()
-{
+constexpr Matrix4x4f getIdentity() {
     Matrix4x4f result;
     result.values[0] = 1.f;
     result.values[5] = 1.f;
@@ -10,18 +9,15 @@ constexpr Matrix4x4f getIdentity()
     return result;
 }
 
-Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale)
-{
+Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale) {
     Matrix4x4f result = copyMatrix(matrix);
-    ;
     result.values[0] *= scale;
     result.values[5] *= scale;
     result.values[10] *= scale;
     return result;
 }
 
-Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale)
-{
+Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale) {
     Matrix4x4f result = copyMatrix(matrix);
     result.values[0] *= scale.x;
     result.values[5] *= scale.y;
@@ -29,8 +25,7 @@ Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale)
     return result;
 }
 
-Matrix4x4f mult(const Matrix4x4f& first, const Matrix4x4f& second)
-{
+Matrix4x4f mult(const Matrix4x4f& first, const Matrix4x4f& second) {
     Matrix4x4f result;
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
@@ -42,13 +37,11 @@ Matrix4x4f mult(const Matrix4x4f& first, const Matrix4x4f& second)
     return result;
 }
 
-Matrix4x4f getScalarMatrix(const GLfloat scale)
-{
+Matrix4x4f getScalarMatrix(const GLfloat scale) {
     return scaleMatrix(getIdentity(), scale);
 }
 
-Vector4f mult(const Matrix4x4f& matrix, const Vector4f& vec)
-{
+Vector4f mult(const Matrix4x4f& matrix, const Vector4f& vec) {
     return {
         vec.x * matrix.values[0] + vec.y * matrix.values[4] + vec.z * matrix.values[8] + vec.w * matrix.values[12],
         vec.x * matrix.values[1] + vec.y * matrix.values[5] + vec.z * matrix.values[9] + vec.w * matrix.values[13],
@@ -57,8 +50,7 @@ Vector4f mult(const Matrix4x4f& matrix, const Vector4f& vec)
     };
 }
 
-Matrix4x4f getXRotationMatrix(GLfloat angleRadians)
-{
+Matrix4x4f getXRotationMatrix(GLfloat angleRadians) {
     return {
         { 1, 0, 0, 0,
             0, cos(angleRadians), -sin(angleRadians), 0,
@@ -67,8 +59,7 @@ Matrix4x4f getXRotationMatrix(GLfloat angleRadians)
     };
 }
 
-Matrix4x4f getYRotationMatrix(GLfloat angleRadians)
-{
+Matrix4x4f getYRotationMatrix(GLfloat angleRadians) {
     return {
         { cos(angleRadians), 0, sin(angleRadians), 0,
             0, 1, 0, 0,
@@ -77,8 +68,7 @@ Matrix4x4f getYRotationMatrix(GLfloat angleRadians)
     };
 }
 
-Matrix4x4f getZRotationMatrix(GLfloat angleRadians)
-{
+Matrix4x4f getZRotationMatrix(GLfloat angleRadians) {
     return {
         { cos(angleRadians), -sin(angleRadians), 0, 0,
             sin(angleRadians), cos(angleRadians), 0, 0,
@@ -87,8 +77,7 @@ Matrix4x4f getZRotationMatrix(GLfloat angleRadians)
     };
 }
 
-Matrix4x4f rotate(const Matrix4x4f matrix, GLfloat xRadians, GLfloat yRadians, GLfloat zRadians)
-{
+Matrix4x4f rotate(const Matrix4x4f matrix, GLfloat xRadians, GLfloat yRadians, GLfloat zRadians) {
     Matrix4x4f result = copyMatrix(matrix);
     ;
     Matrix4x4f rotationMatrix;
@@ -120,8 +109,7 @@ Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate)
     return result;
 }
 
-Matrix4x4f transpose(const Matrix4x4f& matrix)
-{
+Matrix4x4f transpose(const Matrix4x4f& matrix) {
     Matrix4x4f result;
 
     for (int row = 0; row < DIM_OF_MAT; row++) {
@@ -134,8 +122,7 @@ Matrix4x4f transpose(const Matrix4x4f& matrix)
 }
 
 // See https://stackoverflow.com/questions/349050/calculating-a-lookat-matrix for why the dot product is in the bottom
-Matrix4x4f getLookAt(const Vector3f& eye, const Vector3f& pointToLookAt, const Vector3f& up)
-{
+Matrix4x4f getLookAt(const Vector3f& eye, const Vector3f& pointToLookAt, const Vector3f& up) {
     Vector3f zAxis = normalize(subtractVector(pointToLookAt, eye));
     Vector3f xAxis = normalize(cross(zAxis, up));
     Vector3f yAxis = normalize(cross(xAxis, zAxis));
@@ -166,8 +153,7 @@ Matrix4x4f getProjection(GLfloat near, GLfloat far, GLfloat fieldOfViewRadians, 
 
 // Honestly, this is too much of a pain to write myself. I stole it from here:
 // https://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
-bool inverse(const Matrix4x4f& m, Matrix4x4f& result)
-{
+bool inverse(const Matrix4x4f& m, Matrix4x4f& result) {
     float inv[16], det;
     int i;
 

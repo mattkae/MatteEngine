@@ -1,0 +1,82 @@
+useDeferredRendering    false
+
+::skybox
+    front   assets/skybox/cloudy/bluecloud_ft.jpg
+    back    assets/skybox/cloudy/bluecloud_bk.jpg
+    up      assets/skybox/cloudy/bluecloud_up.jpg
+    down    assets/skybox/cloudy/bluecloud_dn.jpg
+    right   assets/skybox/cloudy/bluecloud_rt.jpg
+    left    assets/skybox/cloudy/bluecloud_lf.jpg
+;;
+
+::lights
+    ::
+        type            0
+        color           0.3 0.3 0.3
+        direction       0 -1 0
+        position        0 10 0
+        up              0 0 1
+        usesShadows     true
+        isOn            true
+        constant        1
+        linear          0
+        quadratic       0
+        cosineCutOff    0.5
+        dropOff         24
+    ;;
+;;
+
+::spheres
+    ::
+        radius          1
+        transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+        angleIncrements 10
+    ;;
+;; 
+
+//::particleEmitters
+    ::
+        model               1 0 0 0 0 1 0 0 0 0 1 0 0 3 0 1
+        ::spawnFrequencySeconds
+            baseValue       0.0001
+            randomOffset    0.00005
+        ;;
+        initialNumParticles 10000
+        maxParticles        100000
+        ::colorFunction
+            initial         1 0 0 1
+            linear          -0.25 0 0 -1
+            quadratic       0 0.2 0 0
+            sinValue        0 0 0 0
+            cosValue        0 1 0 0
+        ;;
+        ::movementFunction
+            initial     0 10 0
+            linear      0 10 0
+            quadratic   0 0 0
+            sinValue    0 0 0
+            cosValue    8 0 8
+        ;;
+        numVertices         48
+        particleDimension   0.1 0.1
+        ::particlePosition
+            baseValue   0 0 0
+            randomOffset 1 1 1
+        ;;
+        ::particleTimeToLiveSeconds
+            baseValue       2.0
+            randomOffset    0.5
+        ;;
+    ;;
+;;
+
+//::terrain
+    size            1000
+    granularity     500
+    permSize        1000
+    minMaxHeight    32
+    scaleFactor     0.004
+    ampFactor       0.6
+    frequencyFactor 1.5
+    numOctaves      64
+;;

@@ -13,8 +13,7 @@ inline void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels,
 inline void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[SCENE_FILE_BUFFER_SIZE]);
 inline void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE]);
-inline void ignoreObject(FILE* file, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+inline void ignoreObject(FILE* file, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (startsWith(ptr, END_OBJECT_TOKEN)) {
@@ -23,8 +22,7 @@ inline void ignoreObject(FILE* file, char buffer[SCENE_FILE_BUFFER_SIZE])
     }
 }
 
-void loadScene(const char* filepath, BetterScene& scene)
-{
+void loadScene(const char* filepath, BetterScene& scene) {
     FILE* file;
 #ifdef __APPLE__
     file = fopen(filepath, "r");
@@ -89,8 +87,7 @@ void loadScene(const char* filepath, BetterScene& scene)
     fclose(file);
 }
 
-void loadSkybox(FILE* file, Skybox& skybox, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadSkybox(FILE* file, Skybox& skybox, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char facePaths[6][128];
     char* ptr = &buffer[0];
     while (processLine(file, buffer, ptr)) {
@@ -127,8 +124,7 @@ void loadSkybox(FILE* file, Skybox& skybox, char buffer[SCENE_FILE_BUFFER_SIZE])
     initSkybox(skybox, facePaths);
 }
 
-inline void loadLight(FILE* file, Light& light, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader)
-{
+inline void loadLight(FILE* file, Light& light, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (ifEqualWalkToValue(ptr, "type")) {
@@ -165,8 +161,7 @@ inline void loadLight(FILE* file, Light& light, char buffer[SCENE_FILE_BUFFER_SI
     initLight(light, shader);
 }
 
-void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader)
-{
+void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader) {
     numLights = 0;
     char* ptr;
     while (processLine(file, buffer, ptr)) {
@@ -179,8 +174,7 @@ void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_
     }
 }
 
-inline void loadModel(FILE* file, Model& model, Box& box, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+inline void loadModel(FILE* file, Model& model, Box& box, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (ifEqualWalkToValue(ptr, "path")) {
@@ -195,8 +189,7 @@ inline void loadModel(FILE* file, Model& model, Box& box, char buffer[SCENE_FILE
     initializeModel(model, box);
 }
 
-void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (startsWith(ptr, START_OBJECT_TOKEN)) {
@@ -208,8 +201,7 @@ void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char b
     }
 }
 
-inline void loadSphere(FILE* file, Model& model, Box& box, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+inline void loadSphere(FILE* file, Model& model, Box& box, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     Sphere sphere;
     while (processLine(file, buffer, ptr)) {
@@ -227,8 +219,7 @@ inline void loadSphere(FILE* file, Model& model, Box& box, char buffer[SCENE_FIL
     initializeSphere(sphere, model, box);
 }
 
-void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (startsWith(ptr, START_OBJECT_TOKEN)) {
@@ -254,8 +245,7 @@ void loadRandomizableFloat(FILE* file, RandomizableFloat& v, char buffer[SCENE_F
     }
 }
 
-void loadRandomizableVec3(FILE* file, RandomizableVec3& v, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadRandomizableVec3(FILE* file, RandomizableVec3& v, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (ifEqualWalkToValue(ptr, "baseValue")) {
@@ -268,8 +258,7 @@ void loadRandomizableVec3(FILE* file, RandomizableVec3& v, char buffer[SCENE_FIL
     }
 }
 
-void loadFloatFunc(FILE* file, FunctionFloat& v, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadFloatFunc(FILE* file, FunctionFloat& v, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (ifEqualWalkToValue(ptr, "initial")) {
@@ -288,8 +277,7 @@ void loadFloatFunc(FILE* file, FunctionFloat& v, char buffer[SCENE_FILE_BUFFER_S
     }
 }
 
-void loadVec4Func(FILE* file, FunctionVec4& v, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadVec4Func(FILE* file, FunctionVec4& v, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (ifEqualWalkToValue(ptr, "initial")) {
@@ -308,8 +296,7 @@ void loadVec4Func(FILE* file, FunctionVec4& v, char buffer[SCENE_FILE_BUFFER_SIZ
     }
 }
 
-void loadVec3Func(FILE* file, FunctionVec3& v, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadVec3Func(FILE* file, FunctionVec3& v, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (ifEqualWalkToValue(ptr, "initial")) {
@@ -328,8 +315,7 @@ void loadVec3Func(FILE* file, FunctionVec3& v, char buffer[SCENE_FILE_BUFFER_SIZ
     }
 }
 
-inline void loadParticleEmitter(FILE* file, ParticleEmitter& emitter, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+inline void loadParticleEmitter(FILE* file, ParticleEmitter& emitter, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     char* ptr;
     int initialParticleCount = 0;
     while (processLine(file, buffer, ptr)) {
@@ -362,8 +348,7 @@ inline void loadParticleEmitter(FILE* file, ParticleEmitter& emitter, char buffe
     initializeParticleEmitter(emitter, initialParticleCount);
 }
 
-void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     numEmitters = 0;
     char* ptr;
     while (processLine(file, buffer, ptr)) {
@@ -376,8 +361,7 @@ void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmit
     }
 }
 
-void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE])
-{
+void loadTerrain(FILE* file, Terrain& terrain, char buffer[SCENE_FILE_BUFFER_SIZE]) {
     GenerationParameters gp;
     char* ptr;
     while (processLine(file, buffer, ptr)) {

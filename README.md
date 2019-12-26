@@ -9,7 +9,7 @@ Over time, the goal is to remove these libraries and hand-roll the things that a
 
 ## Capabilities of the Engine
 ### File Format
-The engine reads in `.matte` files, exampels of which can be found in the `assets/scenes` directory. These files are in pseudo-json format, with a few exceptions, since I found JSON to be a little to bloated for my use case.
+The engine reads in `.matte` files, examples of which can be found in the `assets/scenes` directory. These files are in pseudo-json format, with a few exceptions, since I found JSON to be a little to bloated for my use case.
 
 ### Skyboxes and Terrain
 Terrain is being generated using a variation of Simplex Noise, and Skyboxes are being rendered via a Cube Map

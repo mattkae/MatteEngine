@@ -13,7 +13,7 @@
 #include <GLFW/glfw3.h>
 
 int castRayToModel(BetterScene& scene) {
-	Vector4f rayWorld = clickToRay(scene.mCamera);
+	Ray rayWorld = clickToRay(scene.mCamera);
 
 	GLfloat distanceFromEye = -1;
 	int retval = -1;
@@ -22,7 +22,7 @@ int castRayToModel(BetterScene& scene) {
 		const Box& box = scene.modelBoundingBoxes[mIdx];
 		const Model& model = scene.models[mIdx];
 
-		if (isBoxInRayPath(box, model.model, rayWorld, scene.mCamera)) {
+		if (isBoxInRayPath(box, model.model, rayWorld)) {
 			GLfloat nextDistanceFromEye = getDistanceFromCamera(box, scene.mCamera, model.model);
 			if (distanceFromEye < 0 || nextDistanceFromEye < distanceFromEye) {
 				distanceFromEye = nextDistanceFromEye;

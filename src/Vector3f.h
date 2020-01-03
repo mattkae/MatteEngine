@@ -24,3 +24,4 @@ Vector3f subtractVector(const Vector3f& first, const Vector4f& second);
 Vector3f negate(const Vector3f& v);
 Vector3f cross(const Vector3f& first, const Vector3f& second);
 Vector3f normalize(const Vector3f& v);
+Vector3f fromVec4(const Vector4f& v);

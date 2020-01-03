@@ -1,5 +1,5 @@
 #include "Ray.h"
-Vector4f clickToRay(const BetterCamera& camera) {
+Ray clickToRay(const BetterCamera& camera) {
 	Point cursorPosition = getCursorPosition();
 	
 	// Most of my understanding of how I was to get the ray from the point clicked
@@ -12,16 +12,19 @@ Vector4f clickToRay(const BetterCamera& camera) {
 
 	Matrix4x4f inverseProj;
 	if (!inverse(getCameraProjection(camera), inverseProj)) {
-		return Vector4f();
+		return Ray();
 	}
 
 	Matrix4x4f inverseView;
 	if (!inverse(getCameraViewMatrix(camera), inverseView)) {
-		return Vector4f();
+		return Ray();
 	}
 
 	Vector4f rayEye = mult(inverseProj, ndcPoint);
 	rayEye.z = -1.f;
 	rayEye.w = 0.f;
-	return normalize(mult(inverseView, rayEye));
+	Ray result;
+	result.direction = fromVec4(normalize(mult(inverseView, rayEye)));
+	result.position = camera.position;
+	return result;
 }

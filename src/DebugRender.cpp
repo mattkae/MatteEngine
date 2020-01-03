@@ -2,6 +2,7 @@
 #include "ObjModel.h"
 #include "Input.h"
 #include "Ray.h"
+#include "Plane.h"
 
 inline void initArrow(DebugArrow& arrow) {
 	loadFromObj((char*)"assets/simple_arrow.obj", arrow.model);
@@ -49,16 +50,16 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 
 	if (dbgModel.clickState == DebugClickState::NONE) {
 		if (isLeftClickDown()) {
-			Vector4f rayWorld = clickToRay(camera);
-			if (isBoxInRayPath(dbgModel.debugBox, model, rayWorld, camera)) {
+			Ray rayWorld = clickToRay(camera);
+			if (isBoxInRayPath(dbgModel.debugBox, model, rayWorld)) {
 				GLfloat distanceFromCamera = -1;
 
-				if (isBoxInRayPath(dbgModel.xArrow.boundingBox, dbgModel.xArrow.model.model, rayWorld, camera)) {
+				if (isBoxInRayPath(dbgModel.xArrow.boundingBox, dbgModel.xArrow.model.model, rayWorld)) {
 					dbgModel.clickState = DebugClickState::X_AXIS;
 					distanceFromCamera = getDistanceFromCamera(dbgModel.xArrow.boundingBox, camera, dbgModel.xArrow.model.model);
 				}
 				
-				if (isBoxInRayPath(dbgModel.yArrow.boundingBox, dbgModel.yArrow.model.model, rayWorld, camera)) {
+				if (isBoxInRayPath(dbgModel.yArrow.boundingBox, dbgModel.yArrow.model.model, rayWorld)) {
 					GLfloat nextDistanceFromCamera = getDistanceFromCamera(dbgModel.yArrow.boundingBox, camera, dbgModel.yArrow.model.model);
 					if (distanceFromCamera < 0 || nextDistanceFromCamera < distanceFromCamera) {
 						dbgModel.clickState = DebugClickState::Y_AXIS;
@@ -66,7 +67,7 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 					}
 				}
 				
-				if (isBoxInRayPath(dbgModel.zArrow.boundingBox, dbgModel.zArrow.model.model, rayWorld, camera)) {
+				if (isBoxInRayPath(dbgModel.zArrow.boundingBox, dbgModel.zArrow.model.model, rayWorld)) {
 					GLfloat nextDistanceFromCamera = getDistanceFromCamera(dbgModel.zArrow.boundingBox, camera, dbgModel.zArrow.model.model);
 					if (distanceFromCamera < 0 || nextDistanceFromCamera < distanceFromCamera) {
 						dbgModel.clickState = DebugClickState::Z_AXIS;
@@ -84,8 +85,6 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 					changeArrowColor(dbgModel.zArrow, Vector3f{1, 1, 0});
 					break;
 				}
-
-				dbgModel.lastMousePos = getCursorPosition();
 			}
 		}
 	} else if (!isLeftClickDown()) {
@@ -103,19 +102,29 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 
 		dbgModel.clickState = DebugClickState::NONE;
 	} else {
-		Point nextCursorPos = getCursorPosition();
-		Point diff = { nextCursorPos.x - dbgModel.lastMousePos.x, nextCursorPos.y - dbgModel.lastMousePos.y };
-		dbgModel.lastMousePos = nextCursorPos;
+		Ray rayToWorld = clickToRay(camera);
+		Plane plane;
+		plane.center =  fromVec4(mult(model, getCenter(dbgModel.debugBox)));
+		Vector3f intersectPoint;
 
 		switch (dbgModel.clickState) {
 		case DebugClickState::X_AXIS:
-			model = translateMatrix(model, Vector3f{diff.x, 0, 0});
+			plane.normal = Vector3f{0, 0, 1};
+			if (tryGetRayPointOfIntersection(plane, rayToWorld, intersectPoint)) {
+				model = translateMatrixX(model, subtractVector(intersectPoint, plane.center).x);
+			}
 			break;
 		case DebugClickState::Y_AXIS:
-			model = translateMatrix(model, Vector3f{0, diff.y, 0});
+			plane.normal = Vector3f{1, 0, 0};
+			if (tryGetRayPointOfIntersection(plane, rayToWorld, intersectPoint)) {
+				model = translateMatrixY(model, subtractVector(intersectPoint, plane.center).y);
+			}
 			break;
 		case DebugClickState::Z_AXIS:
-			model = translateMatrix(model, Vector3f{0, 0, diff.x});
+			plane.normal = Vector3f{0, 1, 0};
+			if (tryGetRayPointOfIntersection(plane, rayToWorld, intersectPoint)) {
+				model = translateMatrixZ(model, subtractVector(intersectPoint, plane.center).z);
+			}
 			break;
 		}
 	}

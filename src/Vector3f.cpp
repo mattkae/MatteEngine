@@ -64,3 +64,11 @@ Vector3f normalize(const Vector3f& v) {
 		v.z * len
 	};
 }
+
+Vector3f fromVec4(const Vector4f& v) {
+	return {
+		v.x,
+		v.y,
+		v.z
+	};
+}

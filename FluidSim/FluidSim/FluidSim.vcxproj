@@ -84,6 +84,7 @@
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
     <ClInclude Include="..\..\src\OpenGLUtil.h" />
     <ClInclude Include="..\..\src\Panel.h" />
+    <ClInclude Include="..\..\src\Plane.h" />
     <ClInclude Include="..\..\src\Point.h" />
     <ClInclude Include="..\..\src\Quad.h" />
     <ClInclude Include="..\..\src\Rectangle.h" />

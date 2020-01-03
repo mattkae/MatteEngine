@@ -3,6 +3,7 @@
 #include "Vector4f.h"
 #include "Matrix4x4f.h"
 #include "Camera.h"
+#include "Ray.h"
 #include <algorithm>
 #include "Shader.h"
 #include <GL/glew.h>
@@ -26,11 +27,11 @@ inline bool isInBox(const Box& box, const Vector4f& v, const Matrix4x4f& model) 
 
 // Most of my understanding of this algorithm comes form here:
 // https://tavianator.com/fast-branchless-raybounding-box-intersections-part-2-nans/
-inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Vector4f& rayDirection, const BetterCamera& camera) {
+inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Ray& ray) {
 	const Vector4f& lowerLeft = mult(model, box.lowerLeft);
 	const Vector4f& upperRight = mult(model, box.upperRight);
-	const Vector4f& modelRayDirection = rayDirection;
-	const Vector3f& rayPosition = camera.position;
+	const Vector3f& modelRayDirection = ray.direction;
+	const Vector3f& rayPosition = ray.position;
 
 	float xMin = (lowerLeft.x - rayPosition.x) / (modelRayDirection.x);
 	float xMax = (upperRight.x - rayPosition.x) / (modelRayDirection.x);
@@ -48,6 +49,18 @@ inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Vector
 	max = std::min(max, std::max(zMin, zMax));
 
 	return max >= std::max(min, 0.f);
+}
+
+inline Vector4f getCenter(const Box& box) {
+	float xSize = (box.upperRight.x - box.lowerLeft.x) / 2.f;
+	float ySize = (box.upperRight.y - box.lowerLeft.y) / 2.f;
+	float zSize = (box.upperRight.z - box.lowerLeft.z) / 2.f;
+	return { 
+		box.lowerLeft.x + xSize, 
+		box.lowerLeft.y + ySize, 
+		box.lowerLeft.z + zSize, 
+		1.f 
+	};
 }
 
 void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader);

@@ -115,6 +115,24 @@ Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate) 
 	return result;
 }
 
+Matrix4x4f translateMatrixX(const Matrix4x4f& matrix, float translate) {
+	Matrix4x4f result = copyMatrix(matrix);;
+	result.values[12] += translate;
+	return result;
+}
+
+Matrix4x4f translateMatrixY(const Matrix4x4f& matrix, float translate) {
+	Matrix4x4f result = copyMatrix(matrix);;
+	result.values[13] += translate;
+	return result;
+}
+
+Matrix4x4f translateMatrixZ(const Matrix4x4f& matrix, float translate) {
+	Matrix4x4f result = copyMatrix(matrix);;
+	result.values[14] += translate;
+	return result;
+}
+
 Matrix4x4f transpose(const Matrix4x4f& matrix) {
 	Matrix4x4f result;
 

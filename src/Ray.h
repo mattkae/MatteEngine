@@ -5,4 +5,9 @@
 #include "Camera.h"
 #include "GlobalApplicationState.h"
 
-Vector4f clickToRay(const BetterCamera& camera);
+struct Ray {
+	Vector3f direction;
+	Vector3f position;
+};
+
+Ray clickToRay(const BetterCamera& camera);

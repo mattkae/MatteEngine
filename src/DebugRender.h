@@ -44,7 +44,6 @@ struct DebugModel {
 		{ 0, 0, 1 }
 	};
 	DebugClickState clickState = DebugClickState::NONE;
-	Point lastMousePos;
 };
 
 void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera);

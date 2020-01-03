@@ -99,10 +99,8 @@ Matrix4x4f rotate(const Matrix4x4f matrix, GLfloat xRadians, GLfloat yRadians, G
     return result;
 }
 
-Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate)
-{
+Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate) {
     Matrix4x4f result = copyMatrix(matrix);
-    ;
     result.values[12] += translate.x;
     result.values[13] += translate.y;
     result.values[14] += translate.z;

@@ -9,9 +9,10 @@ Rectangle getRectangle(const TextInput& input, const TextRenderer& textRenderer)
 }
 
 inline void setInternalRepresentation(TextInput& textInput, bool force) {
-	if (textInput.representation.size() != 0 && !force) {
-		return;
-	}
+	// @TODO: Add back in check and think of a workaround if this becomes to slow for some reason
+	//if (textInput.representation.size() != 0 && !force) {
+	//	return;
+	//}
 
 	switch (textInput.inputType) {
 	case TextInputType::TEXT: 

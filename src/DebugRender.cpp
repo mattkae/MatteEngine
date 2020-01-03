@@ -85,9 +85,13 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 					changeArrowColor(dbgModel.zArrow, Vector3f{1, 1, 0});
 					break;
 				}
+
+				if (dbgModel.clickState != DebugClickState::NONE) {
+					dbgModel.focusToken = grabFocus();
+				}
 			}
 		}
-	} else if (!isLeftClickDown()) {
+	} else if (!isLeftClickDown() && dbgModel.clickState != DebugClickState::NONE) {
 		switch (dbgModel.clickState) {
 		case DebugClickState::X_AXIS:
 			changeArrowColor(dbgModel.xArrow, Vector3f{1, 0, 0});
@@ -101,6 +105,7 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 		}
 
 		dbgModel.clickState = DebugClickState::NONE;
+		returnFocus(dbgModel.focusToken);
 	} else {
 		Ray rayToWorld = clickToRay(camera);
 		Plane plane;
@@ -115,13 +120,13 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 			}
 			break;
 		case DebugClickState::Y_AXIS:
-			plane.normal = Vector3f{1, 0, 0};
+			plane.normal = Vector3f{0, 0, 1};
 			if (tryGetRayPointOfIntersection(plane, rayToWorld, intersectPoint)) {
 				model = translateMatrixY(model, subtractVector(intersectPoint, plane.center).y);
 			}
 			break;
 		case DebugClickState::Z_AXIS:
-			plane.normal = Vector3f{0, 1, 0};
+			plane.normal = Vector3f{1, 0, 0};
 			if (tryGetRayPointOfIntersection(plane, rayToWorld, intersectPoint)) {
 				model = translateMatrixZ(model, subtractVector(intersectPoint, plane.center).z);
 			}

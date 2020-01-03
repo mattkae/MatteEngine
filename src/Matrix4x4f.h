@@ -1,20 +1,21 @@
 #pragma once
-#include "Vector4f.h"
 #include "Vector3f.h"
+#include "Vector4f.h"
 #include <GL/glew.h>
+#include <cstring>
 
 constexpr int DIM_OF_MAT = 4;
 constexpr int SIZE_OF_4_X_4 = DIM_OF_MAT * DIM_OF_MAT;
 
 // Using coumn major, because OpenGL uses it internally, and we don't need that confusion
 struct Matrix4x4f {
-	GLfloat values[SIZE_OF_4_X_4] = {0};
+    GLfloat values[SIZE_OF_4_X_4] = { 0 };
 };
 
 inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {
-	Matrix4x4f result;
-	memcpy(result.values, matrix.values,  16 * sizeof(GLfloat));
-	return result;
+    Matrix4x4f result;
+    memcpy(result.values, matrix.values, 16 * sizeof(GLfloat));
+    return result;
 }
 
 constexpr Matrix4x4f getIdentity();
@@ -33,5 +34,5 @@ Matrix4x4f translateMatrixY(const Matrix4x4f& matrix, float translate);
 Matrix4x4f translateMatrixZ(const Matrix4x4f& matrix, float translate);
 Matrix4x4f transpose(const Matrix4x4f& matrix);
 Matrix4x4f getLookAt(const Vector3f& eye, const Vector3f& pointToLookAt, const Vector3f& up);
-Matrix4x4f getProjection(GLfloat near,  GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio);
+Matrix4x4f getProjection(GLfloat near, GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio);
 bool inverse(const Matrix4x4f& matrix, Matrix4x4f& result);

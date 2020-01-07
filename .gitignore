@@ -15,3 +15,6 @@ FluidSim/FluidSim/x64/Debug/
 
 FluidSim/Debug/
 .vscode
+*.obj
+*.tlog
+./FluidSim/FluidSim/Release/**

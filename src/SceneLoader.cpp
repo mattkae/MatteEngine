@@ -124,7 +124,7 @@ void loadSkybox(FILE* file, Skybox& skybox, char buffer[SCENE_FILE_BUFFER_SIZE])
     initSkybox(skybox, facePaths);
 }
 
-inline void loadLight(FILE* file, Light& light, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader) {
+inline void loadLight(FILE* file, Light& light, int numLights, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader) {
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (ifEqualWalkToValue(ptr, "type")) {
@@ -158,7 +158,7 @@ inline void loadLight(FILE* file, Light& light, char buffer[SCENE_FILE_BUFFER_SI
         }
     }
 
-    initLight(light, shader);
+    initLight(light, shader, numLights);
 }
 
 void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_FILE_BUFFER_SIZE], const Shader& shader) {
@@ -166,7 +166,7 @@ void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[SCENE_
     char* ptr;
     while (processLine(file, buffer, ptr)) {
         if (startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadLight(file, lights[numLights], buffer, shader);
+            loadLight(file, lights[numLights], numLights, buffer, shader);
             numLights++;
         } else if (startsWith(ptr, END_OBJECT_TOKEN)) {
             break;

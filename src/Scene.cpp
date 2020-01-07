@@ -73,11 +73,9 @@ void renderShadows(const BetterScene& scene) {
 
 	useShader(scene.mShadowShader);
 
-    glCullFace(GL_FRONT);
     for (auto light : scene.lights) {
 		renderLightShadows(light, scene.mShadowShader, scene);
     }
-    glCullFace(GL_BACK);
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -85,7 +83,7 @@ void renderShadows(const BetterScene& scene) {
     }
 }
 
-void renderGBUffer(const BetterScene& scene) {
+void renderGBuffer(const BetterScene& scene) {
 	if (!scene.useDefferredRendering) {
         return;
     }
@@ -119,7 +117,13 @@ void renderDebug(const BetterScene& scene) {
 }
 
 void renderDirect(const BetterScene& scene) {
+    glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+    glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	renderSkybox(scene.mSkybox, scene.mCamera);
@@ -131,15 +135,7 @@ void renderDirect(const BetterScene& scene) {
 	useShader(scene.mSceneShader);
     renderCamera(scene.mCamera, scene.mSceneShader, true);
 
-    glEnable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glDepthMask(GL_TRUE);
-	glClearDepth(1.0f);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	setShaderVec3(scene.mSceneShader, "uAmbient", glm::vec3(0.3f));
+	setShaderVec3(scene.mSceneShader, "uAmbient", glm::vec3(0.1f));
 	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
 
     for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
@@ -150,14 +146,13 @@ void renderDirect(const BetterScene& scene) {
         scene.mDeferredBuffer.renderToScreen(scene.mSceneShader);
     } else {
         renderModels(scene, scene.mSceneShader);
+		renderNonDeferred(scene);
     }
 
     glDisable(GL_BLEND);
-	renderNonDeferred(scene);
+
 	renderDebug(scene);
-
 	renderUI(scene.ui);
-
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -168,7 +163,7 @@ void renderDirect(const BetterScene& scene) {
 
 void renderScene(const BetterScene& scene) {
 	renderShadows(scene);
-	renderGBUffer(scene);
+	renderGBuffer(scene);
 	renderDirect(scene);
 }
 

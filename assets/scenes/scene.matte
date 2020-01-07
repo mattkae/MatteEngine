@@ -12,9 +12,9 @@ useDeferredRendering    false
 ::lights
     ::
         type            0
-        color           0.3 0.3 0.3
+        color           0.3 0.5 0.0
         direction       0 -1 0
-        position        0 10 0
+        position        0 100 0
         up              0 0 1
         usesShadows     true
         isOn            true
@@ -26,10 +26,10 @@ useDeferredRendering    false
     ;;
 ;;
 
-//::models
+::models
     ::
-        path        assets/sword/sword.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+        path        assets/floor.obj
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -3 0 1
     ;;
 ;;
 
@@ -37,11 +37,6 @@ useDeferredRendering    false
     ::
         radius          1
         transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
-        angleIncrements 10
-    ;;
-    ::
-        radius          1
-        transform       1 0 0 0 0 1 0 0 0 0 1 0 0 5 0 1
         angleIncrements 10
     ;;
 ;; 
@@ -82,7 +77,7 @@ useDeferredRendering    false
     ;;
 ;;
 
-//::terrain
+::terrain
     size            1000
     granularity     500
     permSize        1000

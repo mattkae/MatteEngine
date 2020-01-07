@@ -13,8 +13,8 @@ struct BetterScene;
 enum LightType { Directional = 0, PointLight, Spot, Inactive };
 
 struct Light {
-	GLsizei index = 0;
-	LightType type;
+	GLint index = 0;
+	LightType type = LightType::Directional;
     glm::vec3 color = glm::vec3(1.0);
     glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
     glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
@@ -52,7 +52,7 @@ struct Light {
 	GLint shadowMatrixUniform;
 };
 
-bool initLight(Light& light, const Shader& shader);
+bool initLight(Light& light, const Shader& shader, int lightIndex);
 void renderLightShadows(const Light& light, const Shader shader, const BetterScene& scene);
 void renderLight(const Light& light, const Shader shader, const int index);
 void freeLight(Light& light);

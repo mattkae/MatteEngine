@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-glm::mat4 get_light_projection(const Light &light) {
+inline glm::mat4 getLightProjection(const Light &light) {
     switch (light.type) {
     case Directional:
         return glm::ortho<float>(-10, 10, -10.f, 10, GlobalAppState.near, GlobalAppState.far);
@@ -23,7 +23,7 @@ glm::mat4 get_light_projection(const Light &light) {
     }
 }
 
-glm::mat4 get_light_view(const Light &light) {
+inline glm::mat4 getLightView(const Light &light) {
     switch (light.type) {
     case Directional: {
         auto lightPosition = (-GlobalAppState.far / 2.0f) * light.direction;
@@ -103,7 +103,8 @@ static GLint getArrayUniform(const Shader& shader, const int lightIndex, const c
     return getShaderUniform(shader, ss.str().c_str());
 }
 
-bool initLight(Light& light, const Shader& shader) {
+bool initLight(Light& light, const Shader& shader, int lightIndex) {
+	light.index = lightIndex;
     switch (light.type) {
     case Spot:
     case Directional:
@@ -129,6 +130,8 @@ bool initLight(Light& light, const Shader& shader) {
 	if (light.usesShadows) {
 		light.dirShadowUniform = getArrayUniform(shader, light.index, "uDirShadow");
 		light.shadowMatrixUniform = getArrayUniform(shader, light.index, "uLights", "shadowMatrix");
+		light.view = getLightView(light);
+		light.projection = getLightProjection(light);
 	}
 
     return true;
@@ -195,10 +198,12 @@ void renderPointShadows(const Light& light, const Shader &shader, const BetterSc
 
 void renderDirectionalShadows(const Light& light, const Shader shader, const BetterScene &scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
     glViewport(0, 0, light.shadowWidth, light.shadowHeight);
-    glClearDepth(1.0);
+    glClearDepth(1.f);
     glClear(GL_DEPTH_BUFFER_BIT);
 
 	setShaderMat4(shader, "uView", light.view);
@@ -207,6 +212,7 @@ void renderDirectionalShadows(const Light& light, const Shader shader, const Bet
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
+	glDisable(GL_DEPTH_TEST);
     glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }
 

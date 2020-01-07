@@ -7,7 +7,7 @@
 out vec4 Color;
 
 // Input from vertex shader
-in vec3 oFragPos;
+in vec4 oFragPos;
 in vec3 oNormal;
 in vec2 oTexCoords;
 in vec3 oEye;
@@ -15,11 +15,11 @@ in vec3 oEye;
 // Uniform variables
 uniform Material uMaterial;
 uniform int uNumLights;
-uniform Light uLights[MAX_LIGHTS];
 uniform vec3 uAmbient;
 uniform vec2 uFarNear;
+uniform Light uLights[MAX_LIGHTS];
 uniform sampler2DShadow uDirShadow[MAX_LIGHTS];
-// uniform samplerCubeShadow uOmniShadows[MAX_POINT_LIGHT_SHADOWS];
+uniform mat4 shadowMatrixUniform[MAX_LIGHTS];
 
 // Helper functions
 vec3 getColorFromLight(Light directionalLight, vec3 normal, vec3 viewDir, vec3 diffuse, vec3 specular);
@@ -29,7 +29,7 @@ float getOmniVisibility(const in Light light);
 float getDirVisibility(const in int lightIndex, vec4 fragPosInLightSpace);
 
 void main() {
-    vec3 viewDir = normalize(oEye - oFragPos);
+    vec3 viewDir = normalize(oEye - oFragPos.xyz);
     vec3 normal = normalize(oNormal);
     vec3 diffuse = uMaterial.diffuse;
     vec3 specular = uMaterial.specular;
@@ -44,7 +44,7 @@ void main() {
         float visibility = 1.0;
 
         Light light = uLights[lightIndex];
-        vec4 fragPosInLightSpace = light.shadowMatrix * vec4(oFragPos, 1);
+        vec4 fragPosInLightSpace = light.shadowMatrix * oFragPos;
         if (light.usesShadows) {
             if (light.direction == vec3(0.0)) {
                 visibility = getOmniVisibility(light);
@@ -61,7 +61,7 @@ void main() {
 
 vec3 getColorFromLight(Light light, vec3 normal, vec3 viewDir, vec3 diffuse, vec3 specular) {
     // Get vector from the light, to the fragment
-    vec3 posToFrag = light.position - oFragPos;
+    vec3 posToFrag = light.position - oFragPos.xyz;
     float delta = length(posToFrag);
     posToFrag = normalize(posToFrag);
 

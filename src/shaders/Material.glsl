@@ -7,7 +7,8 @@ struct Material {
     float shininess;
     float opacity;
 
-    int texCount;
-    sampler2D diffuseTex;
-    sampler2D specularTex;
+    bvec3 useTexture;
+    sampler2D diffuseTexture;
+    sampler2D specularTexture;
+    sampler2D ambientTexture;
 };

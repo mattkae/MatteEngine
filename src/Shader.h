@@ -8,6 +8,7 @@
 #include "Matrix4x4f.h"
 #include "Matrix3x3f.h"
 #include "Vector4f.h"
+#include "Logger.h"
 
 typedef GLuint Shader;
 
@@ -16,7 +17,11 @@ Shader reloadShader(Shader shader);
 void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& isDying);
 
 inline GLint getShaderUniform(const Shader& shader, const GLchar *name) {
-    return glGetUniformLocation(shader, name);
+    GLint uid = glGetUniformLocation(shader, name);
+	if (uid < 0) {
+		Logger::logError("Failed to find uniform for: " + std::string(name));
+	}
+	return uid;
 }
 
 inline void useShader(const Shader& shader) {
@@ -65,6 +70,10 @@ inline void setShaderMat4(const Shader& shader, const GLchar* name, const Matrix
 
 inline void setShaderVec3(const Shader& shader, const GLchar* name, Vector3f value) {
 	glUniform3f(getShaderUniform(shader, name), value.x, value.y, value.z);
+}
+
+inline void setShaderBVec3(const Shader& shader, const GLchar* name, bool first, bool second, bool third) {
+	glUniform3i(getShaderUniform(shader, name), first, second, third);
 }
 
 inline void setShaderVec3WithUniform(const Shader& shader, GLint uniform, glm::vec3 value) {

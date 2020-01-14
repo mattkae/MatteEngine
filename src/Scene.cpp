@@ -135,7 +135,7 @@ void renderDirect(const BetterScene& scene) {
 	useShader(scene.mSceneShader);
     renderCamera(scene.mCamera, scene.mSceneShader, true);
 
-	setShaderVec3(scene.mSceneShader, "uAmbient", glm::vec3(0.1f));
+	setShaderVec3(scene.mSceneShader, "uAmbient", glm::vec3(0.5f));
 	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
 
     for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {

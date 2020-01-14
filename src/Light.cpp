@@ -4,6 +4,7 @@
 #include "GlmUtility.h"
 #include "ImageUtil.h"
 #include "Scene.h"
+#include "TextureUniformConstants.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -264,12 +265,14 @@ void renderLight(const Light& light, const Shader shader, const int index) {
 			// @TODO: Point light shadows
 			break;
 		case Directional:
-		case Spot:
-			glActiveTexture(GL_TEXTURE0 + light.index);
+		case Spot: {
+			int shadowMapIndex = TextureUniformConstants::LIGHT_SHADOW_TEXTURE_POSITION_START + light.index;
+			glActiveTexture(shadowMapIndex);
 			glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
-			setShaderIntWithUniform(shader, light.dirShadowUniform, light.index);
+			setShaderIntWithUniform(shader, light.dirShadowUniform, shadowMapIndex);
 			setShaderMat4WithUniform(shader, light.shadowMatrixUniform, light.projection * light.view);
 			break;
+		}
 		default:
 			std::cerr << "Unknown light type: " << light.type << std::endl;
 			break;

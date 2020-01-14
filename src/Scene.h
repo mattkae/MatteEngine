@@ -38,7 +38,7 @@ struct BetterScene {
 	UI ui;
 
 	std::thread mHotreloadThreader;
-    bool mUseShadows = true;
+    bool mUseShadows = false;
     Shader mShadowShader;
     BetterCamera mCamera;
 	std::vector<Shader> shadersToReload;

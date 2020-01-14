@@ -90,7 +90,9 @@
     <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />
     <ClInclude Include="..\..\src\SceneUI.h" />
+    <ClInclude Include="..\..\src\StringUtil.h" />
     <ClInclude Include="..\..\src\TextInput.h" />
+    <ClInclude Include="..\..\src\TextureUniformConstants.h" />
     <ClInclude Include="..\..\src\UI.h" />
     <ClInclude Include="..\..\src\UIContext.h" />
     <ClInclude Include="..\..\src\UIEvent.h" />

@@ -19,6 +19,9 @@ struct Material {
     Vector3f specularProperty = { 1.f, 1.f, 1.f };
     float specularComponent = 20.f;
     float transparency = 1.0;
+	GLuint diffuseTexture = 0;
+	GLuint specularTexture = 0;
+	GLuint ambientTexture = 0;
 };
 
 void render_material(const Shader &shader, const Material &material);

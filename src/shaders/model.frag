@@ -34,12 +34,18 @@ void main() {
     vec3 diffuse = uMaterial.diffuse;
     vec3 specular = uMaterial.specular;
     vec3 emissive = uMaterial.emissive;
-    if (uMaterial.texCount > 0) {
-        //diffuse = texture(uMaterial.diffuseTex, oTexCoords);
-        //specular = texture(uMaterial.specularTex, oTexCoords);
+    vec3 ambient = uAmbient;
+    if (uMaterial.useTexture[0]) {
+        diffuse = texture(uMaterial.diffuseTexture, oTexCoords).rgb;
+    }
+    if (uMaterial.useTexture[1]) {
+        specular = texture(uMaterial.specularTexture, oTexCoords).rgb;
+    }
+    if (uMaterial.useTexture[2]) {
+        ambient = texture(uMaterial.ambientTexture, oTexCoords).rgb;
     }
 
-    vec3 finalColor = uAmbient * diffuse + emissive;
+    vec3 finalColor = ambient * diffuse + emissive;
     for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {
         float visibility = 1.0;
 

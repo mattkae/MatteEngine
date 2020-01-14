@@ -12,11 +12,11 @@ useDeferredRendering    false
 ::lights
     ::
         type            0
-        color           0.3 0.5 0.0
+        color           0.5 0.5 0.5
         direction       0 -1 0
         position        0 100 0
         up              0 0 1
-        usesShadows     true
+        usesShadows     false
         isOn            true
         constant        1
         linear          0
@@ -28,12 +28,12 @@ useDeferredRendering    false
 
 ::models
     ::
-        path        assets/floor.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -3 0 1
+        path        assets/mario/Super Mario 64 - Mario.obj
+        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 -10 -30 1
     ;;
 ;;
 
-::spheres
+//::spheres
     ::
         radius          1
         transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
@@ -77,7 +77,7 @@ useDeferredRendering    false
     ;;
 ;;
 
-::terrain
+//::terrain
     size            1000
     granularity     500
     permSize        1000

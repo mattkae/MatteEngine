@@ -5,7 +5,7 @@
 #include "Plane.h"
 
 inline void initArrow(DebugArrow& arrow) {
-	loadFromObj((char*)"assets/simple_arrow.obj", arrow.model);
+	loadFromObj((char*)"assets/models/Arrow/simple_arrow.obj", arrow.model);
 	initializeModel(arrow.model, arrow.boundingBox);
 	for (auto& mesh : arrow.model.meshes) {
 		mesh.material.emissive = arrow.color;

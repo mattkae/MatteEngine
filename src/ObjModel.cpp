@@ -228,6 +228,12 @@ void loadFromObj(char* filepath, Model& model) {
 					} else if (tokenBuffPtr[0] == '/') {
 						tokenBuffPtr++;
 						ptr++;
+
+						if (tokenBuffPtr[0] == '/') {
+							index++;
+							tokenBuffPtr++;
+							ptr++;
+						}
 					}
 
 					lengthToDelim = getLengthToNextFaceVal(tokenBuffPtr);

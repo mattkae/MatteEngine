@@ -3,82 +3,54 @@
 #include "DebugRender.h"
 #include <cmath>
 
-struct RenderableBox {
-	GLuint vao;
-	GLuint vbo;
-};
+inline void initializeRenderableBox(Box& box) {
+	static const GLfloat cubeVertices[] = {
+		box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z,
+		box.upperRight.x, box.lowerLeft.y, box.upperRight.z,
+		box.lowerLeft.x,  box.upperRight.y,  box.upperRight.z,
+		box.upperRight.x,  box.upperRight.y,  box.upperRight.z,
+		box.lowerLeft.x, box.lowerLeft.y, box.lowerLeft.z,
+		box.upperRight.x, box.lowerLeft.y, box.lowerLeft.z,
+		box.lowerLeft.x,  box.upperRight.y, box.lowerLeft.z,
+		box.upperRight.x,  box.upperRight.y, box.lowerLeft.z
+	};
 
-RenderableBox globalBox;
+	static const GLuint cubeIndices[] = {
+		0, 1, 2, 3, 7, 1, 5, 4, 7, 6, 2, 4, 0, 1
+	};
 
-const GLfloat boxVertexData[] = {
-    -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, // triangle 1 : end
-    1.0f, 1.0f,-1.0f, // triangle 2 : begin
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f, // triangle 2 : end
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
-};
+	glGenVertexArrays(1, &box.vao);
+	glGenBuffers(1, &box.vbo);
+	glGenBuffers(1, &box.ebo);
 
-inline void initializeRenderableBox() {
-	glGenVertexArrays(1, &globalBox.vao);
-	glGenBuffers(1, &globalBox.vbo);
+	glBindVertexArray(box.vao);
 
-	glBindVertexArray(globalBox.vao);
-	glBindBuffer(GL_ARRAY_BUFFER, globalBox.vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, box.vbo);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), cubeVertices, GL_STATIC_DRAW);
 
-	glBufferData(GL_ARRAY_BUFFER, 105 * sizeof(boxVertexData), boxVertexData, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box.ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 14 * sizeof(GLuint), cubeIndices, GL_STATIC_DRAW);
+
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	box.material.transparency = 0.5f;
+	box.material.ambient = Vector3f{1.f, 0.f, 0.f};
+}
+
+void updateBox(Box& box, const Matrix4x4f& model) {
+	if (box.vao == 0) {
+		initializeRenderableBox(box);
+	}
 }
 
 void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader) {
-	if (globalBox.vao == 0) {
-		initializeRenderableBox();
-	}
+	setShaderMat4(shader, "uModel", model);
+	render_material(shader, box.material);
 
-	Vector3f scale = {
-		fabsf(box.upperRight.x - box.lowerLeft.x) / 2.f,
-		fabsf(box.upperRight.y - box.lowerLeft.y) / 2.f,
-		fabsf(box.upperRight.z - box.lowerLeft.z) / 2.f,
-	};
-
-	Matrix4x4f scaledModel = scaleMatrix(model, scale);
-
-	glBindVertexArray(globalBox.vao);
-	setShaderMat4(shader, "uModel", scaledModel);
-	setShaderVec3(shader, "uMaterial.emissive", glm::vec3(1, 0, 0));
-	glDrawArrays(GL_LINE_LOOP, 0, 36);
-	glBindVertexArray(0);
+	glBindVertexArray(box.vao);
+    glDrawElements(GL_TRIANGLE_STRIP, 14, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 GLfloat getDistanceFromCamera(const Box& box, const BetterCamera& camera, const Matrix4x4f& model) {

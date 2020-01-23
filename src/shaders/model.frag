@@ -35,6 +35,7 @@ void main() {
     vec3 specular = uMaterial.specular;
     vec3 emissive = uMaterial.emissive;
     vec3 ambient = uAmbient;
+
     if (uMaterial.useTexture[0]) {
         diffuse = texture(uMaterial.diffuseTexture, oTexCoords).rgb;
     }

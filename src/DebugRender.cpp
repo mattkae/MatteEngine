@@ -4,49 +4,53 @@
 #include "Ray.h"
 #include "Plane.h"
 
-inline void initArrow(DebugArrow& arrow) {
-	loadFromObj((char*)"assets/models/Arrow/simple_arrow.obj", arrow.model);
-	initializeModel(arrow.model, arrow.boundingBox);
+inline void changeArrowColor(DebugArrow& arrow, Vector3f color) {
+	arrow.color = color;
 	for (auto& mesh : arrow.model.meshes) {
 		mesh.material.emissive = arrow.color;
 		mesh.material.ambient = arrow.color;
+		mesh.material.diffuse = arrow.color;
 	}
 }
 
-void updateDebugArrow(DebugArrow& arrow, const Matrix4x4f& model) {
+inline void initArrow(DebugArrow& arrow) {
+	loadFromObj((char*)"assets/models/Arrow/simple_arrow.obj", arrow.model);
+	initializeModel(arrow.model, arrow.boundingBox);
+	changeArrowColor(arrow, arrow.color);
+}
+
+void updateDebugArrow(DebugArrow& arrow, Box& box, const Matrix4x4f& model) {
+	arrow.model.model = getIdentity();
 	if (arrow.model.meshes.size() == 0) {
 		initArrow(arrow);
 	}
-	arrow.model.model = getIdentity();
-	arrow.model.model = scaleMatrix(arrow.model.model, 0.1f);
 
-	// Rotate and scale
-	Vector4f upperRight = mult(arrow.model.model, arrow.boundingBox.upperRight);
-	Vector4f lowerLeft = mult(arrow.model.model, arrow.boundingBox.lowerLeft);
+	// Rotate and scale per its direction
+	Vector4f upperRight = arrow.boundingBox.upperRight;
+	Vector4f lowerLeft = arrow.boundingBox.lowerLeft;
 	Vector3f translation = scale(Vector3f{0, 1, 0}, abs(upperRight.y - lowerLeft.y) / 2.f);
 
 	arrow.model.model = translateMatrix(arrow.model.model, translation);
 	arrow.model.model = rotate(arrow.model.model, arrow.rotation.x, arrow.rotation.y, arrow.rotation.z);
 	arrow.model.model = mult(arrow.model.model, model);
+
+	// Center inside of the bounding box
+	Vector4f boxUpperRight = mult(model, box.upperRight);
+	Vector4f boxLowerLeft = mult(model, box.lowerLeft);
+	Vector3f centerOfBox = Vector3f{ 0, fabsf(boxUpperRight.y - boxLowerLeft.y) / 2.f, 0 };
+	arrow.model.model = translateMatrix(arrow.model.model, centerOfBox);
 }
 
 void renderDebugArrow(const DebugArrow& arrow, const Shader& shader) {
 	renderModel(arrow.model, shader);
 }
 
-inline void changeArrowColor(DebugArrow& arrow, Vector3f color) {
-	arrow.color = color;
-	for (auto& mesh : arrow.model.meshes) {
-		mesh.material.emissive = arrow.color;
-		mesh.material.ambient = arrow.color;
-	}
-}
-
 void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera) {
 	dbgModel.model = copyMatrix(model);
-	updateDebugArrow(dbgModel.xArrow, dbgModel.model);
-	updateDebugArrow(dbgModel.yArrow, dbgModel.model);
-	updateDebugArrow(dbgModel.zArrow, dbgModel.model);
+	updateBox(dbgModel.debugBox, model);
+	updateDebugArrow(dbgModel.xArrow, dbgModel.debugBox, dbgModel.model);
+	updateDebugArrow(dbgModel.yArrow, dbgModel.debugBox, dbgModel.model);
+	updateDebugArrow(dbgModel.zArrow, dbgModel.debugBox, dbgModel.model);
 
 	if (dbgModel.clickState == DebugClickState::NONE) {
 		if (isLeftClickDown()) {
@@ -136,8 +140,8 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 }
 
 void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const Shader& shader) {
-	renderBoxOutline(dbgModel.debugBox, model, shader);
 	renderDebugArrow(dbgModel.xArrow, shader);
 	renderDebugArrow(dbgModel.yArrow, shader);
 	renderDebugArrow(dbgModel.zArrow, shader);
+	renderBoxOutline(dbgModel.debugBox, model, shader);
 }

@@ -18,7 +18,7 @@ struct DebugArrow {
 	bool isClicked = false;
 };
 
-void updateDebugArrow(DebugArrow& arrow, const Matrix4x4f& model);
+void updateDebugArrow(DebugArrow& arrow, Box& debugBox, const Matrix4x4f& model);
 void renderDebugArrow(const DebugArrow& arrow, const Shader& shader);
 
 enum DebugClickState {

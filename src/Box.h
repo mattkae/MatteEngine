@@ -4,6 +4,7 @@
 #include "Matrix4x4f.h"
 #include "Camera.h"
 #include "Ray.h"
+#include "Material.h"
 #include <algorithm>
 #include "Shader.h"
 #include <GL/glew.h>
@@ -11,6 +12,10 @@
 struct Box {
 	Vector4f lowerLeft;
 	Vector4f upperRight;
+	GLuint vao = 0;
+	GLuint vbo = 0;
+	GLuint ebo = 0;
+	Material material;
 };
 
 inline bool isInBox(const Box& box, const Vector4f& v, const Matrix4x4f& model) {
@@ -63,5 +68,6 @@ inline Vector4f getCenter(const Box& box) {
 	};
 }
 
+void updateBox(Box& box, const Matrix4x4f& model);
 void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader);
 GLfloat getDistanceFromCamera(const Box& box, const BetterCamera& camera, const Matrix4x4f& model);

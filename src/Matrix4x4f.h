@@ -9,7 +9,11 @@ constexpr int SIZE_OF_4_X_4 = DIM_OF_MAT * DIM_OF_MAT;
 
 // Using coumn major, because OpenGL uses it internally, and we don't need that confusion
 struct Matrix4x4f {
-    GLfloat values[SIZE_OF_4_X_4] = { 0 };
+    GLfloat values[SIZE_OF_4_X_4] = { 
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1 };
 };
 
 inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {

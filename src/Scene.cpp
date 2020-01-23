@@ -56,6 +56,8 @@ void updateScene(BetterScene& scene, double dt) {
 			openModelPanel(scene.ui, modelIdx);
 			scene.selectedModelIndex = modelIdx;
 			scene.debugModel.debugBox = scene.modelBoundingBoxes[modelIdx];
+		} else {
+			scene.selectedModelIndex = -1;
 		}
 	}
 
@@ -149,9 +151,9 @@ void renderDirect(const BetterScene& scene) {
 		renderNonDeferred(scene);
     }
 
+	renderDebug(scene);
     glDisable(GL_BLEND);
 
-	renderDebug(scene);
 	renderUI(scene.ui);
 
     GLenum err;

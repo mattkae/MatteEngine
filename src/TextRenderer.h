@@ -8,10 +8,11 @@
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include <map>
 #include "Shader.h"
 #include "GlobalApplicationState.h"
+#include "Vector2f.h"
+#include "Vector3f.h"
 
 struct CharacterRenderInfo {
     GLuint textureId = 0;
@@ -23,7 +24,7 @@ struct CharacterRenderInfo {
 struct TextRenderer {
 public:
     bool initialize(GLint size, GLchar* path);
-    void renderText(Shader originalShader, std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLfloat scrollX = 0) const;
+    void renderText(Shader originalShader, std::string str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
     void free();
 	inline GLint getFontSize() const { return mSize; }
 	GLfloat getStringWidth(std::string str, GLfloat scale) const;

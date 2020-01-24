@@ -28,7 +28,7 @@ useDeferredRendering    false
 
 ::models
     ::
-        path        assets/models/Mario/Super Mario 64 - Mario.obj
+        path        assets/models/Rabbit/Super Mario 64 - Mario.obj
         transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 1
     ;;
 ;;

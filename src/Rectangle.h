@@ -5,7 +5,7 @@
 #include "Shader.h"
 #include "Input.h"
 #include <GL/glew.h>
-#include <glm/glm.hpp>
+#include "Vector4f.h"
 
 struct Rectangle {
 	GLfloat x = 0.0;
@@ -31,6 +31,7 @@ inline bool isClickedOutside(const Rectangle& rect) {
 	return isLeftClickDown() && !isMouseHovered(rect);
 }
 
-void renderRectangle(const Rectangle& rect, const Shader& shader, glm::vec4 backgroundColor, glm::vec4 borderColor = glm::vec4(0), GLfloat borderWidth = 0);
+void renderRectangle(const Rectangle& rect, const Shader& shader, const Vector4f& backgroundColor, 
+	const Vector4f& borderColor = Vector4f{0, 0, 0, 0}, GLfloat borderWidth = 0);
 
 #endif

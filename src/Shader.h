@@ -52,6 +52,10 @@ inline void setShaderVec4(const Shader& shader, const GLchar* name, glm::vec4 va
 	glUniform4f(getShaderUniform(shader, name), value.x, value.y, value.z, value.w);
 }
 
+inline void setShaderVec4(const Shader& shader, const GLchar* name, const Vector4f& value) {
+	glUniform4f(getShaderUniform(shader, name), value.x, value.y, value.z, value.w);
+}
+
 inline void setShaderMat3(const Shader& shader, const GLchar* name, glm::mat3 matrix) {
 	glUniformMatrix3fv(getShaderUniform(shader, name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
@@ -68,7 +72,7 @@ inline void setShaderMat4(const Shader& shader, const GLchar* name, const Matrix
 	glUniformMatrix4fv(getShaderUniform(shader, name), 1, GL_FALSE, matrix.values);
 }
 
-inline void setShaderVec3(const Shader& shader, const GLchar* name, Vector3f value) {
+inline void setShaderVec3(const Shader& shader, const GLchar* name, const Vector3f& value) {
 	glUniform3f(getShaderUniform(shader, name), value.x, value.y, value.z);
 }
 

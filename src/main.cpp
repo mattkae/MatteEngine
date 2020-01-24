@@ -76,7 +76,7 @@ void initialize(int argc, const char* argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GlobalWindow = glfwCreateWindow(GlobalAppState.width, GlobalAppState.height,
-        GlobalAppState.title.c_str(), nullptr, nullptr);
+        GlobalAppState.title, nullptr, nullptr);
     if (!GlobalWindow) {
         cerr << "Error initializing GLFW window" << endl;
         return;

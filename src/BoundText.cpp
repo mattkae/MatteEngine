@@ -1,9 +1,11 @@
 #include "BoundText.h"
 #include "TextRenderer.h"
+#include "Vector2f.h"
 
-void renderBoundText(const BoundText& bt, const Shader& shader, const TextRenderer& textRenderer, std::string text, glm::vec4 backgroundColor, glm::vec3 textColor, GLint scrollOffset) {
+void renderBoundText(const BoundText& bt, const Shader& shader, const TextRenderer& textRenderer, std::string text, 
+	const Vector4f& backgroundColor, const Vector4f& textColor, GLint scrollOffset) {
 	renderRectangle(bt.rect, shader, backgroundColor);
-	glm::vec2 textPosition = glm::vec2(bt.padding + bt.rect.x, bt.padding + bt.rect.y);
+	Vector2f textPosition = Vector2f { bt.padding + bt.rect.x, bt.padding + bt.rect.y };
 	GLfloat textWidthOffset = textRenderer.getStringWidth(text.substr(0, scrollOffset), bt.scale);
 
 	if (textWidthOffset < bt.rect.w) {

@@ -66,7 +66,7 @@ void bufferRect(const Rectangle& rect) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void renderRectangle(const Rectangle& rect, const Shader& shader, glm::vec4 backgroundColor, glm::vec4 borderColor, GLfloat borderWidth) {
+void renderRectangle(const Rectangle& rect, const Shader& shader, const Vector4f& backgroundColor, const Vector4f& borderColor, GLfloat borderWidth) {
 	if (globalRect.mVao == 0) {
 		initializeRenderableRectangle(globalRect, true);
 	}

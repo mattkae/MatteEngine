@@ -1,13 +1,15 @@
 #pragma once
 #include "BoundText.h"
+#include "Vector4f.h"
+#include "Vector3f.h"
 #include "Shader.h"
 
 struct TextRenderer;
 struct Label {
 	BoundText bt;
 	std::string text;
-	glm::vec4 backgroundColor;
-	glm::vec3 textColor;
+	Vector4f backgroundColor;
+	Vector3f textColor;
 };
 
 void renderLabel(const Label& label, const Shader& shader, const TextRenderer& textRenderer);

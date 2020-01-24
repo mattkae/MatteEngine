@@ -1,22 +1,23 @@
 #pragma once
 #include <functional>
 #include <string>
-#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include "Shader.h"
 #include "TextRenderer.h"
+#include "Vector4f.h"
+#include "Vector2f.h"
 
 struct TextRenderer;
 
 struct Button {
 	std::string label = "";
 	GLfloat padding = 0;
-	glm::vec2 position = glm::vec2(0);
+	Vector2f position;
 	GLfloat scale = 1.0;
-	glm::vec4 buttonColor = glm::vec4(0);
-	glm::vec4 hoverColor = glm::vec4(0);
-	glm::vec4 textColor = glm::vec4(0);
-	glm::vec4 borderColor = glm::vec4(0);
+	Vector4f buttonColor;
+	Vector4f hoverColor;
+	Vector4f textColor;
+	Vector4f borderColor;
 	GLfloat width = 128.f;
 	bool* isClicked = nullptr;
 };

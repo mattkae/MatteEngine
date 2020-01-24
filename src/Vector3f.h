@@ -13,6 +13,34 @@ struct Vector3f {
 	GLfloat x = 0;
 	GLfloat y = 0;
 	GLfloat z = 0;
+
+	Vector3f(GLfloat value) {
+		x = value;
+		y = value;
+		z = value;
+	}
+
+	Vector3f(GLfloat vX, GLfloat vY, GLfloat vZ) {
+		x = vX;
+		y = vY;
+		z = vZ;
+	}
+
+	Vector3f operator+(Vector3f& other) {
+		return addVector(*this, other);
+	}
+
+	Vector3f operator-(Vector3f& other) {
+		return subtractVector(*this, other);
+	}
+
+	Vector3f operator-(Vector4f& other) {
+		return subtractVector(*this, other);
+	}
+
+	Vector3f operator-() {
+		return negate(*this);
+	}
 };
 
 Vector3f addVector(const Vector3f& first, const Vector3f& second);

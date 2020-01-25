@@ -1,31 +1,10 @@
 ﻿#include "Terrain.h"
 #include "Logger.h"
 #include "OpenSimplexNoise.h"
-#include "GlmUtility.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/string_cast.hpp>
 
 static float random_float(float min, float max)
 {
     return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min))));
-}
-
-glm::vec3 calculateColor(float height, float max) {
-    glm::vec3 color;
-    if (height > max * 0.98f) {
-        color = glm::vec3(random_float(0.95f, 1.0f));
-    } else if (height > max * 0.85f) {
-        color = glm::vec3(0.84, 0.74, 0.84);
-    } else if (height > (-max) * 0.25f) {
-        color = glm::vec3(0.0, random_float(0.5f, 0.6f), 0.1);
-    } else if (height > (-max) * 0.35f) {
-        color = glm::vec3(0.925, 0.78, 0.68);
-    } else {
-        color = glm::vec3(0.1, random_float(0.3f, 0.5f), random_float(0.8f, 1.f));
-    }
-
-    return color;
 }
 
 void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
@@ -40,10 +19,10 @@ void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
     for (int yCoord = 0; yCoord < params.granularity; yCoord++) {
         for (int xCoord = 0; xCoord < params.granularity; xCoord++) {
             float height = calculateSimplexValue(
-                squareSize + glm::vec2(xCoord, yCoord), params.minMaxHeight,
+				Vector2f { static_cast<GLfloat>(xCoord), static_cast<GLfloat>(yCoord) } + squareSize, params.minMaxHeight,
                 params.scaleFactor, params.ampFactor, params.frequencyFactor,
                 params.numOctaves, perm, permIndexCap);
-            glm::vec3 position = glm::vec3(squareSize * xCoord, height, squareSize * yCoord);
+            Vector3f position = getVec3(squareSize * xCoord, height, squareSize * yCoord);
 
             vertices.push_back({ position });
 
@@ -73,7 +52,7 @@ void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
         auto firstIndex = indices.at(indexIndex);
         auto secondIndex = indices.at(indexIndex + 1);
 
-        auto normal = glm::normalize(glm::cross(vertices[firstIndex].position - vertices[secondIndex].position, 
+        auto normal = normalize(cross(vertices[firstIndex].position - vertices[secondIndex].position, 
 			vertices[thirdIndex].position - vertices[secondIndex].position));
         vertices[firstIndex].normal = normal;
         vertices[secondIndex].normal = normal;
@@ -88,8 +67,8 @@ void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
 	initializeMesh(terrain.mMesh);
 
     int halfMapSize = params.granularity / 2;
-    terrain.model = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-    terrain.model = glm::translate(terrain.model, glm::vec3(-halfMapSize, -50, -halfMapSize));
+	terrain.model = Matrix4x4f { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
+    terrain.model = translateMatrix(terrain.model, getVec3(-halfMapSize, -50, -halfMapSize));
 }
 
 void renderTerrain(const Terrain& terrain, const Shader& shader, bool withMaterial) {

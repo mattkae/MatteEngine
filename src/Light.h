@@ -16,10 +16,10 @@ enum LightType { Directional = 0, PointLight, Spot, Inactive };
 struct Light {
 	GLint index = 0;
 	LightType type = LightType::Directional;
-    Vector3f color = Vector3f(1.0);
-    Vector3f direction = Vector3f(0.0, 0.0, -1.0);
-    Vector3f up = Vector3f(0.0, 1.0, 0.0);
-    Vector3f position = Vector3f(0.0);
+    Vector3f color = getVec3(1.0);
+    Vector3f direction = getVec3(0.0, 0.0, -1.0);
+    Vector3f up = getVec3(0.0, 1.0, 0.0);
+    Vector3f position = getVec3(0.0);
 
     GLfloat constant = 1.0f;
     GLfloat linear = 0.0f;

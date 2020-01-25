@@ -6,8 +6,6 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "UIContext.h"
-#include <glm/glm.hpp>
-#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 #include "Box.h"

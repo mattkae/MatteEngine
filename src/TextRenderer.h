@@ -16,8 +16,8 @@
 
 struct CharacterRenderInfo {
     GLuint textureId = 0;
-    glm::vec2 size = glm::vec2(0, 0);
-    glm::vec2 bearing = glm::vec2(0, 0);
+    Vector2f size;
+    Vector2f bearing;
     GLuint advance = 0;
 };
 

@@ -26,7 +26,7 @@ void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 			if (elementIndex == 0) {
 				yOffset -= getButtonHeight(button, textRenderer);
 			}
-			button.position = glm::vec2(xPosition, yOffset);
+			button.position = Vector2f { xPosition, yOffset };
 			button.width = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * button.padding;
 			updateButton(button, textRenderer);
 			yOffset -= getButtonHeight(button, textRenderer);
@@ -71,7 +71,7 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 
 	renderPanel(context.panel, shader);
 
-	for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
+	/*for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
 		const UIElement& element = context.uiElements[elementIndex];
 		switch (element.type) {
 		case UIElement::BUTTON:
@@ -84,7 +84,7 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 			renderLabel(std::get<Label>(element.element), shader, textRenderer);
 			break;
 		}
-	}
+	}*/
 }
 
 void freeUIContext(UIContext& context) {

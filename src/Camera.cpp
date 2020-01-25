@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Input.h"
+#include "MathHelper.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
 #include <iostream>
@@ -46,9 +47,9 @@ void updateCamera(BetterCamera& camera, float dt) {
 	Vector3f forwardTemp;
 	GLfloat pitch = camera.pitch;
 	GLfloat yaw = camera.yaw - 90.f;
-	forwardTemp.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	forwardTemp.y = sin(glm::radians(pitch));
-	forwardTemp.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	forwardTemp.x = cos(MathHelper::degreesToRadians(pitch)) * cos(MathHelper::degreesToRadians(yaw));
+	forwardTemp.y = sin(MathHelper::degreesToRadians(pitch));
+	forwardTemp.z = cos(MathHelper::degreesToRadians(pitch)) * sin(MathHelper::degreesToRadians(yaw));
 
 	camera.forward = normalize(forwardTemp);
 	camera.right = normalize(cross(camera.forward, WORLD_UP));
@@ -60,7 +61,7 @@ inline Matrix4x4f getCameraViewMatrix(const BetterCamera& camera) {
 };
 
 inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
-	return getProjection(GlobalAppState.near, GlobalAppState.far, camera.fov, GlobalAppState.aspectRatio);
+	return getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, camera.fov, GlobalAppState.aspectRatio);
 };
 
 void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye) {

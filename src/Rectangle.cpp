@@ -37,7 +37,7 @@ void initializeRenderableRectangle(RenderableRectangle& rect, bool isDynamic) {
 	glBindVertexArray(0);
 }
 
-void renderRenderableRectangle(const RenderableRectangle& rect, const Shader& shader, glm::vec4 backgroundColor) {
+void renderRenderableRectangle(const RenderableRectangle& rect, const Shader& shader, const Vector4f& backgroundColor) {
 	setShaderVec4(shader, "uColor", backgroundColor);
 	glBindVertexArray(rect.mVao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

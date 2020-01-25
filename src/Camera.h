@@ -6,7 +6,6 @@
 #include "Shader.h"
 #include "Vector4f.h"
 #include "Matrix4x4f.h"
-#include <glm/glm.hpp>
 
 struct BetterCamera {
 	Vector3f position = { 0, 0, 5 };

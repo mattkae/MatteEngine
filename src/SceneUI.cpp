@@ -31,8 +31,8 @@ void getMainEditor(BetterScene& scene, UIContext& retVal, UI& ui) {
 	retVal.numUiElements = scene.numModels + 1;
 	size_t elementIdx = 0;
 
-	retVal.panel.backgroundColor = glm::vec4(0.1, 0.1, 0.1, 1);
-	retVal.panel.borderColor = glm::vec4(0.3, 0.3, 0.3, 1);
+	retVal.panel.backgroundColor = getVec4(0.1, 0.1, 0.1);
+	retVal.panel.borderColor = getVec4(0.3, 0.3, 0.3);
 	retVal.panel.percentageWidth = 0.15f;
 	retVal.panel.percentageHeight = 0.75f;
 	retVal.panel.horizontal = UIPositioning::LEFT;
@@ -44,8 +44,8 @@ void getMainEditor(BetterScene& scene, UIContext& retVal, UI& ui) {
 	Label modelLabel;
 	modelLabel.bt.padding = 2.f;
 	modelLabel.text = "Models";
-	modelLabel.backgroundColor = glm::vec4(0);
-	modelLabel.textColor = glm::vec4(1);
+	modelLabel.backgroundColor = Vector4f();
+	modelLabel.textColor = getVec4(1);
 	retVal.uiElements[elementIdx].type = UIElement::LABEL;
 	retVal.uiElements[elementIdx].element = modelLabel;
 	retVal.spaceBetweenElements = 2.f;
@@ -55,8 +55,8 @@ void getMainEditor(BetterScene& scene, UIContext& retVal, UI& ui) {
 		const size_t modelPanelIdx = mIdx + 1;
 		Button button;
 		button.label = "Model #" + std::to_string(mIdx + 1);
-		button.buttonColor = glm::vec4(0.9, 0.9, 0.9, 1);
-		button.hoverColor = glm::vec4(1, 1, 1, 1);
+		button.buttonColor = getVec4(0.9, 0.9, 0.9);
+		button.hoverColor = getVec4(1);
 		button.padding = 2.f;
 		button.isClicked = &ui.panels[modelPanelIdx].shouldOpen;
 		retVal.uiElements[elementIdx].element = button;
@@ -66,8 +66,8 @@ void getMainEditor(BetterScene& scene, UIContext& retVal, UI& ui) {
 }
 
 void getModelEditor(Model& model, UIContext& retval, size_t elementIdx) {
-	retval.panel.backgroundColor = glm::vec4(0.1, 0.1, 0.1, 1);
-	retval.panel.borderColor = glm::vec4(0.3, 0.3, 0.3, 1);
+	retval.panel.backgroundColor = getVec4(0.1, 0.1, 0.1);
+	retval.panel.borderColor = getVec4(0.3, 0.3, 0.3);
 	retval.panel.percentageWidth = 0.15f;
 	retval.panel.percentageHeight = 0.75f;
 	retval.panel.horizontal = UIPositioning::RIGHT;
@@ -81,8 +81,8 @@ void getModelEditor(Model& model, UIContext& retval, size_t elementIdx) {
 	Label modelLabel;
 	modelLabel.bt.padding = 2.f;
 	modelLabel.text = "Model #" + std::to_string(elementIdx + 1);
-	modelLabel.backgroundColor = glm::vec4(0);
-	modelLabel.textColor = glm::vec4(1);
+	modelLabel.backgroundColor = Vector4f();
+	modelLabel.textColor = getVec4(1);
 	retval.uiElements[0].type = UIElement::LABEL;
 	retval.uiElements[0].element = modelLabel;
 
@@ -93,9 +93,9 @@ void getModelEditor(Model& model, UIContext& retval, size_t elementIdx) {
 		textInput.isFocused = false;
 		textInput.inputType = TextInputType::FLOAT;
 		textInput.value.fVal = &model.model.values[12 + translationComponentIndex];
-		textInput.textColor = glm::vec4(0, 0, 0, 1);
-		textInput.backgroundColor = glm::vec4(0.9, 0.9, 0.9, 1);
-		textInput.focusedBackgroundColor = glm::vec4(1, 1, 1, 1);
+		textInput.textColor = getVec4(0, 0, 0);
+		textInput.backgroundColor = getVec4(0.9, 0.9, 0.9);
+		textInput.focusedBackgroundColor = getVec4(1, 1, 1);
 		textInput.bt.padding = 2.f;
 
 		retval.uiElements[translationComponentIndex + 1].element = textInput;

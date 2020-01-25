@@ -4,7 +4,6 @@
 #include "UIEvent.h"
 #include "BoundText.h"
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include <string>
 #include <functional>
 
@@ -21,9 +20,9 @@ union TextInputValue {
 };
 
 struct TextInput {
-	glm::vec3 textColor = glm::vec3(0, 0, 0);
-	glm::vec4 backgroundColor = glm::vec4(1, 1, 1, 1);
-	glm::vec4 focusedBackgroundColor = glm::vec4(1, 1, 1, 1);
+	Vector4f textColor = Vector4f();
+	Vector4f backgroundColor = Vector4f{ 1, 1, 1, 1 };
+	Vector4f focusedBackgroundColor = Vector4f { 1, 1, 1, 1 };
 	BoundText bt;
 	int focusToken = -1;
 	size_t cursorPosition = 0;

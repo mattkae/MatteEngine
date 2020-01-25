@@ -76,3 +76,33 @@ Vector4f cross(const Vector4f& first, const Vector4f& second) {
 void logVector4f(const Vector4f& v, std::string variableName) {
 	Logger::logInfo(variableName + " = (" + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " + std::to_string(v.z) + ", " + std::to_string(v.w) + ")");
 }
+
+
+Vector4f getVec4(GLfloat value) {
+	return { value, value, value, value };
+}
+
+Vector4f getVec4(GLfloat x, GLfloat y, GLfloat z) {
+	return { x, y, z, 1.f };
+}
+
+Vector4f getVec4(GLfloat x, GLfloat y, GLfloat z, GLfloat w) {
+	return { x, y, z, w };
+}
+
+Vector4f operator*(const Vector4f& vec, GLfloat value) {
+	return scale(vec, value);
+}
+
+Vector4f operator+(const Vector4f& v1, const Vector4f& v2) {
+	return addVector(v1, v2);
+}
+
+Vector4f operator*(const Vector4f& v1, const Vector4f& v2) {
+	return {
+		v1.x * v2.x,
+		v1.y * v2.y,
+		v1.z * v2.z,
+		1.f
+	};
+}

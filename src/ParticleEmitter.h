@@ -1,21 +1,23 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
-#include "GlmUtility.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Randomizable.h"
 #include "Functional.h"
 #include <GL/glew.h>
 #include <functional>
-#include <glm/glm.hpp>
+#include "Vector2f.h"
+#include "Vector3f.h"
+#include "Vector4f.h"
+#include "Matrix4x4f.h"
 
 struct ParticleRenderVariables {
-    glm::vec3 position = glm::vec3(0);
-    glm::vec4 color = glm::vec4(1.0);
+    Vector3f position;
+	Vector4f color = Vector4f{ 1.f, 1.f, 1.f, 1.f };
 };
 
 struct ParticleUpdateVariables {
-    glm::vec3 velocity = glm::vec3(0, 1, 0);
+	Vector3f velocity = Vector3f{ 0.f, 1.f, 0.f };
     float timeAliveSeconds = 0;
     float deathTimeSeconds = 0;
 };
@@ -23,13 +25,13 @@ struct ParticleUpdateVariables {
 struct ParticleEmitter {
 public:
 	// Group variables
-    glm::mat4 model = glm::mat4(1.0f);
+    Matrix4x4f model;
 	RandomizableFloat spawnFrequencySeconds;
 	size_t maxParticles = 500;
 	FunctionVec4 colorFunction;
     FunctionVec3 movementFunction;
     int numVertices = 3;
-	glm::vec2 particleDimension;
+	Vector2f particleDimension;
 
 	// Per particle variables
 	RandomizableVec3 particlePosition;

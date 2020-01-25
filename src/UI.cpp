@@ -1,7 +1,7 @@
 #include "UI.h"
 #include "Scene.h"
 #include "GlobalApplicationState.h"
-#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 void initUI(UI& ui) {
 	ui.mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
@@ -29,7 +29,7 @@ void updateUI(UI& ui, double dt) {
 
 void renderUI(const UI& ui) {
 	useShader(ui.mOrthographicShader);
-	glm::mat4 projection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
+	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	setShaderMat4(ui.mOrthographicShader, "uProjection", projection);
 	for (size_t idx = 0; idx < ui.numPanels; idx++) {
 		renderUIContext(ui.panels[idx], ui.mOrthographicShader, ui.mTextRenderer);

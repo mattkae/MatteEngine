@@ -1,9 +1,6 @@
 #include "Model.h"
-#include "GlmUtility.h"
 #include "ObjModel.h"
 #include <GL/glew.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 inline void trySetBoxBounds(Box& box, Mesh& mesh, bool& hasBoxBeenSet) {

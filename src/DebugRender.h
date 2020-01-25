@@ -5,9 +5,7 @@
 #include "Model.h"
 #include "Box.h"
 #include "Camera.h"
-#ifndef M_PI
-    #define M_PI 3.14159265358979323846
-#endif
+#include "MathHelper.h"
 
 struct DebugArrow {
 	Vector3f rotation;
@@ -32,7 +30,7 @@ struct DebugModel {
 	Box debugBox;
 	Matrix4x4f model;
 	DebugArrow xArrow = {
-		{ 0, 0, M_PI / 2 },
+		{ 0, 0, PI / 2 },
 		{ 1, 0, 0 }
 	};
 	DebugArrow yArrow = {
@@ -40,7 +38,7 @@ struct DebugModel {
 		{ 0, 1, 0 }
 	};
 	DebugArrow zArrow = {
-		{ M_PI / 2, 0, 0 },
+		{ PI / 2, 0, 0 },
 		{ 0, 0, 1 }
 	};
 	DebugClickState clickState = DebugClickState::NONE;

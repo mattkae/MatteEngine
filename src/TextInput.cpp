@@ -127,6 +127,6 @@ void renderTextInput(const TextInput& textInput, const Shader& shader, const Tex
 	if (textInput.isFocused) {
 		GLfloat cursorOffset = textRenderer.getStringWidth(textInput.representation.substr(0, textInput.cursorPosition), textInput.bt.scale);
 		Rectangle cursorRect = { textInput.bt.rect.x + textInput.bt.padding + cursorOffset, textInput.bt.rect.y, 2, textRenderer.getFontSize() };
-		renderRectangle(cursorRect, shader, glm::vec4(1, 0, 0, 1));
+		renderRectangle(cursorRect, shader, Vector4f { 1, 0, 0, 1 });
 	}
 }

@@ -1,6 +1,6 @@
 #include "Ray.h"
 Ray clickToRay(const BetterCamera& camera) {
-	Point cursorPosition = getCursorPosition();
+	Vector2f cursorPosition = getCursorPosition();
 	
 	// Most of my understanding of how I was to get the ray from the point clicked
 	// on screen comes from here: http://antongerdelan.net/opengl/raycasting.html

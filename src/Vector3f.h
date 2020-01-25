@@ -13,36 +13,14 @@ struct Vector3f {
 	GLfloat x = 0;
 	GLfloat y = 0;
 	GLfloat z = 0;
-
-	Vector3f(GLfloat value) {
-		x = value;
-		y = value;
-		z = value;
-	}
-
-	Vector3f(GLfloat vX, GLfloat vY, GLfloat vZ) {
-		x = vX;
-		y = vY;
-		z = vZ;
-	}
-
-	Vector3f operator+(Vector3f& other) {
-		return addVector(*this, other);
-	}
-
-	Vector3f operator-(Vector3f& other) {
-		return subtractVector(*this, other);
-	}
-
-	Vector3f operator-(Vector4f& other) {
-		return subtractVector(*this, other);
-	}
-
-	Vector3f operator-() {
-		return negate(*this);
-	}
 };
 
+// Creation
+Vector3f getVec3(GLfloat value);
+Vector3f getVec3(GLfloat x, GLfloat y, GLfloat z);
+
+
+// Methods
 Vector3f addVector(const Vector3f& first, const Vector3f& second);
 GLfloat dotProduct(const Vector3f& first, const Vector3f& second);
 GLfloat length(const Vector3f& v);
@@ -53,3 +31,12 @@ Vector3f negate(const Vector3f& v);
 Vector3f cross(const Vector3f& first, const Vector3f& second);
 Vector3f normalize(const Vector3f& v);
 Vector3f fromVec4(const Vector4f& v);
+
+
+// Operator overlaods
+Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
+Vector3f operator-(const Vector3f& v1, const Vector3f& v2);
+Vector3f operator-(const Vector3f& v1,const  Vector4f& v2);
+Vector3f operator-(const Vector3f& vec);
+Vector3f operator*(const Vector3f& vec, GLfloat value);
+Vector3f operator*(const Vector3f& v1, const Vector3f& v2);

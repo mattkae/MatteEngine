@@ -1,4 +1,3 @@
-#include <glm/gtc/matrix_transform.hpp>
 #include "TextRenderer.h"
 #include "Logger.h"
 
@@ -83,8 +82,8 @@ bool TextRenderer::loadChar(GLchar c)
 
 	CharacterRenderInfo renderInfo = {
         texture,
-        glm::ivec2(bitmap.width, bitmap.rows),
-        glm::ivec2(glyph->bitmap_left, glyph->bitmap_top),
+		Vector2f { static_cast<GLfloat>(bitmap.width), static_cast<GLfloat>(bitmap.rows) },
+		Vector2f { static_cast<GLfloat>(glyph->bitmap_left), static_cast<GLfloat>(glyph->bitmap_top) },
         static_cast<GLuint>(glyph->advance.x)
     };
 
@@ -96,7 +95,7 @@ bool TextRenderer::loadChar(GLchar c)
 void TextRenderer::renderText(Shader originalShader, std::string str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glm::mat4 projection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
+	Matrix4x4f projection = getOrthographicProjection(GlobalAppState.near, GlobalAppState.far, 0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	
 	useShader(mShader);
 	setShaderFloat(mShader, "scrollX", scrollX);

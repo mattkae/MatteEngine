@@ -9,7 +9,7 @@ struct Label {
 	BoundText bt;
 	std::string text;
 	Vector4f backgroundColor;
-	Vector3f textColor;
+	Vector4f textColor;
 };
 
 void renderLabel(const Label& label, const Shader& shader, const TextRenderer& textRenderer);

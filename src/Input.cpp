@@ -126,8 +126,8 @@ bool isRightClickDown() {
 	return globalInput.clickStates[GLFW_MOUSE_BUTTON_RIGHT];
 }
 
-Point getCursorPosition() {
-	Point point;
+Vector2f getCursorPosition() {
+	Vector2f point;
 	if (globalInput.window) {
 		double x, y;
 		glfwGetCursorPos(globalInput.window, &x, &y);

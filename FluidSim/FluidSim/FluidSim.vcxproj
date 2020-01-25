@@ -25,7 +25,6 @@
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\DebugRender.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
-    <ClCompile Include="..\..\src\Entity.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
@@ -42,7 +41,6 @@
     <ClCompile Include="..\..\src\ObjModel.cpp" />
     <ClCompile Include="..\..\src\Panel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
-    <ClCompile Include="..\..\src\Physics.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
     <ClCompile Include="..\..\src\Ray.cpp" />
     <ClCompile Include="..\..\src\Rectangle.cpp" />
@@ -59,6 +57,7 @@
     <ClCompile Include="..\..\src\Texture.cpp" />
     <ClCompile Include="..\..\src\UI.cpp" />
     <ClCompile Include="..\..\src\UIContext.cpp" />
+    <ClCompile Include="..\..\src\Vector2f.cpp" />
     <ClCompile Include="..\..\src\Vector3f.cpp" />
     <ClCompile Include="..\..\src\Vector4f.cpp" />
   </ItemGroup>
@@ -73,19 +72,18 @@
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
     <ClInclude Include="..\..\src\Entity.h" />
     <ClInclude Include="..\..\src\Functional.h" />
-    <ClInclude Include="..\..\src\GlmUtility.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\Input.h" />
     <ClInclude Include="..\..\src\Label.h" />
     <ClInclude Include="..\..\src\Light.h" />
     <ClInclude Include="..\..\src\Logger.h" />
     <ClInclude Include="..\..\src\Material.h" />
+    <ClInclude Include="..\..\src\MathHelper.h" />
     <ClInclude Include="..\..\src\Matrix3x3f.h" />
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
     <ClInclude Include="..\..\src\OpenGLUtil.h" />
     <ClInclude Include="..\..\src\Panel.h" />
     <ClInclude Include="..\..\src\Plane.h" />
-    <ClInclude Include="..\..\src\Point.h" />
     <ClInclude Include="..\..\src\Quad.h" />
     <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />
@@ -96,13 +94,13 @@
     <ClInclude Include="..\..\src\UI.h" />
     <ClInclude Include="..\..\src\UIContext.h" />
     <ClInclude Include="..\..\src\UIEvent.h" />
+    <ClInclude Include="..\..\src\Vector2f.h" />
     <ClInclude Include="..\..\src\Vector3f.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\Model.h" />
     <ClInclude Include="..\..\src\ObjectPool.h" />
     <ClInclude Include="..\..\src\ObjModel.h" />
     <ClInclude Include="..\..\src\ParticleEmitter.h" />
-    <ClInclude Include="..\..\src\Physics.h" />
     <ClInclude Include="..\..\src\Randomizable.h" />
     <ClInclude Include="..\..\src\Scene.h" />
     <ClInclude Include="..\..\src\Shader.h" />

@@ -4,8 +4,6 @@
 #include "Model.h"
 #include "Shader.h"
 #include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <nlohmann/json.hpp>
 
 struct Sphere {
     int radius = 1;

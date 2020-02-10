@@ -167,25 +167,24 @@ Matrix4x4f getPerspectiveProjection(GLfloat near, GLfloat far, GLfloat fieldOfVi
 }
 
 Matrix4x4f getOrthographicProjection(GLfloat near, GLfloat far, GLfloat left, GLfloat right, GLfloat top, GLfloat bottom) {
-	return {
-		{
-			2.f / (right - left), 0, 0, -((right + left) / (right - left)),
-			0, 2.f / (top - bottom), 0, -((top + bottom) / (top -bottom)),
-			0, 0, (-2.f) / (far - near), -((far + near) / (far - near)),
-			0, 0, 0, 1
-		}
-	};
+	Matrix4x4f result;
+	result.values[0] = 2.f / (right - left);
+	result.values[5] = 2.f / (top - bottom);
+	result.values[10] = 1.f / (far - near);
+	result.values[12] = -(right + left) / (right - left);
+	result.values[13] = -(top + bottom) / (top - bottom);
+	result.values[14] = -near / (far - near);
+	return result;
 }
 
-Matrix4x4f getOrthographicProjection(GLfloat left, GLfloat right, GLfloat top, GLfloat bottom) {
-	return {
-		{
-			2.f / (right - left), 0, 0, (right + left) / (right - left),
-			0, 2.f / (top - bottom), 0, (top + bottom) / (top - bottom),
-			0, 0, 1.f, 0,
-			0, 0, 0, 1.f
-		}
-	};
+Matrix4x4f getOrthographicProjection(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top) {
+	Matrix4x4f result;
+	result.values[0] = 2.f / (right - left);
+	result.values[5] = 2.f / (top - bottom);
+	result.values[10] = 1.f;
+	result.values[12] = -(right + left) / (right - left);
+	result.values[13] = -(top + bottom) / (top - bottom);
+	return result;
 }
 
 // Honestly, this is too much of a pain to write myself. I stole it from here:

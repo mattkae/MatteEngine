@@ -95,7 +95,7 @@ bool TextRenderer::loadChar(GLchar c)
 void TextRenderer::renderText(Shader originalShader, std::string str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	Matrix4x4f projection = getOrthographicProjection(GlobalAppState.near, GlobalAppState.far, 0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
+	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	
 	useShader(mShader);
 	setShaderFloat(mShader, "scrollX", scrollX);

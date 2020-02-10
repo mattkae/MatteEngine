@@ -1,6 +1,5 @@
 #include "Button.h"
 #include "TextRenderer.h"
-#include "Rectangle.h"
 #include "Vector2f.h"
 
 Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
@@ -8,10 +7,10 @@ Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 }
 
 void updateButton(Button& button, const TextRenderer& textRenderer) {
-	Rectangle rect = getRectangle(button, textRenderer);
+	button.boundingRect = getRectangle(button, textRenderer);
 	if (button.isClicked != nullptr) {
 		if (!(*button.isClicked)) {
-			if (isClicked(rect)) {
+			if (isClicked(button.boundingRect)) {
 				*button.isClicked = true;
 			}
 		}
@@ -20,7 +19,6 @@ void updateButton(Button& button, const TextRenderer& textRenderer) {
 
 void renderButton(const Button& button, const Shader& shader, const TextRenderer& textRenderer) {
 	Vector2f textPosition = button.position + Vector2f{2 * button.padding, 2 * button.padding};
-	Rectangle rect = getRectangle(button, textRenderer);
-	renderRectangle(rect, shader, *button.isClicked ? button.hoverColor : button.buttonColor);
+	renderRectangle(button.boundingRect, shader, *button.isClicked ? button.hoverColor : button.buttonColor);
 	textRenderer.renderText(shader, button.label, textPosition, button.scale, button.textColor);
 }

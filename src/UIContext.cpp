@@ -71,7 +71,7 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 
 	renderPanel(context.panel, shader);
 
-	/*for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
+	for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
 		const UIElement& element = context.uiElements[elementIndex];
 		switch (element.type) {
 		case UIElement::BUTTON:
@@ -84,7 +84,7 @@ void renderUIContext(const UIContext& context, const Shader& shader, const TextR
 			renderLabel(std::get<Label>(element.element), shader, textRenderer);
 			break;
 		}
-	}*/
+	}
 }
 
 void freeUIContext(UIContext& context) {

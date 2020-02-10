@@ -6,6 +6,7 @@
 #include "TextRenderer.h"
 #include "Vector4f.h"
 #include "Vector2f.h"
+#include "Rectangle.h"
 
 struct TextRenderer;
 
@@ -20,6 +21,7 @@ struct Button {
 	Vector4f borderColor;
 	GLfloat width = 128.f;
 	bool* isClicked = nullptr;
+	Rectangle boundingRect;
 };
 
 void updateButton(Button& button, const TextRenderer& textRenderer);

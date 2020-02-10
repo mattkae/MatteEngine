@@ -26,7 +26,7 @@ void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 			if (elementIndex == 0) {
 				yOffset -= getButtonHeight(button, textRenderer);
 			}
-			button.position = glm::vec2(xPosition, yOffset);
+			button.position = Vector2f { xPosition, yOffset };
 			button.width = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * button.padding;
 			updateButton(button, textRenderer);
 			yOffset -= getButtonHeight(button, textRenderer);

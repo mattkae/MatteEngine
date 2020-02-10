@@ -4,8 +4,9 @@
 #include "Model.h"
 #include "Shader.h"
 #include "GlobalApplicationState.h"
+#include "Vector3f.h"
+#include "Matrix4x4f.h"
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include <vector>
 
 struct BetterScene;
@@ -15,10 +16,10 @@ enum LightType { Directional = 0, PointLight, Spot, Inactive };
 struct Light {
 	GLint index = 0;
 	LightType type = LightType::Directional;
-    glm::vec3 color = glm::vec3(1.0);
-    glm::vec3 direction = glm::vec3(0.0, 0.0, -1.0);
-    glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
-    glm::vec3 position = glm::vec3(0.0);
+    Vector3f color = getVec3(1.0);
+    Vector3f direction = getVec3(0.0, 0.0, -1.0);
+    Vector3f up = getVec3(0.0, 1.0, 0.0);
+    Vector3f position = getVec3(0.0);
 
     GLfloat constant = 1.0f;
     GLfloat linear = 0.0f;
@@ -36,8 +37,8 @@ struct Light {
 	GLuint depthFbo = 0;
 	bool isOn = true;
 
-	glm::mat4 projection;
-	glm::mat4 view;
+	Matrix4x4f projection;
+	Matrix4x4f view;
 	
 	GLint colorUniform;
 	GLint directionUniform;

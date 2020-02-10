@@ -151,8 +151,7 @@ Matrix4x4f getLookAt(const Vector3f& eye, const Vector3f& pointToLookAt, const V
     };
 }
 
-Matrix4x4f getProjection(GLfloat near, GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio)
-{
+Matrix4x4f getPerspectiveProjection(GLfloat near, GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio) {
     const GLfloat halfFieldOfView = fieldOfViewRadians * 0.5f;
     const GLfloat top = tan(halfFieldOfView) * near;
     const GLfloat bottom = -top;
@@ -165,6 +164,27 @@ Matrix4x4f getProjection(GLfloat near, GLfloat far, GLfloat fieldOfViewRadians, 
             (right + left) / (right - left), (top + bottom) / (top - bottom), -(far + near) / (far - near), -1,
             0, 0, (-2 * far * near) / (far - near), 0 }
     };
+}
+
+Matrix4x4f getOrthographicProjection(GLfloat near, GLfloat far, GLfloat left, GLfloat right, GLfloat top, GLfloat bottom) {
+	Matrix4x4f result;
+	result.values[0] = 2.f / (right - left);
+	result.values[5] = 2.f / (top - bottom);
+	result.values[10] = 1.f / (far - near);
+	result.values[12] = -(right + left) / (right - left);
+	result.values[13] = -(top + bottom) / (top - bottom);
+	result.values[14] = -near / (far - near);
+	return result;
+}
+
+Matrix4x4f getOrthographicProjection(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top) {
+	Matrix4x4f result;
+	result.values[0] = 2.f / (right - left);
+	result.values[5] = 2.f / (top - bottom);
+	result.values[10] = 1.f;
+	result.values[12] = -(right + left) / (right - left);
+	result.values[13] = -(top + bottom) / (top - bottom);
+	return result;
 }
 
 // Honestly, this is too much of a pain to write myself. I stole it from here:
@@ -210,7 +230,7 @@ bool inverse(const Matrix4x4f& m, Matrix4x4f& result) {
     if (det == 0)
         return false;
 
-    det = 1.0 / det;
+    det = 1.f / det;
 
     for (i = 0; i < 16; i++)
         result.values[i] = inv[i] * det;

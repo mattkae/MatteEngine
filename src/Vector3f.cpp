@@ -1,5 +1,13 @@
 #include "Vector3f.h"
 
+Vector3f getVec3(GLfloat value) {
+	return { value, value, value };
+}
+
+Vector3f getVec3(GLfloat x, GLfloat y, GLfloat z) {
+	return { x, y, z };
+}
+
 Vector3f addVector(const Vector3f& first, const Vector3f& second) {
 	return {
 		first.x + second.x,
@@ -70,5 +78,33 @@ Vector3f fromVec4(const Vector4f& v) {
 		v.x,
 		v.y,
 		v.z
+	};
+}
+
+Vector3f operator+(const Vector3f& v1, const Vector3f& v2) {
+	return addVector(v1, v2);
+}
+
+Vector3f operator-(const Vector3f& v1, const Vector3f& v2) {
+	return subtractVector(v1, v2);
+}
+
+Vector3f operator-(const Vector3f& v1,const  Vector4f& v2) {
+	return subtractVector(v1, v2);
+}
+
+Vector3f operator-(const Vector3f& vec) {
+	return negate(vec);
+}
+
+Vector3f operator*(const Vector3f& vec, GLfloat value) {
+	return scale(vec, value);
+}
+
+Vector3f operator*(const Vector3f& v1, const Vector3f& v2) {
+	return {
+		v1.x * v2.x,
+		v1.y * v2.y,
+		v1.z * v2.z
 	};
 }

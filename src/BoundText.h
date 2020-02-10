@@ -1,8 +1,11 @@
-#pragma once
+#ifndef BOUND_TEXT_H
+
+#define BOUND_TEXT_H
 #include "Rectangle.h"
 #include "Shader.h"
 #include "TextRenderer.h"
-#include <glm/glm.hpp>
+#include "Vector3f.h"
+#include "Vector4f.h"
 #include <string>
 
 struct BoundText {
@@ -11,7 +14,10 @@ struct BoundText {
 	Rectangle rect;
 };
 
-void renderBoundText(const BoundText& bt, const Shader& shader, const TextRenderer& textRenderer, std::string text,glm::vec4 backgroundColor, glm::vec3 textColor, GLint position = 0);
+void renderBoundText(const BoundText& bt, const Shader& shader, const TextRenderer& textRenderer, 
+	std::string text, const Vector4f& backgroundColor, const Vector4f& textColor, GLint position = 0);
 inline GLfloat getBoundTextHeight(const BoundText& bt, const TextRenderer& textRenderer) {
 	return (textRenderer.getFontSize() + 2 * bt.padding) * bt.scale;
 }
+
+#endif // !BOUND_TEXT_H

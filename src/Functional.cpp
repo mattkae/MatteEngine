@@ -1,10 +1,10 @@
 #define _USE_MATH_DEFINES
 
 #include "Functional.h"
-#include <cmath>
+#include "MathHelper.h"
 
 constexpr float getTwoPi() {
-	return static_cast<float>(2 * M_PI);
+	return static_cast<float>(2 * PI);
 }
 
 float calculateFunc(const FunctionFloat& f, float fractionComplete) {
@@ -13,18 +13,18 @@ float calculateFunc(const FunctionFloat& f, float fractionComplete) {
 		+ (f.quadratic * fractionComplete * fractionComplete);
 }
 
-glm::vec3 calculateFunc(const FunctionVec3& f, float fractionComplete) {
+Vector3f calculateFunc(const FunctionVec3& f, float fractionComplete) {
     return f.initial 
 		+ (f.linear * fractionComplete) 
 		+ (f.quadratic * fractionComplete * fractionComplete)
-		+ f.cosValue * glm::vec3(cos(fractionComplete * getTwoPi()))
-		+ f.sinValue * glm::vec3(sin(fractionComplete * getTwoPi()));
+		+ getVec3(cos(fractionComplete * getTwoPi())) * f.cosValue
+		+ getVec3(sin(fractionComplete * getTwoPi())) * f.sinValue;
 }
 
-glm::vec4 calculateFunc(const FunctionVec4& f, float fractionComplete) {
+Vector4f calculateFunc(const FunctionVec4& f, float fractionComplete) {
     return f.initial 
 		+ (f.linear * fractionComplete) 
 		+ (f.quadratic * fractionComplete * fractionComplete)
-		+ f.cosValue * glm::vec4(cos(fractionComplete * getTwoPi()))
-		+ f.sinValue * glm::vec4(sin(fractionComplete * getTwoPi()));
+		+ getVec4(cos(fractionComplete * getTwoPi())) * f.cosValue
+		+ getVec4(sin(fractionComplete * getTwoPi())) * f.sinValue;
 }

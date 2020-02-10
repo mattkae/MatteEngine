@@ -18,8 +18,7 @@ int* getSimplexArray(int permSize)
 const float SKEW_FACTOR = (sqrt(3.f) - 1.f) / 2.f;
 const float UNSKEW_FACTOR = (3.f - sqrt(3.f)) / 6.f;
 
-inline int32_t fast_floor(float fp)
-{
+inline int32_t fast_floor(float fp) {
     int32_t i = static_cast<int32_t>(fp);
     return (fp < i) ? (i - 1) : (i);
 }
@@ -43,27 +42,26 @@ int gradients2D[] = {
     -5,
 };
 
-float grad(glm::vec2 in, glm::vec2 distance, const int* perm,
-    const int permIndexCap)
-{
+float grad(const Vector2f& in, const Vector2f& distance, const int* perm,const int permIndexCap) {
     int hash = perm[(perm[(int)in.x & permIndexCap] + (int)in.y) & permIndexCap] & 0x0E;
     return gradients2D[hash] * distance.x + gradients2D[hash + 1] * distance.y;
 }
 
-float simplex(glm::vec2 pointWorldSpace, const int* perm, const int permIndexCap)
-{
-    glm::vec2 inSimplex = pointWorldSpace + (pointWorldSpace.x + pointWorldSpace.y) * SKEW_FACTOR; // in point in Simplex-Space
-    glm::vec2 lowerLeftSimplexSpace = glm::vec2(fast_floor(inSimplex.x),
-        fast_floor(inSimplex.y)); // Lower left point in Simplex-Space
+float simplex(const Vector2f& pointWorldSpace, const int* perm, const int permIndexCap){
+    Vector2f inSimplex = pointWorldSpace + (pointWorldSpace.x + pointWorldSpace.y) * SKEW_FACTOR; // in point in Simplex-Space
+	Vector2f lowerLeftSimplexSpace = Vector2f{
+		static_cast<GLfloat>(fast_floor(inSimplex.x)),
+		static_cast<GLfloat>(fast_floor(inSimplex.y))
+	}; // Lower left point in Simplex-Space
 
-    glm::vec2 lowerLeftWorldSpace = lowerLeftSimplexSpace - (lowerLeftSimplexSpace.x + lowerLeftSimplexSpace.y) * UNSKEW_FACTOR; // Lower left point in IN-space
-    glm::vec2 d0 = pointWorldSpace - lowerLeftWorldSpace; // Distance between in point and lower left point, in IN-space
+    Vector2f lowerLeftWorldSpace = lowerLeftSimplexSpace - (lowerLeftSimplexSpace.x + lowerLeftSimplexSpace.y) * UNSKEW_FACTOR; // Lower left point in IN-space
+    Vector2f d0 = pointWorldSpace - lowerLeftWorldSpace; // Distance between in point and lower left point, in IN-space
 
-    glm::vec2 upperLeftOrLowerRightPoint = (d0.x > d0.y) ? glm::vec2(1.f, 0.f) : glm::vec2(0.f, 1.f); // Upper left point, or lower right point
+	Vector2f upperLeftOrLowerRightPoint = (d0.x > d0.y) ? Vector2f{1.f, 0.f} : Vector2f{0.f, 1.f}; // Upper left point, or lower right point
 
     // https://github.com/WardBenjamin/SimplexNoise/blob/master/SimplexNoise/Noise.cs
-    glm::vec2 d1 = d0 - upperLeftOrLowerRightPoint + UNSKEW_FACTOR;
-    glm::vec2 d2 = d0 - 1.f + 2.f * UNSKEW_FACTOR;
+    Vector2f d1 = d0 - upperLeftOrLowerRightPoint + UNSKEW_FACTOR;
+    Vector2f d2 = d0 - 1.f + 2.f * UNSKEW_FACTOR;
 
     // Sample from bottom left point
     float bottomLeftSample = 0;
@@ -86,14 +84,14 @@ float simplex(glm::vec2 pointWorldSpace, const int* perm, const int permIndexCap
     float t2 = 0.5f - (d2.x * d2.x) - (d2.y * d2.y);
     if (t2 > 0) {
         t2 *= t2;
-        upperRightSample = t2 * t2 * grad(lowerLeftSimplexSpace + glm::vec2(1, 1), d2, perm, permIndexCap);
+		upperRightSample = t2 * t2 * grad(lowerLeftSimplexSpace + Vector2f{1, 1}, d2, perm, permIndexCap);
     }
 
     // Adjust sample appropriately
     return 40.f * (bottomLeftSample + upperLeftOrBottomRightSample + upperRightSample);
 }
 
-float calculateSimplexValue(glm::vec2 coordinate, float maxHeight,
+float calculateSimplexValue(Vector2f coordinate, float maxHeight,
     float scaleFactor, float ampFactor,
     float frequencyFactor, int numOctaves,
     int* perm, int permIndexCap)
@@ -103,7 +101,7 @@ float calculateSimplexValue(glm::vec2 coordinate, float maxHeight,
     float maxAmp = 0;
     float noise = 0;
     for (int i = 0; i < numOctaves; i++) {
-        noise += (simplex(frequency * coordinate, perm, permIndexCap) * amp);
+        noise += (simplex(coordinate * frequency, perm, permIndexCap) * amp);
         maxAmp += amp;
         amp *= ampFactor;
         frequency *= frequencyFactor;

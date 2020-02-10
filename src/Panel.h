@@ -1,9 +1,10 @@
 #pragma once
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include "Shader.h"
 #include "Rectangle.h"
 #include "GlobalApplicationState.h"
+#include "Vector2f.h"
+#include "Vector4f.h"
 
 enum UIPositioning {
 	ABSOLUTE = 0,
@@ -21,9 +22,9 @@ struct Panel {
 	GLfloat percentageHeight = 0.90f;
 	UIPositioning horizontal = UIPositioning::ABSOLUTE;
 	UIPositioning vertical = UIPositioning::ABSOLUTE;
-	glm::vec2 absolutePositioning = glm::vec2(0);
-	glm::vec4 backgroundColor = glm::vec4(1.0);
-	glm::vec4 borderColor = glm::vec4(1.0);
+	Vector2f absolutePositioning;
+	Vector4f backgroundColor = Vector4f{1.f, 1.f, 1.f, 1.f};
+	Vector4f borderColor = Vector4f{1.f, 1.f, 1.f, 1.f};
 	GLfloat borderWidth = 1.f;
 	GLfloat padding = 2.f;
 	bool isClosable = true;

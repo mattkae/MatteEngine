@@ -19,8 +19,8 @@ struct Box {
 };
 
 inline bool isInBox(const Box& box, const Vector4f& v, const Matrix4x4f& model) {
-	Vector4f lowerLeft = mult(model, box.lowerLeft);
-	Vector4f upperRight = mult(model, box.upperRight);
+	Vector4f lowerLeft = model * box.lowerLeft;
+	Vector4f upperRight = model * box.upperRight;
 
 	return v.x >= lowerLeft.x 
 		&& v.y >= lowerLeft.y
@@ -33,8 +33,8 @@ inline bool isInBox(const Box& box, const Vector4f& v, const Matrix4x4f& model) 
 // Most of my understanding of this algorithm comes form here:
 // https://tavianator.com/fast-branchless-raybounding-box-intersections-part-2-nans/
 inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Ray& ray) {
-	const Vector4f& lowerLeft = mult(model, box.lowerLeft);
-	const Vector4f& upperRight = mult(model, box.upperRight);
+	const Vector4f& lowerLeft = model * box.lowerLeft;
+	const Vector4f& upperRight = model * box.upperRight;
 	const Vector3f& modelRayDirection = ray.direction;
 	const Vector3f& rayPosition = ray.position;
 

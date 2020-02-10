@@ -6,9 +6,10 @@
 #include "ObjModel.h"
 #include "Vertex.h"
 #include "StringUtil.h"
+#include "Vector2f.h"
+#include "Vector3f.h"
 #include <cstring>
 #include <fstream>
-#include <glm/glm.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -154,9 +155,9 @@ void loadFromObj(char* filepath, Model& model) {
 
 	// @TODO: This can be optimized further in the future
 	std::vector<Material> materials;
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::vec3> normals;
-    std::vector<glm::vec2> textureCoords;
+    std::vector<Vector3f> vertices;
+    std::vector<Vector3f> normals;
+    std::vector<Vector2f> textureCoords;
     std::vector<Face> faces;
     bool useSmoothShading = false;
 	std::string activeMaterialName;
@@ -166,16 +167,16 @@ void loadFromObj(char* filepath, Model& model) {
 		if (StringUtil::startsWith(ptr, "#")) {
 			continue;
 		} else if (StringUtil::ifEqualWalkToValue(ptr, "vt")) {
-            glm::vec2 coord;
+            Vector2f coord;
 			StringUtil::strToVec2(ptr, coord);
 			coord.y = 1.f - coord.y;
             textureCoords.push_back(coord);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "vn")) {
-			glm::vec3 normal;
+			Vector3f normal;
 			StringUtil::strToVec3(ptr, normal);
 			normals.push_back(normal);
 		} else if (StringUtil::ifEqualWalkToValue(ptr, "v")) {
-			glm::vec3 vertex;
+			Vector3f vertex;
 			StringUtil::strToVec3(ptr, vertex);
 			vertices.push_back(vertex);
 		} else if (StringUtil::ifEqualWalkToValue(ptr, "f")) {

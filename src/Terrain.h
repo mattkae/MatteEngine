@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Mesh.h"
+#include "Matrix4x4f.h"
 #include <GL/glew.h>
 #include <nlohmann/json.hpp>
 
@@ -20,7 +21,7 @@ struct GenerationParameters {
 };
 
 struct Terrain {
-    glm::mat4 model = glm::mat4(1);
+    Matrix4x4f model;
     Mesh mMesh;
 };
 

@@ -1,15 +1,11 @@
 #include "Scene.h"
 #include "SceneUI.h"
 #include "Camera.h"
-#include "GlmUtility.h"
 #include "ImageUtil.h"
 #include "Input.h"
-#include "Physics.h"
 #include "Logger.h"
 #include "Ray.h"
 #include <fstream>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 
 int castRayToModel(BetterScene& scene) {
@@ -137,7 +133,7 @@ void renderDirect(const BetterScene& scene) {
 	useShader(scene.mSceneShader);
     renderCamera(scene.mCamera, scene.mSceneShader, true);
 
-	setShaderVec3(scene.mSceneShader, "uAmbient", glm::vec3(0.5f));
+	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.5f));
 	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
 
     for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {

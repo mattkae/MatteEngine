@@ -1,8 +1,10 @@
 #ifndef STRING_UTIL_H
 #define STRING_UTIL_H
 #include <string>
-#include <glm/glm.hpp>
 #include "Matrix4x4f.h"
+#include "Vector2f.h"
+#include "Vector3f.h"
+#include "Vector4f.h"
 
 namespace StringUtil {
 	constexpr int DEFAULT_BUFFER_SIZE = 1024;
@@ -83,7 +85,7 @@ namespace StringUtil {
 		return false;
 	}
 
-	inline void strToVec3(char* ptr, glm::vec3& v) {
+	inline void strToVec3(char* ptr, Vector3f& v) {
 		size_t index = 0;
 		char value[32];
 		while (index < 3 && ptr[0] != '\0' && ptr[0] != '\n') {
@@ -105,7 +107,7 @@ namespace StringUtil {
 		}
 	}
 
-	inline void strToVec2(char* ptr, glm::vec2& v) {
+	inline void strToVec2(char* ptr, Vector2f& v) {
 		size_t index = 0;
 		char value[32];
 		while (index < 2 && ptr[0] != '\0' && ptr[0] != '\n') {
@@ -124,7 +126,7 @@ namespace StringUtil {
 		}
 	}
 
-	inline void strToVec4(char* ptr, glm::vec4& v) {
+	inline void strToVec4(char* ptr, Vector4f& v) {
 		size_t index = 0;
 		char value[32];
 		while (index < 4 && ptr[0] != '\0' && ptr[0] != '\n') {
@@ -149,7 +151,7 @@ namespace StringUtil {
 		}
 	}
 
-	inline void strToMat4(char* ptr, glm::mat4& v) {
+	inline void strToMat4(char* ptr, Matrix4x4f& mat) {
 		size_t index = 0;
 		char value[32];
 		while (index < 16 && ptr[0] != '\0' && ptr[0] != '\n') {
@@ -159,13 +161,13 @@ namespace StringUtil {
 			float fvalue = std::stof(value);
 
 			if (index < 4) {
-				v[0][index % 4] = fvalue;
+				mat.values[index % 4] = fvalue;
 			} else if (index < 8) {
-				v[1][index % 4] = fvalue;
+				mat.values[4 + index % 4] = fvalue;
 			} else if (index < 12) {
-				v[2][index % 4] = fvalue;
+				mat.values[8 + index % 4] = fvalue;
 			} else {
-				v[3][index % 4] = fvalue;
+				mat.values[12 + index % 4] = fvalue;
 			}
 
 			index++;

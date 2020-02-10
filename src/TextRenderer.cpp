@@ -1,4 +1,3 @@
-#include <glm/gtc/matrix_transform.hpp>
 #include "TextRenderer.h"
 #include "Logger.h"
 
@@ -83,8 +82,8 @@ bool TextRenderer::loadChar(GLchar c)
 
 	CharacterRenderInfo renderInfo = {
         texture,
-        glm::ivec2(bitmap.width, bitmap.rows),
-        glm::ivec2(glyph->bitmap_left, glyph->bitmap_top),
+		Vector2f { static_cast<GLfloat>(bitmap.width), static_cast<GLfloat>(bitmap.rows) },
+		Vector2f { static_cast<GLfloat>(glyph->bitmap_left), static_cast<GLfloat>(glyph->bitmap_top) },
         static_cast<GLuint>(glyph->advance.x)
     };
 
@@ -93,15 +92,15 @@ bool TextRenderer::loadChar(GLchar c)
     return true;
 }
 
-void TextRenderer::renderText(Shader originalShader, std::string str, glm::vec2 position, GLfloat scale, glm::vec3 color, GLfloat scrollX) const {
+void TextRenderer::renderText(Shader originalShader, std::string str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glm::mat4 projection = glm::ortho(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
+	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	
 	useShader(mShader);
 	setShaderFloat(mShader, "scrollX", scrollX);
 	setShaderMat4(mShader, "uProjection", projection);
-	setShaderVec3(mShader, "uColor", color);
+	setShaderVec4(mShader, "uColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(mVao);
 

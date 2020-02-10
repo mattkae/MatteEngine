@@ -1,41 +1,40 @@
 #include "Light.h"
 #include "Camera.h"
 #include "GlobalApplicationState.h"
-#include "GlmUtility.h"
 #include "ImageUtil.h"
 #include "Scene.h"
 #include "TextureUniformConstants.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
 
-inline glm::mat4 getLightProjection(const Light &light) {
+inline Matrix4x4f getLightProjection(const Light &light) {
     switch (light.type) {
     case Directional:
-        return glm::ortho<float>(-10, 10, -10.f, 10, GlobalAppState.near, GlobalAppState.far);
+		// @TODO: Almost certian these values shouldn't be this random
+        return getOrthographicProjection(GlobalAppState.near, GlobalAppState.far, -10, 10, -10.f, 10);
     case Spot:
-        return glm::perspective<float>(glm::radians(45.f), GlobalAppState.aspectRatio, GlobalAppState.near, GlobalAppState.far);
+		// @TODO: Don't default the FOV to 45 degrees
+		return getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, 0.7853982f, GlobalAppState.aspectRatio);
     case PointLight:
     default:
-        std::cerr << "Attempting to get a view for unknown light: " << light.type << std::endl;
-        return glm::mat4(0.0);
+        Logger::logError("Attempting to get a view for unknown light: " + light.type);
+        return Matrix4x4f();
     }
 }
 
-inline glm::mat4 getLightView(const Light &light) {
+inline Matrix4x4f getLightView(const Light &light) {
     switch (light.type) {
     case Directional: {
-        auto lightPosition = (-GlobalAppState.far / 2.0f) * light.direction;
-        return glm::lookAt(lightPosition, lightPosition + light.direction, light.up);
+        auto lightPosition = light.direction * (-GlobalAppState.far / 2.0f);
+		return getLookAt(lightPosition, lightPosition + light.direction, light.up);
     }
     case Spot:
-        return glm::lookAt(light.position, light.position + light.direction, light.up);
+		return getLookAt(light.position, light.position + light.direction, light.up);
     case PointLight:
     default:
-        std::cerr << "Attempting to get a view for unknown light: " << light.type << std::endl;
-        return glm::mat4(0.0);
+        Logger::logError("Attempting to get a view for unknown light: " + light.type);
+        return Matrix4x4f();
     }
 }
 
@@ -154,40 +153,40 @@ void renderPointShadows(const Light& light, const Shader &shader, const BetterSc
             std::cerr << "Shadow FBO is broken with code " << status << std::endl;
         }
 
-        glm::vec3 currentDirection;
-        glm::vec3 up;
+        Vector3f currentDirection;
+        Vector3f up;
         switch (fidx) {
         case 0:
-            currentDirection = glm::vec3(1, 0, 0);
-            up = glm::vec3(0, 1, 0);
+            currentDirection = getVec3(1, 0, 0);
+            up = getVec3(0, 1, 0);
             break;
         case 1:
-            currentDirection = glm::vec3(-1, 0, 0);
-            up = glm::vec3(0, -1, 0);
+            currentDirection = getVec3(-1, 0, 0);
+            up = getVec3(0, -1, 0);
             break;
         case 2:
-            currentDirection = glm::vec3(0, 1, 0);
-            up = glm::vec3(0.0, 0.0, 1.0);
+            currentDirection = getVec3(0, 1, 0);
+            up = getVec3(0.0, 0.0, 1.0);
             break;
         case 3:
-            currentDirection = glm::vec3(0, -1, 0);
-            up = glm::vec3(0.0, 0.0, -1.0);
+            currentDirection = getVec3(0, -1, 0);
+            up = getVec3(0.0, 0.0, -1.0);
             break;
         case 4:
-            currentDirection = glm::vec3(0, 0, 1);
-            up = glm::vec3(0, 1, 0);
+            currentDirection = getVec3(0, 0, 1);
+            up = getVec3(0, 1, 0);
             break;
         case 5:
-            currentDirection = glm::vec3(0, 0, -1);
-            up = glm::vec3(0, -1, 0);
+            currentDirection = getVec3(0, 0, -1);
+            up = getVec3(0, -1, 0);
             break;
         default:
             std::cerr << "Invalid direction for cube map." << std::endl;
             break;
         }
 
-        glm::mat4 view = glm::lookAt(light.position, light.position + currentDirection, up);
-        glm::mat4 proj = glm::perspective(glm::radians(45.f), GlobalAppState.aspectRatio, GlobalAppState.near, GlobalAppState.far);
+        Matrix4x4f view = getLookAt(light.position, light.position + currentDirection, up);
+        Matrix4x4f proj = getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, 0.7853982f, GlobalAppState.aspectRatio);
 		setShaderMat4(shader, "uViewProj", proj * view);
 		renderModels(scene, shader);
     }
@@ -247,8 +246,8 @@ void renderLight(const Light& light, const Shader shader, const int index) {
 	bool isDirectional = light.type == LightType::Directional;
 	bool isPoint = light.type == LightType::PointLight;
 
-	glm::vec3 position = isDirectional ? glm::vec3(light.direction) * -GlobalAppState.far : light.position;
-	glm::vec3 direction = isPoint ? glm::vec3(0) : light.direction;
+	Vector3f position = isDirectional ? light.direction * -GlobalAppState.far : light.position;
+	Vector3f direction = isPoint ? getVec3(0) : light.direction;
 	setShaderVec3WithUniform(shader, light.directionUniform, direction);
 	setShaderVec3WithUniform(shader, light.positionUniform, position);
 	setShaderFloatWithUniform(shader, light.constantUniform, isDirectional ? 1.f : light.constant);
@@ -274,7 +273,7 @@ void renderLight(const Light& light, const Shader shader, const int index) {
 			break;
 		}
 		default:
-			std::cerr << "Unknown light type: " << light.type << std::endl;
+			Logger::logError("Unknown light type: " + light.type);
 			break;
 		}
 	}
@@ -283,9 +282,10 @@ void renderLight(const Light& light, const Shader shader, const int index) {
 		float near = GlobalAppState.near;
 		float far = GlobalAppState.far;
 		float diff = far - near;
-		glm::vec2 uFarNear;
-		uFarNear.x = (far + near) / diff * 0.5f + 0.5f;
-		uFarNear.y = -(far * near) / diff;
+		Vector2f uFarNear = {
+			(far + near) / diff * 0.5f + 0.5f,
+			-(far * near) / diff
+		};
 		setShaderVec2(shader, "uFarNear", uFarNear);
 	}
 }

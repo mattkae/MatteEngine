@@ -6,7 +6,6 @@
 #include "Shader.h"
 #include "Vertex.h"
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include <vector>
 
 struct Mesh {

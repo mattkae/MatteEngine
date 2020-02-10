@@ -1,6 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-#include "Point.h"
+#include "Vector2f.h"
 
 const int DEFAULT_FOCUS_TOKEN = 0;
 
@@ -12,7 +12,7 @@ bool isKeyDown(int key, int focusToken);
 bool isKeyJustUp(int key, int focusToken);
 bool isLeftClickDown();
 bool isRightClickDown();
-Point getCursorPosition();
+Vector2f getCursorPosition();
 int grabFocus();
 void returnFocus(int focusToken);
 int getInputFocus();

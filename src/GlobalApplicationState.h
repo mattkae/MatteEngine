@@ -1,6 +1,5 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
-#include <string>
 #include <GL/glew.h>
 
 struct GLFWwindow;
@@ -13,7 +12,7 @@ struct GlobalApplicationState {
   GLfloat floatHeight = 600.f;
 
   GLfloat aspectRatio = floatWidth / floatHeight;
-  std::string title = "Matte";
+  const char* title = "Matte";
 
   GLfloat near = 1.f;
   GLfloat far = 1000.f;

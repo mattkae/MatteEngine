@@ -6,7 +6,6 @@
 #include "Shader.h"
 #include "Vector3f.h"
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include <vector>
 
 struct Material {

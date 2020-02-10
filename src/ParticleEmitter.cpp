@@ -1,10 +1,6 @@
 #include "ParticleEmitter.h"
-#include "GlmUtility.h"
 #include <array>
 #include <cmath>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/quaternion.hpp>
 #include <iostream>
 #include <vector>
 

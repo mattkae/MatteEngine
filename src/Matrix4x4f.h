@@ -38,5 +38,15 @@ Matrix4x4f translateMatrixY(const Matrix4x4f& matrix, float translate);
 Matrix4x4f translateMatrixZ(const Matrix4x4f& matrix, float translate);
 Matrix4x4f transpose(const Matrix4x4f& matrix);
 Matrix4x4f getLookAt(const Vector3f& eye, const Vector3f& pointToLookAt, const Vector3f& up);
-Matrix4x4f getProjection(GLfloat near, GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio);
+Matrix4x4f getPerspectiveProjection(GLfloat near, GLfloat far, GLfloat fieldOfViewRadians, GLfloat aspectRatio);
+Matrix4x4f getOrthographicProjection(GLfloat near, GLfloat far, GLfloat left, GLfloat right, GLfloat top, GLfloat bottom);
+Matrix4x4f getOrthographicProjection(GLfloat left, GLfloat right, GLfloat top, GLfloat bottom);
 bool inverse(const Matrix4x4f& matrix, Matrix4x4f& result);
+
+inline Matrix4x4f operator*(const Matrix4x4f& m1, const Matrix4x4f& m2) {
+	return mult(m1, m2);
+}
+
+inline Vector4f operator*(const Matrix4x4f& m, const Vector4f& v) {
+	return mult(m, v);
+}

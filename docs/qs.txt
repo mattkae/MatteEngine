@@ -1,2 +1,0 @@
-1. Give each material its own ambient color, or keep a world ambient?
-2. Different lighting models

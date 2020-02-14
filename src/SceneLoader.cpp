@@ -1,5 +1,5 @@
 #include "SceneLoader.h"
-#include "ObjModel.h"
+#include "ObjFileLoader.h"
 #include "SceneUI.h"
 #include "Sphere.h"
 #include "StringUtil.h"

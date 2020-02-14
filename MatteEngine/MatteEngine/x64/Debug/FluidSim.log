@@ -1,0 +1,107 @@
+﻿  Camera.cpp
+c:\users\mattykae\projects\fluid-sim\src\camera.cpp(41): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\camera.cpp(48): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\camera.cpp(55): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\camera.cpp(58): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+  ImageUtil.cpp
+  Input.cpp
+  Light.cpp
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(109): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(117): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\random(3376): error C2338: invalid template argument for uniform_real_distribution: N4659 29.6.1.1 [rand.req.genl]/1d requires one of float, double, or long double
+  c:\users\mattykae\projects\fluid-sim\src\particleemitter.h(68): note: see reference to class template instantiation 'std::uniform_real_distribution<uint32_t>' being compiled
+c:\users\mattykae\projects\fluid-sim\src\light.cpp(319): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  main.cpp
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(109): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(117): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\random(3376): error C2338: invalid template argument for uniform_real_distribution: N4659 29.6.1.1 [rand.req.genl]/1d requires one of float, double, or long double
+  c:\users\mattykae\projects\fluid-sim\src\particleemitter.h(68): note: see reference to class template instantiation 'std::uniform_real_distribution<uint32_t>' being compiled
+  Material.cpp
+c:\users\mattykae\projects\fluid-sim\src\material.cpp(27): warning C4267: 'argument': conversion from 'size_t' to 'GLint', possible loss of data
+  Mesh.cpp
+c:\users\mattykae\projects\fluid-sim\src\mesh.cpp(71): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Model.cpp
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(109): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(117): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\model.cpp(142): warning C4101: 'shininess': unreferenced local variable
+  ParticleEmitter.cpp
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(109): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(117): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\random(3376): error C2338: invalid template argument for uniform_real_distribution: N4659 29.6.1.1 [rand.req.genl]/1d requires one of float, double, or long double
+  c:\users\mattykae\projects\fluid-sim\src\particleemitter.h(68): note: see reference to class template instantiation 'std::uniform_real_distribution<uint32_t>' being compiled
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(31): error C2672: 'nlohmann::basic_json<std::map,std::vector,std::string,bool,int64_t,uint64_t,double,std::allocator,nlohmann::adl_serializer>::get_to': no matching overloaded function found
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(31): error C2783: 'ValueType &nlohmann::basic_json<std::map,std::vector,std::string,bool,int64_t,uint64_t,double,std::allocator,nlohmann::adl_serializer>::get_to(ValueType &) noexcept(<expr>) const': could not deduce template argument for '__formal'
+  c:\vcpkg\installed\x64-windows\include\nlohmann\json.hpp(13759): note: see declaration of 'nlohmann::basic_json<std::map,std::vector,std::string,bool,int64_t,uint64_t,double,std::allocator,nlohmann::adl_serializer>::get_to'
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(42): error C2672: 'nlohmann::basic_json<std::map,std::vector,std::string,bool,int64_t,uint64_t,double,std::allocator,nlohmann::adl_serializer>::get_to': no matching overloaded function found
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(42): error C2783: 'ValueType &nlohmann::basic_json<std::map,std::vector,std::string,bool,int64_t,uint64_t,double,std::allocator,nlohmann::adl_serializer>::get_to(ValueType &) noexcept(<expr>) const': could not deduce template argument for '__formal'
+  c:\vcpkg\installed\x64-windows\include\nlohmann\json.hpp(13759): note: see declaration of 'nlohmann::basic_json<std::map,std::vector,std::string,bool,int64_t,uint64_t,double,std::allocator,nlohmann::adl_serializer>::get_to'
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(68): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(115): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(124): warning C4244: '+=': conversion from 'float' to 'uint32_t', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(130): warning C4244: 'argument': conversion from 'uint32_t' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\particleemitter.cpp(148): warning C4244: 'argument': conversion from 'uint32_t' to 'GLfloat', possible loss of data
+  Physics.cpp
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(109): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(117): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+  Scene.cpp
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(109): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(117): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\random(3376): error C2338: invalid template argument for uniform_real_distribution: N4659 29.6.1.1 [rand.req.genl]/1d requires one of float, double, or long double
+  c:\users\mattykae\projects\fluid-sim\src\particleemitter.h(68): note: see reference to class template instantiation 'std::uniform_real_distribution<uint32_t>' being compiled
+c:\users\mattykae\projects\fluid-sim\src\scene.cpp(99): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\scene.cpp(155): warning C4267: 'argument': conversion from 'size_t' to 'GLint', possible loss of data
+  Shader.cpp
+  SimplexNoise.cpp
+c:\users\mattykae\projects\fluid-sim\src\simplexnoise.cpp(8): warning C4244: 'initializing': conversion from '_Rep' to 'unsigned int', possible loss of data
+          with
+          [
+              _Rep=std::chrono::system_clock::rep
+          ]
+  Skybox.cpp
+  Sphere.cpp
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(89): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::mat<4,4,glm::f32,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(100): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<4,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(109): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\glmutility.h(117): warning C4267: 'argument': conversion from 'size_t' to 'glm::vec<3,float,0>::length_type', possible loss of data
+  Terrain.cpp
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(53): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(54): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(62): warning C4244: 'initializing': conversion from 'float' to 'size_t', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(86): warning C4244: 'initializing': conversion from 'float' to 'size_t', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(87): warning C4018: '<': signed/unsigned mismatch
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(88): warning C4018: '<': signed/unsigned mismatch
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(114): warning C4244: 'argument': conversion from 'float' to 'GLsizeiptr', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(119): warning C4244: 'argument': conversion from 'float' to 'GLsizeiptr', possible loss of data
+c:\users\mattykae\projects\fluid-sim\src\terrain.cpp(134): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Texture.cpp
+  Generating Code...

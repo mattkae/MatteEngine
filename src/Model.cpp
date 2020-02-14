@@ -1,5 +1,4 @@
 #include "Model.h"
-#include "ObjModel.h"
 #include <GL/glew.h>
 #include <iostream>
 

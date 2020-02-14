@@ -1,5 +1,5 @@
 #include "DebugRender.h"
-#include "ObjModel.h"
+#include "ObjFileLoader.h"
 #include "Input.h"
 #include "Ray.h"
 #include "Plane.h"

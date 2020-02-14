@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "ObjModel.h"
+#include "ObjFileLoader.h"
 #include <GL/glew.h>
 #include <iostream>
 

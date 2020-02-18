@@ -1,7 +1,7 @@
 #pragma once
-#include <fstream>
 #include "ReadonlyString.h"
-#include "Logger.h"
+#include "ReadonlyXMLToken.h"
+#include <fstream>
 
 namespace FileHelper {
 	inline FILE* openFile(const char* filepath) {
@@ -21,38 +21,6 @@ namespace FileHelper {
 	}
 
 	namespace XML {
-		inline bool readTag(FILE* file, ReadonlyString& buffer) {
-			if (buffer.data == nullptr) {
-				buffer.allocate(1024);
-			}
-
-			readNext(file, buffer);
-
-			int startIndex = 0;
-			while (buffer.ptr[startIndex] != '<') {
-				if (buffer.ptr[startIndex] != ' ' && buffer.ptr[startIndex] != '\n') {
-					Logger::logWarning("Encountered unknown character when we should be encountering an '<'");
-					return false;
-				}
-				startIndex++;
-			}
-
-			buffer.ptr += startIndex;
-
-			int endIndex = startIndex + 1;
-			while (buffer.ptr[endIndex] != '>') {
-				if (endIndex == buffer.bufferSize) {
-					buffer.grow(2 * buffer.bufferSize);
-					fseek(file, buffer.bufferSize, SEEK_SET);
-					readNext(file, buffer);
-				}
-
-				endIndex++;
-			}
-
-
-			buffer.bufferSize = endIndex - startIndex;
-			buffer.data[endIndex + 1] = '\0';
-		}
+		bool readTokenTag(FILE* file, ReadonlyString& buffer, ReadonlyXMLToken& outToken);
 	}
 }

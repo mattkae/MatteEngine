@@ -26,12 +26,14 @@
     <ClCompile Include="..\..\src\ColladaFileLoader.cpp" />
     <ClCompile Include="..\..\src\DebugRender.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
+    <ClCompile Include="..\..\src\FileHelper.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
     <ClCompile Include="..\..\src\Label.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
+    <ClCompile Include="..\..\src\List.cpp" />
     <ClCompile Include="..\..\src\Logger.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Material.cpp" />
@@ -44,6 +46,7 @@
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
     <ClCompile Include="..\..\src\Ray.cpp" />
+    <ClCompile Include="..\..\src\ReadonlyString.cpp" />
     <ClCompile Include="..\..\src\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\SceneLoader.cpp" />
@@ -79,6 +82,7 @@
     <ClInclude Include="..\..\src\Input.h" />
     <ClInclude Include="..\..\src\Label.h" />
     <ClInclude Include="..\..\src\Light.h" />
+    <ClInclude Include="..\..\src\List.h" />
     <ClInclude Include="..\..\src\Logger.h" />
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\MathHelper.h" />
@@ -89,6 +93,7 @@
     <ClInclude Include="..\..\src\Plane.h" />
     <ClInclude Include="..\..\src\Quad.h" />
     <ClInclude Include="..\..\src\ReadonlyString.h" />
+    <ClInclude Include="..\..\src\ReadonlyXMLToken.h" />
     <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />
     <ClInclude Include="..\..\src\SceneUI.h" />

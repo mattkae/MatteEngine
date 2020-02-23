@@ -7,9 +7,12 @@ struct ReadonlyStrPtr {
 };
 
 struct ReadonlyString {
+	// Info about the underlying string
 	char* data = nullptr;
 	size_t length = 0;
 	size_t bufferSize = 0;
+
+	// Info about where we're currently looking in the string
 	char* ptr = nullptr;
 	size_t ptrPosition = 0;
 

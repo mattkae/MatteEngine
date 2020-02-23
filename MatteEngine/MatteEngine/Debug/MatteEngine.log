@@ -1,2 +1,8 @@
-﻿  FileHelper.cpp
+﻿  ColladaFileLoader.cpp
+  DebugRender.cpp
+  Mesh.cpp
+  Model.cpp
+  UI.cpp
+  Vector4f.cpp
+  Generating Code...
   MatteEngine.vcxproj -> C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\MatteEngine.exe

@@ -163,7 +163,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\test\ListTest.cpp" />
     <ClCompile Include="..\..\test\ReadonlyStringTest.cpp" />
-    <ClCompile Include="..\..\test\XMLTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MatteEngine\MatteEngine.vcxproj">

@@ -64,7 +64,6 @@ namespace Containers
 			list.deallocate();
 		}
 
-
 		TEST_METHOD(GrowWorks)
 		{
 			List list;

@@ -21,8 +21,5 @@
     <ClCompile Include="..\..\test\ReadonlyStringTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\XMLTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

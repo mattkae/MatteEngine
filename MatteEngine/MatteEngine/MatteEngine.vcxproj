@@ -26,7 +26,6 @@
     <ClCompile Include="..\..\src\ColladaFileLoader.cpp" />
     <ClCompile Include="..\..\src\DebugRender.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
-    <ClCompile Include="..\..\src\FileHelper.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
@@ -93,7 +92,6 @@
     <ClInclude Include="..\..\src\Plane.h" />
     <ClInclude Include="..\..\src\Quad.h" />
     <ClInclude Include="..\..\src\ReadonlyString.h" />
-    <ClInclude Include="..\..\src\ReadonlyXMLToken.h" />
     <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />
     <ClInclude Include="..\..\src\SceneUI.h" />

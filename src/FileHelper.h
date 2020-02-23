@@ -1,6 +1,5 @@
 #pragma once
 #include "ReadonlyString.h"
-#include "ReadonlyXMLToken.h"
 #include <fstream>
 
 namespace FileHelper {
@@ -18,9 +17,5 @@ namespace FileHelper {
 		size_t bytesRead = fread(buffer.data, 1, buffer.bufferSize, file);
 		buffer.length = bytesRead;
 		buffer.ptr = buffer.data;
-	}
-
-	namespace XML {
-		bool readTokenTag(FILE* file, ReadonlyString& buffer, ReadonlyXMLToken& outToken);
 	}
 }

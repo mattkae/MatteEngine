@@ -19,6 +19,11 @@ union TextInputValue {
 	std::string* sVal;
 };
 
+union LastValue {
+	int iVal;
+	float fVal;
+};
+
 struct TextInput {
 	Vector4f textColor = Vector4f();
 	Vector4f backgroundColor = Vector4f{ 1, 1, 1, 1 };
@@ -31,6 +36,7 @@ struct TextInput {
 	TextInputType inputType = TextInputType::TEXT;
 	TextInputValue value;
 	std::string representation = "";
+	LastValue lastValue;
 };
 
 void updateTextInput(TextInput& input, const TextRenderer& textRenderer);

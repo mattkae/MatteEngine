@@ -43,6 +43,10 @@ void freeUI(UI& ui) {
 
 	delete[] ui.panels;
 	ui.numPanels = 0;
+
+	if (ui.mOrthographicShader > 0) {
+		glDeleteProgram(ui.mOrthographicShader);
+	}
 }
 
 void openModelPanel(UI& ui, size_t index) {

@@ -8,7 +8,7 @@
 #include <vector>
 
 struct UI {
-	 Shader mOrthographicShader;
+	 Shader mOrthographicShader = 0;
 	 TextRenderer mTextRenderer;
 	 UIContext* panels = nullptr;
 	 size_t numPanels = 0;

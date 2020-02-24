@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Logger.h"
 #include "Ray.h"
+#include "SceneLoader.h"
 #include <fstream>
 #include <GLFW/glfw3.h>
 
@@ -63,6 +64,10 @@ void updateScene(BetterScene& scene, double dt) {
 
 	updateUI(scene.ui, dt);
 
+	if (isKeyJustDown(GLFW_KEY_R, 0)) {
+		freeScene(scene);
+		loadScene("assets/scenes/big_scene.matte", scene);
+	}
 }
 
 void renderShadows(const BetterScene& scene) {
@@ -144,10 +149,10 @@ void renderDirect(const BetterScene& scene) {
         scene.mDeferredBuffer.renderToScreen(scene.mSceneShader);
     } else {
         renderModels(scene, scene.mSceneShader);
+		renderDebug(scene);
 		renderNonDeferred(scene);
     }
 
-	renderDebug(scene);
     glDisable(GL_BLEND);
 
 	renderUI(scene.ui);
@@ -167,24 +172,45 @@ void renderScene(const BetterScene& scene) {
 
 void freeScene(BetterScene& scene) {
 	scene.isDying = true;
+
+	// Models
 	for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
         freeModel(scene.models[modelIdx]);
     }
 	scene.numModels = 0;
 	
+	// Lights
 	for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
 		freeLight(scene.lights[lidx]);
     }
 	scene.numLightsUsed = 0;
 
+	// Particle emitters
 	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
 		freeParticleEmitter(scene.emitters[eIdx]);
 	}
 	scene.numEmitters = 0;
 
+	// UI
 	freeUI(scene.ui);
+
+	// Skybox
 	freeSkybox(scene.mSkybox);
+
+	// Terrain
     freeTerrain(scene.mTerrain);
+
+	// Deferred
     scene.mDeferredBuffer.free();
+
+	// Threads
 	scene.mHotreloadThreader.join();
+
+	// Shaders
+	if (scene.mShadowShader > 0) {
+		glDeleteProgram(scene.mShadowShader);
+	}
+
+	// Debug program
+	freeDebug(scene.debugModel);
 }

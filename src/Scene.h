@@ -39,13 +39,12 @@ struct BetterScene {
 
 	std::thread mHotreloadThreader;
     bool mUseShadows = false;
-    Shader mShadowShader;
+    Shader mShadowShader = 0;
     BetterCamera mCamera;
 	std::vector<Shader> shadersToReload;
 	bool isDying = false;
 };
 
-void reloadScene(BetterScene& scene);
 void updateScene(BetterScene& scene, double dt);
 void renderScene(const BetterScene& scene);
 void freeScene(BetterScene& scene);

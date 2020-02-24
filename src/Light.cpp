@@ -266,7 +266,7 @@ void renderLight(const Light& light, const Shader shader, const int index) {
 		case Directional:
 		case Spot: {
 			int shadowMapIndex = TextureUniformConstants::LIGHT_SHADOW_TEXTURE_POSITION_START + light.index;
-			glActiveTexture(shadowMapIndex);
+			glActiveTexture(GL_TEXTURE0 + shadowMapIndex);
 			glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
 			setShaderIntWithUniform(shader, light.dirShadowUniform, shadowMapIndex);
 			setShaderMat4WithUniform(shader, light.shadowMatrixUniform, light.projection * light.view);
@@ -295,6 +295,7 @@ void freeLight(Light& light) {
         glDeleteTextures(1, &light.shadowTexture);
 		light.shadowTexture = 0;
 	}
+
 	if (light.depthFbo != 0) {
         glDeleteFramebuffers(1, &light.depthFbo);
 		light.depthFbo = 0;

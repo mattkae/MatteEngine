@@ -145,3 +145,13 @@ void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const
 	renderDebugArrow(dbgModel.zArrow, shader);
 	renderBoxOutline(dbgModel.debugBox, model, shader);
 }
+
+void freeDebug(DebugModel& dbgModel) {
+	freeModel(dbgModel.xArrow.model);
+	freeModel(dbgModel.yArrow.model);
+	freeModel(dbgModel.zArrow.model);
+	
+	if (dbgModel.debugBox.vao) glDeleteVertexArrays(1, &dbgModel.debugBox.vao);
+	if (dbgModel.debugBox.vbo) glDeleteBuffers(1, &dbgModel.debugBox.vbo);
+    if (dbgModel.debugBox.ebo) glDeleteBuffers(1, &dbgModel.debugBox.ebo);
+}

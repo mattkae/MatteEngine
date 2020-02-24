@@ -89,6 +89,7 @@ void DeferredGeometryBuffer::free()
         glDeleteTextures(1, &this->mMaterialInfoTexture);
         glDeleteBuffers(1, &this->mDepth);
         delete mAttachments;
+        glDeleteProgram(this->mShader);
         mHasGenerated = false;
     }
 }

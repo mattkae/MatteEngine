@@ -7,7 +7,7 @@
 #include "Vector4f.h"
 
 namespace StringUtil {
-	constexpr int DEFAULT_BUFFER_SIZE = 1024;
+	constexpr int DEFAULT_BUFFER_SIZE = 512;
 
 	inline void substring(char *out, char const *in, size_t len, size_t offset = 0) { 
 		memcpy(out, in + offset, len);

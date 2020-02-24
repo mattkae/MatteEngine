@@ -19,7 +19,6 @@ uniform vec3 uAmbient;
 uniform vec2 uFarNear;
 uniform Light uLights[MAX_LIGHTS];
 uniform sampler2DShadow uDirShadow[MAX_LIGHTS];
-uniform mat4 shadowMatrixUniform[MAX_LIGHTS];
 
 // Helper functions
 vec3 getColorFromLight(Light directionalLight, vec3 normal, vec3 viewDir, vec3 diffuse, vec3 specular);

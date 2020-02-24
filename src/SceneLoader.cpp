@@ -3,18 +3,19 @@
 #include "SceneUI.h"
 #include "Sphere.h"
 #include "StringUtil.h"
+#include "FileHelper.h"
 
 const char* START_OBJECT_TOKEN = "::";
 const char* END_OBJECT_TOKEN = ";;";
 const char* IGNORE_OBJECT_TOKEN = "//";
 
-inline void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-inline void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE], const Shader& shader);
-inline void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-inline void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-inline void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-inline void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-inline void ignoreObject(FILE* file, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE], const Shader& shader);
+void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void ignoreObject(FILE* file, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
     while (StringUtil::processLine(file, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
@@ -24,12 +25,7 @@ inline void ignoreObject(FILE* file, char buffer[StringUtil::DEFAULT_BUFFER_SIZE
 }
 
 void loadScene(const char* filepath, BetterScene& scene) {
-    FILE* file;
-#ifdef __APPLE__
-    file = fopen(filepath, "r");
-#else
-    fopen_s(&file, filepath, "r");
-#endif
+    FILE* file = FileHelper::openFile(filepath);
 
     char buffer[StringUtil::DEFAULT_BUFFER_SIZE];
     if (file == NULL) {
@@ -329,7 +325,7 @@ inline void loadParticleEmitter(FILE* file, ParticleEmitter& emitter, char buffe
             } else if (StringUtil::ifEqualWalkToValue(ptr, "particleTimeToLiveSeconds")) {
                 loadRandomizableFloat(file, emitter.particleTimeToLiveSeconds, buffer);
             }
-        } else if (StringUtil::ifEqualWalkToValue(ptr, "radius")) {
+        } else if (StringUtil::ifEqualWalkToValue(ptr, "model")) {
             StringUtil::strToMat4(ptr, emitter.model);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "initialNumParticles")) {
             StringUtil::strToInt(ptr, initialParticleCount);

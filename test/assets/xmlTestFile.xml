@@ -1,5 +1,0 @@
-<tagOne value1="hello" value2="4">
-    <tagTwo a="foo" b="bar">
-        InnerValue inside`
-    </tagTwo>
-</tagOne>

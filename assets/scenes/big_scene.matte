@@ -26,42 +26,74 @@ useDeferredRendering    false
     ;;
 ;;
 
-::spheres
+::models
     ::
-        radius          1
-        transform       1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
-        angleIncrements 10
+        path        assets/models/Mario/Super Mario 64 - Mario.obj
+        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 30 0 0 1
     ;;
-;; 
+;;
 
-//::particleEmitters
+::particleEmitters
     ::
-        model               1 0 0 0 0 1 0 0 0 0 1 0 0 3 0 1
+        model               1 0 0 0 0 1 0 0 0 0 1 0 -10 0 0 1
         ::spawnFrequencySeconds
-            baseValue       0.0001
-            randomOffset    0.00005
+            baseValue       0.001
+            randomOffset    0.0005
         ;;
-        initialNumParticles 10000
+        initialNumParticles 100000
         maxParticles        100000
         ::colorFunction
-            initial         1 0 0 1
-            linear          -0.25 0 0 -1
-            quadratic       0 0.2 0 0
+            initial         1 0.1 0 1
+            linear          -0.01 0.3 0 -1
+            quadratic       0 0.4 0 -0.2
             sinValue        0 0 0 0
-            cosValue        0 1 0 0
+            cosValue        0 0 0 0
         ;;
         ::movementFunction
             initial     0 10 0
-            linear      0 10 0
+            linear      0 -0.1 3
             quadratic   0 0 0
             sinValue    0 0 0
-            cosValue    8 0 8
+            cosValue    0 0 0
         ;;
         numVertices         48
-        particleDimension   0.1 0.1
+        particleDimension   0.3 0.3
         ::particlePosition
             baseValue   0 0 0
-            randomOffset 1 1 1
+            randomOffset 2 0.3 2
+        ;;
+        ::particleTimeToLiveSeconds
+            baseValue       0.5
+            randomOffset    0.3
+        ;;
+    ;;
+    ::
+        model               1 0 0 0 0 1 0 0 0 0 1 0 -10 3 0 1
+        ::spawnFrequencySeconds
+            baseValue       0.001
+            randomOffset    0.0005
+        ;;
+        initialNumParticles 100
+        maxParticles        100
+        ::colorFunction
+            initial         0.1 0.2 0.2 0.3
+            linear          -0.01 -0.01 -0.01 -0.3
+            quadratic       0 0 0 0
+            sinValue        0 0 0 0
+            cosValue        0 0 0 0
+        ;;
+        ::movementFunction
+            initial     0 10 0
+            linear      0 -0.2 5
+            quadratic   0 0 0
+            sinValue    0 0 0
+            cosValue    0 0 0
+        ;;
+        numVertices         12
+        particleDimension   0.2 0.2
+        ::particlePosition
+            baseValue   0 0 0
+            randomOffset 2 0.3 2
         ;;
         ::particleTimeToLiveSeconds
             baseValue       2.0
@@ -70,7 +102,7 @@ useDeferredRendering    false
     ;;
 ;;
 
-//::terrain
+::terrain
     size            1000
     granularity     500
     permSize        1000

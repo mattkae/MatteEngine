@@ -47,3 +47,4 @@ struct DebugModel {
 
 void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera);
 void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const Shader& shader);
+void freeDebug(DebugModel& dbgModel);

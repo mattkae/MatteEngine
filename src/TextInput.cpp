@@ -19,17 +19,29 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 		textInput.representation = *textInput.value.sVal;
 		break;
 	case TextInputType::INT:
-		textInput.representation = std::to_string(*textInput.value.iVal);
+		if (textInput.lastValue.iVal != *textInput.value.iVal) {
+			textInput.lastValue.iVal = *textInput.value.iVal;
+			textInput.representation = std::to_string(*textInput.value.iVal);
+		} else {
+			return;
+		}
 		break;
 	case TextInputType::FLOAT: 
-		textInput.representation = std::to_string(*textInput.value.fVal);
+		if (textInput.lastValue.fVal != *textInput.value.fVal) {
+			textInput.lastValue.fVal = *textInput.value.fVal;
+			textInput.representation = std::to_string(*textInput.value.fVal);
+		} else {
+			return;
+		}
 		break;
 	default:
 		// @TODO: Log error
 		break;
 	}
 
-	textInput.cursorPosition = textInput.representation.length();
+	if (textInput.cursorPosition > textInput.representation.length()) {
+		textInput.cursorPosition = textInput.representation.length();
+	}
 }
 
 inline void onStrChange(TextInput& textInput, std::string v) {

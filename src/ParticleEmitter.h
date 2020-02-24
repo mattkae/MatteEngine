@@ -41,7 +41,7 @@ public:
 	ParticleRenderVariables* particleRenderVariables = nullptr;
 	ParticleUpdateVariables* particleUpdateVariables = nullptr;
 	size_t nextParticleIndex = 0;
-    Shader mParticleShader;
+    Shader mParticleShader = 0;
     float timeUntilSpawnSeconds = 0;
     GLuint vao = 0;
     GLuint vbo = 0;

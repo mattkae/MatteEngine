@@ -145,9 +145,6 @@ void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& c
 	useShader(emitter.mParticleShader);
     renderCamera(camera, emitter.mParticleShader);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	setShaderMat4(emitter.mParticleShader, "uModel", emitter.model);
 	setShaderVec3(emitter.mParticleShader, "uCameraUp", camera.up);
 	setShaderVec3(emitter.mParticleShader, "uCameraRight", camera.right);
@@ -158,14 +155,32 @@ void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& c
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(ParticleRenderVariables) * emitter.maxParticles, emitter.particleRenderVariables);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//debugVAOState("error: ");
-
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6 * emitter.numVertices, emitter.nextParticleIndex);
     glBindVertexArray(0);
-
-    glDisable(GL_BLEND);
 }
 
 void freeParticleEmitter(ParticleEmitter& emitter) {
-	// FREE!
+	if (emitter.particleRenderVariables != nullptr) {
+		delete[] emitter.particleRenderVariables;
+	}
+
+	if (emitter.particleUpdateVariables != nullptr) {
+		delete[] emitter.particleUpdateVariables;
+	}
+
+	if (emitter.vao > 0) {
+		glDeleteVertexArrays(1, &emitter.vao);
+	}
+
+	if (emitter.vbo > 0) {
+		glDeleteFramebuffers(1, &emitter.vbo);
+	}
+
+	if (emitter.instanceVbo > 0) {
+		glDeleteFramebuffers(1, &emitter.instanceVbo);
+	}
+
+	if (emitter.mParticleShader > 0) {
+		glDeleteShader(emitter.mParticleShader);
+	}
 }

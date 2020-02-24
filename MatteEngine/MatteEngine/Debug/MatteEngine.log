@@ -1,8 +1,25 @@
-﻿  ColladaFileLoader.cpp
+﻿  Box.cpp
+  ColladaFileLoader.cpp
   DebugRender.cpp
-  Mesh.cpp
+  DeferredGeometryBuffer.cpp
+  Light.cpp
+  main.cpp
   Model.cpp
+  ObjFileLoader.cpp
+  Scene.cpp
+  SceneLoader.cpp
+  SceneUI.cpp
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(34,54): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(35,50): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(58,45): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(69,54): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(70,50): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(97,52): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  Sphere.cpp
+  TextInput.cpp
+C:\Users\mattykae\Projects\MatteEngine\src\TextInput.cpp(141,135): warning C4838: conversion from 'GLint' to 'GLfloat' requires a narrowing conversion
+C:\Users\mattykae\Projects\MatteEngine\src\TextInput.cpp(141,135): warning C4244: 'initializing': conversion from 'GLint' to 'GLfloat', possible loss of data
   UI.cpp
-  Vector4f.cpp
+  UIContext.cpp
   Generating Code...
   MatteEngine.vcxproj -> C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\MatteEngine.exe

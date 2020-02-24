@@ -12,10 +12,15 @@ The engine reads in `.matte` files, examples of which can be found in the `asset
 
 ### Models
 The engine currently supports the .obj file format. At the moment, there are plans to load .dae files in order to support animation. We currently support texture mapping.
+
 ![model](readme-assets/model_demo.JPG)
+
 The positions of models can be modified in the world by either selecting the model and subsequently selecting its arrows and dragging:
+
 ![model-selection](readme-assets/model_selection_demo.JPG)
+
 Or by using the UI to modify the values of the selected model:
+
 ![model-ui](readme-assets/model_move_ui_demo.JPG)
 
 ### Lights
@@ -26,10 +31,12 @@ Skyboxes work using a cube map, made up of six different images
 
 ### Skyboxes and Terrain
 Terrain is being generated using a variation of Simplex Noise
-![terrain](readme-assets/terrain_demo.png)
+
+![terrain](readme-assets/terrain_demo.JPG)
 
 ### Particle Emitters
 The engine also features a fairly nuanced particle system, in which users can specify how the color and speed of a particle changes over time. These particles are drawn via instancing, and I've found that 100,000 particles on screen at the same time causes very little slow down.
+
 ![particles](readme-assets/particle_demo_gif.gif)
 
 ### UI System

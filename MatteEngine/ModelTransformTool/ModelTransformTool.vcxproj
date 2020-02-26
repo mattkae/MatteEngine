@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -18,113 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\BoundText.cpp" />
-    <ClCompile Include="..\..\src\Box.cpp" />
-    <ClCompile Include="..\..\src\Button.cpp" />
-    <ClCompile Include="..\..\src\Camera.cpp" />
-    <ClCompile Include="..\..\src\DebugRender.cpp" />
-    <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
-    <ClCompile Include="..\..\src\Functional.cpp" />
-    <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
-    <ClCompile Include="..\..\src\ImageUtil.cpp" />
-    <ClCompile Include="..\..\src\Input.cpp" />
-    <ClCompile Include="..\..\src\Label.cpp" />
-    <ClCompile Include="..\..\src\Light.cpp" />
-    <ClCompile Include="..\..\src\List.cpp" />
-    <ClCompile Include="..\..\src\Logger.cpp" />
-    <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\Material.cpp" />
-    <ClCompile Include="..\..\src\Matrix3x3f.cpp" />
-    <ClCompile Include="..\..\src\Matrix4x4f.cpp" />
-    <ClCompile Include="..\..\src\Mesh.cpp" />
-    <ClCompile Include="..\..\src\Model.cpp" />
-    <ClCompile Include="..\..\src\ObjFileLoader.cpp" />
-    <ClCompile Include="..\..\src\Panel.cpp" />
-    <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
-    <ClCompile Include="..\..\src\Randomizable.cpp" />
-    <ClCompile Include="..\..\src\Ray.cpp" />
-    <ClCompile Include="..\..\src\ReadonlyString.cpp" />
-    <ClCompile Include="..\..\src\Rectangle.cpp" />
-    <ClCompile Include="..\..\src\Scene.cpp" />
-    <ClCompile Include="..\..\src\SceneLoader.cpp" />
-    <ClCompile Include="..\..\src\SceneUI.cpp" />
-    <ClCompile Include="..\..\src\Shader.cpp" />
-    <ClCompile Include="..\..\src\OpenSimplexNoise.cpp" />
-    <ClCompile Include="..\..\src\Skybox.cpp" />
-    <ClCompile Include="..\..\src\Sphere.cpp" />
-    <ClCompile Include="..\..\src\Terrain.cpp" />
-    <ClCompile Include="..\..\src\TextInput.cpp" />
-    <ClCompile Include="..\..\src\TextRenderer.cpp" />
-    <ClCompile Include="..\..\src\Texture.cpp" />
-    <ClCompile Include="..\..\src\UI.cpp" />
-    <ClCompile Include="..\..\src\UIContext.cpp" />
-    <ClCompile Include="..\..\src\Vector2f.cpp" />
-    <ClCompile Include="..\..\src\Vector3f.cpp" />
-    <ClCompile Include="..\..\src\Vector4f.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\src\BoundText.h" />
-    <ClInclude Include="..\..\src\Box.h" />
-    <ClInclude Include="..\..\src\Button.h" />
-    <ClInclude Include="..\..\src\Camera.h" />
-    <ClInclude Include="..\..\src\DebugRender.h" />
-    <ClInclude Include="..\..\src\DirectoryUtil.h" />
-    <ClInclude Include="..\..\src\FileHelper.h" />
-    <ClInclude Include="..\..\src\GlobalApplicationState.h" />
-    <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
-    <ClInclude Include="..\..\src\Entity.h" />
-    <ClInclude Include="..\..\src\Functional.h" />
-    <ClInclude Include="..\..\src\ImageUtil.h" />
-    <ClInclude Include="..\..\src\Input.h" />
-    <ClInclude Include="..\..\src\Label.h" />
-    <ClInclude Include="..\..\src\Light.h" />
-    <ClInclude Include="..\..\src\List.h" />
-    <ClInclude Include="..\..\src\Logger.h" />
-    <ClInclude Include="..\..\src\Material.h" />
-    <ClInclude Include="..\..\src\MathHelper.h" />
-    <ClInclude Include="..\..\src\Matrix3x3f.h" />
-    <ClInclude Include="..\..\src\Matrix4x4f.h" />
-    <ClInclude Include="..\..\src\OpenGLUtil.h" />
-    <ClInclude Include="..\..\src\Panel.h" />
-    <ClInclude Include="..\..\src\Plane.h" />
-    <ClInclude Include="..\..\src\Quad.h" />
-    <ClInclude Include="..\..\src\ReadonlyString.h" />
-    <ClInclude Include="..\..\src\Rectangle.h" />
-    <ClInclude Include="..\..\src\SceneLoader.h" />
-    <ClInclude Include="..\..\src\SceneUI.h" />
-    <ClInclude Include="..\..\src\StringUtil.h" />
-    <ClInclude Include="..\..\src\TextInput.h" />
-    <ClInclude Include="..\..\src\TextureUniformConstants.h" />
-    <ClInclude Include="..\..\src\UI.h" />
-    <ClInclude Include="..\..\src\UIContext.h" />
-    <ClInclude Include="..\..\src\UIEvent.h" />
-    <ClInclude Include="..\..\src\Vector2f.h" />
-    <ClInclude Include="..\..\src\Vector3f.h" />
-    <ClInclude Include="..\..\src\Mesh.h" />
-    <ClInclude Include="..\..\src\Model.h" />
-    <ClInclude Include="..\..\src\ObjectPool.h" />
-    <ClInclude Include="..\..\src\ObjFileLoader.h" />
-    <ClInclude Include="..\..\src\ParticleEmitter.h" />
-    <ClInclude Include="..\..\src\Randomizable.h" />
-    <ClInclude Include="..\..\src\Scene.h" />
-    <ClInclude Include="..\..\src\Shader.h" />
-    <ClInclude Include="..\..\src\OpenSimplexNoise.h" />
-    <ClInclude Include="..\..\src\Skybox.h" />
-    <ClInclude Include="..\..\src\Sphere.h" />
-    <ClInclude Include="..\..\src\Terrain.h" />
-    <ClInclude Include="..\..\src\TextRenderer.h" />
-    <ClInclude Include="..\..\src\Texture.h" />
-    <ClInclude Include="..\..\src\Vector4f.h" />
-    <ClInclude Include="..\..\src\Vertex.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{F436B927-268D-48BB-A003-D3DDE8D48729}</ProjectGuid>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{6C2B1CA3-212E-4160-AFD0-93BC83C5BFBD}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FluidSim</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
-    <ProjectName>MatteEngine</ProjectName>
+    <RootNamespace>ModelTransformTool</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -136,20 +35,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -173,7 +72,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <SourcePath>$(VC_SourcePath);C:\Users\mattykae\Projects\Fluid-Sim\src</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -186,13 +84,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -202,13 +99,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -217,15 +113,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -236,15 +131,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -253,6 +147,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Model.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Model.h" />
+    <ClInclude Include="dirent.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

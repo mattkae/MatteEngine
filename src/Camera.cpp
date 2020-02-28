@@ -57,7 +57,7 @@ void updateCamera(BetterCamera& camera, float dt) {
 }
 
 inline Matrix4x4f getCameraViewMatrix(const BetterCamera& camera) { 
-	return getLookAt(camera.position, addVector(camera.position, camera.forward), camera.up);
+	return getLookAt(camera.position, camera.position + camera.forward, camera.up);
 };
 
 inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
@@ -67,7 +67,7 @@ inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
 void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye) {
 	auto view = getCameraViewMatrix(camera);
 	auto proj = getCameraProjection(camera);
-	auto uVp = mult(view, proj);
+	auto uVp = view * proj;
 
 	setShaderMat4(shader, "uVp", uVp);
 	if (withEye) {

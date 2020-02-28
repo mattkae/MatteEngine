@@ -269,7 +269,7 @@ void renderLight(const Light& light, const Shader shader, const int index) {
 			glActiveTexture(GL_TEXTURE0 + shadowMapIndex);
 			glBindTexture(GL_TEXTURE_2D, light.shadowTexture);
 			setShaderIntWithUniform(shader, light.dirShadowUniform, shadowMapIndex);
-			setShaderMat4WithUniform(shader, light.shadowMatrixUniform, light.projection * light.view);
+			setShaderMat4WithUniform(shader, light.shadowMatrixUniform, light.view * light.projection);
 			break;
 		}
 		default:

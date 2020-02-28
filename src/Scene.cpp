@@ -66,7 +66,7 @@ void updateScene(BetterScene& scene, double dt) {
 
 	if (isKeyJustDown(GLFW_KEY_R, 0)) {
 		freeScene(scene);
-		loadScene("assets/scenes/big_scene.matte", scene);
+		loadScene("assets/scenes/scene.matte", scene);
 	}
 }
 

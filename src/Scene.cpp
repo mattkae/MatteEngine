@@ -33,14 +33,6 @@ int castRayToModel(BetterScene& scene) {
 void updateScene(BetterScene& scene, double dt) {
 	float dtFloat = static_cast<float>(dt);
 
-	if (scene.shadersToReload.size() > 0) {
-		for (Shader shader: scene.shadersToReload) {
-			reloadShader(shader);
-		}
-
-		scene.shadersToReload.clear();
-	}
-
     updateCamera(scene.mCamera, dtFloat);
 
 	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
@@ -66,7 +58,7 @@ void updateScene(BetterScene& scene, double dt) {
 
 	if (isKeyJustDown(GLFW_KEY_R, 0)) {
 		freeScene(scene);
-		loadScene("assets/scenes/big_scene.matte", scene);
+		loadScene("assets/scenes/scene.matte", scene);
 	}
 }
 
@@ -138,7 +130,7 @@ void renderDirect(const BetterScene& scene) {
 	useShader(scene.mSceneShader);
     renderCamera(scene.mCamera, scene.mSceneShader, true);
 
-	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.5f));
+	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.1f));
 	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
 
     for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
@@ -202,9 +194,6 @@ void freeScene(BetterScene& scene) {
 
 	// Deferred
     scene.mDeferredBuffer.free();
-
-	// Threads
-	scene.mHotreloadThreader.join();
 
 	// Shaders
 	if (scene.mShadowShader > 0) {

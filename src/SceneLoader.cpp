@@ -76,7 +76,6 @@ void loadScene(const char* filepath, BetterScene& scene) {
 
     scene.isDying = false;
     scene.mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
-    scene.mHotreloadThreader = std::thread(watchForDirectorychanges, std::ref(scene.shadersToReload), std::ref(scene.isDying));
     fclose(file);
 }
 

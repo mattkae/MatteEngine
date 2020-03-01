@@ -33,15 +33,13 @@ struct BetterScene {
     Terrain mTerrain;
     Skybox mSkybox;
     Shader mSceneShader;
+    Shader mShadowShader;
     bool useDefferredRendering = false;
     DeferredGeometryBuffer mDeferredBuffer;
 	UI ui;
 
-	std::thread mHotreloadThreader;
-    bool mUseShadows = false;
-    Shader mShadowShader = 0;
+    bool mUseShadows = true;
     BetterCamera mCamera;
-	std::vector<Shader> shadersToReload;
 	bool isDying = false;
 };
 

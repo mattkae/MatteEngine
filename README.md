@@ -43,7 +43,15 @@ The engine also features a fairly nuanced particle system, in which users can sp
 The UI system is currently in its infancy but, as the project progresses, it should become a lot more built-out. In its current state, users are able to edit the location of models in the scene via text input.
 
 ### Deferred rendering
-The user can turn deferred rendering on in the `.matte` configuration, but some things may break.
+The user can turn deferred rendering on in the `.matte` configuration, but some things may break/.
+
+### Soft Shadows using Precentage-Closer Filterig (PCF)
+Before PCF, with hard shadows:
+![terrain](readme-assets/mario_hard_shadow.JPG)
+
+After PCF, with smooth shadows (sampling 4x4 grid around the texel):
+![terrain](readme-assets/mario_soft_shadow.JPG)
+
 
 ## Upcoming
 1. Animation System

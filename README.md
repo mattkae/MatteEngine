@@ -47,10 +47,10 @@ The user can turn deferred rendering on in the `.matte` configuration, but some 
 
 ### Soft Shadows using Precentage-Closer Filterig (PCF)
 Before PCF, with hard shadows:
-![terrain](readme-assets/mario_hard_shadow.JPG)
+![hard_shadow](readme-assets/mario_hard_shadow.JPG)
 
 After PCF, with smooth shadows (sampling 4x4 grid around the texel):
-![terrain](readme-assets/mario_soft_shadow.JPG)
+![soft_shadow](readme-assets/mario_soft_shadow.JPG)
 
 
 ## Upcoming

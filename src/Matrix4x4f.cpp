@@ -17,6 +17,14 @@ Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale) {
     return result;
 }
 
+Matrix4x4f setScale(const Matrix4x4f& matrix, const GLfloat scale) {
+    Matrix4x4f result = copyMatrix(matrix);
+    result.values[0] = scale;
+    result.values[5] = scale;
+    result.values[10] = scale;
+    return result;
+}
+
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale) {
     Matrix4x4f result = copyMatrix(matrix);
     result.values[0] *= scale.x;

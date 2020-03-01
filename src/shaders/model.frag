@@ -125,6 +125,30 @@ float getOmniVisibility(const in Light light) {
 }
 
 float getDirVisibility(const in int lightIndex, vec4 fragPosInLightSpace) {
-    vec3 lP = (fragPosInLightSpace.xyz / fragPosInLightSpace.w) * 0.5 + 0.5f;
-    return texture(uDirShadow[lightIndex], lP);
+    float retval = 0;
+    int N = 4;
+    int twoN = N * 2;
+
+    vec3 lightPosition = (vec3(fragPosInLightSpace.x, 
+        fragPosInLightSpace.y, 
+        fragPosInLightSpace.z) / fragPosInLightSpace.w) * 0.5 + 0.5;
+
+    if (true) {
+        return texture(uDirShadow[lightIndex], lightPosition);
+    }
+
+    vec3 transformedVec = vec3(lightPosition);
+    float divisor = 0;
+    vec2 texelSize = 1.0 / textureSize(uDirShadow[lightIndex], 0);
+
+    for (int x = -N; x <= N; x++) {
+        for (int y = -N; y <= N; y++) {
+            vec2 transform = vec2(x, y) * texelSize;
+            transformedVec.x = lightPosition.x + transform.x;
+            transformedVec.y = lightPosition.y + transform.y;
+            divisor += 1;
+            retval += texture(uDirShadow[lightIndex], transformedVec);
+        }
+    }
+    return retval / divisor;
 }

@@ -38,10 +38,8 @@ struct BetterScene {
     DeferredGeometryBuffer mDeferredBuffer;
 	UI ui;
 
-	std::thread mHotreloadThreader;
     bool mUseShadows = true;
     BetterCamera mCamera;
-	std::vector<Shader> shadersToReload;
 	bool isDying = false;
 };
 

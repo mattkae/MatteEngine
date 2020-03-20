@@ -73,7 +73,6 @@
     <ClInclude Include="..\..\src\FileHelper.h" />
     <ClInclude Include="..\..\src\GlobalApplicationState.h" />
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
-    <ClInclude Include="..\..\src\Entity.h" />
     <ClInclude Include="..\..\src\Functional.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\Input.h" />

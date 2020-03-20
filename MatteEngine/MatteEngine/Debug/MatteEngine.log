@@ -1,1 +1,60 @@
-﻿  MatteEngine.vcxproj -> C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\MatteEngine.exe
+﻿  BoundText.cpp
+  Box.cpp
+  Button.cpp
+  Camera.cpp
+  DebugRender.cpp
+  DeferredGeometryBuffer.cpp
+  Label.cpp
+  Light.cpp
+  Material.cpp
+  Matrix3x3f.cpp
+  Matrix4x4f.cpp
+  Mesh.cpp
+  Model.cpp
+  ObjFileLoader.cpp
+  Panel.cpp
+  ParticleEmitter.cpp
+C:\Users\mattykae\Projects\MatteEngine\src\ParticleEmitter.cpp(127,29): warning C4018: '<': signed/unsigned mismatch
+  Ray.cpp
+  Rectangle.cpp
+  Scene.cpp
+  SceneLoader.cpp
+  Generating Code...
+  Compiling...
+  SceneUI.cpp
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(34,54): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(35,50): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(58,45): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(69,54): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(70,50): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\SceneUI.cpp(97,52): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  Shader.cpp
+  Skybox.cpp
+  Sphere.cpp
+  Terrain.cpp
+C:\Users\mattykae\Projects\MatteEngine\src\Terrain.cpp(66,47): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\mattykae\Projects\MatteEngine\src\Terrain.cpp(71,79): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+C:\Users\mattykae\Projects\MatteEngine\src\Terrain.cpp(71,60): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+  TextInput.cpp
+C:\Users\mattykae\Projects\MatteEngine\src\TextInput.cpp(141,135): warning C4838: conversion from 'GLint' to 'GLfloat' requires a narrowing conversion
+C:\Users\mattykae\Projects\MatteEngine\src\TextInput.cpp(141,135): warning C4244: 'initializing': conversion from 'GLint' to 'GLfloat', possible loss of data
+  TextRenderer.cpp
+  UI.cpp
+  UIContext.cpp
+  main.cpp
+  Generating Code...
+  LINK : C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\MatteEngine.exe not found or not built by the last incremental link; performing full link
+Vector4f.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Vector4f.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+Vector3f.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Vector3f.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+Vector2f.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Vector2f.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+Texture.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Texture.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+OpenSimplexNoise.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'OpenSimplexNoise.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+ReadonlyString.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'ReadonlyString.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+Randomizable.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Randomizable.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+Logger.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Logger.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+List.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'List.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+Input.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Input.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+ImageUtil.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'ImageUtil.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+GlobalApplicationState.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'GlobalApplicationState.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+Functional.obj : warning LNK4099: PDB 'vc142.pdb' was not found with 'Functional.obj' or at 'C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\vc142.pdb'; linking object as if no debug info
+  MatteEngine.vcxproj -> C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\MatteEngine.exe

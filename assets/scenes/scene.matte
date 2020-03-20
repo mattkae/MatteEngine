@@ -11,7 +11,7 @@ useDeferredRendering    false
 
 ::lights
     ::
-        type            2
+        type            0
         color           0.5 0.5 0.5
         direction       0 -1 0
         position        0 10 0
@@ -28,12 +28,12 @@ useDeferredRendering    false
 
 ::models
     ::
-        path        assets/models/Mario/Super Mario 64 - Mario.obj
-        transform   0.01 0 0 0 0 0.01 0 0 0 0 0.01 0 0 0 0 1
+        path        assets/models/Transparent_1/Transparent.obj
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
     ;;
     ::
-        path        assets/models/Floor/floor.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -3 0 1
+        path        assets/models/Transparent_2/Transparent.obj
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 -10 1
     ;;
 ;;
 

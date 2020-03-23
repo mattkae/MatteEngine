@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\BinarySerializer.cpp" />
     <ClCompile Include="..\..\src\BoundText.cpp" />
     <ClCompile Include="..\..\src\Box.cpp" />
     <ClCompile Include="..\..\src\Button.cpp" />
@@ -32,6 +33,7 @@
     <ClCompile Include="..\..\src\Label.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
     <ClCompile Include="..\..\src\List.cpp" />
+    <ClCompile Include="..\..\src\LoadModel.cpp" />
     <ClCompile Include="..\..\src\Logger.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Material.cpp" />
@@ -64,6 +66,7 @@
     <ClCompile Include="..\..\src\Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\BinarySerializer.h" />
     <ClInclude Include="..\..\src\BoundText.h" />
     <ClInclude Include="..\..\src\Box.h" />
     <ClInclude Include="..\..\src\Button.h" />
@@ -79,6 +82,7 @@
     <ClInclude Include="..\..\src\Label.h" />
     <ClInclude Include="..\..\src\Light.h" />
     <ClInclude Include="..\..\src\List.h" />
+    <ClInclude Include="..\..\src\LoadModel.h" />
     <ClInclude Include="..\..\src\Logger.h" />
     <ClInclude Include="..\..\src\Material.h" />
     <ClInclude Include="..\..\src\MathHelper.h" />

@@ -1,3 +1,5 @@
 #pragma once
+#include <vector>
+#include <string>
 
-int readModelDirectory();
+std::vector<std::string> readModelDirectory();

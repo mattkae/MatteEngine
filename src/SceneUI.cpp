@@ -4,10 +4,10 @@
 #include "Logger.h"
 #include <string>
 
-void getMainEditor(BetterScene& scene, UIContext& retVal, UI& ui);
+void getMainEditor(Scene& scene, UIContext& retVal, UI& ui);
 void getModelEditor(Model& model, UIContext& retval, size_t elementIdx);
 
-void getSceneUI(BetterScene& scene, UI& ui) {
+void getSceneUI(Scene& scene, UI& ui) {
 	size_t numRightPanels = scene.numModels;
 	size_t numMainUiElements = 1 + numRightPanels;
 	size_t uiPanelIndex = 0;
@@ -26,7 +26,7 @@ void getSceneUI(BetterScene& scene, UI& ui) {
 	}
 }
 
-void getMainEditor(BetterScene& scene, UIContext& retVal, UI& ui) {
+void getMainEditor(Scene& scene, UIContext& retVal, UI& ui) {
 	retVal.uiElements = new UIElement[scene.numModels + 1];
 	retVal.numUiElements = scene.numModels + 1;
 	size_t elementIdx = 0;

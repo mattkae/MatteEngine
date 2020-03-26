@@ -25,8 +25,8 @@ void glfw_error_callback(int error, const char* message)
 int main(int argc, const char* argv[]) {
     initialize(argc, argv);
 
-    BetterScene scene;
-	loadScene("assets/scenes/big_scene.matte", scene);
+    Scene scene;
+	SceneLoader::loadScene("assets/scenes/big_scene.matte", scene);
 
     glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;

@@ -17,8 +17,11 @@
 #include "shaders/Light.shared.cpp"
 #include "Box.h"
 #include "DebugRender.h"
+#include "ModelLoader.h"
 
-struct BetterScene {
+struct Scene {
+	ModelLoader modelLoader;
+
 	Model models[32];
 	Box modelBoundingBoxes[32];
 	size_t numModels = 0;
@@ -45,9 +48,9 @@ struct BetterScene {
 	bool isDying = false;
 };
 
-void updateScene(BetterScene& scene, double dt);
-void renderScene(const BetterScene& scene);
-void freeScene(BetterScene& scene);
-void renderModels(const BetterScene& scene, const Shader &shader, bool withMaterial = true);
+void updateScene(Scene& scene, double dt);
+void renderScene(const Scene& scene);
+void freeScene(Scene& scene);
+void renderModels(const Scene& scene, const Shader &shader, bool withMaterial = true);
 
 #endif

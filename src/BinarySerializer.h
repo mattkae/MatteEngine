@@ -12,17 +12,17 @@ enum SerializationMode {
 class BinarySerializer {
 public:
 	BinarySerializer(const char* file, SerializationMode mode);
-	void close();
+	void close() const;
 
-	void writeInt32(int value);
-	void writeInt64(long value);
-	void writeByte(char value);
-	void writeFloat32(float value);
-	void writeFloat64(double value);
-	void writeString(std::string value);
-	void writeVec2(Vector2f& v);
-	void writeVec3(Vector3f& v);
-	void writeVec4(Vector4f& v);
+	void writeInt32(int value) const;
+	void writeInt64(long value) const;
+	void writeByte(char value) const;
+	void writeFloat32(float value) const;
+	void writeFloat64(double value) const;
+	void writeString(std::string value) const;
+	void writeVec2(Vector2f& v) const;
+	void writeVec3(Vector3f& v) const;
+	void writeVec4(Vector4f& v) const;
 
 	int readInt32();
 	long readInt64();

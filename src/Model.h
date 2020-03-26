@@ -13,12 +13,11 @@
 
 struct Model {
     Matrix4x4f model;
-    std::vector<Mesh> meshes;
-};
+    Mesh* meshes;
+    int numMeshes;
 
-void initializeModel(Model& model);
-void initializeModel(Model& model, Box& box);
-void renderModel(const Model& model, const Shader& shader, bool withMaterial = true);
-void freeModel(Model& model);
+    void render(const Shader& shader, bool withMaterial = true) const;
+    void free();
+};
 
 #endif

@@ -137,7 +137,7 @@ bool initLight(Light& light, const Shader& shader, int lightIndex) {
     return true;
 }
 
-void renderPointShadows(const Light& light, const Shader &shader, const BetterScene &scene) {
+void renderPointShadows(const Light& light, const Shader &shader, const Scene &scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0f, 4.0f);
@@ -196,7 +196,7 @@ void renderPointShadows(const Light& light, const Shader &shader, const BetterSc
     glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }
 
-void renderDirectionalShadows(const Light& light, const Shader shader, const BetterScene &scene) {
+void renderDirectionalShadows(const Light& light, const Shader shader, const Scene &scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, light.depthFbo);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -216,7 +216,7 @@ void renderDirectionalShadows(const Light& light, const Shader shader, const Bet
     glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
 }
 
-void renderLightShadows(const Light& light, const Shader shader, const BetterScene& scene) {
+void renderLightShadows(const Light& light, const Shader shader, const Scene& scene) {
     if (!light.isOn || !light.usesShadows) {
         return;
 	}

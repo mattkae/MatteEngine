@@ -5,9 +5,6 @@
 #include "Mesh.h"
 #include "Matrix4x4f.h"
 #include <GL/glew.h>
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::json;
 
 struct GenerationParameters {
     int size = 512;

@@ -64,3 +64,8 @@ void List::deallocate() {
 	this->elementSize = 0;
 	this->sizeBytes = 0;
 }
+
+char* List::getValue(int idx) {
+	char* ptr = ((char*)this->data);
+	return &ptr[elementSize * idx];
+}

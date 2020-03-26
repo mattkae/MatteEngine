@@ -26,13 +26,13 @@ BinarySerializer::BinarySerializer(const char* file, SerializationMode mode) {
 	}
 }
 
-void BinarySerializer::close() {
+void BinarySerializer::close() const {
 	if (mFile != nullptr) {
 		fclose(mFile);
 	}
 }
 
-void BinarySerializer::writeInt32(int value) {
+void BinarySerializer::writeInt32(int value) const {
 	if (mMode != SerializationMode::WRITE) {
 		Logger::logError("Cannot write binary, wrong mode");
 		return;
@@ -41,7 +41,7 @@ void BinarySerializer::writeInt32(int value) {
 	fwrite(&value, sizeof(int), 1, mFile);
 }
 
-void BinarySerializer::writeByte(char value) {
+void BinarySerializer::writeByte(char value) const {
 	if (mMode != SerializationMode::WRITE) {
 		Logger::logError("Cannot write binary, wrong mode");
 		return;
@@ -50,7 +50,7 @@ void BinarySerializer::writeByte(char value) {
 	fwrite(&value, sizeof(char), 1, mFile);
 }
 
-void BinarySerializer::writeInt64(long value) {
+void BinarySerializer::writeInt64(long value) const {
 	if (mMode != SerializationMode::WRITE) {
 		Logger::logError("Cannot write binary, wrong mode");
 		return;
@@ -59,7 +59,7 @@ void BinarySerializer::writeInt64(long value) {
 	fwrite(&value, sizeof(long), 1, mFile);
 }
 
-void BinarySerializer::writeFloat32(float value) {
+void BinarySerializer::writeFloat32(float value) const {
 	if (mMode != SerializationMode::WRITE) {
 		Logger::logError("Cannot write binary, wrong mode");
 		return;
@@ -68,7 +68,7 @@ void BinarySerializer::writeFloat32(float value) {
 	fwrite(&value, sizeof(float), 1, mFile);
 }
 
-void BinarySerializer::writeFloat64(double value) {
+void BinarySerializer::writeFloat64(double value) const {
 	if (mMode != SerializationMode::WRITE) {
 		Logger::logError("Cannot write binary, wrong mode");
 		return;
@@ -77,7 +77,7 @@ void BinarySerializer::writeFloat64(double value) {
 	fwrite(&value, sizeof(value), 1, mFile);
 }
 
-void BinarySerializer::writeString(std::string value) {
+void BinarySerializer::writeString(std::string value) const {
 	if (mMode != SerializationMode::WRITE) {
 		Logger::logError("Cannot write binary, wrong mode");
 		return;
@@ -89,18 +89,18 @@ void BinarySerializer::writeString(std::string value) {
 	}
 }
 
-void BinarySerializer::writeVec2(Vector2f& v) {
+void BinarySerializer::writeVec2(Vector2f& v) const {
 	writeFloat32(v.x);	
 	writeFloat32(v.y);	
 }
 
-void BinarySerializer::writeVec3(Vector3f& v) {
+void BinarySerializer::writeVec3(Vector3f& v) const {
 	writeFloat32(v.x);	
 	writeFloat32(v.y);	
 	writeFloat32(v.z);	
 }
 
-void BinarySerializer::writeVec4(Vector4f& v) {
+void BinarySerializer::writeVec4(Vector4f& v) const {
 	writeFloat32(v.x);	
 	writeFloat32(v.y);	
 	writeFloat32(v.z);	

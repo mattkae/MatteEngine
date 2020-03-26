@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3f.h"
+#include "Vector4f.h"
 #include "Vertex.h"
 #include <GL/glew.h>
 #include <vector>
@@ -30,7 +31,10 @@ struct LoadMesh {
 struct LoadModel {
     std::vector<LoadMesh> meshes;
     std::string modelPath;
+    Vector4f lowerLeftBoundingBoxCorner;
+    Vector4f upperRightBoundingBoxCorner;
 
     void writeLoadModel(BinarySerializer& serializer);
     void readLoadModel(BinarySerializer& serializer);
+    void calculateBoundingBox();
 };

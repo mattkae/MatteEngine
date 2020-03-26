@@ -41,7 +41,6 @@
     <ClCompile Include="..\..\src\Matrix4x4f.cpp" />
     <ClCompile Include="..\..\src\Mesh.cpp" />
     <ClCompile Include="..\..\src\Model.cpp" />
-    <ClCompile Include="..\..\src\ObjFileLoader.cpp" />
     <ClCompile Include="..\..\src\Panel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
@@ -51,6 +50,7 @@
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\SceneLoader.cpp" />
     <ClCompile Include="..\..\src\SceneUI.cpp" />
+    <ClCompile Include="..\..\src\ModelLoader.cpp" />
     <ClCompile Include="..\..\src\Shader.cpp" />
     <ClCompile Include="..\..\src\OpenSimplexNoise.cpp" />
     <ClCompile Include="..\..\src\Skybox.cpp" />
@@ -59,6 +59,7 @@
     <ClCompile Include="..\..\src\TextInput.cpp" />
     <ClCompile Include="..\..\src\TextRenderer.cpp" />
     <ClCompile Include="..\..\src\Texture.cpp" />
+    <ClCompile Include="..\..\src\TextureInfo.cpp" />
     <ClCompile Include="..\..\src\UI.cpp" />
     <ClCompile Include="..\..\src\UIContext.cpp" />
     <ClCompile Include="..\..\src\Vector2f.cpp" />
@@ -96,8 +97,10 @@
     <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />
     <ClInclude Include="..\..\src\SceneUI.h" />
+    <ClInclude Include="..\..\src\ModelLoader.h" />
     <ClInclude Include="..\..\src\StringUtil.h" />
     <ClInclude Include="..\..\src\TextInput.h" />
+    <ClInclude Include="..\..\src\TextureInfo.h" />
     <ClInclude Include="..\..\src\TextureUniformConstants.h" />
     <ClInclude Include="..\..\src\UI.h" />
     <ClInclude Include="..\..\src\UIContext.h" />
@@ -107,7 +110,6 @@
     <ClInclude Include="..\..\src\Mesh.h" />
     <ClInclude Include="..\..\src\Model.h" />
     <ClInclude Include="..\..\src\ObjectPool.h" />
-    <ClInclude Include="..\..\src\ObjFileLoader.h" />
     <ClInclude Include="..\..\src\ParticleEmitter.h" />
     <ClInclude Include="..\..\src\Randomizable.h" />
     <ClInclude Include="..\..\src\Scene.h" />

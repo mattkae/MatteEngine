@@ -1,5 +1,7 @@
 useDeferredRendering    false
 
+textures                assets/texture-info.mattl
+
 ::skybox
     front   assets/skybox/cloudy/bluecloud_ft.jpg
     back    assets/skybox/cloudy/bluecloud_bk.jpg
@@ -28,12 +30,12 @@ useDeferredRendering    false
 
 ::models
     ::
-        path        assets/models/Mario/Super Mario 64 - Mario.obj
-        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 30 0 0 1
+        path        assets/models/Mario/Super Mario 64 - Mario.mattl
+        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 1
     ;;
 ;;
 
-::particleEmitters
+//::particleEmitters
     ::
         model               1 0 0 0 0 1 0 0 0 0 1 0 -10 0 0 1
         ::spawnFrequencySeconds
@@ -102,7 +104,7 @@ useDeferredRendering    false
     ;;
 ;;
 
-::terrain
+//::terrain
     size            1000
     granularity     500
     permSize        1000

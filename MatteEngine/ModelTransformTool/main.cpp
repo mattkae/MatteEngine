@@ -1,6 +1,8 @@
 #include "LoadModel.h"
 #include "LoadModel.cpp"
 #include "DirectoryReader.h"
+#include "TextureInfo.h"
+#include "TextureInfo.cpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h> 
 #include <assimp/postprocess.h>
@@ -14,11 +16,6 @@ Vector3f assimpColor4ToVec3(aiColor4D inColor);
 
 GLuint nextTextureUniqueId = 1;
 
-struct TextureInfo {
-    std::string fullpath;
-    GLuint uniqueId = 0;
-};
-
 std::vector<TextureInfo> outTextures;
 std::vector<LoadModel> outModels;
 
@@ -27,7 +24,7 @@ int main() {
 
     Assimp::Importer importer;
     for (std::string modelFile : modelFiles) {
-        const aiScene* scene = importer.ReadFile(modelFile, aiProcess_Triangulate);
+        const aiScene* scene = importer.ReadFile(modelFile, aiProcess_Triangulate | aiProcess_FlipUVs);
         if (!scene) {
             Logger::logError("Failed to read file at path: " + modelFile);
             continue;
@@ -39,16 +36,19 @@ int main() {
         outModels.push_back(model);
     }
 
+    // Write out all the models
     for (LoadModel& model : outModels) {
         std::string outputFile = model.modelPath.substr(0, model.modelPath.find_last_of('.')) + ".mattl";
         BinarySerializer modelSerializer(outputFile.c_str(), SerializationMode::WRITE);
         model.writeLoadModel(modelSerializer);
         modelSerializer.close();
+    }
 
-        BinarySerializer modelDeserializer(outputFile.c_str(), SerializationMode::READ);
-        LoadModel newModel;
-        newModel.readLoadModel(modelDeserializer);
-        modelDeserializer.close();
+    // Write out all the textures
+    BinarySerializer textureInfoSerializer("assets/texture-info.mattl", SerializationMode::WRITE);
+    textureInfoSerializer.writeInt32(outTextures.size());
+    for (TextureInfo& textureInfo : outTextures) {
+        textureInfo.write(textureInfoSerializer);
     }
 
     return EXIT_SUCCESS;
@@ -121,7 +121,7 @@ void processNode(std::string fullPath, const aiNode* node, const aiScene* scene,
                     aiString filePath;
                     material->GetTexture(aiTextureType_DIFFUSE, texIndex, &filePath);
                     
-                    std::string texturePath = fullPath + "/" + std::string(filePath.C_Str());
+                    std::string texturePath = fullPath.substr(0, fullPath.find_last_of('/')) + "/" + std::string(filePath.C_Str());
                     TextureInfo info;
                     bool foundInfo = false;
                     for (TextureInfo textureInfo : outTextures) {

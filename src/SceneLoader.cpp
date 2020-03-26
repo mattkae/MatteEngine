@@ -1,5 +1,4 @@
 #include "SceneLoader.h"
-#include "ObjFileLoader.h"
 #include "SceneUI.h"
 #include "Sphere.h"
 #include "StringUtil.h"
@@ -11,7 +10,7 @@ const char* IGNORE_OBJECT_TOKEN = "//";
 
 void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE], const Shader& shader);
-void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
@@ -24,7 +23,7 @@ void ignoreObject(FILE* file, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     }
 }
 
-void loadScene(const char* filepath, BetterScene& scene) {
+void SceneLoader::loadScene(const char* filepath, Scene& scene) {
     FILE* file = FileHelper::openFile(filepath);
 
     char buffer[StringUtil::DEFAULT_BUFFER_SIZE];
@@ -44,7 +43,7 @@ void loadScene(const char* filepath, BetterScene& scene) {
             } else if (StringUtil::startsWith(ptr, "lights")) {
                 loadLights(file, scene.lights, scene.numLightsUsed, buffer, scene.mSceneShader);
             } else if (StringUtil::startsWith(ptr, "models")) {
-                loadModels(file, scene.models, scene.modelBoundingBoxes, scene.numModels, buffer);
+                loadModels(file, scene, scene.numModels, buffer);
             } else if (StringUtil::startsWith(ptr, "spheres")) {
                 loadSpheres(file, scene.models, scene.modelBoundingBoxes, scene.numModels, buffer);
             } else if (StringUtil::startsWith(ptr, "particleEmitters")) {
@@ -68,6 +67,8 @@ void loadScene(const char* filepath, BetterScene& scene) {
             }
         } else if (StringUtil::startsWith(ptr, IGNORE_OBJECT_TOKEN)) {
             ignoreObject(file, buffer);
+        } else if (StringUtil::ifEqualWalkToValue(ptr, "textures")) {
+            scene.modelLoader.loadTextureList(ptr);
         }
     }
 
@@ -167,26 +168,26 @@ void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[String
     }
 }
 
-inline void loadModel(FILE* file, Model& model, Box& box, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+inline void loadModel(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
     while (StringUtil::processLine(file, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "path")) {
-            loadFromObj(ptr, model);
+            ModelLoader::ModelLoadResult retval = scene.modelLoader.loadSerializedModel(ptr);
+            scene.models[numModels] = retval.model;
+            scene.modelBoundingBoxes[numModels] = retval.box;
         } else if (StringUtil::ifEqualWalkToValue(ptr, "transform")) {
-            StringUtil::strToMyMat4(ptr, model.model);
+            StringUtil::strToMyMat4(ptr, scene.models[numModels].model);
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }
     }
-
-    initializeModel(model, box);
 }
 
-void loadModels(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
     while (StringUtil::processLine(file, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadModel(file, models[numModels], boxes[numModels], buffer);
+            loadModel(file, scene, numModels, buffer);
             numModels++;
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;

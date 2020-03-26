@@ -1,6 +1,8 @@
 #include "LoadModel.h"
 #include "BinarySerializer.h"
 void LoadModel::writeLoadModel(BinarySerializer& serializer) {
+	calculateBoundingBox();
+
 	serializer.writeInt32(meshes.size());
 	for (LoadMesh& mesh: meshes) {
 		serializer.writeInt32(mesh.vertices.size());
@@ -24,6 +26,9 @@ void LoadModel::writeLoadModel(BinarySerializer& serializer) {
 		serializer.writeInt32(mesh.material.specularUniqueTextureId);
 		serializer.writeInt32(mesh.material.ambientUniqueTextureId);
 	}
+
+	serializer.writeVec4(lowerLeftBoundingBoxCorner);
+	serializer.writeVec4(upperRightBoundingBoxCorner);
 }
 
 void LoadModel::readLoadModel(BinarySerializer& serializer) {
@@ -55,5 +60,45 @@ void LoadModel::readLoadModel(BinarySerializer& serializer) {
 		mesh.material.diffuseUniqueTextureId = serializer.readInt32();
 		mesh.material.specularUniqueTextureId = serializer.readInt32();
 		mesh.material.ambientUniqueTextureId = serializer.readInt32();
+	}
+
+	lowerLeftBoundingBoxCorner = serializer.readVec4();
+	upperRightBoundingBoxCorner = serializer.readVec4();
+}
+
+void LoadModel::calculateBoundingBox() {
+	bool hasBoxBeenSet = false;
+	for (const LoadMesh& mesh: meshes) {
+		for (auto& vertex : mesh.vertices) {
+			if (!hasBoxBeenSet) {
+				lowerLeftBoundingBoxCorner.x = vertex.position.x;
+				lowerLeftBoundingBoxCorner.y = vertex.position.y;
+				lowerLeftBoundingBoxCorner.z = vertex.position.z;
+				upperRightBoundingBoxCorner.x = vertex.position.x;
+				upperRightBoundingBoxCorner.y = vertex.position.y;
+				upperRightBoundingBoxCorner.z = vertex.position.z;
+				hasBoxBeenSet = true;
+			}
+			
+			if (vertex.position.x < lowerLeftBoundingBoxCorner.x) {
+				lowerLeftBoundingBoxCorner.x = vertex.position.x;
+			}
+			if (vertex.position.y < lowerLeftBoundingBoxCorner.y) {
+				lowerLeftBoundingBoxCorner.y = vertex.position.y;
+			}
+			if (vertex.position.z < lowerLeftBoundingBoxCorner.z) {
+				lowerLeftBoundingBoxCorner.z = vertex.position.z;
+			}
+
+			if (vertex.position.x > upperRightBoundingBoxCorner.x) {
+				upperRightBoundingBoxCorner.x = vertex.position.x;
+			}
+			if (vertex.position.y > upperRightBoundingBoxCorner.y) {
+				upperRightBoundingBoxCorner.y = vertex.position.y;
+			}
+			if (vertex.position.z > upperRightBoundingBoxCorner.z) {
+				upperRightBoundingBoxCorner.z = vertex.position.z;
+			}
+		}
 	}
 }

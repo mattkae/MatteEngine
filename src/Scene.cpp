@@ -9,7 +9,7 @@
 #include <fstream>
 #include <GLFW/glfw3.h>
 
-int castRayToModel(BetterScene& scene) {
+int castRayToModel(Scene& scene) {
 	Ray rayWorld = clickToRay(scene.mCamera);
 
 	GLfloat distanceFromEye = -1;
@@ -30,7 +30,7 @@ int castRayToModel(BetterScene& scene) {
 	return retval;
 }
 
-void updateScene(BetterScene& scene, double dt) {
+void updateScene(Scene& scene, double dt) {
 	float dtFloat = static_cast<float>(dt);
 
 	if (scene.shadersToReload.size() > 0) {
@@ -66,11 +66,11 @@ void updateScene(BetterScene& scene, double dt) {
 
 	if (isKeyJustDown(GLFW_KEY_R, 0)) {
 		freeScene(scene);
-		loadScene("assets/scenes/big_scene.matte", scene);
+		SceneLoader::loadScene("assets/scenes/big_scene.matte", scene);
 	}
 }
 
-void renderShadows(const BetterScene& scene) {
+void renderShadows(const Scene& scene) {
 	if (!scene.mUseShadows)
         return;
 
@@ -86,7 +86,7 @@ void renderShadows(const BetterScene& scene) {
     }
 }
 
-void renderGBuffer(const BetterScene& scene) {
+void renderGBuffer(const Scene& scene) {
 	if (!scene.useDefferredRendering) {
         return;
     }
@@ -98,28 +98,28 @@ void renderGBuffer(const BetterScene& scene) {
     }
 }
 
-void renderNonDeferred(const BetterScene& scene) {
+void renderNonDeferred(const Scene& scene) {
 	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
 		renderParticleEmitter(scene.emitters[eIdx], scene.mCamera);
 	}
 }
 
-void renderModels(const BetterScene& scene, const Shader &shader, bool withMaterial) {
+void renderModels(const Scene& scene, const Shader &shader, bool withMaterial) {
     renderTerrain(scene.mTerrain, shader, withMaterial);
 
     for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
 		if (scene.selectedModelIndex != modelIdx)
-			renderModel(scene.models[modelIdx], shader, withMaterial);
+			scene.models[modelIdx].render(shader, withMaterial);
     }
 }
 
-void renderDebug(const BetterScene& scene) {
+void renderDebug(const Scene& scene) {
 	if (scene.selectedModelIndex > -1) {
 		renderDebugModel(scene.debugModel, scene.models[scene.selectedModelIndex].model, scene.mSceneShader);
 	}
 }
 
-void renderDirect(const BetterScene& scene) {
+void renderDirect(const Scene& scene) {
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
@@ -164,18 +164,18 @@ void renderDirect(const BetterScene& scene) {
 	glDisable(GL_DEPTH_TEST);
 }
 
-void renderScene(const BetterScene& scene) {
+void renderScene(const Scene& scene) {
 	renderShadows(scene);
 	renderGBuffer(scene);
 	renderDirect(scene);
 }
 
-void freeScene(BetterScene& scene) {
+void freeScene(Scene& scene) {
 	scene.isDying = true;
 
 	// Models
 	for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
-        freeModel(scene.models[modelIdx]);
+        scene.models[modelIdx].free();
     }
 	scene.numModels = 0;
 	

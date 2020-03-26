@@ -11,4 +11,5 @@ struct List {
 	void add(void* element);
 	void grow(size_t newSize);
 	void deallocate();
+	char* getValue(int index);
 };

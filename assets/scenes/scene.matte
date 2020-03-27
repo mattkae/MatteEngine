@@ -1,6 +1,6 @@
 useDeferredRendering    false
 
-textures                asserts/texture-info.mattl
+textures                assets/texture-info.mattl
 
 ::skybox
     front   assets/skybox/cloudy/bluecloud_ft.jpg

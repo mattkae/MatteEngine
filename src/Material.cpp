@@ -21,10 +21,10 @@ void Material::initialize(LoadMaterial& material, List* list) {
 	if (list != nullptr) {
 		for (int textureIndex = 0; textureIndex < list->numElements; textureIndex++) {
 			const ModelLoader::TextureListItem* texture = (ModelLoader::TextureListItem*)(list->getValue(textureIndex));
-			if (texture->uniqueId == material.ambientUniqueTextureId) {
-				ambientTexture = texture->texture;
-			} else if (texture->uniqueId == material.diffuseUniqueTextureId) {
+			if (texture->uniqueId == material.diffuseUniqueTextureId) {
 				diffuseTexture = texture->texture;
+			} else if (texture->uniqueId == material.ambientUniqueTextureId) {
+				ambientTexture = texture->texture;
 			} else if (texture->uniqueId == material.specularUniqueTextureId) {
 				specularTexture = texture->texture;
 			}

@@ -30,8 +30,8 @@ textures                assets/texture-info.mattl
 
 ::models
     ::
-        path        assets/models/Mario/Super Mario 64 - Mario.mattl
-        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 1
+        path        assets/models/Astroboy/astroBoy_walk.mattl
+        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -5 -30 1
     ;;
 ;;
 

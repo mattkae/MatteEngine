@@ -31,7 +31,7 @@ void Mesh::initialize(LoadMesh& loadMesh, List* list) {
 
     glBindVertexArray(0);
 
-    numIndices= loadMesh.indices.size();
+    numIndices = loadMesh.indices.size();
     material.initialize(loadMesh.material, list);
 }
 

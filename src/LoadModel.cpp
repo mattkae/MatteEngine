@@ -6,7 +6,7 @@ void LoadModel::writeLoadModel(BinarySerializer& serializer) {
 	serializer.writeInt32(meshes.size());
 	for (LoadMesh& mesh: meshes) {
 		serializer.writeInt32(mesh.vertices.size());
-		for (Vertex& vertex: mesh.vertices) {
+		for (LoadVertex& vertex: mesh.vertices) {
 			serializer.writeVec3(vertex.position);
 			serializer.writeVec3(vertex.normal);
 			serializer.writeVec2(vertex.texCoords);

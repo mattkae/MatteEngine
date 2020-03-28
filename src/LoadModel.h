@@ -1,7 +1,9 @@
 #pragma once
+#include "Vector2f.h"
 #include "Vector3f.h"
 #include "Vector4f.h"
 #include "Vertex.h"
+#include "Matrix4x4f.h"
 #include <GL/glew.h>
 #include <vector>
 
@@ -22,13 +24,32 @@ struct LoadMaterial {
     int ambientUniqueTextureId = -1;
 };
 
+struct LoadVertexBoneData {
+    unsigned int boneIndex;
+    GLfloat weight;
+};
+
+struct LoadVertex {
+    Vector3f position;
+    Vector3f normal;
+    Vector2f texCoords;
+    std::vector<LoadVertexBoneData> boneInfoList;
+};
+
 struct LoadMesh {
-    std::vector<Vertex> vertices;
+    unsigned int nodeUniqueId;
+    std::vector<LoadVertex> vertices;
     std::vector<GLint> indices;
     LoadMaterial material;
 };
 
+struct LoadBone {
+    Matrix4x4f offsetMatrix;
+    unsigned int nodeUniqueId;
+};
+
 struct LoadModel {
+    std::vector<LoadBone> bones;
     std::vector<LoadMesh> meshes;
     std::string modelPath;
     Vector4f lowerLeftBoundingBoxCorner;

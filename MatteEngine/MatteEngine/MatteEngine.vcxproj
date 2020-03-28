@@ -43,6 +43,7 @@
     <ClCompile Include="..\..\src\Model.cpp" />
     <ClCompile Include="..\..\src\Panel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
+    <ClCompile Include="..\..\src\Quaternion.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
     <ClCompile Include="..\..\src\Ray.cpp" />
     <ClCompile Include="..\..\src\ReadonlyString.cpp" />
@@ -67,6 +68,7 @@
     <ClCompile Include="..\..\src\Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\AnimationController.h" />
     <ClInclude Include="..\..\src\BinarySerializer.h" />
     <ClInclude Include="..\..\src\BoundText.h" />
     <ClInclude Include="..\..\src\Box.h" />
@@ -93,6 +95,7 @@
     <ClInclude Include="..\..\src\Panel.h" />
     <ClInclude Include="..\..\src\Plane.h" />
     <ClInclude Include="..\..\src\Quad.h" />
+    <ClInclude Include="..\..\src\Quaternion.h" />
     <ClInclude Include="..\..\src\ReadonlyString.h" />
     <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />

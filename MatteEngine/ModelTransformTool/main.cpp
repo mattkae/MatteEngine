@@ -6,18 +6,28 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h> 
 #include <assimp/postprocess.h>
+#include <map>
 
 #include "Logger.h"
 #include "Vector3f.cpp"
 #include "BinarySerializer.cpp"
+#include "Matrix4x4f.h"
 
-void processNode(std::string fullPath, const aiNode* node, const aiScene* scene, std::vector<LoadMesh>& meshes);
+void processNode(std::string fullPath, 
+    const aiNode* node, 
+    const aiScene* scene, 
+    std::vector<LoadMesh>& meshes,
+    std::vector<LoadBone>& bones);
+void processAnimations(aiAnimation** const animations, unsigned int numAnimations);
 Vector3f assimpColor4ToVec3(aiColor4D inColor);
+Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix);
 
+unsigned int nextNodeNameUniqueId;
 GLuint nextTextureUniqueId = 1;
 
 std::vector<TextureInfo> outTextures;
 std::vector<LoadModel> outModels;
+std::map<std::string, unsigned int> nodeNameToUniqueIdMapping;
 
 int main() {
     std::vector<std::string> modelFiles = readModelDirectory();
@@ -30,9 +40,13 @@ int main() {
             continue;
         }
 
+
         LoadModel model;
         model.modelPath = modelFile;
-        processNode(modelFile, scene->mRootNode, scene, model.meshes);
+
+        processNode(modelFile, scene->mRootNode, scene, model.meshes, model.bones);
+
+        processAnimations(scene->mAnimations, scene->mNumAnimations);
         outModels.push_back(model);
     }
 
@@ -42,6 +56,7 @@ int main() {
         BinarySerializer modelSerializer(outputFile.c_str(), SerializationMode::WRITE);
         model.writeLoadModel(modelSerializer);
         modelSerializer.close();
+        nodeNameToUniqueIdMapping.clear();
     }
 
     // Write out all the textures
@@ -60,13 +75,27 @@ const aiTextureType TEXTURES_TO_READ[] = {
     aiTextureType_SPECULAR,
 };
 
-void processNode(std::string fullPath, const aiNode* node, const aiScene* scene, std::vector<LoadMesh>& meshes) {
+void processNode(std::string fullPath, 
+    const aiNode* node, 
+    const aiScene* scene, 
+    std::vector<LoadMesh>& meshes,
+    std::vector<LoadBone>& bones) {
+
+    std::string nodeName = node->mName.C_Str();
+    if (nodeNameToUniqueIdMapping.find(nodeName) == nodeNameToUniqueIdMapping.end()) {
+        nodeNameToUniqueIdMapping.insert(std::pair<std::string, unsigned int>(nodeName, nextNodeNameUniqueId++));
+    }
+
+    const unsigned int nodeUniqueId = nodeNameToUniqueIdMapping.at(nodeName);
+
     for (unsigned int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
         LoadMesh mesh;
+        mesh.nodeUniqueId = nodeUniqueId;
+
         const aiMesh* assimpMesh = scene->mMeshes[node->mMeshes[meshIndex]];
         
         for (unsigned int vertexIndex = 0; vertexIndex < assimpMesh->mNumVertices; vertexIndex++) {
-            Vertex vertex;
+            LoadVertex vertex;
 
             const aiVector3D assimpPosition = assimpMesh->mVertices[vertexIndex];
             vertex.position = getVec3(assimpPosition.x, assimpPosition.y, assimpPosition.z);
@@ -90,6 +119,29 @@ void processNode(std::string fullPath, const aiNode* node, const aiScene* scene,
             aiFace face = assimpMesh->mFaces[faceIndex];
             for (unsigned int indexIndex = 0; indexIndex < face.mNumIndices; indexIndex++) {
                 mesh.indices.push_back(face.mIndices[indexIndex]);
+            }
+        }
+
+        for (unsigned int boneIndex = 0; boneIndex < assimpMesh->mNumBones; boneIndex++) {
+            const aiBone* assimpBone = assimpMesh->mBones[boneIndex];
+
+            LoadBone bone;
+            std::string boneName = assimpBone->mName.C_Str();
+            if (nodeNameToUniqueIdMapping.find(boneName) == nodeNameToUniqueIdMapping.end()) {
+                nodeNameToUniqueIdMapping.insert(std::pair<std::string, unsigned int>(boneName, nextNodeNameUniqueId++));
+            }
+
+            bone.nodeUniqueId = nodeNameToUniqueIdMapping[boneName];
+            bone.offsetMatrix = assimpMatrixToMatrix(assimpBone->mOffsetMatrix);
+            bones.push_back(bone);
+
+            for (unsigned int weightIndex = 0; weightIndex < assimpBone->mNumWeights; weightIndex++) {
+                aiVertexWeight assimpWeight = assimpBone->mWeights[weightIndex];
+                LoadVertexBoneData boneData;
+                boneData.boneIndex = bones.size() - 1;
+                boneData.weight = assimpWeight.mWeight;
+                printf("Bone %s, %f\n", assimpBone->mName.C_Str(), boneData.weight);
+                mesh.vertices[assimpWeight.mVertexId].boneInfoList.push_back(boneData);
             }
         }
 
@@ -160,10 +212,32 @@ void processNode(std::string fullPath, const aiNode* node, const aiScene* scene,
     }
 
     for (unsigned int childNodeIndex = 0; childNodeIndex < node->mNumChildren; childNodeIndex++) {
-        processNode(fullPath, node->mChildren[childNodeIndex], scene, meshes);
+        processNode(fullPath, node->mChildren[childNodeIndex], scene, meshes, bones);
+    }
+}
+
+void processAnimations(aiAnimation**const animations, unsigned int numAnimations) {
+    for (unsigned int animIndex = 0; animIndex < numAnimations; animIndex++) {
+        const aiAnimation* animation = animations[animIndex];
+        for (unsigned int channelIndex = 0; channelIndex < animation->mNumChannels; channelIndex++) {
+            // For each channel, look up the node connected to that channel
+            const aiNodeAnim* assimpNodeAnim = animation->mChannels[channelIndex];
+            std::string nodeName = assimpNodeAnim->mNodeName.C_Str();
+            unsigned int uniqueId = nodeNameToUniqueIdMapping.at(nodeName);
+        }
     }
 }
 
 Vector3f assimpColor4ToVec3(aiColor4D inColor) {
     return { inColor.r, inColor.g, inColor.b };
+}
+
+Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix) {
+    Matrix4x4f retval;
+
+    for (int index = 0; index < 16; index++) {
+        retval.values[index] = matrix[floor(index / 4)][index % 4];
+    }
+
+    return retval;
 }

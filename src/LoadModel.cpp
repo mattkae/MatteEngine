@@ -1,69 +1,37 @@
 #include "LoadModel.h"
 #include "BinarySerializer.h"
+
 void LoadModel::writeLoadModel(BinarySerializer& serializer) {
 	calculateBoundingBox();
+	serializer.writeVec4(lowerLeftBoundingBoxCorner);
+	serializer.writeVec4(upperRightBoundingBoxCorner);
 
 	serializer.writeInt32(meshes.size());
 	for (LoadMesh& mesh: meshes) {
-		serializer.writeInt32(mesh.vertices.size());
-		for (LoadVertex& vertex: mesh.vertices) {
-			serializer.writeVec3(vertex.position);
-			serializer.writeVec3(vertex.normal);
-			serializer.writeVec2(vertex.texCoords);
-		}
-
-		serializer.writeInt32(mesh.indices.size());
-		for (GLint index: mesh.indices) {
-			serializer.writeInt32(index);
-		}
-
-		serializer.writeVec3(mesh.material.emissive);
-		serializer.writeVec3(mesh.material.ambient);
-		serializer.writeVec3(mesh.material.diffuse);
-		serializer.writeVec3(mesh.material.specular);
-		serializer.writeFloat32(mesh.material.transparency);
-		serializer.writeInt32(mesh.material.diffuseUniqueTextureId);
-		serializer.writeInt32(mesh.material.specularUniqueTextureId);
-		serializer.writeInt32(mesh.material.ambientUniqueTextureId);
+		mesh.write(serializer);
 	}
 
-	serializer.writeVec4(lowerLeftBoundingBoxCorner);
-	serializer.writeVec4(upperRightBoundingBoxCorner);
+	serializer.writeUint32((unsigned int)bones.size());
+	for (LoadBone& bone : bones) {
+		bone.write(serializer);
+	}
 }
 
 void LoadModel::readLoadModel(BinarySerializer& serializer) {
-	int numMeshes = serializer.readInt32();
-	meshes.resize(numMeshes);
-
-	for (int meshIdx = 0; meshIdx < numMeshes; meshIdx++) {
-		LoadMesh& mesh = meshes[meshIdx];
-
-		int numVertices = serializer.readInt32();
-		mesh.vertices.resize(numVertices);
-		for (int vertexIdx = 0; vertexIdx < numVertices; vertexIdx++) {
-			mesh.vertices[vertexIdx].position = serializer.readVec3();
-			mesh.vertices[vertexIdx].normal = serializer.readVec3();
-			mesh.vertices[vertexIdx].texCoords = serializer.readVec2();
-		}
-
-		int indicesSize = serializer.readInt32();
-		mesh.indices.resize(indicesSize);
-		for (int indexIdx = 0; indexIdx < indicesSize; indexIdx++) {
-			mesh.indices[indexIdx] = serializer.readInt32();
-		}
-
-		mesh.material.emissive = serializer.readVec3();
-		mesh.material.ambient = serializer.readVec3();
-		mesh.material.diffuse = serializer.readVec3();
-		mesh.material.specular = serializer.readVec3();
-		mesh.material.transparency = serializer.readFloat32();
-		mesh.material.diffuseUniqueTextureId = serializer.readInt32();
-		mesh.material.specularUniqueTextureId = serializer.readInt32();
-		mesh.material.ambientUniqueTextureId = serializer.readInt32();
-	}
-
 	lowerLeftBoundingBoxCorner = serializer.readVec4();
 	upperRightBoundingBoxCorner = serializer.readVec4();
+
+	int numMeshes = serializer.readInt32();
+	meshes.resize(numMeshes);
+	for (LoadMesh& mesh: meshes) {
+		mesh.read(serializer);
+	}
+
+	unsigned int numBones = serializer.readUint32();
+	bones.resize(numBones);
+	for (LoadBone& bone: bones) {
+		bone.read(serializer);
+	}
 }
 
 void LoadModel::calculateBoundingBox() {
@@ -101,4 +69,90 @@ void LoadModel::calculateBoundingBox() {
 			}
 		}
 	}
+}
+
+void LoadMesh::write(BinarySerializer& serializer) {
+	serializer.writeInt32(vertices.size());
+	for (LoadVertex& vertex: vertices) {
+		vertex.write(serializer);
+	}
+
+	serializer.writeInt32(indices.size());
+	for (GLint index: indices) {
+		serializer.writeInt32(index);
+	}
+
+	material.write(serializer);
+}
+
+void LoadMesh::read(BinarySerializer& serializer) {
+	vertices.resize(serializer.readInt32());
+	for (LoadVertex& vertex: vertices) {
+		vertex.read(serializer);
+	}
+
+	int indicesSize = serializer.readInt32();
+	indices.resize(indicesSize);
+	for (int indexIdx = 0; indexIdx < indicesSize; indexIdx++) {
+		indices[indexIdx] = serializer.readInt32();
+	}
+
+	material.read(serializer);
+}
+
+void LoadVertex::write(BinarySerializer& serializer) {
+	serializer.writeVec3(position);
+	serializer.writeVec3(normal);
+	serializer.writeVec2(texCoords);
+	serializer.writeUint32(boneInfoList.size());
+	for (LoadVertexBoneData& boneData : boneInfoList) {
+		serializer.writeUint32(boneData.boneIndex);
+		serializer.writeFloat32(boneData.weight);
+	}
+}
+
+void LoadVertex::read(BinarySerializer& serializer) {
+	position = serializer.readVec3();
+	normal = serializer.readVec3();
+	texCoords = serializer.readVec2();
+
+	boneInfoList.resize(serializer.readUint32());
+	for (LoadVertexBoneData& boneData : boneInfoList) {
+		boneData.boneIndex = serializer.readUint32();
+		boneData.weight = serializer.readFloat32();
+	}
+}
+
+void LoadMaterial::write(BinarySerializer& serializer) {
+	serializer.writeVec3(emissive);
+	serializer.writeVec3(ambient);
+	serializer.writeVec3(diffuse);
+	serializer.writeVec3(specular);
+	serializer.writeFloat32(transparency);
+	serializer.writeInt32(diffuseUniqueTextureId);
+	serializer.writeInt32(specularUniqueTextureId);
+	serializer.writeInt32(ambientUniqueTextureId);
+}
+
+void LoadMaterial::read(BinarySerializer& serializer) {
+	emissive = serializer.readVec3();
+	ambient = serializer.readVec3();
+	diffuse = serializer.readVec3();
+	specular = serializer.readVec3();
+	transparency = serializer.readFloat32();
+	diffuseUniqueTextureId = serializer.readInt32();
+	specularUniqueTextureId = serializer.readInt32();
+	ambientUniqueTextureId = serializer.readInt32();
+}
+
+void LoadBone::write(BinarySerializer& serializer) {
+	serializer.writeMat4x4(offsetMatrix);
+	serializer.writeUint32(nodeUniqueId);
+	serializer.writeUint32(parentNodeUniqueId);
+}
+
+void LoadBone::read(BinarySerializer& serializer) {
+	offsetMatrix = serializer.readMat4x4();
+	nodeUniqueId = serializer.readUint32();
+	parentNodeUniqueId = serializer.readUint32();
 }

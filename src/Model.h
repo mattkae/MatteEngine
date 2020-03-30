@@ -14,10 +14,10 @@ struct Mesh;
 struct Model {
     Matrix4x4f model;
 
-    Bone* bones;
+    Bone* bones = nullptr;
     unsigned int numBones;
 
-    Mesh* meshes;
+    Mesh* meshes = nullptr;
     int numMeshes;
 
     AnimationController animationController;

@@ -1,7 +1,8 @@
 #include "Sphere.h"
 #include "MathHelper.h"
-#include "Vertex.h"
 #include "LoadModel.h"
+#include "Mesh.h"
+#include "Box.h"
 #include <cmath>
 #include <vector>
 

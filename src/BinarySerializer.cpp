@@ -32,6 +32,9 @@ void BinarySerializer::close() const {
 	}
 }
 
+/*
+	Writes
+*/
 void BinarySerializer::writeInt32(int value) const {
 	if (mMode != SerializationMode::WRITE) {
 		Logger::logError("Cannot write binary, wrong mode");
@@ -39,6 +42,15 @@ void BinarySerializer::writeInt32(int value) const {
 	}
 
 	fwrite(&value, sizeof(int), 1, mFile);
+}
+
+void BinarySerializer::writeUint32(unsigned int value) const {
+	if (mMode != SerializationMode::WRITE) {
+		Logger::logError("Cannot write binary, wrong mode");
+		return;
+	}
+
+	fwrite(&value, sizeof(unsigned int), 1, mFile);
 }
 
 void BinarySerializer::writeByte(char value) const {
@@ -107,6 +119,15 @@ void BinarySerializer::writeVec4(Vector4f& v) const {
 	writeFloat32(v.w);	
 }
 
+void BinarySerializer::writeMat4x4(Matrix4x4f& m) const {
+	for (unsigned int index = 0; index < SIZE_OF_4_X_4; index++) {
+		writeFloat32(m.values[index]);
+	}
+}
+
+/*
+	Reads
+*/
 int BinarySerializer::readInt32() {
 	int retval;
 	fread(buffer, sizeof(int), 1, mFile);
@@ -118,6 +139,13 @@ long BinarySerializer::readInt64() {
 	long retval;
 	fread(buffer, sizeof(long), 1, mFile);
 	memcpy(&retval, buffer, sizeof(long));
+	return retval;
+}
+
+unsigned int BinarySerializer::readUint32() {
+	unsigned int retval;
+	fread(buffer, sizeof(unsigned int), 1, mFile);
+	memcpy(&retval, buffer, sizeof(unsigned int));
 	return retval;
 }
 
@@ -171,5 +199,13 @@ Vector4f BinarySerializer::readVec4() {
 	retval.y = readFloat32();
 	retval.z = readFloat32();
 	retval.w = readFloat32();
+	return retval;
+}
+
+Matrix4x4f BinarySerializer::readMat4x4() {
+	Matrix4x4f retval;
+	for (unsigned int index = 0; index < SIZE_OF_4_X_4; index++) {
+		retval.values[index] = readFloat32();
+	}
 	return retval;
 }

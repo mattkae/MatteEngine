@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "Mesh.h"
+#include "Bone.h"
 #include <GL/glew.h>
 
 void Model::update(float dt) {
@@ -14,7 +15,7 @@ void Model::render(const Shader& shader, bool withMaterial) const {
 }
 
 void Model::free() {
-    if (meshes) {
+    if (meshes != nullptr) {
         for (int meshIdx = 0; meshIdx < numMeshes; meshIdx++) {
             meshes[meshIdx].free();
         }
@@ -22,7 +23,7 @@ void Model::free() {
         numMeshes = 0;
     }
 
-    if (bones) {
+    if (bones != nullptr) {
         delete[] bones;
         numBones = 0;
     }

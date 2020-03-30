@@ -3,12 +3,12 @@
 
 #include "Material.h"
 #include "Shader.h"
-#include "Vertex.h"
 #include <GL/glew.h>
 #include <vector>
 
 struct LoadMesh;
 struct List;
+struct Vertex;
 
 struct Mesh {
     Material material;

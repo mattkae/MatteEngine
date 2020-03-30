@@ -5,6 +5,8 @@
 #include "Shader.h"
 #include <GL/glew.h>
 
+struct Box;
+
 struct Sphere {
     int radius = 1;
 	float angleIncrements = 5.f;

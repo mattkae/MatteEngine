@@ -7,12 +7,12 @@ struct Quaternion;
 struct Bone;
 
 struct AnimationNode {
-	unsigned int meshNodeUniqueId;
+	unsigned int nodeUniqueId;
 
 	int numFrames = 0;
 	Vector3f* positions;
 	Vector3f* scalings;
-	Quaternion* positions;
+	Quaternion* rotations;
 
 	Matrix4x4f activeResult;
 };
@@ -21,16 +21,23 @@ struct Animation {
 	bool isRunning = false;
 	GLdouble duration;
 	GLdouble ticksPerSecond;
-	int numNodes = 0;
+	unsigned int numNodes = 0;
 	AnimationNode* nodes;
 };
 
-// The animation controller will live on the Model and update its active animations.
-// When an animation is updated, it will update the bones with the same nodeUniqueId.
-// Then, at render time, each vertex will index into the 'bones' data on the Model and
-// retrieve it's transforms.
+/*
+	How animation works:
+
+	Each frame, we calculate a new Matrix for each AnimationNode (which represents
+	the point in the animation that we're at). Once calcualted, we find the corresponding
+	Bone for that matches the uniqueId in the AnimationNode. This is that particular bone's
+	transform, but now we also need to calculate the parent's transform, all the way up
+	the node hierarchy.
+
+	Finally, when we update a vertex, we index into the Bones array and get the current transform.
+*/
 struct AnimationController {
 	Animation* animationList;
-	int numAnimations = 0;
+	unsigned int numAnimations = 0;
 	void update(float dt, Bone* bones, unsigned int numBones);
 };

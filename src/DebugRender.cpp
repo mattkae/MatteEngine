@@ -3,6 +3,8 @@
 #include "Ray.h"
 #include "Plane.h"
 #include "ModelLoader.h"
+#include "Mesh.h"
+#include "Box.h"
 
 inline void changeArrowColor(DebugArrow& arrow, Vector3f color) {
 	arrow.color = color;

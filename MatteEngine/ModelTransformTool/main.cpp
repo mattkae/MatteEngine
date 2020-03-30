@@ -16,9 +16,10 @@
 void processNode(std::string fullPath, 
     const aiNode* node, 
     const aiScene* scene, 
-    std::vector<LoadMesh>& meshes,
-    std::vector<LoadBone>& bones);
-void processAnimations(aiAnimation** const animations, unsigned int numAnimations);
+    LoadModel& model);
+void processAnimations(aiAnimation** const animations, 
+    unsigned int numAnimations,
+    LoadModel& model);
 Vector3f assimpColor4ToVec3(aiColor4D inColor);
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix);
 
@@ -44,9 +45,9 @@ int main() {
         LoadModel model;
         model.modelPath = modelFile;
 
-        processNode(modelFile, scene->mRootNode, scene, model.meshes, model.bones);
+        processNode(modelFile, scene->mRootNode, scene, model);
 
-        processAnimations(scene->mAnimations, scene->mNumAnimations);
+        processAnimations(scene->mAnimations, scene->mNumAnimations, model);
         outModels.push_back(model);
     }
 
@@ -56,6 +57,10 @@ int main() {
         BinarySerializer modelSerializer(outputFile.c_str(), SerializationMode::WRITE);
         model.writeLoadModel(modelSerializer);
         modelSerializer.close();
+
+        //BinarySerializer rs(outputFile.c_str(), SerializationMode::READ);
+        //model.readLoadModel(rs);
+
         nodeNameToUniqueIdMapping.clear();
     }
 
@@ -78,8 +83,7 @@ const aiTextureType TEXTURES_TO_READ[] = {
 void processNode(std::string fullPath, 
     const aiNode* node, 
     const aiScene* scene, 
-    std::vector<LoadMesh>& meshes,
-    std::vector<LoadBone>& bones) {
+    LoadModel& model) {
 
     std::string nodeName = node->mName.C_Str();
     if (nodeNameToUniqueIdMapping.find(nodeName) == nodeNameToUniqueIdMapping.end()) {
@@ -90,8 +94,6 @@ void processNode(std::string fullPath,
 
     for (unsigned int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
         LoadMesh mesh;
-        mesh.nodeUniqueId = nodeUniqueId;
-
         const aiMesh* assimpMesh = scene->mMeshes[node->mMeshes[meshIndex]];
         
         for (unsigned int vertexIndex = 0; vertexIndex < assimpMesh->mNumVertices; vertexIndex++) {
@@ -133,14 +135,14 @@ void processNode(std::string fullPath,
 
             bone.nodeUniqueId = nodeNameToUniqueIdMapping[boneName];
             bone.offsetMatrix = assimpMatrixToMatrix(assimpBone->mOffsetMatrix);
-            bones.push_back(bone);
+            model.bones.push_back(bone);
 
             for (unsigned int weightIndex = 0; weightIndex < assimpBone->mNumWeights; weightIndex++) {
                 aiVertexWeight assimpWeight = assimpBone->mWeights[weightIndex];
                 LoadVertexBoneData boneData;
-                boneData.boneIndex = bones.size() - 1;
+                boneData.boneIndex = model.bones.size() - 1;
                 boneData.weight = assimpWeight.mWeight;
-                printf("Bone %s, %f\n", assimpBone->mName.C_Str(), boneData.weight);
+                //printf("Bone %s, %f\n", assimpBone->mName.C_Str(), boneData.weight);
                 mesh.vertices[assimpWeight.mVertexId].boneInfoList.push_back(boneData);
             }
         }
@@ -208,22 +210,32 @@ void processNode(std::string fullPath,
         }
 
 
-        meshes.push_back(mesh);
+        model.meshes.push_back(mesh);
     }
 
     for (unsigned int childNodeIndex = 0; childNodeIndex < node->mNumChildren; childNodeIndex++) {
-        processNode(fullPath, node->mChildren[childNodeIndex], scene, meshes, bones);
+        processNode(fullPath, node->mChildren[childNodeIndex], scene, model);
     }
 }
 
-void processAnimations(aiAnimation**const animations, unsigned int numAnimations) {
+void processAnimations(aiAnimation**const animations, unsigned int numAnimations, LoadModel& model) {
     for (unsigned int animIndex = 0; animIndex < numAnimations; animIndex++) {
-        const aiAnimation* animation = animations[animIndex];
-        for (unsigned int channelIndex = 0; channelIndex < animation->mNumChannels; channelIndex++) {
+        const aiAnimation* assimpAnimation = animations[animIndex];
+        Animation animation;
+        animation.duration = assimpAnimation->mDuration;
+        animation.ticksPerSecond = assimpAnimation->mTicksPerSecond;
+        animation.numNodes = assimpAnimation->mNumChannels;
+        animation.nodes = new AnimationNode[animation.numNodes];
+
+        for (unsigned int channelIndex = 0; channelIndex < assimpAnimation->mNumChannels; channelIndex++) {
             // For each channel, look up the node connected to that channel
-            const aiNodeAnim* assimpNodeAnim = animation->mChannels[channelIndex];
+            const aiNodeAnim* assimpNodeAnim = assimpAnimation->mChannels[channelIndex];
             std::string nodeName = assimpNodeAnim->mNodeName.C_Str();
             unsigned int uniqueId = nodeNameToUniqueIdMapping.at(nodeName);
+
+            animation.nodes[channelIndex] = {
+                uniqueId,
+            };
         }
     }
 }

@@ -43,6 +43,10 @@ void updateScene(Scene& scene, double dt) {
 
     updateCamera(scene.mCamera, dtFloat);
 
+	for (unsigned int modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
+		scene.models[modelIdx].update(dtFloat);
+	}
+
 	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
 		updateParticleEmitter(scene.emitters[eIdx], dtFloat);
 	}

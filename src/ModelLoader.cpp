@@ -4,6 +4,8 @@
 #include "BinarySerializer.h"
 #include "TextureInfo.h"
 #include "Logger.h"
+#include "Mesh.h"
+#include "Box.h"
 #include <SOIL.h>
 
 GLuint loadTexture(std::string path);

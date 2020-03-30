@@ -12,22 +12,22 @@ void Mesh::initialize(LoadMesh& loadMesh, List* list) {
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, loadMesh.vertices.size() * sizeof(Vertex), &loadMesh.vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, loadMesh.vertices.size() * sizeof(LoadVertex), &loadMesh.vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, loadMesh.indices.size() * sizeof(GLuint), &loadMesh.indices[0], GL_STATIC_DRAW);
 
     // Position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(LoadVertex), (GLvoid *)0);
 
     // Normal
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(LoadVertex), (GLvoid *)offsetof(LoadVertex, normal));
 
     // Texture Coordinate
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(LoadVertex), (GLvoid *)offsetof(LoadVertex, texCoords));
 
     glBindVertexArray(0);
 

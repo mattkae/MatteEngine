@@ -2,8 +2,8 @@
 #include "Vector2f.h"
 #include "Vector3f.h"
 #include "Vector4f.h"
-#include "Vertex.h"
 #include "Matrix4x4f.h"
+#include "AnimationController.h"
 #include <GL/glew.h>
 #include <vector>
 
@@ -22,6 +22,9 @@ struct LoadMaterial {
     int diffuseUniqueTextureId = -1;
     int specularUniqueTextureId = -1;
     int ambientUniqueTextureId = -1;
+
+    void write(BinarySerializer& serializer);
+    void read(BinarySerializer& serializer);
 };
 
 struct LoadVertexBoneData {
@@ -34,26 +37,37 @@ struct LoadVertex {
     Vector3f normal;
     Vector2f texCoords;
     std::vector<LoadVertexBoneData> boneInfoList;
+
+    void write(BinarySerializer& serializer);
+    void read(BinarySerializer& serializer);
 };
 
 struct LoadMesh {
-    unsigned int nodeUniqueId;
     std::vector<LoadVertex> vertices;
     std::vector<GLint> indices;
     LoadMaterial material;
+
+    void write(BinarySerializer& serializer);
+    void read(BinarySerializer& serializer);
 };
 
 struct LoadBone {
     Matrix4x4f offsetMatrix;
     unsigned int nodeUniqueId;
+    unsigned int parentNodeUniqueId;
+
+    void write(BinarySerializer& serializer);
+    void read(BinarySerializer& serializer);
 };
 
 struct LoadModel {
-    std::vector<LoadBone> bones;
-    std::vector<LoadMesh> meshes;
     std::string modelPath;
     Vector4f lowerLeftBoundingBoxCorner;
     Vector4f upperRightBoundingBoxCorner;
+
+    std::vector<LoadBone> bones;
+    std::vector<LoadMesh> meshes;
+    std::vector<Animation> animations;
 
     void writeLoadModel(BinarySerializer& serializer);
     void readLoadModel(BinarySerializer& serializer);

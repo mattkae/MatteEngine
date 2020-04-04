@@ -12,6 +12,8 @@
 #include "Vector3f.cpp"
 #include "BinarySerializer.cpp"
 #include "Matrix4x4f.h"
+#include "Quaternion.h"
+#include "AnimationController.cpp"
 
 void processNode(std::string fullPath, 
     const aiNode* node, 
@@ -21,6 +23,7 @@ void processAnimations(aiAnimation** const animations,
     unsigned int numAnimations,
     LoadModel& model);
 Vector3f assimpColor4ToVec3(aiColor4D inColor);
+Vector3f assimpVec3ToVec3(aiVector3D v);
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix);
 
 unsigned int nextNodeNameUniqueId;
@@ -58,8 +61,8 @@ int main() {
         model.writeLoadModel(modelSerializer);
         modelSerializer.close();
 
-        //BinarySerializer rs(outputFile.c_str(), SerializationMode::READ);
-        //model.readLoadModel(rs);
+        BinarySerializer rs(outputFile.c_str(), SerializationMode::READ);
+        model.readLoadModel(rs);
 
         nodeNameToUniqueIdMapping.clear();
     }
@@ -233,15 +236,40 @@ void processAnimations(aiAnimation**const animations, unsigned int numAnimations
             std::string nodeName = assimpNodeAnim->mNodeName.C_Str();
             unsigned int uniqueId = nodeNameToUniqueIdMapping.at(nodeName);
 
-            animation.nodes[channelIndex] = {
-                uniqueId,
-            };
+            AnimationNode& node = animation.nodes[channelIndex];
+            node.nodeUniqueId = uniqueId;
+            node.numPositions = assimpNodeAnim->mNumPositionKeys;
+            node.positions = new Vector3f[node.numPositions];
+            for (unsigned int positionIndex = 0; positionIndex < node.numPositions; positionIndex++) {
+                node.positions[positionIndex] = assimpVec3ToVec3(assimpNodeAnim->mPositionKeys[positionIndex].mValue);
+            }
+
+            node.numScalings = assimpNodeAnim->mNumScalingKeys;
+            node.scalings = new Vector3f[node.numScalings];
+            for (unsigned int scalingIndex = 0; scalingIndex < node.numScalings; scalingIndex++) {
+                node.scalings[scalingIndex] = assimpVec3ToVec3(assimpNodeAnim->mScalingKeys[scalingIndex].mValue);
+            }
+
+            node.numRotations = assimpNodeAnim->mNumRotationKeys;
+            node.rotations = new Quaternion[node.numRotations];
+            for (unsigned int rotationIdx = 0; rotationIdx < node.numRotations; rotationIdx++) {
+                node.rotations[rotationIdx].w = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.w;
+                node.rotations[rotationIdx].x = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.x;
+                node.rotations[rotationIdx].y = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.y;
+                node.rotations[rotationIdx].z = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.z;
+            }
         }
+
+        model.animations.push_back(animation);
     }
 }
 
 Vector3f assimpColor4ToVec3(aiColor4D inColor) {
     return { inColor.r, inColor.g, inColor.b };
+}
+
+Vector3f assimpVec3ToVec3(aiVector3D v) {
+    return { v.x, v.y, v.z };
 }
 
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix) {

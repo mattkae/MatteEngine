@@ -3,6 +3,7 @@
 #include "Vector2f.h"
 #include "Vector3f.h"
 #include "Vector4f.h"
+#include "Quaternion.h"
 #include "Matrix4x4f.h"
 
 enum SerializationMode {
@@ -26,6 +27,7 @@ public:
 	void writeVec3(Vector3f& v) const;
 	void writeVec4(Vector4f& v) const;
 	void writeMat4x4(Matrix4x4f& m) const;
+	void writeQuaternion(Quaternion& m) const;
 
 	int readInt32();
 	long readInt64();
@@ -38,6 +40,7 @@ public:
 	Vector3f readVec3();
 	Vector4f readVec4();
 	Matrix4x4f readMat4x4();
+	Quaternion readQuaternion();
 private:
 	const char* mFilePath;
 	SerializationMode mMode;

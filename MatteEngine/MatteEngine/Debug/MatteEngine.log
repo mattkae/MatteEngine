@@ -1,13 +1,5 @@
-﻿  Matrix3x3f.cpp
-  Matrix4x4f.cpp
-  Sphere.cpp
-  Terrain.cpp
-C:\Users\mattykae\Projects\MatteEngine\src\Terrain.cpp(65,47): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-C:\Users\mattykae\Projects\MatteEngine\src\Terrain.cpp(69,79): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-C:\Users\mattykae\Projects\MatteEngine\src\Terrain.cpp(69,60): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-  TextInput.cpp
-C:\Users\mattykae\Projects\MatteEngine\src\TextInput.cpp(141,135): warning C4838: conversion from 'GLint' to 'GLfloat' requires a narrowing conversion
-C:\Users\mattykae\Projects\MatteEngine\src\TextInput.cpp(141,135): warning C4244: 'initializing': conversion from 'GLint' to 'GLfloat', possible loss of data
-  Vector4f.cpp
-  Generating Code...
-  MatteEngine.vcxproj -> C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\MatteEngine.exe
+﻿  AnimationController.cpp
+C:\Users\mattykae\Projects\MatteEngine\src\AnimationController.cpp(37,26): warning C4244: 'argument': conversion from 'GLdouble' to 'float', possible loss of data
+C:\Users\mattykae\Projects\MatteEngine\src\AnimationController.cpp(38,26): warning C4244: 'argument': conversion from 'GLdouble' to 'float', possible loss of data
+  BinarySerializer.cpp
+  Box.cpp

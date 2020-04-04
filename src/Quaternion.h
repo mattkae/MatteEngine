@@ -3,7 +3,10 @@
 #include "Matrix4x4f.h"
 
 struct Quaternion {
-	GLfloat i;
-	GLfloat j;
-	GLfloat k;
+	GLfloat w;
+	GLfloat x;
+	GLfloat y;
+	GLfloat z;
+
+	Quaternion operator*(const Quaternion& other);
 };

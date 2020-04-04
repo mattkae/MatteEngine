@@ -3,6 +3,10 @@
 #include "Bone.h"
 #include <GL/glew.h>
 
+void Model::initialize() {
+
+}
+
 void Model::update(float dt) {
     animationController.update(dt, bones, numBones);
 }
@@ -26,5 +30,9 @@ void Model::free() {
     if (bones != nullptr) {
         delete[] bones;
         numBones = 0;
+    }
+
+    if (animationController.animationList) {
+        // @TODO: Free animation controller
     }
 }

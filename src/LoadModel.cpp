@@ -15,6 +15,11 @@ void LoadModel::writeLoadModel(BinarySerializer& serializer) {
 	for (LoadBone& bone : bones) {
 		bone.write(serializer);
 	}
+
+	serializer.writeUint32((unsigned int)animations.size());
+	for (Animation& animation : animations) {
+		animation.write(serializer);
+	}
 }
 
 void LoadModel::readLoadModel(BinarySerializer& serializer) {
@@ -31,6 +36,12 @@ void LoadModel::readLoadModel(BinarySerializer& serializer) {
 	bones.resize(numBones);
 	for (LoadBone& bone: bones) {
 		bone.read(serializer);
+	}
+
+	unsigned int numAnimations = serializer.readUint32();
+	animations.resize(numAnimations);
+	for (Animation& animation: animations) {
+		animation.read(serializer);
 	}
 }
 

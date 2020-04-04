@@ -125,6 +125,13 @@ void BinarySerializer::writeMat4x4(Matrix4x4f& m) const {
 	}
 }
 
+void BinarySerializer::writeQuaternion(Quaternion& q) const {
+	writeFloat32(q.w);	
+	writeFloat32(q.x);	
+	writeFloat32(q.y);	
+	writeFloat32(q.z);	
+}
+
 /*
 	Reads
 */
@@ -207,5 +214,14 @@ Matrix4x4f BinarySerializer::readMat4x4() {
 	for (unsigned int index = 0; index < SIZE_OF_4_X_4; index++) {
 		retval.values[index] = readFloat32();
 	}
+	return retval;
+}
+
+Quaternion BinarySerializer::readQuaternion() {
+	Quaternion retval;
+	retval.w = readFloat32();
+	retval.x = readFloat32();
+	retval.y = readFloat32();
+	retval.z = readFloat32();
 	return retval;
 }

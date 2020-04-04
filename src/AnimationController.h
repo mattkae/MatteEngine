@@ -5,16 +5,22 @@
 struct Vector3f;
 struct Quaternion;
 struct Bone;
+class BinarySerializer;
 
 struct AnimationNode {
 	unsigned int nodeUniqueId;
 
-	int numFrames = 0;
+	unsigned int numPositions = 0;
 	Vector3f* positions;
+	unsigned int numScalings = 0;
 	Vector3f* scalings;
+	unsigned int numRotations = 0;
 	Quaternion* rotations;
 
 	Matrix4x4f activeResult;
+
+	void write(BinarySerializer& serializer);
+	void read(BinarySerializer& serializer);
 };
 
 struct Animation {
@@ -23,6 +29,9 @@ struct Animation {
 	GLdouble ticksPerSecond;
 	unsigned int numNodes = 0;
 	AnimationNode* nodes;
+
+	void write(BinarySerializer& serializer);
+	void read(BinarySerializer& serializer);
 };
 
 /*

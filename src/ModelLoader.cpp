@@ -6,6 +6,7 @@
 #include "Logger.h"
 #include "Mesh.h"
 #include "Box.h"
+#include "Bone.h"
 #include <SOIL.h>
 
 GLuint loadTexture(std::string path);
@@ -62,6 +63,16 @@ ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermedi
 	ModelLoader::ModelLoadResult retval;
 	retval.model.numMeshes = intermediateModel.meshes.size();
 	retval.model.meshes = new Mesh[retval.model.numMeshes];
+	retval.model.numBones = intermediateModel.bones.size();
+	retval.model.bones = new Bone[retval.model.numBones];
+
+	for (unsigned int boneIdx = 0; boneIdx < retval.model.numBones; boneIdx++) {
+		const LoadBone& loadBone = intermediateModel.bones[boneIdx];
+		retval.model.bones[boneIdx].nodeUniqueId = loadBone.nodeUniqueId;
+		retval.model.bones[boneIdx].offsetMatrix = loadBone.offsetMatrix;
+		retval.model.bones[boneIdx].parentNodeUniqueId = loadBone.parentNodeUniqueId;
+	}
+
 	for (int meshIdx = 0; meshIdx < retval.model.numMeshes; meshIdx++) {
 		retval.model.meshes[meshIdx].initialize(intermediateModel.meshes[meshIdx], &textureList);
 	}

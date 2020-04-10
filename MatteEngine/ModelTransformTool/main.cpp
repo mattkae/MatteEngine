@@ -15,23 +15,22 @@
 #include "Quaternion.h"
 #include "AnimationController.cpp"
 
-void processNode(std::string fullPath, 
-    const aiNode* node, 
-    const aiScene* scene, 
-    LoadModel& model);
-void processAnimations(aiAnimation** const animations, 
-    unsigned int numAnimations,
-    LoadModel& model);
+void processNode(std::string fullPath, const aiNode* node, const aiScene* scene, LoadModel& model);
+void processAnimations(aiAnimation** const animations, unsigned int numAnimations,LoadModel& model);
+void postProcessBones(LoadModel& model);
 Vector3f assimpColor4ToVec3(aiColor4D inColor);
 Vector3f assimpVec3ToVec3(aiVector3D v);
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix);
 
-unsigned int nextNodeNameUniqueId;
 GLuint nextTextureUniqueId = 1;
-
 std::vector<TextureInfo> outTextures;
 std::vector<LoadModel> outModels;
-std::map<std::string, unsigned int> nodeNameToUniqueIdMapping;
+
+struct NodeInfo {
+    std::vector<std::string> children;
+};
+
+std::map<std::string, NodeInfo> nodeNameToInfoMapping;
 
 int main() {
     std::vector<std::string> modelFiles = readModelDirectory();
@@ -49,7 +48,7 @@ int main() {
         model.modelPath = modelFile;
 
         processNode(modelFile, scene->mRootNode, scene, model);
-
+        postProcessBones(model);
         processAnimations(scene->mAnimations, scene->mNumAnimations, model);
         outModels.push_back(model);
     }
@@ -64,7 +63,7 @@ int main() {
         BinarySerializer rs(outputFile.c_str(), SerializationMode::READ);
         model.readLoadModel(rs);
 
-        nodeNameToUniqueIdMapping.clear();
+        nodeNameToInfoMapping.clear();
     }
 
     // Write out all the textures
@@ -89,16 +88,20 @@ void processNode(std::string fullPath,
     LoadModel& model) {
 
     std::string nodeName = node->mName.C_Str();
-    if (nodeNameToUniqueIdMapping.find(nodeName) == nodeNameToUniqueIdMapping.end()) {
-        nodeNameToUniqueIdMapping.insert(std::pair<std::string, unsigned int>(nodeName, nextNodeNameUniqueId++));
+    if (nodeNameToInfoMapping.find(nodeName) == nodeNameToInfoMapping.end()) {
+        nodeNameToInfoMapping.insert(std::pair<std::string, NodeInfo>(nodeName, NodeInfo()));
     }
 
-    const unsigned int nodeUniqueId = nodeNameToUniqueIdMapping.at(nodeName);
+    NodeInfo& nodeInfo = nodeNameToInfoMapping.at(nodeName);
+    for (unsigned int childIndex = 0; childIndex < node->mNumChildren; childIndex++) {
+        nodeInfo.children.push_back(node->mChildren[childIndex]->mName.C_Str());
+    }
 
     for (unsigned int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
         LoadMesh mesh;
         const aiMesh* assimpMesh = scene->mMeshes[node->mMeshes[meshIndex]];
         
+        // Read vertices
         for (unsigned int vertexIndex = 0; vertexIndex < assimpMesh->mNumVertices; vertexIndex++) {
             LoadVertex vertex;
 
@@ -120,6 +123,7 @@ void processNode(std::string fullPath,
             mesh.vertices.push_back(vertex);
         }
 
+        // Read faces
         for (unsigned int faceIndex = 0; faceIndex < assimpMesh->mNumFaces; faceIndex++) {
             aiFace face = assimpMesh->mFaces[faceIndex];
             for (unsigned int indexIndex = 0; indexIndex < face.mNumIndices; indexIndex++) {
@@ -127,16 +131,12 @@ void processNode(std::string fullPath,
             }
         }
 
+        // Read bones
         for (unsigned int boneIndex = 0; boneIndex < assimpMesh->mNumBones; boneIndex++) {
             const aiBone* assimpBone = assimpMesh->mBones[boneIndex];
 
             LoadBone bone;
-            std::string boneName = assimpBone->mName.C_Str();
-            if (nodeNameToUniqueIdMapping.find(boneName) == nodeNameToUniqueIdMapping.end()) {
-                nodeNameToUniqueIdMapping.insert(std::pair<std::string, unsigned int>(boneName, nextNodeNameUniqueId++));
-            }
-
-            bone.nodeUniqueId = nodeNameToUniqueIdMapping[boneName];
+            bone.identifier = assimpBone->mName.C_Str();
             bone.offsetMatrix = assimpMatrixToMatrix(assimpBone->mOffsetMatrix);
             model.bones.push_back(bone);
 
@@ -150,6 +150,7 @@ void processNode(std::string fullPath,
             }
         }
 
+        // Read material
         if (assimpMesh->mMaterialIndex >= 0) {
             const aiMaterial* material = scene->mMaterials[assimpMesh->mMaterialIndex];
             
@@ -216,11 +217,33 @@ void processNode(std::string fullPath,
         model.meshes.push_back(mesh);
     }
 
+    // Read children
     for (unsigned int childNodeIndex = 0; childNodeIndex < node->mNumChildren; childNodeIndex++) {
         processNode(fullPath, node->mChildren[childNodeIndex], scene, model);
     }
 }
 
+// In this step, we match the bone indices up with the bone identifiers, so that
+// we don't have to send the identifiers over the wire later on.
+void postProcessBones(LoadModel& model) {
+    for (unsigned int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
+       LoadBone& bone = model.bones[boneIdx];
+       std::vector<std::string> childIdentifers = nodeNameToInfoMapping.at(bone.identifier).children;
+       for (std::string identifier: childIdentifers) {
+           for (unsigned int otherBoneIdx = 0; otherBoneIdx < model.bones.size(); otherBoneIdx++) {
+               if (boneIdx == otherBoneIdx) continue;
+
+               LoadBone& otherbone = model.bones[otherBoneIdx];
+               if (otherbone.identifier == identifier) {
+                   bone.childrenBoneIndices.push_back(otherBoneIdx);
+                   break;
+               }
+           }
+       }
+    }
+}
+
+// Read animations
 void processAnimations(aiAnimation**const animations, unsigned int numAnimations, LoadModel& model) {
     for (unsigned int animIndex = 0; animIndex < numAnimations; animIndex++) {
         const aiAnimation* assimpAnimation = animations[animIndex];
@@ -233,30 +256,35 @@ void processAnimations(aiAnimation**const animations, unsigned int numAnimations
         for (unsigned int channelIndex = 0; channelIndex < assimpAnimation->mNumChannels; channelIndex++) {
             // For each channel, look up the node connected to that channel
             const aiNodeAnim* assimpNodeAnim = assimpAnimation->mChannels[channelIndex];
-            std::string nodeName = assimpNodeAnim->mNodeName.C_Str();
-            unsigned int uniqueId = nodeNameToUniqueIdMapping.at(nodeName);
+            std::string identifier = assimpNodeAnim->mNodeName.C_Str();
 
-            AnimationNode& node = animation.nodes[channelIndex];
-            node.nodeUniqueId = uniqueId;
-            node.numPositions = assimpNodeAnim->mNumPositionKeys;
-            node.positions = new Vector3f[node.numPositions];
-            for (unsigned int positionIndex = 0; positionIndex < node.numPositions; positionIndex++) {
-                node.positions[positionIndex] = assimpVec3ToVec3(assimpNodeAnim->mPositionKeys[positionIndex].mValue);
+            AnimationNode* node = &animation.nodes[channelIndex];
+            for (unsigned int boneIndex = 0; boneIndex < model.bones.size(); boneIndex++) {
+                if (identifier == model.bones[boneIndex].identifier) {
+                    node->boneIndex = boneIndex;
+                    break;
+                }
             }
 
-            node.numScalings = assimpNodeAnim->mNumScalingKeys;
-            node.scalings = new Vector3f[node.numScalings];
-            for (unsigned int scalingIndex = 0; scalingIndex < node.numScalings; scalingIndex++) {
-                node.scalings[scalingIndex] = assimpVec3ToVec3(assimpNodeAnim->mScalingKeys[scalingIndex].mValue);
+            node->numPositions = assimpNodeAnim->mNumPositionKeys;
+            node->positions = new Vector3f[node->numPositions];
+            for (unsigned int positionIndex = 0; positionIndex < node->numPositions; positionIndex++) {
+                node->positions[positionIndex] = assimpVec3ToVec3(assimpNodeAnim->mPositionKeys[positionIndex].mValue);
             }
 
-            node.numRotations = assimpNodeAnim->mNumRotationKeys;
-            node.rotations = new Quaternion[node.numRotations];
-            for (unsigned int rotationIdx = 0; rotationIdx < node.numRotations; rotationIdx++) {
-                node.rotations[rotationIdx].w = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.w;
-                node.rotations[rotationIdx].x = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.x;
-                node.rotations[rotationIdx].y = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.y;
-                node.rotations[rotationIdx].z = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.z;
+            node->numScalings = assimpNodeAnim->mNumScalingKeys;
+            node->scalings = new Vector3f[node->numScalings];
+            for (unsigned int scalingIndex = 0; scalingIndex < node->numScalings; scalingIndex++) {
+                node->scalings[scalingIndex] = assimpVec3ToVec3(assimpNodeAnim->mScalingKeys[scalingIndex].mValue);
+            }
+
+            node->numRotations = assimpNodeAnim->mNumRotationKeys;
+            node->rotations = new Quaternion[node->numRotations];
+            for (unsigned int rotationIdx = 0; rotationIdx < node->numRotations; rotationIdx++) {
+                node->rotations[rotationIdx].w = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.w;
+                node->rotations[rotationIdx].x = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.x;
+                node->rotations[rotationIdx].y = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.y;
+                node->rotations[rotationIdx].z = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.z;
             }
         }
 

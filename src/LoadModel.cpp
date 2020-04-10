@@ -158,12 +158,20 @@ void LoadMaterial::read(BinarySerializer& serializer) {
 
 void LoadBone::write(BinarySerializer& serializer) {
 	serializer.writeMat4x4(offsetMatrix);
-	serializer.writeUint32(nodeUniqueId);
-	serializer.writeUint32(parentNodeUniqueId);
+	serializer.writeInt32(parentBoneIndex);
+
+	serializer.writeUint32(childrenBoneIndices.size());
+	for (unsigned int childIndex = 0; childIndex < childrenBoneIndices.size(); childIndex++) {
+		serializer.writeInt32(childrenBoneIndices[childIndex]);
+	}
 }
 
 void LoadBone::read(BinarySerializer& serializer) {
 	offsetMatrix = serializer.readMat4x4();
-	nodeUniqueId = serializer.readUint32();
-	parentNodeUniqueId = serializer.readUint32();
+	parentBoneIndex = serializer.readUint32();
+
+	childrenBoneIndices.resize(serializer.readUint32());
+	for (unsigned int childIndex = 0; childIndex < childrenBoneIndices.size(); childIndex++) {
+		childrenBoneIndices[childIndex] = serializer.readInt32();
+	}
 }

@@ -10,8 +10,9 @@
 
 struct Bone;
 struct Mesh;
+struct LoadModel;
 
-constexpr unsigned int MAX_BONES = 16;
+constexpr unsigned int MAX_BONES = 128;
 
 struct Model {
     Matrix4x4f model;
@@ -25,7 +26,6 @@ struct Model {
 
     AnimationController animationController;
 
-    void initialize();
     void update(float dt);
     void render(const Shader& shader, bool withMaterial = true) const;
     void free();

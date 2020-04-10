@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\AnimationController.cpp" />
     <ClCompile Include="..\..\src\BinarySerializer.cpp" />
+    <ClCompile Include="..\..\src\Bone.cpp" />
     <ClCompile Include="..\..\src\BoundText.cpp" />
     <ClCompile Include="..\..\src\Box.cpp" />
     <ClCompile Include="..\..\src\Button.cpp" />

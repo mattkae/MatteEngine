@@ -2,51 +2,96 @@
 #include "Bone.h"
 #include "BinarySerializer.h"
 
-void AnimationController::update(float dt, Bone* bones, unsigned int numBones) {
+unsigned int calculateTickIndex(GLdouble tickPosition, GLdouble totalTicks, unsigned int numIndices) {
+	return floor((tickPosition / totalTicks) * numIndices);
+}
+
+void propagateBoneTransform(Bone bone, Bone* bones, Vector3f position, Vector3f scaling, Quaternion rotation) {
+	for (unsigned int childIdx = 0; childIdx < bone.numChildBones; childIdx++) {
+		Bone& child = bones[bone.childrenBoneIndices[childIdx]];
+		child.position = child.position + position;
+		child.scaling = child.scaling + scaling;
+		child.rotation = child.rotation * rotation;
+
+		propagateBoneTransform(child, bones, position, scaling, rotation);
+	}
+}
+
+void AnimationController::update(float dt, Bone* bones, unsigned int numBones, Matrix4x4f* boneMatrices) {
 	for (unsigned int animIndex = 0; animIndex < numAnimations; animIndex++) {
 		Animation& animation = animationList[animIndex];
 		if (!animation.isRunning) {
 			continue;
 		}
 
+		animation.currentTime += dt;
+		if (animation.currentTime >= animation.duration) {
+			animation.currentTime = 0;
+		}
+
+		GLdouble tick = animation.currentTime * animation.ticksPerSecond;
+		GLdouble totalTicks = animation.duration * animation.ticksPerSecond;
+
 		for (unsigned int nodeIdx = 0; nodeIdx < animation.numNodes; nodeIdx++) {
 			AnimationNode& node = animation.nodes[nodeIdx];
 
-			// update the node's matrix...
+			Vector3f position = node.positions[calculateTickIndex(tick, totalTicks, node.numPositions)];
+			Vector3f scaling = node.scalings[calculateTickIndex(tick, totalTicks, node.numScalings)];
+			Quaternion rotation = node.rotations[calculateTickIndex(tick, totalTicks, node.numRotations)];
 
-
-			for (unsigned int boneIdx = 0; boneIdx < numBones; boneIdx++) {
-				Bone& bone = bones[boneIdx];
-				if (bone.nodeUniqueId == node.nodeUniqueId) {
-					// update the bone's matrix...
-
-					// find the parent bone... multiply its matrix by my matrix
-
-					// do that all the way up the hierarchy...
-
-					// pray its not slow...
-
-
-				}
-			}
+			Bone& bone = bones[node.boneIndex];
+			bone.position = position;
+			bone.scaling = scaling;
+			bone.rotation = rotation;
+			propagateBoneTransform(bone, bones, position, scaling, rotation);
 		}
 	}
 }
 
+void AnimationController::free() {
+	if (animationList == nullptr) {
+		return;
+	}
+
+	for (unsigned int animationIdx = 0; animationIdx < numAnimations; animationIdx++) {
+		Animation* animation = &animationList[animationIdx];
+		for (unsigned int nodeIdx = 0; nodeIdx < animation->numNodes; nodeIdx++) {
+			AnimationNode* node = &animation->nodes[nodeIdx];
+			delete node->positions;
+			delete node->rotations;
+			delete node->scalings;
+		}
+
+		delete animation->nodes;
+	}
+
+	delete animationList;
+}
+
+// ***************************************
+// Binary Serializations
+// ***************************************
 void Animation::write(BinarySerializer& serializer) {
 	serializer.writeFloat32(duration);
 	serializer.writeFloat32(ticksPerSecond);
 	serializer.writeUint32(numNodes);
+	for (unsigned int nodeIdx = 0; nodeIdx < numNodes; nodeIdx++) {
+		nodes[nodeIdx].write(serializer);
+	}
 }
 
 void Animation::read(BinarySerializer& serializer) {
 	duration = serializer.readFloat32();
 	ticksPerSecond = serializer.readFloat32();
 	numNodes = serializer.readUint32();
+	nodes = new AnimationNode[numNodes];
+	for (unsigned int nodeIdx = 0; nodeIdx < numNodes; nodeIdx++) {
+		nodes[nodeIdx].read(serializer);
+	}
 }
 
 void AnimationNode::write(BinarySerializer& serializer) {
-	serializer.writeUint32(nodeUniqueId);
+	serializer.writeUint32(boneIndex);
 	serializer.writeUint32(numPositions);
 	for (unsigned int positionIdx = 0; positionIdx < numPositions; positionIdx++) {
 		serializer.writeVec3(positions[positionIdx]);
@@ -64,7 +109,7 @@ void AnimationNode::write(BinarySerializer& serializer) {
 }
 
 void AnimationNode::read(BinarySerializer& serializer) {
-	nodeUniqueId = serializer.readUint32();
+	boneIndex = serializer.readUint32();
 	numPositions = serializer.readUint32();
 	positions = new Vector3f[numPositions];
 	for (unsigned int positionIdx = 0; positionIdx < numPositions; positionIdx++) {

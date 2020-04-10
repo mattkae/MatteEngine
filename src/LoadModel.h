@@ -53,8 +53,11 @@ struct LoadMesh {
 
 struct LoadBone {
     Matrix4x4f offsetMatrix;
-    unsigned int nodeUniqueId;
-    unsigned int parentNodeUniqueId;
+
+    std::string identifier;
+
+    int parentBoneIndex = -1;
+    std::vector<int> childrenBoneIndices;
 
     void write(BinarySerializer& serializer);
     void read(BinarySerializer& serializer);

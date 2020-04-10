@@ -68,9 +68,13 @@ ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermedi
 
 	for (unsigned int boneIdx = 0; boneIdx < retval.model.numBones; boneIdx++) {
 		const LoadBone& loadBone = intermediateModel.bones[boneIdx];
-		retval.model.bones[boneIdx].nodeUniqueId = loadBone.nodeUniqueId;
 		retval.model.bones[boneIdx].offsetMatrix = loadBone.offsetMatrix;
-		retval.model.bones[boneIdx].parentNodeUniqueId = loadBone.parentNodeUniqueId;
+		retval.model.bones[boneIdx].numChildBones = loadBone.childrenBoneIndices.size();
+		retval.model.bones[boneIdx].childrenBoneIndices = new int[loadBone.childrenBoneIndices.size()];
+
+		for (unsigned int childBoneIdx = 0; childBoneIdx < loadBone.childrenBoneIndices.size(); childBoneIdx++) {
+			retval.model.bones[boneIdx].childrenBoneIndices[childBoneIdx] = loadBone.childrenBoneIndices[childBoneIdx];
+		}
 	}
 
 	for (int meshIdx = 0; meshIdx < retval.model.numMeshes; meshIdx++) {
@@ -79,6 +83,11 @@ ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermedi
 
 	retval.box.lowerLeft = intermediateModel.lowerLeftBoundingBoxCorner;
 	retval.box.upperRight = intermediateModel.upperRightBoundingBoxCorner;
+	retval.model.animationController.numAnimations = intermediateModel.animations.size();
+	retval.model.animationController.animationList  = new Animation[retval.model.animationController.numAnimations];
+	for (unsigned int animationIdx = 0; animationIdx < retval.model.animationController.numAnimations; animationIdx++) {
+		retval.model.animationController.animationList[animationIdx] = intermediateModel.animations[animationIdx];
+	}
 
 	return retval;
 }

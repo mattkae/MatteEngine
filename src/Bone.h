@@ -1,8 +1,17 @@
 #pragma once
 #include "Matrix4x4f.h"
+#include "Vector3f.h"
+#include "Quaternion.h"
 
 struct Bone {
 	Matrix4x4f offsetMatrix;
-	unsigned int nodeUniqueId;
-	unsigned int parentNodeUniqueId;
+	Vector3f position;
+	Vector3f scaling;
+	Quaternion rotation;
+
+	int parentBoneIndex = -1;
+	unsigned int numChildBones;
+	int* childrenBoneIndices = nullptr;
+
+	void free();
 };

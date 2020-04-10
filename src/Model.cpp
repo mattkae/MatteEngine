@@ -3,12 +3,8 @@
 #include "Bone.h"
 #include <GL/glew.h>
 
-void Model::initialize() {
-
-}
-
 void Model::update(float dt) {
-    animationController.update(dt, bones, numBones);
+    animationController.update(dt, bones, numBones, boneModels);
 }
 
 void Model::render(const Shader& shader, bool withMaterial) const {
@@ -28,11 +24,12 @@ void Model::free() {
     }
 
     if (bones != nullptr) {
+        for (unsigned int boneIdx = 0; boneIdx < numBones; boneIdx++) {
+            bones[boneIdx].free();
+        }
         delete[] bones;
         numBones = 0;
     }
 
-    if (animationController.animationList) {
-        // @TODO: Free animation controller
-    }
+    animationController.free();
 }

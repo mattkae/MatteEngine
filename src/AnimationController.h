@@ -5,6 +5,7 @@
 struct Vector3f;
 struct Quaternion;
 struct Bone;
+struct BoneTreeNode;
 class BinarySerializer;
 
 struct AnimationNode {
@@ -37,20 +38,9 @@ struct Animation {
 	void read(BinarySerializer& serializer);
 };
 
-/*
-	How animation works:
-
-	Each frame, we calculate a new Matrix for each AnimationNode (which represents
-	the point in the animation that we're at). Once calcualted, we find the corresponding
-	Bone for that matches the uniqueId in the AnimationNode. This is that particular bone's
-	transform, but now we also need to calculate the parent's transform, all the way up
-	the node hierarchy.
-
-	Finally, when we update a vertex, we index into the Bones array and get the current transform.
-*/
 struct AnimationController {
 	Animation* animationList;
 	unsigned int numAnimations = 0;
-	void update(float dt, Bone* bones, unsigned int numBones, Matrix4x4f* boneMatrices);
+	void update(float dt, Bone* bones, unsigned int numBones, Matrix4x4f* boneMatrices, Matrix4x4f inverseRootNode, BoneTreeNode* rootNode);
 	void free();
 };

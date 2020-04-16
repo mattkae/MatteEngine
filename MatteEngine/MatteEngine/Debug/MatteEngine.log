@@ -1,5 +1,2 @@
-﻿  AnimationController.cpp
-C:\Users\mattykae\Projects\MatteEngine\src\AnimationController.cpp(6,14): warning C4244: 'return': conversion from 'double' to 'unsigned int', possible loss of data
-C:\Users\mattykae\Projects\MatteEngine\src\AnimationController.cpp(75,26): warning C4244: 'argument': conversion from 'GLdouble' to 'float', possible loss of data
-C:\Users\mattykae\Projects\MatteEngine\src\AnimationController.cpp(76,26): warning C4244: 'argument': conversion from 'GLdouble' to 'float', possible loss of data
+﻿  Model.cpp
   MatteEngine.vcxproj -> C:\Users\mattykae\Projects\MatteEngine\MatteEngine\Debug\MatteEngine.exe

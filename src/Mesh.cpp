@@ -8,8 +8,8 @@ struct Vertex {
     Vector3f position;
     Vector3f normal;
     Vector2f texCoords;
-    GLfloat boneWeights[4];
-    GLuint boneIndices[4];
+    GLfloat boneWeights[4] = { 0, 0, 0, 0 };
+    GLint boneIndices[4] = { 0, 0, 0, 0 };
 
     void initialize(const LoadVertex& vertex) {
         position = vertex.position;
@@ -19,7 +19,7 @@ struct Vertex {
         size_t max = fmin(vertex.boneInfoList.size(), 4);
         for (size_t index = 0; index < max; index++) {
             boneWeights[index] = vertex.boneInfoList[index].weight;
-            boneIndices[index] = vertex.boneInfoList[index].boneIndex;
+            boneIndices[index] = (GLint)vertex.boneInfoList[index].boneIndex;
         }
     }
 };
@@ -55,12 +55,12 @@ void Mesh::initialize(LoadMesh& loadMesh, List* list) {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
 
     // Bone weights
-    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
 
     // Bone indices
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(4, 4, GL_UNSIGNED_INT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
+    glEnableVertexAttribArray(4);
+    glVertexAttribIPointer(4, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
 
     glBindVertexArray(0);
 

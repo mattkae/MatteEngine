@@ -1,23 +1,13 @@
 #include "AnimationController.h"
 #include "Bone.h"
 #include "BinarySerializer.h"
+#include "Matrix4x4f.h"
 
 unsigned int calculateTickIndex(GLdouble tickPosition, GLdouble totalTicks, unsigned int numIndices) {
 	return floor((tickPosition / totalTicks) * numIndices);
 }
 
-void propagateBoneTransform(Bone bone, Bone* bones, Vector3f position, Vector3f scaling, Quaternion rotation) {
-	for (unsigned int childIdx = 0; childIdx < bone.numChildBones; childIdx++) {
-		Bone& child = bones[bone.childrenBoneIndices[childIdx]];
-		child.position = child.position + position;
-		child.scaling = child.scaling + scaling;
-		child.rotation = child.rotation * rotation;
-
-		propagateBoneTransform(child, bones, position, scaling, rotation);
-	}
-}
-
-void AnimationController::update(float dt, Bone* bones, unsigned int numBones, Matrix4x4f* boneMatrices) {
+void AnimationController::update(float dt, Bone* bones, unsigned int numBones, Matrix4x4f* boneMatrices, Matrix4x4f inverseRootNode, BoneTreeNode* rootNode) {
 	for (unsigned int animIndex = 0; animIndex < numAnimations; animIndex++) {
 		Animation& animation = animationList[animIndex];
 		if (!animation.isRunning) {
@@ -40,11 +30,15 @@ void AnimationController::update(float dt, Bone* bones, unsigned int numBones, M
 			Quaternion rotation = node.rotations[calculateTickIndex(tick, totalTicks, node.numRotations)];
 
 			Bone& bone = bones[node.boneIndex];
-			bone.position = position;
-			bone.scaling = scaling;
-			bone.rotation = rotation;
-			propagateBoneTransform(bone, bones, position, scaling, rotation);
+			Matrix4x4f translationMatrix = translateMatrix(Matrix4x4f(), position);
+			Matrix4x4f rotationMatrix = rotation.toMatrix();
+			Matrix4x4f scalingMatrix = scaleMatrix(Matrix4x4f(), scaling);
+			bone.localTransform = translationMatrix * rotationMatrix * scalingMatrix;
 		}
+	}
+
+	if (rootNode != nullptr) {
+		rootNode->update(bones, boneMatrices, Matrix4x4f(), inverseRootNode);
 	}
 }
 

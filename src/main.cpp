@@ -30,7 +30,7 @@ int main(int argc, const char* argv[]) {
 
     glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;
-    double frameTimerMs = 0;
+    double frameTimerSeconds = 0;
     double currentTime = 0, prevTime = glfwGetTime(), deltaTime;
     while (!glfwWindowShouldClose(GlobalWindow)) {
         currentTime = glfwGetTime();
@@ -44,11 +44,11 @@ int main(int argc, const char* argv[]) {
 
         glfwSwapBuffers(GlobalWindow);
         frameCount++;
-        frameTimerMs += deltaTime;
-        if (frameTimerMs > 1.0) {
+        frameTimerSeconds += deltaTime;
+        if (frameTimerSeconds > 1.0) {
             Logger::logInfo(std::to_string(frameCount) + " frames per second");
             frameCount = 0;
-            frameTimerMs = 0;
+            frameTimerSeconds = 0;
 		}
     }
 

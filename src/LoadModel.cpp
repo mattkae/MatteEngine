@@ -1,5 +1,6 @@
 #include "LoadModel.h"
 #include "BinarySerializer.h"
+#include <algorithm>
 
 void LoadModel::writeLoadModel(BinarySerializer& serializer) {
 	calculateBoundingBox();
@@ -16,10 +17,13 @@ void LoadModel::writeLoadModel(BinarySerializer& serializer) {
 		bone.write(serializer);
 	}
 
+	rootNode.write(serializer);
+
 	serializer.writeUint32((unsigned int)animations.size());
 	for (Animation& animation : animations) {
 		animation.write(serializer);
 	}
+	serializer.writeMat4x4(inverseRootNode);
 }
 
 void LoadModel::readLoadModel(BinarySerializer& serializer) {
@@ -38,11 +42,14 @@ void LoadModel::readLoadModel(BinarySerializer& serializer) {
 		bone.read(serializer);
 	}
 
+	rootNode.read(serializer);
+
 	unsigned int numAnimations = serializer.readUint32();
 	animations.resize(numAnimations);
 	for (Animation& animation: animations) {
 		animation.read(serializer);
 	}
+	inverseRootNode = serializer.readMat4x4();
 }
 
 void LoadModel::calculateBoundingBox() {
@@ -111,11 +118,18 @@ void LoadMesh::read(BinarySerializer& serializer) {
 	material.read(serializer);
 }
 
+bool compareLoadVertexBoneData(LoadVertexBoneData first, LoadVertexBoneData second) {
+	return first.weight > second.weight;
+}
+
 void LoadVertex::write(BinarySerializer& serializer) {
 	serializer.writeVec3(position);
 	serializer.writeVec3(normal);
 	serializer.writeVec2(texCoords);
 	serializer.writeUint32(boneInfoList.size());
+
+	std::sort(boneInfoList.begin(), boneInfoList.end(), compareLoadVertexBoneData);
+
 	for (LoadVertexBoneData& boneData : boneInfoList) {
 		serializer.writeUint32(boneData.boneIndex);
 		serializer.writeFloat32(boneData.weight);
@@ -158,20 +172,26 @@ void LoadMaterial::read(BinarySerializer& serializer) {
 
 void LoadBone::write(BinarySerializer& serializer) {
 	serializer.writeMat4x4(offsetMatrix);
-	serializer.writeInt32(parentBoneIndex);
-
-	serializer.writeUint32(childrenBoneIndices.size());
-	for (unsigned int childIndex = 0; childIndex < childrenBoneIndices.size(); childIndex++) {
-		serializer.writeInt32(childrenBoneIndices[childIndex]);
-	}
+	serializer.writeMat4x4(transform);
 }
 
 void LoadBone::read(BinarySerializer& serializer) {
 	offsetMatrix = serializer.readMat4x4();
-	parentBoneIndex = serializer.readUint32();
+	transform = serializer.readMat4x4();
+}
 
-	childrenBoneIndices.resize(serializer.readUint32());
-	for (unsigned int childIndex = 0; childIndex < childrenBoneIndices.size(); childIndex++) {
-		childrenBoneIndices[childIndex] = serializer.readInt32();
+void LoadBoneNode::write(BinarySerializer& serializer) {
+	serializer.writeUint32(boneIndex);
+	serializer.writeUint32(children.size());
+	for (LoadBoneNode& child: children) {
+		child.write(serializer);
+	}
+}
+
+void LoadBoneNode::read(BinarySerializer& serializer) {
+	boneIndex = serializer.readUint32();
+	children.resize(serializer.readUint32());
+	for (LoadBoneNode& child: children) {
+		child.read(serializer);
 	}
 }

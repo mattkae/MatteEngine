@@ -13,11 +13,14 @@
 #include "BinarySerializer.cpp"
 #include "Matrix4x4f.h"
 #include "Quaternion.h"
+#include "Quaternion.cpp"
 #include "AnimationController.cpp"
+#include "Matrix4x4f.cpp"
+#include "Bone.cpp"
 
 void processNode(std::string fullPath, const aiNode* node, const aiScene* scene, LoadModel& model);
 void processAnimations(aiAnimation** const animations, unsigned int numAnimations,LoadModel& model);
-void postProcessBones(LoadModel& model);
+void postProcessBones(LoadModel& model, const aiScene* scene);
 Vector3f assimpColor4ToVec3(aiColor4D inColor);
 Vector3f assimpVec3ToVec3(aiVector3D v);
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix);
@@ -25,12 +28,6 @@ Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix);
 GLuint nextTextureUniqueId = 1;
 std::vector<TextureInfo> outTextures;
 std::vector<LoadModel> outModels;
-
-struct NodeInfo {
-    std::vector<std::string> children;
-};
-
-std::map<std::string, NodeInfo> nodeNameToInfoMapping;
 
 int main() {
     std::vector<std::string> modelFiles = readModelDirectory();
@@ -46,9 +43,10 @@ int main() {
 
         LoadModel model;
         model.modelPath = modelFile;
+        inverse(assimpMatrixToMatrix(scene->mRootNode->mTransformation), model.inverseRootNode);
 
         processNode(modelFile, scene->mRootNode, scene, model);
-        postProcessBones(model);
+        postProcessBones(model, scene);
         processAnimations(scene->mAnimations, scene->mNumAnimations, model);
         outModels.push_back(model);
     }
@@ -62,8 +60,6 @@ int main() {
 
         BinarySerializer rs(outputFile.c_str(), SerializationMode::READ);
         model.readLoadModel(rs);
-
-        nodeNameToInfoMapping.clear();
     }
 
     // Write out all the textures
@@ -86,17 +82,6 @@ void processNode(std::string fullPath,
     const aiNode* node, 
     const aiScene* scene, 
     LoadModel& model) {
-
-    std::string nodeName = node->mName.C_Str();
-    if (nodeNameToInfoMapping.find(nodeName) == nodeNameToInfoMapping.end()) {
-        nodeNameToInfoMapping.insert(std::pair<std::string, NodeInfo>(nodeName, NodeInfo()));
-    }
-
-    NodeInfo& nodeInfo = nodeNameToInfoMapping.at(nodeName);
-    for (unsigned int childIndex = 0; childIndex < node->mNumChildren; childIndex++) {
-        nodeInfo.children.push_back(node->mChildren[childIndex]->mName.C_Str());
-    }
-
     for (unsigned int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
         LoadMesh mesh;
         const aiMesh* assimpMesh = scene->mMeshes[node->mMeshes[meshIndex]];
@@ -145,7 +130,6 @@ void processNode(std::string fullPath,
                 LoadVertexBoneData boneData;
                 boneData.boneIndex = model.bones.size() - 1;
                 boneData.weight = assimpWeight.mWeight;
-                //printf("Bone %s, %f\n", assimpBone->mName.C_Str(), boneData.weight);
                 mesh.vertices[assimpWeight.mVertexId].boneInfoList.push_back(boneData);
             }
         }
@@ -223,24 +207,48 @@ void processNode(std::string fullPath,
     }
 }
 
-// In this step, we match the bone indices up with the bone identifiers, so that
-// we don't have to send the identifiers over the wire later on.
-void postProcessBones(LoadModel& model) {
+LoadBoneNode processNode(const aiNode* node, LoadModel& model) {
+    LoadBoneNode retval;
     for (unsigned int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
-       LoadBone& bone = model.bones[boneIdx];
-       std::vector<std::string> childIdentifers = nodeNameToInfoMapping.at(bone.identifier).children;
-       for (std::string identifier: childIdentifers) {
-           for (unsigned int otherBoneIdx = 0; otherBoneIdx < model.bones.size(); otherBoneIdx++) {
-               if (boneIdx == otherBoneIdx) continue;
-
-               LoadBone& otherbone = model.bones[otherBoneIdx];
-               if (otherbone.identifier == identifier) {
-                   bone.childrenBoneIndices.push_back(otherBoneIdx);
-                   break;
-               }
-           }
+       if (model.bones[boneIdx].identifier == node->mName.C_Str()) {
+           model.bones[boneIdx].transform = assimpMatrixToMatrix(node->mTransformation);
+           retval.boneIndex = boneIdx;
+           break;
        }
     }
+
+    for (unsigned int childIdx = 0; childIdx < node->mNumChildren; childIdx++) {
+        retval.children.push_back(processNode(node->mChildren[childIdx], model));
+    }
+
+    return retval;
+}
+
+const aiNode* getRoot(const aiNode* node, LoadModel& model) {
+    for (unsigned int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
+       if (model.bones[boneIdx].identifier == node->mName.C_Str()) {
+           return node;
+       }
+    }
+
+    for (unsigned int childIdx = 0; childIdx < node->mNumChildren; childIdx++) {
+        const aiNode* childRetval = getRoot(node->mChildren[childIdx], model);
+        if (childRetval != nullptr) {
+            return childRetval;
+        }
+    }
+
+    return nullptr;
+}
+
+// In this step, we match the bone indices up with the bone identifiers, so that
+// we don't have to send the identifiers over the wire later on.
+void postProcessBones(LoadModel& model, const aiScene* scene) {
+    if (model.bones.size() == 0) {
+        return;
+    }
+
+    model.rootNode = processNode(getRoot(scene->mRootNode, model), model);
 }
 
 // Read animations
@@ -303,9 +311,25 @@ Vector3f assimpVec3ToVec3(aiVector3D v) {
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix) {
     Matrix4x4f retval;
 
-    for (int index = 0; index < 16; index++) {
-        retval.values[index] = matrix[floor(index / 4)][index % 4];
-    }
+    retval.values[0] = (GLfloat)matrix.a1; 
+    retval.values[1] = (GLfloat)matrix.b1;  
+    retval.values[2] = (GLfloat)matrix.c1; 
+    retval.values[3] = (GLfloat)matrix.d1;
+
+    retval.values[4] = (GLfloat)matrix.a2; 
+    retval.values[5] = (GLfloat)matrix.b2;  
+    retval.values[6] = (GLfloat)matrix.c2; 
+    retval.values[7] = (GLfloat)matrix.d2;
+
+    retval.values[8] = (GLfloat)matrix.a3; 
+    retval.values[9] = (GLfloat)matrix.b3;  
+    retval.values[10] = (GLfloat)matrix.c3; 
+    retval.values[11] = (GLfloat)matrix.d3;
+
+    retval.values[12] = (GLfloat)matrix.a4; 
+    retval.values[13] = (GLfloat)matrix.b4;  
+    retval.values[14] = (GLfloat)matrix.c4; 
+    retval.values[15] = (GLfloat)matrix.d4;
 
     return retval;
 }

@@ -59,22 +59,30 @@ ModelLoader::ModelLoadResult ModelLoader::loadSerializedModel(const char* path) 
 	return ModelLoader::loadFromLoadModel(intermediateModel);
 }
 
+void copyBoneTreeNode(BoneTreeNode* node, const LoadBoneNode& nodeToCopy) {
+	node->boneIndex = nodeToCopy.boneIndex;
+	node->numChildren = nodeToCopy.children.size();
+	node->children = new BoneTreeNode[nodeToCopy.children.size()];
+	for (unsigned int nodeIdx = 0; nodeIdx < node->numChildren; nodeIdx++) {
+		copyBoneTreeNode(&node->children[nodeIdx], nodeToCopy.children[nodeIdx]);
+	}
+}
+
 ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermediateModel) {
 	ModelLoader::ModelLoadResult retval;
+	retval.model.inverseRootNode = intermediateModel.inverseRootNode;
 	retval.model.numMeshes = intermediateModel.meshes.size();
 	retval.model.meshes = new Mesh[retval.model.numMeshes];
 	retval.model.numBones = intermediateModel.bones.size();
 	retval.model.bones = new Bone[retval.model.numBones];
-
 	for (unsigned int boneIdx = 0; boneIdx < retval.model.numBones; boneIdx++) {
-		const LoadBone& loadBone = intermediateModel.bones[boneIdx];
-		retval.model.bones[boneIdx].offsetMatrix = loadBone.offsetMatrix;
-		retval.model.bones[boneIdx].numChildBones = loadBone.childrenBoneIndices.size();
-		retval.model.bones[boneIdx].childrenBoneIndices = new int[loadBone.childrenBoneIndices.size()];
+		retval.model.bones[boneIdx].offsetMatrix = intermediateModel.bones[boneIdx].offsetMatrix;
+		retval.model.bones[boneIdx].nodeTransform = intermediateModel.bones[boneIdx].transform;
+	}
 
-		for (unsigned int childBoneIdx = 0; childBoneIdx < loadBone.childrenBoneIndices.size(); childBoneIdx++) {
-			retval.model.bones[boneIdx].childrenBoneIndices[childBoneIdx] = loadBone.childrenBoneIndices[childBoneIdx];
-		}
+	if (intermediateModel.rootNode.children.size() > 0) {
+		retval.model.rootNode = new BoneTreeNode();
+		copyBoneTreeNode(retval.model.rootNode, intermediateModel.rootNode);
 	}
 
 	for (int meshIdx = 0; meshIdx < retval.model.numMeshes; meshIdx++) {

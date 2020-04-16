@@ -5,13 +5,16 @@
 
 struct Bone {
 	Matrix4x4f offsetMatrix;
-	Vector3f position;
-	Vector3f scaling;
-	Quaternion rotation;
-
-	int parentBoneIndex = -1;
-	unsigned int numChildBones;
-	int* childrenBoneIndices = nullptr;
-
-	void free();
+    Matrix4x4f nodeTransform;
+	Matrix4x4f localTransform;
 };
+
+struct BoneTreeNode {
+    int boneIndex = -1;
+    BoneTreeNode* children;
+    unsigned int numChildren = 0;
+
+    void update(Bone* bones, Matrix4x4f* matrices, Matrix4x4f currentMatrix, Matrix4x4f inverseRootNode);
+    void free();
+};
+

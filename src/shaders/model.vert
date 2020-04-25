@@ -18,12 +18,13 @@ uniform mat4 uBones[64];
 uniform vec3 uEye;
 
 void main() {
-  mat4 boneTransform = uBones[boneIndices[0]] * boneWeights[0];
-    boneTransform += uBones[boneIndices[1]] * boneWeights[1];
-    boneTransform += uBones[boneIndices[2]] * boneWeights[2];
-    boneTransform += uBones[boneIndices[3]] * boneWeights[3];
+  mat4 boneTransform = uBones[boneIndices.x] * boneWeights.x;
+    boneTransform += uBones[boneIndices.y] * boneWeights.y;
+    boneTransform += uBones[boneIndices.z] * boneWeights.w;
+    boneTransform += uBones[boneIndices.w] * boneWeights.z;
 
-  vec4 fragPos = uModel * boneTransform * vec4(position, 1.0f);
+  vec4 bonePosition = boneTransform * vec4(position, 1.0f);
+  vec4 fragPos = uModel * bonePosition;
   gl_Position = uVp * fragPos;
   oFragPos = fragPos;
   oTexCoords = texCoords;

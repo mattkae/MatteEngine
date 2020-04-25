@@ -53,7 +53,6 @@ struct LoadMesh {
 
 struct LoadBone {
     Matrix4x4f offsetMatrix;
-    Matrix4x4f transform;
     std::string identifier;
     void write(BinarySerializer& serializer);
     void read(BinarySerializer& serializer);
@@ -62,6 +61,7 @@ struct LoadBone {
 struct LoadBoneNode {
     int boneIndex = -1;
     std::vector<LoadBoneNode> children;
+    Matrix4x4f nodeTransform;
 
     void write(BinarySerializer& serializer);
     void read(BinarySerializer& serializer);

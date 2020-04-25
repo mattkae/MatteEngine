@@ -61,6 +61,7 @@ ModelLoader::ModelLoadResult ModelLoader::loadSerializedModel(const char* path) 
 
 void copyBoneTreeNode(BoneTreeNode* node, const LoadBoneNode& nodeToCopy) {
 	node->boneIndex = nodeToCopy.boneIndex;
+	node->nodeTransform = nodeToCopy.nodeTransform;
 	node->numChildren = nodeToCopy.children.size();
 	node->children = new BoneTreeNode[nodeToCopy.children.size()];
 	for (unsigned int nodeIdx = 0; nodeIdx < node->numChildren; nodeIdx++) {
@@ -77,7 +78,6 @@ ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermedi
 	retval.model.bones = new Bone[retval.model.numBones];
 	for (unsigned int boneIdx = 0; boneIdx < retval.model.numBones; boneIdx++) {
 		retval.model.bones[boneIdx].offsetMatrix = intermediateModel.bones[boneIdx].offsetMatrix;
-		retval.model.bones[boneIdx].nodeTransform = intermediateModel.bones[boneIdx].transform;
 	}
 
 	if (intermediateModel.rootNode.children.size() > 0) {

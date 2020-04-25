@@ -25,15 +25,23 @@ void AnimationController::update(float dt, Bone* bones, unsigned int numBones, M
 		for (unsigned int nodeIdx = 0; nodeIdx < animation.numNodes; nodeIdx++) {
 			AnimationNode& node = animation.nodes[nodeIdx];
 
-			Vector3f position = node.positions[calculateTickIndex(tick, totalTicks, node.numPositions)];
-			Vector3f scaling = node.scalings[calculateTickIndex(tick, totalTicks, node.numScalings)];
-			Quaternion rotation = node.rotations[calculateTickIndex(tick, totalTicks, node.numRotations)];
+			//Vector3f position = node.positions[calculateTickIndex(tick, totalTicks, node.numPositions)];
+			//Vector3f scaling = node.scalings[calculateTickIndex(tick, totalTicks, node.numScalings)];
+			//Quaternion rotation = node.rotations[calculateTickIndex(tick, totalTicks, node.numRotations)];
+			Vector3f position = node.positions[0];
+			Vector3f scaling = node.scalings[0];
+			Quaternion rotation = node.rotations[0];
 
-			Bone& bone = bones[node.boneIndex];
-			Matrix4x4f translationMatrix = translateMatrix(Matrix4x4f(), position);
-			Matrix4x4f rotationMatrix = rotation.toMatrix();
-			Matrix4x4f scalingMatrix = scaleMatrix(Matrix4x4f(), scaling);
-			bone.localTransform = translationMatrix * rotationMatrix * scalingMatrix;
+			Bone* bone = &bones[node.boneIndex];
+			Matrix4x4f translationMatrix = setTranslation(Matrix4x4f(), position);
+			Matrix4x4f rotationMatrix = rotation.normalize().toMatrix();
+			Matrix4x4f scalingMatrix = setScale(Matrix4x4f(), scaling);
+			bone->localTransform = translationMatrix * rotationMatrix * scalingMatrix;
+
+			//Bone& bone = bones[node.boneIndex];
+			//bone.localTransform = rotation.toMatrix();
+			//bone.localTransform = setTranslation(bone.localTransform, position);
+			//bone.localTransform = setScale(bone.localTransform, scaling);
 		}
 	}
 

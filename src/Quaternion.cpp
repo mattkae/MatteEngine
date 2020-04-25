@@ -16,7 +16,7 @@ GLfloat Quaternion::length() const {
 Quaternion Quaternion::normalize() const {
 	GLfloat l = length();
 	return {
-		1.f,
+		w / l,
 		x / l,
 		y / l,
 		z / l,
@@ -37,6 +37,10 @@ Matrix4x4f Quaternion::toMatrix() const {
 			2 * (x * z + w * y),
 			2 * (y * z - w * x),
 			1 - 2 * (x * x + y * y),
+			0,
+			0,
+			0,
+			0,
 			1
 		}
 	};

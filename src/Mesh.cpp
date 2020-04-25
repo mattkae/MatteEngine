@@ -27,7 +27,8 @@ struct Vertex {
 void Mesh::initialize(LoadMesh& loadMesh, List* list) {
     Vertex* vertices = new Vertex[loadMesh.vertices.size()];
     for (size_t index = 0; index < loadMesh.vertices.size(); index++) {
-        vertices[index].initialize(loadMesh.vertices[index]);
+        Vertex* v = &vertices[index];
+        v->initialize(loadMesh.vertices[index]);
     }
 
     glGenVertexArrays(1, &vao);

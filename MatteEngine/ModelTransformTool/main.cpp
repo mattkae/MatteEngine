@@ -43,7 +43,6 @@ int main() {
 
         LoadModel model;
         model.modelPath = modelFile;
-        inverse(assimpMatrixToMatrix(scene->mRootNode->mTransformation), model.inverseRootNode);
 
         processNode(modelFile, scene->mRootNode, scene, model);
         postProcessBones(model, scene);
@@ -123,12 +122,26 @@ void processNode(std::string fullPath,
             LoadBone bone;
             bone.identifier = assimpBone->mName.C_Str();
             bone.offsetMatrix = assimpMatrixToMatrix(assimpBone->mOffsetMatrix);
-            model.bones.push_back(bone);
+            int foundBoneIndex = model.bones.size();
+
+            bool alreadyExists = false;
+            for (unsigned int existingIdx = 0; existingIdx < model.bones.size(); existingIdx++) {
+                LoadBone& existing = model.bones[existingIdx];
+                if (existing.identifier == bone.identifier) {
+                    foundBoneIndex = existingIdx;
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExists) {
+                model.bones.push_back(bone);
+            }
 
             for (unsigned int weightIndex = 0; weightIndex < assimpBone->mNumWeights; weightIndex++) {
                 aiVertexWeight assimpWeight = assimpBone->mWeights[weightIndex];
                 LoadVertexBoneData boneData;
-                boneData.boneIndex = model.bones.size() - 1;
+                boneData.boneIndex = foundBoneIndex;
                 boneData.weight = assimpWeight.mWeight;
                 mesh.vertices[assimpWeight.mVertexId].boneInfoList.push_back(boneData);
             }
@@ -207,18 +220,18 @@ void processNode(std::string fullPath,
     }
 }
 
-LoadBoneNode processNode(const aiNode* node, LoadModel& model) {
+LoadBoneNode processNode(const aiNode* node, LoadModel& model, int depth = 0) {
     LoadBoneNode retval;
     for (unsigned int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
        if (model.bones[boneIdx].identifier == node->mName.C_Str()) {
-           model.bones[boneIdx].transform = assimpMatrixToMatrix(node->mTransformation);
+           retval.nodeTransform = assimpMatrixToMatrix(node->mTransformation);
            retval.boneIndex = boneIdx;
            break;
        }
     }
 
     for (unsigned int childIdx = 0; childIdx < node->mNumChildren; childIdx++) {
-        retval.children.push_back(processNode(node->mChildren[childIdx], model));
+        retval.children.push_back(processNode(node->mChildren[childIdx], model, depth++));
     }
 
     return retval;
@@ -227,7 +240,8 @@ LoadBoneNode processNode(const aiNode* node, LoadModel& model) {
 const aiNode* getRoot(const aiNode* node, LoadModel& model) {
     for (unsigned int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
        if (model.bones[boneIdx].identifier == node->mName.C_Str()) {
-           return node;
+            inverse(assimpMatrixToMatrix(node->mTransformation), model.inverseRootNode);
+            return node;
        }
     }
 
@@ -325,11 +339,6 @@ Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix) {
     retval.values[9] = (GLfloat)matrix.b3;  
     retval.values[10] = (GLfloat)matrix.c3; 
     retval.values[11] = (GLfloat)matrix.d3;
-
-    retval.values[12] = (GLfloat)matrix.a4; 
-    retval.values[13] = (GLfloat)matrix.b4;  
-    retval.values[14] = (GLfloat)matrix.c4; 
-    retval.values[15] = (GLfloat)matrix.d4;
 
     return retval;
 }

@@ -9,10 +9,6 @@ void Model::update(float dt) {
 
 void Model::render(const Shader& shader, bool withMaterial) const {
     setShaderMat4(shader, "uModel", model);
-    //for (unsigned int bondeIdx = 0; bondeIdx < numBones; bondeIdx++) {
-    //    std::string str = "uBones[" + std::to_string(bondeIdx) + "]";
-    //    setShaderMat4(shader, str.c_str(), boneModels[bondeIdx]);
-    //}
     setShaderMat4Multiple(shader, "uBones", numBones, boneModels);
 	for (int meshIdx = 0; meshIdx < numMeshes; meshIdx++) {
 		meshes[meshIdx].render(shader, withMaterial);

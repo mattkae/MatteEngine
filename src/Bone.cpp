@@ -2,8 +2,10 @@
 
 void BoneTreeNode::update(Bone* bones, Matrix4x4f* matrices, Matrix4x4f currentMatrix, Matrix4x4f inverseRootNode) {
 	if (boneIndex > -1) {
-		currentMatrix = currentMatrix * bones[boneIndex].localTransform;
-		matrices[boneIndex] = inverseRootNode * currentMatrix * bones[boneIndex].offsetMatrix;
+		currentMatrix = bones[boneIndex].localTransform * currentMatrix;
+		matrices[boneIndex] = bones[boneIndex].offsetMatrix * currentMatrix * inverseRootNode;
+	} else {
+		currentMatrix = nodeTransform * currentMatrix;
 	}
 
 	for (unsigned int childIdx = 0; childIdx < numChildren; childIdx++) {

@@ -43,7 +43,7 @@ int main() {
 
         LoadModel model;
         model.modelPath = modelFile;
-
+        inverse(assimpMatrixToMatrix(scene->mRootNode->mTransformation), model.inverseRootNode);
         processNode(modelFile, scene->mRootNode, scene, model);
         postProcessBones(model, scene);
         processAnimations(scene->mAnimations, scene->mNumAnimations, model);
@@ -58,7 +58,18 @@ int main() {
         modelSerializer.close();
 
         BinarySerializer rs(outputFile.c_str(), SerializationMode::READ);
-        model.readLoadModel(rs);
+        LoadModel newModel;
+        newModel.readLoadModel(rs);
+
+        for (int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
+            auto firstBone = model.bones[boneIdx];
+            auto secondBone = newModel.bones[boneIdx];
+            for (int i = 0; i < 16; i++) {
+                if (firstBone.offsetMatrix.values[i] != firstBone.offsetMatrix.values[i]) {
+                    printf("WOwowow");
+                }
+            }
+        }
     }
 
     // Write out all the textures
@@ -222,9 +233,9 @@ void processNode(std::string fullPath,
 
 LoadBoneNode processNode(const aiNode* node, LoadModel& model, int depth = 0) {
     LoadBoneNode retval;
+    retval.nodeTransform = assimpMatrixToMatrix(node->mTransformation);
     for (unsigned int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
        if (model.bones[boneIdx].identifier == node->mName.C_Str()) {
-           retval.nodeTransform = assimpMatrixToMatrix(node->mTransformation);
            retval.boneIndex = boneIdx;
            break;
        }
@@ -240,7 +251,6 @@ LoadBoneNode processNode(const aiNode* node, LoadModel& model, int depth = 0) {
 const aiNode* getRoot(const aiNode* node, LoadModel& model) {
     for (unsigned int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
        if (model.bones[boneIdx].identifier == node->mName.C_Str()) {
-            inverse(assimpMatrixToMatrix(node->mTransformation), model.inverseRootNode);
             return node;
        }
     }
@@ -248,7 +258,7 @@ const aiNode* getRoot(const aiNode* node, LoadModel& model) {
     for (unsigned int childIdx = 0; childIdx < node->mNumChildren; childIdx++) {
         const aiNode* childRetval = getRoot(node->mChildren[childIdx], model);
         if (childRetval != nullptr) {
-            return childRetval;
+            return node;
         }
     }
 
@@ -262,7 +272,7 @@ void postProcessBones(LoadModel& model, const aiScene* scene) {
         return;
     }
 
-    model.rootNode = processNode(getRoot(scene->mRootNode, model), model);
+    model.rootNode = processNode(scene->mRootNode, model);
 }
 
 // Read animations
@@ -325,20 +335,25 @@ Vector3f assimpVec3ToVec3(aiVector3D v) {
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix) {
     Matrix4x4f retval;
 
-    retval.values[0] = (GLfloat)matrix.a1; 
-    retval.values[1] = (GLfloat)matrix.b1;  
-    retval.values[2] = (GLfloat)matrix.c1; 
-    retval.values[3] = (GLfloat)matrix.d1;
+    retval.values[0] = matrix.a1;
+    retval.values[1] = matrix.a2;
+    retval.values[2] = matrix.a3;
+    retval.values[3] = matrix.a4;
 
-    retval.values[4] = (GLfloat)matrix.a2; 
-    retval.values[5] = (GLfloat)matrix.b2;  
-    retval.values[6] = (GLfloat)matrix.c2; 
-    retval.values[7] = (GLfloat)matrix.d2;
+    retval.values[4] = matrix.b1;
+    retval.values[5] = matrix.b2;
+    retval.values[6] = matrix.b3;
+    retval.values[7] = matrix.b4;
 
-    retval.values[8] = (GLfloat)matrix.a3; 
-    retval.values[9] = (GLfloat)matrix.b3;  
-    retval.values[10] = (GLfloat)matrix.c3; 
-    retval.values[11] = (GLfloat)matrix.d3;
+    retval.values[8] = matrix.c1;
+    retval.values[9] = matrix.c2;
+    retval.values[10] = matrix.c3;
+    retval.values[11] = matrix.c4;
 
-    return retval;
+    retval.values[12] = matrix.d1;
+    retval.values[13] = matrix.d2;
+    retval.values[14] = matrix.d3;
+    retval.values[15] = matrix.d4;
+
+    return transpose(retval);
 }

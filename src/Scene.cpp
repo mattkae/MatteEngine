@@ -33,14 +33,6 @@ int castRayToModel(Scene& scene) {
 void updateScene(Scene& scene, double dt) {
 	float dtFloat = static_cast<float>(dt);
 
-	if (scene.shadersToReload.size() > 0) {
-		for (Shader shader: scene.shadersToReload) {
-			reloadShader(shader);
-		}
-
-		scene.shadersToReload.clear();
-	}
-
     updateCamera(scene.mCamera, dtFloat);
 
 	for (unsigned int modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
@@ -142,7 +134,7 @@ void renderDirect(const Scene& scene) {
 	useShader(scene.mSceneShader);
     renderCamera(scene.mCamera, scene.mSceneShader, true);
 
-	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.5f));
+	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.1f));
 	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
 
     for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
@@ -206,9 +198,6 @@ void freeScene(Scene& scene) {
 
 	// Deferred
     scene.mDeferredBuffer.free();
-
-	// Threads
-	scene.mHotreloadThreader.join();
 
 	// Shaders
 	if (scene.mShadowShader > 0) {

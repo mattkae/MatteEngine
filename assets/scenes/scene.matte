@@ -13,12 +13,12 @@ textures                assets/texture-info.mattl
 
 ::lights
     ::
-        type            0
+        type            2
         color           0.5 0.5 0.5
         direction       0 -1 0
-        position        0 100 0
+        position        0 10 0
         up              0 0 1
-        usesShadows     false
+        usesShadows     true
         isOn            true
         constant        1
         linear          0

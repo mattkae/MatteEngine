@@ -22,7 +22,13 @@ Matrix4x4f setScale(const Matrix4x4f& matrix, const Vector3f& scale) {
     result.values[0] = scale.x;
     result.values[5] = scale.y;
     result.values[10] = scale.z;
-    return result;
+}
+
+Matrix4x4f setScale(const Matrix4x4f& matrix, const GLfloat scale) {
+    Matrix4x4f result = copyMatrix(matrix);
+    result.values[0] = scale;
+    result.values[5] = scale;
+    result.values[10] = scale;
 }
 
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale) {
@@ -185,11 +191,11 @@ Matrix4x4f getPerspectiveProjection(GLfloat near, GLfloat far, GLfloat fieldOfVi
 Matrix4x4f getOrthographicProjection(GLfloat near, GLfloat far, GLfloat left, GLfloat right, GLfloat top, GLfloat bottom) {
 	Matrix4x4f result;
 	result.values[0] = 2.f / (right - left);
-	result.values[5] = 2.f / (top - bottom);
-	result.values[10] = 1.f / (far - near);
+	result.values[5] = -2.f / (top - bottom);
+	result.values[10] = -2.f / (far - near);
 	result.values[12] = -(right + left) / (right - left);
 	result.values[13] = -(top + bottom) / (top - bottom);
-	result.values[14] = -near / (far - near);
+	result.values[14] = -(far + near) / (far - near);
 	return result;
 }
 

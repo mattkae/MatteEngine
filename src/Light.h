@@ -30,8 +30,8 @@ struct Light {
 
     bool usesShadows = false;
 
-	GLint shadowWidth = GlobalAppState.width;
-    GLint shadowHeight = GlobalAppState.height;
+	GLint shadowWidth = 2 * GlobalAppState.width;
+    GLint shadowHeight = 2 * GlobalAppState.height;
 
 	GLuint shadowTexture = 0;
 	GLuint depthFbo = 0;

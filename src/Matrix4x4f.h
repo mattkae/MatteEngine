@@ -25,6 +25,7 @@ inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {
 constexpr Matrix4x4f getIdentity();
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale);
 Matrix4x4f setScale(const Matrix4x4f& matrix, const Vector3f& scale);
+Matrix4x4f setScale(const Matrix4x4f& matrix, const GLfloat scale);
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale);
 Matrix4x4f mult(const Matrix4x4f& first, const Matrix4x4f& second);
 Matrix4x4f getScalarMatrix(const GLfloat scale);

@@ -10,7 +10,7 @@ All third party libraries are installed via vcpkg on the build machine.
 ### Animation
 We now have animation working. The ModelTransformTool takes any file format, loads them with Assimp, and outputs the file as a `.mattl`.
 
-![animation](readme-assets/animation.gid)
+![animation](readme-assets/animation.gif)
 
 ### File Format
 The engine reads in `.matte` files, examples of which can be found in the `assets/scenes` directory. These files are in pseudo-json format, with a few exceptions, since I found JSON to be a little to bloated for my use case.

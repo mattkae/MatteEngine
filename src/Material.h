@@ -1,12 +1,14 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
-#define GLM_ENABLE_EXPERIMENTAL
 
 #include "Texture.h"
 #include "Shader.h"
 #include "Vector3f.h"
 #include <GL/glew.h>
 #include <vector>
+
+struct LoadMaterial;
+struct List;
 
 struct Material {
     std::string name;
@@ -18,11 +20,13 @@ struct Material {
     Vector3f specularProperty = { 1.f, 1.f, 1.f };
     float specularComponent = 20.f;
     float transparency = 1.0;
+
 	GLuint diffuseTexture = 0;
 	GLuint specularTexture = 0;
 	GLuint ambientTexture = 0;
-};
 
-void render_material(const Shader &shader, const Material &material);
+    void initialize(LoadMaterial& material, List* list);
+    void render(const Shader& shader) const;
+};
 
 #endif

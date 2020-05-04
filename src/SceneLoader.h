@@ -2,4 +2,6 @@
 #include "Scene.h"
 #include <string>
 
-void loadScene(const char* filepath, BetterScene& scene);
+namespace SceneLoader {
+	void loadScene(const char* filepath, Scene& scene);
+}

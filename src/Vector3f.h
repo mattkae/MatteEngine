@@ -13,6 +13,7 @@ struct Vector3f {
 	GLfloat x = 0;
 	GLfloat y = 0;
 	GLfloat z = 0;
+	Vector3f interpolate(const Vector3f& other, const GLfloat factor);
 };
 
 // Creation
@@ -31,7 +32,6 @@ Vector3f negate(const Vector3f& v);
 Vector3f cross(const Vector3f& first, const Vector3f& second);
 Vector3f normalize(const Vector3f& v);
 Vector3f fromVec4(const Vector4f& v);
-
 
 // Operator overlaods
 Vector3f operator+(const Vector3f& v1, const Vector3f& v2);

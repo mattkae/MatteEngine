@@ -1,27 +1,30 @@
 #include "DebugRender.h"
-#include "ObjFileLoader.h"
 #include "Input.h"
 #include "Ray.h"
 #include "Plane.h"
+#include "ModelLoader.h"
+#include "Mesh.h"
+#include "Box.h"
 
 inline void changeArrowColor(DebugArrow& arrow, Vector3f color) {
 	arrow.color = color;
-	for (auto& mesh : arrow.model.meshes) {
-		mesh.material.emissive = arrow.color;
-		mesh.material.ambient = arrow.color;
-		mesh.material.diffuse = arrow.color;
+	for (int meshIdx = 0; meshIdx < arrow.model.numMeshes; meshIdx++) {
+		arrow.model.meshes[meshIdx].material.emissive = arrow.color;
+		arrow.model.meshes[meshIdx].material.ambient = arrow.color;
+		arrow.model.meshes[meshIdx].material.diffuse = arrow.color;
 	}
 }
 
 inline void initArrow(DebugArrow& arrow) {
-	loadFromObj((char*)"assets/models/Arrow/simple_arrow.obj", arrow.model);
-	initializeModel(arrow.model, arrow.boundingBox);
-	changeArrowColor(arrow, arrow.color);
+	/*ModelLoader::ModelLoadResult retval = ModelLoader::loadSerializedModel((char*)"assets/models/Arrow/simple_arrow.mattl");
+	arrow.model = retval.model;
+	arrow.boundingBox = retval.box;
+	changeArrowColor(arrow, arrow.color);*/
 }
 
 void updateDebugArrow(DebugArrow& arrow, Box& box, const Matrix4x4f& model) {
 	arrow.model.model = getIdentity();
-	if (arrow.model.meshes.size() == 0) {
+	if (arrow.model.numMeshes == 0) {
 		initArrow(arrow);
 	}
 
@@ -42,7 +45,7 @@ void updateDebugArrow(DebugArrow& arrow, Box& box, const Matrix4x4f& model) {
 }
 
 void renderDebugArrow(const DebugArrow& arrow, const Shader& shader) {
-	renderModel(arrow.model, shader);
+	arrow.model.render(shader);
 }
 
 void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera) {
@@ -147,9 +150,9 @@ void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const
 }
 
 void freeDebug(DebugModel& dbgModel) {
-	freeModel(dbgModel.xArrow.model);
-	freeModel(dbgModel.yArrow.model);
-	freeModel(dbgModel.zArrow.model);
+	dbgModel.xArrow.model.free();
+	dbgModel.yArrow.model.free();
+	dbgModel.zArrow.model.free();
 	
 	if (dbgModel.debugBox.vao) glDeleteVertexArrays(1, &dbgModel.debugBox.vao);
 	if (dbgModel.debugBox.vbo) glDeleteBuffers(1, &dbgModel.debugBox.vbo);

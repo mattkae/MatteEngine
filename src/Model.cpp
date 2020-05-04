@@ -1,68 +1,38 @@
 #include "Model.h"
-#include "ObjFileLoader.h"
+#include "Mesh.h"
+#include "Bone.h"
 #include <GL/glew.h>
-#include <iostream>
 
-inline void trySetBoxBounds(Box& box, Mesh& mesh, bool& hasBoxBeenSet) {
-	for (auto& vertex : mesh.vertices) {
-		if (!hasBoxBeenSet) {
-			box.lowerLeft.x = vertex.position.x;
-			box.lowerLeft.y = vertex.position.y;
-			box.lowerLeft.z = vertex.position.z;
-			box.upperRight.x = vertex.position.x;
-			box.upperRight.y = vertex.position.y;
-			box.upperRight.z = vertex.position.z;
-			hasBoxBeenSet = true;
-		}
-			
-		if (vertex.position.x < box.lowerLeft.x) {
-			box.lowerLeft.x = vertex.position.x;
-		}
-		if (vertex.position.y < box.lowerLeft.y) {
-			box.lowerLeft.y = vertex.position.y;
-		}
-		if (vertex.position.z < box.lowerLeft.z) {
-			box.lowerLeft.z = vertex.position.z;
-		}
-
-		if (vertex.position.x > box.upperRight.x) {
-			box.upperRight.x = vertex.position.x;
-		}
-		if (vertex.position.y > box.upperRight.y) {
-			box.upperRight.y = vertex.position.y;
-		}
-		if (vertex.position.z > box.upperRight.z) {
-			box.upperRight.z = vertex.position.z;
-		}
-	}
+void Model::update(float dt) {
+    animationController.update(dt, bones, numBones, boneModels, inverseRootNode, rootNode);
 }
 
-void initializeModel(Model& model) {
-    for (auto& mesh : model.meshes) {
-        initializeMesh(mesh);
+void Model::render(const Shader& shader, bool withMaterial) const {
+    setShaderMat4(shader, "uModel", model);
+    setShaderMat4Multiple(shader, "uBones", numBones, boneModels);
+	for (int meshIdx = 0; meshIdx < numMeshes; meshIdx++) {
+		meshes[meshIdx].render(shader, withMaterial);
     }
 }
 
-void initializeModel(Model& model, Box& box) {
-	bool hasBoxBeenSet = false;
-
-    for (auto& mesh : model.meshes) {
-        initializeMesh(mesh);
-		trySetBoxBounds(box, mesh, hasBoxBeenSet);
-    }
-}
-
-void freeModel(Model& model) {
-    for (auto& mesh : model.meshes) {
-        freeMesh(mesh);
+void Model::free() {
+    if (meshes != nullptr) {
+        for (int meshIdx = 0; meshIdx < numMeshes; meshIdx++) {
+            meshes[meshIdx].free();
+        }
+        delete[] meshes;
+        numMeshes = 0;
     }
 
-    model.meshes.clear();
-}
-
-void renderModel(const Model& model, const Shader& shader, bool withMaterial) {
-    setShaderMat4(shader, "uModel", model.model);
-    for (auto& mesh : model.meshes) {
-		renderMesh(mesh, shader, withMaterial);
+    if (bones != nullptr) {
+        delete[] bones;
+        numBones = 0;
     }
+
+    if (rootNode) {
+        rootNode->free();
+        delete rootNode;
+    }
+
+    animationController.free();
 }

@@ -1,24 +1,25 @@
 #ifndef MESH_H
 #define MESH_H
-#define GLM_ENABLE_EXPERIMENTAL
 
 #include "Material.h"
 #include "Shader.h"
-#include "Vertex.h"
 #include <GL/glew.h>
 #include <vector>
 
+struct LoadMesh;
+struct List;
+struct Vertex;
+
 struct Mesh {
-    std::vector<Vertex> vertices;
-    std::vector<GLint> indicies;
     Material material;
     GLuint vao = 0;
 	GLuint vbo = 0;
 	GLuint ebo = 0;
-};
+	GLint numIndices = 0;
 
-void initializeMesh(Mesh& mesh);
-void renderMesh(const Mesh& mesh, const Shader& shader, bool withMaterial = true);
-void freeMesh(Mesh& mesh);
+	void initialize(LoadMesh& loadMesh, List* list);
+	void free();
+	void render(const Shader& shader, bool withMaterial = true) const;
+};
 
 #endif

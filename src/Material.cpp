@@ -1,11 +1,36 @@
 #include "Material.h"
 #include "TextureUniformConstants.h"
 #include "Logger.h"
+#include "LoadModel.h"
+#include "List.h"
+#include "ModelLoader.h"
 #include <iostream>
 #include <sstream>
 #include <string>
 
-const int MATERIAL_TEX_INDEX = 8;
+void Material::initialize(LoadMaterial& material, List* list) {
+	emissive = material.emissive;
+	ambient = material.ambient;
+	diffuse = material.diffuse;
+	specular = material.specular;
+	diffuseProperty = material.diffuseProperty;
+	specularProperty = material.specularProperty;
+	specularComponent = material.specularComponent;
+	transparency = material.transparency;
+
+	if (list != nullptr) {
+		for (int textureIndex = 0; textureIndex < list->numElements; textureIndex++) {
+			const ModelLoader::TextureListItem* texture = (ModelLoader::TextureListItem*)(list->getValue(textureIndex));
+			if (texture->uniqueId == material.diffuseUniqueTextureId) {
+				diffuseTexture = texture->texture;
+			} else if (texture->uniqueId == material.ambientUniqueTextureId) {
+				ambientTexture = texture->texture;
+			} else if (texture->uniqueId == material.specularUniqueTextureId) {
+				specularTexture = texture->texture;
+			}
+		}
+	}
+}
 
 inline void renderTexture(const Shader &shader, GLint index, GLuint textureHandle, const GLchar* uniformName) {
  	setShaderInt(shader, uniformName, index);
@@ -15,17 +40,17 @@ inline void renderTexture(const Shader &shader, GLint index, GLuint textureHandl
 	}
 }
 
-void render_material(const Shader &shader, const Material &material) {
-	setShaderVec3(shader, "uMaterial.diffuse", material.diffuse);
-	setShaderVec3(shader, "uMaterial.specular", material.specular);
-	setShaderVec3(shader, "uMaterial.emissive", material.emissive);
-	setShaderVec3(shader, "uMaterial.diffuseProperty", material.diffuseProperty);
-	setShaderVec3(shader, "uMaterial.specularProperty", material.specularProperty);
-	//setShaderFloat(shader, "uMaterial.shininess", material.specularComponent);
-	setShaderFloat(shader, "uMaterial.opacity", material.transparency);
+void Material::render(const Shader &shader) const {
+	setShaderVec3(shader, "uMaterial.diffuse", diffuse);
+	setShaderVec3(shader, "uMaterial.specular", specular);
+	setShaderVec3(shader, "uMaterial.emissive", emissive);
+	setShaderVec3(shader, "uMaterial.diffuseProperty", diffuseProperty);
+	setShaderVec3(shader, "uMaterial.specularProperty", specularProperty);
+	//setShaderFloat(shader, "uMaterial.shininess", specularComponent);
+	setShaderFloat(shader, "uMaterial.opacity", transparency);
 
-	setShaderBVec3(shader, "uMaterial.useTexture", material.diffuseTexture > 0, material.specularTexture > 0, material.ambientTexture > 0);
-	renderTexture(shader, TextureUniformConstants::DIFFUSE_TEXTURE_POSTIION, material.diffuseTexture, "uMaterial.diffuseTexture");
-	renderTexture(shader, TextureUniformConstants::SPECULAR_TEXTURE_POSTIION, material.specularTexture, "uMaterial.specularTexture");
-	renderTexture(shader, TextureUniformConstants::AMBIENT_TEXTURE_POSITION, material.ambientTexture, "uMaterial.ambientTexture");
+	setShaderBVec3(shader, "uMaterial.useTexture", diffuseTexture > 0, specularTexture > 0, ambientTexture > 0);
+	renderTexture(shader, TextureUniformConstants::DIFFUSE_TEXTURE_POSTIION, diffuseTexture, "uMaterial.diffuseTexture");
+	renderTexture(shader, TextureUniformConstants::SPECULAR_TEXTURE_POSTIION, specularTexture, "uMaterial.specularTexture");
+	renderTexture(shader, TextureUniformConstants::AMBIENT_TEXTURE_POSITION, ambientTexture, "uMaterial.ambientTexture");
 }

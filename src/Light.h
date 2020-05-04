@@ -9,7 +9,7 @@
 #include <GL/glew.h>
 #include <vector>
 
-struct BetterScene;
+struct Scene;
 
 enum LightType { Directional = 0, PointLight, Spot, Inactive };
 
@@ -54,7 +54,7 @@ struct Light {
 };
 
 bool initLight(Light& light, const Shader& shader, int lightIndex);
-void renderLightShadows(const Light& light, const Shader shader, const BetterScene& scene);
+void renderLightShadows(const Light& light, const Shader shader, const Scene& scene);
 void renderLight(const Light& light, const Shader shader, const int index);
 void freeLight(Light& light);
 #endif

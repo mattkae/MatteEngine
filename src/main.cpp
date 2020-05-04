@@ -1,4 +1,3 @@
-#define GLM_ENABLE_EXPERIMENTAL
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -26,12 +25,12 @@ void glfw_error_callback(int error, const char* message)
 int main(int argc, const char* argv[]) {
     initialize(argc, argv);
 
-    BetterScene scene;
-	loadScene("assets/scenes/scene.matte", scene);
+    Scene scene;
+	SceneLoader::loadScene("assets/scenes/big_scene.matte", scene);
 
     glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;
-    double frameTimerMs = 0;
+    double frameTimerSeconds = 0;
     double currentTime = 0, prevTime = glfwGetTime(), deltaTime;
     while (!glfwWindowShouldClose(GlobalWindow)) {
         currentTime = glfwGetTime();
@@ -45,11 +44,11 @@ int main(int argc, const char* argv[]) {
 
         glfwSwapBuffers(GlobalWindow);
         frameCount++;
-        frameTimerMs += deltaTime;
-        if (frameTimerMs > 1.0) {
+        frameTimerSeconds += deltaTime;
+        if (frameTimerSeconds > 1.0) {
             Logger::logInfo(std::to_string(frameCount) + " frames per second");
             frameCount = 0;
-            frameTimerMs = 0;
+            frameTimerSeconds = 0;
 		}
     }
 

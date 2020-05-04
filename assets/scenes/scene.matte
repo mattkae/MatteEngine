@@ -1,5 +1,7 @@
 useDeferredRendering    false
 
+textures                assets/texture-info.mattl
+
 ::skybox
     front   assets/skybox/cloudy/bluecloud_ft.jpg
     back    assets/skybox/cloudy/bluecloud_bk.jpg
@@ -28,12 +30,8 @@ useDeferredRendering    false
 
 ::models
     ::
-        path        assets/models/Mario/Super Mario 64 - Mario.obj
-        transform   0.01 0 0 0 0 0.01 0 0 0 0 0.01 0 0 0 0 1
-    ;;
-    ::
-        path        assets/models/Floor/floor.obj
-        transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -3 0 1
+        path        assets/models/Mario/Super Mario 64 - Mario.mattl
+        transform   0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 1
     ;;
 ;;
 

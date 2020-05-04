@@ -94,7 +94,7 @@ void DeferredGeometryBuffer::free()
     }
 }
 
-void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const BetterScene& scene) const
+void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Scene& scene) const
 {
     if (!mHasGenerated) {
         return;

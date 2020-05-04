@@ -108,3 +108,7 @@ Vector3f operator*(const Vector3f& v1, const Vector3f& v2) {
 		v1.z * v2.z
 	};
 }
+
+Vector3f Vector3f::interpolate(const Vector3f& other, const GLfloat factor) {
+	return *this + ((*this - other) * factor);
+}

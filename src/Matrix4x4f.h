@@ -24,6 +24,7 @@ inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {
 
 constexpr Matrix4x4f getIdentity();
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const GLfloat scale);
+Matrix4x4f setScale(const Matrix4x4f& matrix, const Vector3f& scale);
 Matrix4x4f setScale(const Matrix4x4f& matrix, const GLfloat scale);
 Matrix4x4f scaleMatrix(const Matrix4x4f& matrix, const Vector3f& scale);
 Matrix4x4f mult(const Matrix4x4f& first, const Matrix4x4f& second);
@@ -33,6 +34,7 @@ Matrix4x4f getXRotationMatrix(GLfloat angleRadians);
 Matrix4x4f getYRotationMatrix(GLfloat angleRadians);
 Matrix4x4f getZRotationMatrix(GLfloat angleRadians);
 Matrix4x4f rotate(const Matrix4x4f matrix, GLfloat xRadians = 0, GLfloat yRadians = 0, GLfloat zRadians = 0);
+Matrix4x4f setTranslation(const Matrix4x4f& matrix, const Vector3f& translate);
 Matrix4x4f translateMatrix(const Matrix4x4f& matrix, const Vector3f& translate);
 Matrix4x4f translateMatrixX(const Matrix4x4f& matrix, float translate);
 Matrix4x4f translateMatrixY(const Matrix4x4f& matrix, float translate);

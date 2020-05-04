@@ -1,5 +1,5 @@
 #pragma once
 
-struct BetterScene;
+struct Scene;
 struct UI;
-void getSceneUI(BetterScene& scene, UI& ui);
+void getSceneUI(Scene& scene, UI& ui);

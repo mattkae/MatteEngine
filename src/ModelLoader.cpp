@@ -95,6 +95,8 @@ ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermedi
 	retval.model.animationController.animationList  = new Animation[retval.model.animationController.numAnimations];
 	for (unsigned int animationIdx = 0; animationIdx < retval.model.animationController.numAnimations; animationIdx++) {
 		retval.model.animationController.animationList[animationIdx] = intermediateModel.animations[animationIdx];
+		retval.model.animationController.animationList[animationIdx].totalTicks = retval.model.animationController.animationList[animationIdx].duration 
+			* retval.model.animationController.animationList[animationIdx].ticksPerSecond;
 	}
 
 	return retval;

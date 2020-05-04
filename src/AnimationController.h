@@ -8,15 +8,21 @@ struct Bone;
 struct BoneTreeNode;
 class BinarySerializer;
 
+template <typename T>
+struct LerpableValue {
+	T value;
+	GLdouble time;
+};
+
 struct AnimationNode {
 	unsigned int boneIndex = 0;
 
 	unsigned int numPositions = 0;
-	Vector3f* positions;
+	LerpableValue<Vector3f>* positions;
 	unsigned int numScalings = 0;
-	Vector3f* scalings;
+	LerpableValue<Vector3f>* scalings;
 	unsigned int numRotations = 0;
-	Quaternion* rotations;
+	LerpableValue<Quaternion>* rotations;
 
 	unsigned int currentPosition = 0;
 	unsigned int currentScaling = 0;
@@ -24,16 +30,21 @@ struct AnimationNode {
 
 	void write(BinarySerializer& serializer);
 	void read(BinarySerializer& serializer);
+	Vector3f getInterpolatedPosition(GLdouble currentAnimTime);
+	Vector3f getInterpolatedScaling(GLdouble currentAnimTime);
+	Quaternion getInterpolatedRotation(GLdouble currentAnimTime);
 };
 
 struct Animation {
 	bool isRunning = true;
-	GLdouble duration; // In seconds
-	GLdouble ticksPerSecond;
+	GLdouble duration = 0; // In seconds
+	GLdouble ticksPerSecond = 0;
 	unsigned int numNodes = 0;
-	AnimationNode* nodes;
+	AnimationNode* nodes = nullptr;
+	GLdouble totalTicks = 0;
+	GLdouble currentTimeSeconds = 0;
+	GLdouble currentTimeTicks = 0;
 
-	GLdouble currentTime = 0;
 	void write(BinarySerializer& serializer);
 	void read(BinarySerializer& serializer);
 };

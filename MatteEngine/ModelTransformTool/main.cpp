@@ -299,24 +299,27 @@ void processAnimations(aiAnimation**const animations, unsigned int numAnimations
             }
 
             node->numPositions = assimpNodeAnim->mNumPositionKeys;
-            node->positions = new Vector3f[node->numPositions];
+            node->positions = new LerpableValue<Vector3f>[node->numPositions];
             for (unsigned int positionIndex = 0; positionIndex < node->numPositions; positionIndex++) {
-                node->positions[positionIndex] = assimpVec3ToVec3(assimpNodeAnim->mPositionKeys[positionIndex].mValue);
+                node->positions[positionIndex].value = assimpVec3ToVec3(assimpNodeAnim->mPositionKeys[positionIndex].mValue);
+                node->positions[positionIndex].time = assimpNodeAnim->mPositionKeys[positionIndex].mTime;
             }
 
             node->numScalings = assimpNodeAnim->mNumScalingKeys;
-            node->scalings = new Vector3f[node->numScalings];
+            node->scalings = new LerpableValue<Vector3f>[node->numScalings];
             for (unsigned int scalingIndex = 0; scalingIndex < node->numScalings; scalingIndex++) {
-                node->scalings[scalingIndex] = assimpVec3ToVec3(assimpNodeAnim->mScalingKeys[scalingIndex].mValue);
+                node->scalings[scalingIndex].value = assimpVec3ToVec3(assimpNodeAnim->mScalingKeys[scalingIndex].mValue);
+                node->scalings[scalingIndex].time = assimpNodeAnim->mScalingKeys[scalingIndex].mTime;
             }
 
             node->numRotations = assimpNodeAnim->mNumRotationKeys;
-            node->rotations = new Quaternion[node->numRotations];
+            node->rotations = new LerpableValue<Quaternion>[node->numRotations];
             for (unsigned int rotationIdx = 0; rotationIdx < node->numRotations; rotationIdx++) {
-                node->rotations[rotationIdx].w = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.w;
-                node->rotations[rotationIdx].x = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.x;
-                node->rotations[rotationIdx].y = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.y;
-                node->rotations[rotationIdx].z = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.z;
+                node->rotations[rotationIdx].value.w = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.w;
+                node->rotations[rotationIdx].value.x = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.x;
+                node->rotations[rotationIdx].value.y = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.y;
+                node->rotations[rotationIdx].value.z = assimpNodeAnim->mRotationKeys[rotationIdx].mValue.z;
+                node->rotations[rotationIdx].time = assimpNodeAnim->mRotationKeys[rotationIdx].mTime;
             }
         }
 

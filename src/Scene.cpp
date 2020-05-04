@@ -134,7 +134,7 @@ void renderDirect(const Scene& scene) {
 	useShader(scene.mSceneShader);
     renderCamera(scene.mCamera, scene.mSceneShader, true);
 
-	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.1f));
+	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.3f));
 	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
 
     for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {

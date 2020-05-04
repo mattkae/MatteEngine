@@ -41,7 +41,7 @@ struct Scene {
     DeferredGeometryBuffer mDeferredBuffer;
 	UI ui;
 
-    bool mUseShadows = true;
+    bool mUseShadows = false;
     BetterCamera mCamera;
 	bool isDying = false;
 };

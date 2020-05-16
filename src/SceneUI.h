@@ -2,4 +2,4 @@
 
 struct Scene;
 struct UI;
-void getSceneUI(Scene& scene, UI& ui);
+//void getSceneUI(Scene& scene, UI& ui);

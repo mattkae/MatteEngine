@@ -12,7 +12,7 @@
 GLuint loadTexture(std::string path);
 
 void ModelLoader::loadTextureList(const char* path) {
-	textureList.allocate(16, sizeof(TextureListItem));
+	textureList.allocate(16);
 
 	BinarySerializer serializer(path, SerializationMode::READ);
 	int numTextures = serializer.readInt32();

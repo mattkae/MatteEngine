@@ -5,20 +5,26 @@
 #include "TextInput.h"
 #include "Panel.h"
 #include "UIContext.h"
+#include "List.h"
 #include <vector>
+
+typedef size_t PanelHandle;
+struct Model;
+struct Terrain;
 
 struct UI {
 	 Shader mOrthographicShader = 0;
 	 TextRenderer mTextRenderer;
-	 UIContext* panels = nullptr;
-	 size_t numPanels = 0;
+	 List<UIContext> panels;
 
-	 int modelOffset = 0;
+	 void init();
+	 void update(double dt);
+	 void render() const;
+	 void free();
+
+	 PanelHandle showModelSelector(Model* models, size_t numModels);
+	 PanelHandle showModelPanel(Model& model);
+	 PanelHandle showTerrainPanel(Terrain& terrain);
+
+	 void hidePanel(PanelHandle handle);
 };
-
-void initUI(UI& ui);
-void updateUI(UI& ui, double dt);
-void renderUI(const UI& ui);
-void freeUI(UI& ui);
-
-void openModelPanel(UI& ui, size_t index);

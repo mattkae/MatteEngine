@@ -12,12 +12,13 @@ struct BoundText {
 	GLfloat scale = 1.f;
 	GLfloat padding = 0.f;
 	Rectangle rect;
-};
 
-void renderBoundText(const BoundText& bt, const Shader& shader, const TextRenderer& textRenderer, 
-	std::string text, const Vector4f& backgroundColor, const Vector4f& textColor, GLint position = 0);
-inline GLfloat getBoundTextHeight(const BoundText& bt, const TextRenderer& textRenderer) {
-	return (textRenderer.getFontSize() + 2 * bt.padding) * bt.scale;
-}
+	void render(const Shader& shader, const TextRenderer& textRenderer, 
+		std::string text, const Vector4f& backgroundColor, const Vector4f& textColor, GLint position = 0);
+	
+	inline GLfloat getBoundTextHeight(const TextRenderer& textRenderer) const {
+		return (textRenderer.getFontSize() + 2 * padding) * scale;
+	}
+};
 
 #endif // !BOUND_TEXT_H

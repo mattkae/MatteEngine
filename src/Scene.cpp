@@ -46,7 +46,7 @@ void updateScene(Scene& scene, double dt) {
 	if (isLeftClickDown() && isDefaultFocused()) {
 		int modelIdx = castRayToModel(scene);
 		if (modelIdx > -1) {
-			openModelPanel(scene.ui, modelIdx);
+			//scene.ui.openModelPanel(modelIdx);
 			scene.selectedModelIndex = modelIdx;
 			scene.debugModel.debugBox = scene.modelBoundingBoxes[modelIdx];
 		} else {
@@ -58,7 +58,7 @@ void updateScene(Scene& scene, double dt) {
 		updateDebugModel(scene.debugModel, scene.models[scene.selectedModelIndex].model, scene.mCamera);
 	}
 
-	updateUI(scene.ui, dt);
+	scene.ui.update(dt);
 
 	if (isKeyJustDown(GLFW_KEY_R, 0)) {
 		freeScene(scene);
@@ -101,7 +101,7 @@ void renderNonDeferred(const Scene& scene) {
 }
 
 void renderModels(const Scene& scene, const Shader &shader, bool withMaterial) {
-    renderTerrain(scene.mTerrain, shader, withMaterial);
+    scene.mTerrain.render(shader, withMaterial);
 
     for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
 		if (scene.selectedModelIndex != modelIdx)
@@ -120,7 +120,7 @@ void renderDirect(const Scene& scene) {
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
     glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);`
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -150,8 +150,7 @@ void renderDirect(const Scene& scene) {
     }
 
     glDisable(GL_BLEND);
-
-	renderUI(scene.ui);
+	scene.ui.render();
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -188,13 +187,13 @@ void freeScene(Scene& scene) {
 	scene.numEmitters = 0;
 
 	// UI
-	freeUI(scene.ui);
+	scene.ui.free();
 
 	// Skybox
 	freeSkybox(scene.mSkybox);
 
 	// Terrain
-    freeTerrain(scene.mTerrain);
+    scene.mTerrain.free();
 
 	// Deferred
     scene.mDeferredBuffer.free();

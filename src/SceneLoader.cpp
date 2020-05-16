@@ -72,9 +72,7 @@ void SceneLoader::loadScene(const char* filepath, Scene& scene) {
         }
     }
 
-    initUI(scene.ui);
-    getSceneUI(scene, scene.ui);
-
+    scene.ui.init();
     scene.isDying = false;
     scene.mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
     fclose(file);
@@ -379,5 +377,5 @@ void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_B
         }
     }
 
-    initializeTerrain(terrain, gp);
+    terrain.initialize(gp);
 }

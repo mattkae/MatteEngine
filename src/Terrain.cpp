@@ -1,21 +1,27 @@
 ﻿#include "Terrain.h"
 #include "Logger.h"
 #include "OpenSimplexNoise.h"
-#include "LoadModel.h"
+#include "Vertex.h"
 
-static float random_float(float min, float max)
-{
+inline static float randomFloat(float min, float max) {
     return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min))));
 }
 
-void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
+void Terrain::initialize(const GenerationParameters& params) {
     Logger::logInfo("Generating terrain...");
 
     float squareSize = ((float)params.size / (float)params.granularity) / 2.f;
     int* perm = getSimplexArray(params.permSize);
     int permIndexCap = (params.permSize / 2) - 1;
 
-    LoadMesh mesh;
+    unsigned int numVertices = params.granularity * params.granularity;
+    unsigned int numIndices = numVertices * 6;
+    GLint* indicies = new GLint[numIndices];
+    unsigned int indicesIdx = 0;
+
+    Vertex* vertices = new Vertex[numVertices];
+    unsigned int vertexIdx = 0;
+
     for (int yCoord = 0; yCoord < params.granularity; yCoord++) {
         for (int xCoord = 0; xCoord < params.granularity; xCoord++) {
             float height = calculateSimplexValue(
@@ -23,57 +29,61 @@ void initializeTerrain(Terrain& terrain, const GenerationParameters& params) {
                 params.scaleFactor, params.ampFactor, params.frequencyFactor,
                 params.numOctaves, perm, permIndexCap);
             Vector3f position = getVec3(squareSize * xCoord, height, squareSize * yCoord);
-
-            mesh.vertices.push_back({ position });
+            vertices[vertexIdx++] = { position };
 
             if (yCoord != params.granularity - 1 && xCoord != params.granularity - 1) {
                 GLuint idx = yCoord * params.granularity + xCoord;
-                mesh.indices.push_back(idx);
-                mesh.indices.push_back(idx + 1);
-                mesh.indices.push_back(idx + params.granularity);
-                mesh.indices.push_back(idx + params.granularity);
-                mesh.indices.push_back(idx + params.granularity + 1);
-                mesh.indices.push_back(idx + 1);
+                indicies[indicesIdx++] = idx;
+                indicies[indicesIdx++] = idx + 1;
+                indicies[indicesIdx++] = idx + params.granularity;
+                indicies[indicesIdx++] = idx + params.granularity;
+                indicies[indicesIdx++] = idx + params.granularity + 1;
+                indicies[indicesIdx++] = idx + 1;
             }
         }
     }
 
     // Calculate normals
-    for (size_t indexIndex = 0; indexIndex < mesh.indices.size(); indexIndex += 3) {
-        if (indexIndex + 2 >= mesh.indices.size()) {
+    for (size_t indexIndex = 0; indexIndex < numIndices; indexIndex += 3) {
+        if (indexIndex + 2 >= numIndices) {
             break;
         }
 
-        auto thirdIndex = mesh.indices.at(indexIndex + 2);
-        if (static_cast<size_t>(thirdIndex) >= mesh.vertices.size()) {
+        auto thirdIndex = indicies[indexIndex + 2];
+        if (static_cast<size_t>(thirdIndex) >= numVertices) {
             break;
 		}
 
-        auto firstIndex = mesh.indices.at(indexIndex);
-        auto secondIndex = mesh.indices.at(indexIndex + 1);
+        GLint firstIndex = indicies[indexIndex];
+        GLint secondIndex = indicies[indexIndex + 1];
 
-        auto normal = normalize(cross(mesh.vertices[firstIndex].position - mesh.vertices[secondIndex].position, 
-			mesh.vertices[thirdIndex].position - mesh.vertices[secondIndex].position));
-        mesh.vertices[firstIndex].normal = normal;
-        mesh.vertices[secondIndex].normal = normal;
-        mesh.vertices[thirdIndex].normal = normal;
+        Vector3f normal = normalize(cross(vertices[firstIndex].position - vertices[secondIndex].position, 
+			vertices[thirdIndex].position - vertices[secondIndex].position));
+        vertices[firstIndex].normal = normal;
+        vertices[secondIndex].normal = normal;
+        vertices[thirdIndex].normal = normal;
     }
 
     Logger::logInfo("Finished generating terrain!");
 
-    terrain.mMesh.initialize(mesh, nullptr);
-	terrain.mMesh.material.diffuse = { 0, 0.2, 0 };
+    LoadMaterial material;
+    material.diffuse = Vector3f { 0, 1, 0 };
+    mMesh.initialize(vertices, numVertices, indicies, numIndices, material);
+	mMesh.material.diffuse = { 0, 0.2, 0 };
 
     int halfMapSize = params.granularity / 2;
-	terrain.model = Matrix4x4f { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
-    terrain.model = translateMatrix(terrain.model, getVec3(-halfMapSize, -50, -halfMapSize));
+	model = Matrix4x4f { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
+    model = translateMatrix(model, getVec3(-halfMapSize, -50, -halfMapSize));
+    delete []vertices;
+    delete []indicies;
 }
 
-void renderTerrain(const Terrain& terrain, const Shader& shader, bool withMaterial) {
-	setShaderMat4(shader, "uModel", terrain.model);
-	terrain.mMesh.render(shader, withMaterial);
+void Terrain::render(const Shader& shader, bool withMaterial) const {
+	setShaderMat4(shader, "uModel", model);
+	setShaderBool(shader, "uDisableBones", true);
+	mMesh.render(shader, withMaterial);
 }
 
-void freeTerrain(Terrain& terrain) {
-    terrain.mMesh.free();
+void Terrain::free() {
+    mMesh.free();
 }

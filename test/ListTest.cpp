@@ -1,6 +1,5 @@
 #include "CppUnitTest.h"
 #include "../src/List.h"
-#include "../src/List.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -17,85 +16,69 @@ namespace Containers
 		
 		TEST_METHOD(EmptyListTest)
 		{
-			List list;
-			list.allocate(1024, sizeof(int));
+			List<int> list;
+			list.allocate(1024);
 			Assert::AreEqual((size_t)1024, list.capacity);
-			Assert::AreEqual(sizeof(int), list.elementSize);
-			Assert::AreEqual((size_t)(1024 * sizeof(int)), list.sizeBytes);
 			Assert::AreEqual((size_t)0, list.numElements);
-			list.deallocate();
+			list.free();
 		}
 
 		TEST_METHOD(AddToListTest)
 		{
-			List list;
-			list.allocate(1024, sizeof(int));
+			List<int> list;
+			list.allocate(1024);
 			int five = 5;
 			list.add(&five);
 			Assert::AreEqual((size_t)1024, list.capacity);
-			Assert::AreEqual(sizeof(int), list.elementSize);
-			Assert::AreEqual((size_t)(1024 * sizeof(int)), list.sizeBytes);
 			Assert::AreEqual((size_t)1, list.numElements);
 
-			int value = ((int*)(list.data))[0];
-			Assert::AreEqual(five, value);
+			Assert::AreEqual(five, *list.getValue(0));
 
 			int six = 6;
 			list.add(&six);
-			value = ((int*)(list.data))[1];
-			Assert::AreEqual(six, value);
+			Assert::AreEqual(six, *list.getValue(1));
 
-			list.deallocate();
+			list.free();
 		}
 
 		TEST_METHOD(AddToListTestStruct)
 		{
-			List list;
-			list.allocate(1024, sizeof(TestStruct));
+			List<TestStruct> list;
+			list.allocate(1024);
 			TestStruct inValue;
 			list.add(&inValue);
 			Assert::AreEqual((size_t)1024, list.capacity);
-			Assert::AreEqual(sizeof(TestStruct), list.elementSize);
-			Assert::AreEqual((size_t)(1024 * sizeof(TestStruct)), list.sizeBytes);
 			Assert::AreEqual((size_t)1, list.numElements);
 
-			TestStruct outValue = ((TestStruct*)(list.data))[0];
+			TestStruct outValue = *list.getValue(0);
 			Assert::AreEqual(inValue.foo, outValue.foo);
-			list.deallocate();
+			list.free();
 		}
 
 		TEST_METHOD(GrowWorks)
 		{
-			List list;
-			list.allocate(1024, sizeof(double));
+			List<double> list;
+			list.allocate(1024);
 			Assert::AreEqual((size_t)1024, list.capacity);
-			Assert::AreEqual(sizeof(double), list.elementSize);
-			Assert::AreEqual((size_t)(1024 * sizeof(double)), list.sizeBytes);
 			Assert::AreEqual((size_t)0, list.numElements);
 
 			list.grow(2048);
 			Assert::AreEqual((size_t)2048, list.capacity);
-			Assert::AreEqual(sizeof(double), list.elementSize);
-			Assert::AreEqual((size_t)(2048 * sizeof(double)), list.sizeBytes);
 			Assert::AreEqual((size_t)0, list.numElements);
 
-			list.deallocate();
+			list.free();
 		}
 
 		TEST_METHOD(DeallocateWorks)
 		{
-			List list;
-			list.allocate(1024, sizeof(double));
+			List<double> list;
+			list.allocate(1024);
 			Assert::AreEqual((size_t)1024, list.capacity);
-			Assert::AreEqual(sizeof(double), list.elementSize);
-			Assert::AreEqual((size_t)(1024 * sizeof(double)), list.sizeBytes);
 			Assert::AreEqual((size_t)0, list.numElements);
 
-			list.deallocate();
+			list.free();
 
 			Assert::AreEqual((size_t)0, list.capacity);
-			Assert::AreEqual((size_t)0, list.elementSize);
-			Assert::AreEqual((size_t)0, list.sizeBytes);
 			Assert::AreEqual((size_t)0, list.numElements);
 		}
 	};

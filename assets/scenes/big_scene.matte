@@ -28,7 +28,7 @@ textures                assets/texture-info.mattl
     ;;
 ;;
 
-::models
+//::models
     ::
         path        assets/models/Astroboy/astroBoy_walk.mattl
         transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -5 -30 1
@@ -104,7 +104,7 @@ textures                assets/texture-info.mattl
     ;;
 ;;
 
-//::terrain
+::terrain
     size            1000
     granularity     500
     permSize        1000

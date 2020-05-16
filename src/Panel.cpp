@@ -4,7 +4,7 @@
 #include "GlobalApplicationState.h"
 #include "Rectangle.h"
 
-GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfloat windowDimension, GLfloat panelDimension) {
+inline GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfloat windowDimension, GLfloat panelDimension) {
 	switch (positioning) {
 	case UIPositioning::ABSOLUTE:
 		return absolutePosition;
@@ -19,18 +19,18 @@ GLfloat getPositioning(UIPositioning positioning, GLfloat absolutePosition, GLfl
 	}
 }
 
-void setPanelPosition(Panel& panel) {
-	panel.maxWidth = GlobalAppState.floatWidth;
-	panel.maxHeight = GlobalAppState.floatHeight;
-	GLfloat panelWidth = panel.maxWidth * panel.percentageWidth;
-	GLfloat panelHeight = panel.maxHeight * panel.percentageHeight;
+void Panel::update() {
+	maxWidth = GlobalAppState.floatWidth;
+	maxHeight = GlobalAppState.floatHeight;
+	GLfloat panelWidth = maxWidth * percentageWidth;
+	GLfloat panelHeight = maxHeight * percentageHeight;
 
-	GLfloat x = getPositioning(panel.horizontal, panel.absolutePositioning.x, panel.maxWidth, panelWidth);
-	GLfloat y = getPositioning(panel.vertical, panel.absolutePositioning.y, panel.maxHeight, panelHeight);
+	GLfloat x = getPositioning(horizontal, absolutePositioning.x, maxWidth, panelWidth);
+	GLfloat y = getPositioning(vertical, absolutePositioning.y, maxHeight, panelHeight);
 
-	panel.boundingRect = { x + panel.padding, y, panelWidth, panelHeight };
+	boundingRect = { x + padding, y, panelWidth, panelHeight };
 }
 
-void renderPanel(const Panel& panel, const Shader& shader) {
-	renderRectangle(panel.boundingRect, shader, panel.backgroundColor, panel.borderColor, panel.borderWidth);
+void Panel::render(const Shader& shader) const {
+	boundingRect.render(shader, backgroundColor, borderColor, borderWidth);
 }

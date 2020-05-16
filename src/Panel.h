@@ -28,7 +28,7 @@ struct Panel {
 	GLfloat borderWidth = 1.f;
 	GLfloat padding = 2.f;
 	bool isClosable = true;
-};
 
-void setPanelPosition(Panel& panel);
-void renderPanel(const Panel& panel, const Shader& shader);
+	void update();
+	void render(const Shader& shader) const;
+};

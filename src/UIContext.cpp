@@ -1,25 +1,25 @@
 #include "UIContext.h"
 #include "GlobalApplicationState.h"
 
-void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
-	if (context.shouldOpen && !context.isActive) {
-		context.isActive = true;
-		context.shouldOpen = false;
-	} else if (context.shouldClose && context.isActive) {
-		context.shouldClose = false;
-		context.isActive = false;
+void UIContext::update(const TextRenderer& textRenderer) {
+	if (shouldOpen && !isActive) {
+		isActive = true;
+		shouldOpen = false;
+	} else if (shouldClose && isActive) {
+		shouldClose = false;
+		isActive = false;
 	}
 
-	if (!context.isActive) {
+	if (!isActive) {
 		return;
 	}
 
-	setPanelPosition(context.panel);
-	GLfloat yOffset = GlobalAppState.floatHeight - context.panel.boundingRect.y - context.panel.padding;
-	GLfloat xPosition = context.panel.boundingRect.x + context.panel.padding;
+	panel.update();
+	GLfloat yOffset = GlobalAppState.floatHeight - panel.boundingRect.y - panel.padding;
+	GLfloat xPosition = panel.boundingRect.x + panel.padding;
 	
-	for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
-		UIElement& element = context.uiElements[elementIndex];
+	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
+		UIElement& element = uiElements[elementIndex];
 		switch (element.type) {
 		case UIElement::BUTTON: {
 			Button& button = std::get<Button>(element.element);
@@ -27,67 +27,72 @@ void updateUIContext(UIContext& context, const TextRenderer& textRenderer) {
 				yOffset -= getButtonHeight(button, textRenderer);
 			}
 			button.position = Vector2f { xPosition, yOffset };
-			button.width = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * button.padding;
-			updateButton(button, textRenderer);
+			button.width = GlobalAppState.floatWidth * panel.percentageWidth - 2 * button.padding;
+			button.update(textRenderer);
 			yOffset -= getButtonHeight(button, textRenderer);
 			break;
 		}
 		case UIElement::TEXT_INPUT: {
 			TextInput& textInput = std::get<TextInput>(element.element);
 			if (elementIndex == 0) {
-				yOffset -= getBoundTextHeight(textInput.bt, textRenderer);
+				yOffset -= textInput.bt.getBoundTextHeight(textRenderer);
 			}
 			textInput.bt.rect.x = xPosition;
 			textInput.bt.rect.y = yOffset;
-			textInput.bt.rect.w = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * textInput.bt.padding;
-			updateTextInput(textInput, textRenderer);
-			yOffset -= getBoundTextHeight(textInput.bt, textRenderer);
+			textInput.bt.rect.w = GlobalAppState.floatWidth * panel.percentageWidth - 2 * textInput.bt.padding;
+			textInput.update(textRenderer);
+			yOffset -= textInput.bt.getBoundTextHeight(textRenderer);
 			break;
 		}
 		case UIElement::LABEL: {
 			Label& label = std::get<Label>(element.element);
-			GLfloat btHeight = getBoundTextHeight(label.bt, textRenderer);
+			GLfloat btHeight = label.bt.getBoundTextHeight(textRenderer);
 			if (elementIndex == 0) {
 				yOffset -= btHeight;
 			}
 
 			label.bt.rect.x = xPosition;
 			label.bt.rect.y = yOffset;
-			label.bt.rect.w = GlobalAppState.floatWidth * context.panel.percentageWidth - 2 * label.bt.padding;
+			label.bt.rect.w = GlobalAppState.floatWidth * panel.percentageWidth - 2 * label.bt.padding;
 			label.bt.rect.h = btHeight;
 			yOffset -= btHeight;
 			break;
 		}
 		}
 
-		yOffset -= context.spaceBetweenElements;
+		yOffset -= spaceBetweenElements;
 	}
 }
 
-void renderUIContext(const UIContext& context, const Shader& shader, const TextRenderer& textRenderer) {
-	if (!context.isActive) {
+void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) {
+	if (!isActive) {
 		return;
 	}
 
-	renderPanel(context.panel, shader);
+	panel.render(shader);
 
-	for (size_t elementIndex = 0; elementIndex < context.numUiElements; elementIndex++) {
-		const UIElement& element = context.uiElements[elementIndex];
+	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
+		const UIElement& element = uiElements[elementIndex];
 		switch (element.type) {
-		case UIElement::BUTTON:
-			renderButton(std::get<Button>(element.element), shader, textRenderer);
+		case UIElement::BUTTON: {
+			Button button = std::get<Button>(element.element);
+			button.render(shader, textRenderer);
 			break;
-		case UIElement::TEXT_INPUT:
-			renderTextInput(std::get<TextInput>(element.element), shader, textRenderer);
+		}
+		case UIElement::TEXT_INPUT: {
+			TextInput textInput = std::get<TextInput>(element.element);
+			textInput.render(shader, textRenderer);
 			break;
-		case UIElement::LABEL:
-			renderLabel(std::get<Label>(element.element), shader, textRenderer);
+		}
+		case UIElement::LABEL: {
+			Label label = std::get<Label>(element.element);
+			label.render(shader, textRenderer);
 			break;
+		}
 		}
 	}
 }
 
-void freeUIContext(UIContext& context) {
-	delete[] context.uiElements;
-	context.numUiElements = 0;
+void UIContext::free() {
+	uiElements.free();
 }

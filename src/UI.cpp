@@ -2,54 +2,49 @@
 #include "Scene.h"
 #include "GlobalApplicationState.h"
 
-void initUI(UI& ui) {
-	ui.mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
-	ui.mTextRenderer.initialize(16, (GLchar*)"assets/fonts/consola.ttf");
+void UI::init() {
+	mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
+	mTextRenderer.initialize(16, (GLchar*)"assets/fonts/consola.ttf");
+	panels.allocate(8);
 }
 
-void updateUI(UI& ui, double dt) {
-	for (size_t idx = 0; idx < ui.numPanels; idx++) {
-		UIContext& panel = ui.panels[idx];
+void UI::update(double dt) {
+	for (size_t idx = 0; idx < panels.numElements; idx++) {
+		UIContext& panel = panels[idx];
 		if (panel.shouldOpen) {
-			for (size_t otherIdx = 0; otherIdx < ui.numPanels; otherIdx++) {
+			for (size_t otherIdx = 0; otherIdx < panels.numElements; otherIdx++) {
 				// This only runs once every time you open a new context, so we can afford to be slow but robust
-				if (ui.panels[otherIdx].isActive
-					&& ui.panels[otherIdx].panel.vertical == panel.panel.vertical
-					&& ui.panels[otherIdx].panel.horizontal == panel.panel.horizontal) {
-					ui.panels[otherIdx].isActive = false;
+				if (panels[otherIdx].isActive
+					&& panels[otherIdx].panel.vertical == panel.panel.vertical
+					&& panels[otherIdx].panel.horizontal == panel.panel.horizontal) {
+					panels[otherIdx].isActive = false;
 				}
 			}
 		}
 
-		updateUIContext(panel, ui.mTextRenderer);
+		panel.update(mTextRenderer);
 	}
 }
 
 
-void renderUI(const UI& ui) {
-	useShader(ui.mOrthographicShader);
+void UI::render() const {
+	useShader(mOrthographicShader);
 	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
-	setShaderMat4(ui.mOrthographicShader, "uProjection", projection);
+	setShaderMat4(mOrthographicShader, "uProjection", projection);
 
-	for (size_t idx = 0; idx < ui.numPanels; idx++) {
-		renderUIContext(ui.panels[idx], ui.mOrthographicShader, ui.mTextRenderer);
+	for (size_t idx = 0; idx < panels.numElements; idx++) {
+		panels[idx].render(mOrthographicShader, mTextRenderer);
 	}
 }
 
-void freeUI(UI& ui) {
-	for (size_t idx = 0; idx < ui.numPanels; idx++) {
-		freeUIContext(ui.panels[idx]);
+void UI::free() {
+	for (size_t idx = 0; idx < panels.numElements; idx++) {
+		panels[idx].free();
 	}
 
-	delete[] ui.panels;
-	ui.numPanels = 0;
+	panels.free();
 
-	if (ui.mOrthographicShader > 0) {
-		glDeleteProgram(ui.mOrthographicShader);
+	if (mOrthographicShader > 0) {
+		glDeleteProgram(mOrthographicShader);
 	}
-}
-
-void openModelPanel(UI& ui, size_t index) {
-	size_t modelIndex = ui.modelOffset + index;
-	ui.panels[modelIndex].shouldOpen = true;
 }

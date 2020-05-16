@@ -22,10 +22,11 @@ struct Button {
 	GLfloat width = 128.f;
 	bool* isClicked = nullptr;
 	Rectangle boundingRect;
+	
+	void update(const TextRenderer& textRenderer);
+	void render(const Shader& shader, const TextRenderer& textRenderer);
 };
 
-void updateButton(Button& button, const TextRenderer& textRenderer);
-void renderButton(const Button& button, const Shader& shader, const TextRenderer& textRenderer);
 inline GLfloat getButtonHeight(const Button& button, const TextRenderer& textRenderer) {
 	return (textRenderer.getFontSize() + 2 * button.padding) * button.scale;
 }

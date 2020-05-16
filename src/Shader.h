@@ -68,6 +68,10 @@ inline void setShaderBVec3(const Shader& shader, const GLchar* name, bool first,
 	glUniform3i(getShaderUniform(shader, name), first, second, third);
 }
 
+inline void setShaderBool(const Shader& shader, const GLchar* name, bool value) {
+	glUniform1i(getShaderUniform(shader, name), value);
+}
+
 inline void setShaderVec3WithUniform(const Shader& shader, GLint uniform, const Vector3f& value) {
 	glUniform3f(uniform, value.x, value.y, value.z);
 }

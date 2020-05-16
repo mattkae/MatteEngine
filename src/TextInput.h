@@ -37,7 +37,7 @@ struct TextInput {
 	TextInputValue value;
 	std::string representation = "";
 	LastValue lastValue;
-};
 
-void updateTextInput(TextInput& input, const TextRenderer& textRenderer);
-void renderTextInput(const TextInput& input, const Shader& shader, const TextRenderer& textRenderer);
+	void update(const TextRenderer& textRenderer);
+	void render(const Shader& shader, const TextRenderer& textRenderer);
+};

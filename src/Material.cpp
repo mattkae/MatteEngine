@@ -2,13 +2,12 @@
 #include "TextureUniformConstants.h"
 #include "Logger.h"
 #include "LoadModel.h"
-#include "List.h"
 #include "ModelLoader.h"
 #include <iostream>
 #include <sstream>
 #include <string>
 
-void Material::initialize(LoadMaterial& material, List* list) {
+void Material::initialize(LoadMaterial& material, List<TextureListItem>* list) {
 	emissive = material.emissive;
 	ambient = material.ambient;
 	diffuse = material.diffuse;
@@ -19,8 +18,8 @@ void Material::initialize(LoadMaterial& material, List* list) {
 	transparency = material.transparency;
 
 	if (list != nullptr) {
-		for (int textureIndex = 0; textureIndex < list->numElements; textureIndex++) {
-			const ModelLoader::TextureListItem* texture = (ModelLoader::TextureListItem*)(list->getValue(textureIndex));
+		for (size_t textureIndex = 0; textureIndex < list->numElements; textureIndex++) {
+			const TextureListItem* texture = list->getValue(textureIndex);
 			if (texture->uniqueId == material.diffuseUniqueTextureId) {
 				diffuseTexture = texture->texture;
 			} else if (texture->uniqueId == material.ambientUniqueTextureId) {

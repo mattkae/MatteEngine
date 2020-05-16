@@ -4,11 +4,12 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Vector3f.h"
+#include "List.h"
+#include "TextureListItem.h"
 #include <GL/glew.h>
 #include <vector>
 
 struct LoadMaterial;
-struct List;
 
 struct Material {
     std::string name;
@@ -25,7 +26,7 @@ struct Material {
 	GLuint specularTexture = 0;
 	GLuint ambientTexture = 0;
 
-    void initialize(LoadMaterial& material, List* list);
+    void initialize(LoadMaterial& material, List<TextureListItem>* list);
     void render(const Shader& shader) const;
 };
 

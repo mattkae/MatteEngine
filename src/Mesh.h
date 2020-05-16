@@ -3,11 +3,12 @@
 
 #include "Material.h"
 #include "Shader.h"
+#include "TextureListItem.h"
 #include <GL/glew.h>
 #include <vector>
 
 struct LoadMesh;
-struct List;
+struct LoadMaterial;
 struct Vertex;
 
 struct Mesh {
@@ -17,7 +18,13 @@ struct Mesh {
 	GLuint ebo = 0;
 	GLint numIndices = 0;
 
-	void initialize(LoadMesh& loadMesh, List* list);
+	void initialize(Vertex* vertices,
+		unsigned int numVertices, 
+		GLint* indices, 
+		unsigned int numIndices,
+		LoadMaterial& loadMaterial
+	);
+	void initialize(LoadMesh& loadMesh, List<TextureListItem>* list);
 	void free();
 	void render(const Shader& shader, bool withMaterial = true) const;
 };

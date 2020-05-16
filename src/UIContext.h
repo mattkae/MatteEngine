@@ -6,6 +6,7 @@
 #include "Panel.h"
 #include "Label.h"
 #include "Shader.h"
+#include "List.h"
 #include <vector>
 #include <variant>
 
@@ -29,11 +30,10 @@ struct UIContext {
 	bool isActive = true;
 	bool shouldOpen = false;
 	bool shouldClose = false;
-	UIElement* uiElements = nullptr;
-	size_t numUiElements = 0;
 	GLfloat spaceBetweenElements = 2.f;
-};
+	List<UIElement> uiElements;
 
-void updateUIContext(UIContext& context, const TextRenderer& textRenderer);
-void renderUIContext(const UIContext& context, const Shader& shader, const TextRenderer& renderer);
-void freeUIContext(UIContext& context);
+	void update(const TextRenderer& textRenderer);
+	void render(const Shader& shader, const TextRenderer& renderer);
+	void free();
+};

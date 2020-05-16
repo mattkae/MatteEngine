@@ -5,7 +5,8 @@
 #include <GLFW/glfw3.h>
 
 Rectangle getRectangle(const TextInput& input, const TextRenderer& textRenderer) {
-	return { input.bt.rect.x, input.bt.rect.y, input.bt.rect.w, getBoundTextHeight(input.bt, textRenderer) };
+	GLfloat height = input.bt.getBoundTextHeight(textRenderer);
+	return { input.bt.rect.x, input.bt.rect.y, input.bt.rect.w, height };
 }
 
 inline void setInternalRepresentation(TextInput& textInput, bool force) {
@@ -66,42 +67,42 @@ inline void onStrChange(TextInput& textInput, std::string v) {
 	setInternalRepresentation(textInput, true);
 }
 
-void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
-	setInternalRepresentation(textInput, false);
-	textInput.bt.rect = getRectangle(textInput, textRenderer);
+void TextInput::update(const TextRenderer& textRenderer) {
+	setInternalRepresentation(*this, false);
+	bt.rect = getRectangle(*this, textRenderer);
 
-	if (!textInput.isFocused) {
-		if (isClicked(textInput.bt.rect)) {
-			textInput.focusToken = grabFocus();
-			textInput.isFocused = true;
+	if (!isFocused) {
+		if (bt.rect.isClicked()) {
+			focusToken = grabFocus();
+			isFocused = true;
 		}
-	} else if (textInput.isFocused) {
-		if (isLeftClickDown() && !isClicked(textInput.bt.rect)) {
-			returnFocus(textInput.focusToken);
-			textInput.isFocused = false;
-			onStrChange(textInput, textInput.representation);
+	} else if (isFocused) {
+		if (isLeftClickDown() && !bt.rect.isClicked()) {
+			returnFocus(focusToken);
+			isFocused = false;
+			onStrChange(*this, representation);
 		}
 	}
 
-	int key = getCurrentKeyDown(textInput.focusToken);
-	int scancode = getCurrentScancode(textInput.focusToken);
+	int key = getCurrentKeyDown(focusToken);
+	int scancode = getCurrentScancode(focusToken);
 
-	if (key > -1 && isKeyJustDown(key, textInput.focusToken)) {
+	if (key > -1 && isKeyJustDown(key, focusToken)) {
 		switch (key) {
 		case GLFW_KEY_ENTER:
-			onStrChange(textInput, textInput.representation);
+			onStrChange(*this, representation);
 			break;
 		case GLFW_KEY_LEFT:
-			textInput.cursorPosition = textInput.cursorPosition == 0 ? 0 : textInput.cursorPosition - 1;
+			cursorPosition = cursorPosition == 0 ? 0 : cursorPosition - 1;
 			break;
 		case GLFW_KEY_RIGHT: {
-			textInput.cursorPosition = textInput.cursorPosition == textInput.representation.length() ? textInput.representation.length() : textInput.cursorPosition + 1;
+			cursorPosition = cursorPosition == representation.length() ? representation.length() : cursorPosition + 1;
 			break;
 		}
 		case GLFW_KEY_BACKSPACE:
-			if (!textInput.representation.empty() && textInput.cursorPosition != 0) {
-				textInput.representation.erase(textInput.cursorPosition - 1, 1);
-				textInput.cursorPosition--;
+			if (!representation.empty() && cursorPosition != 0) {
+				representation.erase(cursorPosition - 1, 1);
+				cursorPosition--;
 			}
 			break;
 		case GLFW_KEY_LEFT_SHIFT:
@@ -115,30 +116,30 @@ void updateTextInput(TextInput& textInput, const TextRenderer& textRenderer) {
 				}
 				char c = (char) key;
 			
-				if (!isKeyDown(GLFW_KEY_LEFT_SHIFT, textInput.focusToken)) {
+				if (!isKeyDown(GLFW_KEY_LEFT_SHIFT, focusToken)) {
 					c = std::tolower(c);
 				}
 
-				if (textInput.cursorPosition == 0) {
-					textInput.representation = c + textInput.representation;
-				} else if (textInput.cursorPosition == textInput.representation.size()) {
-					textInput.representation += c;
+				if (cursorPosition == 0) {
+					representation = c + representation;
+				} else if (cursorPosition == representation.size()) {
+					representation += c;
 				} else {
-					textInput.representation = textInput.representation.substr(0, textInput.cursorPosition) + c + textInput.representation.substr(textInput.cursorPosition);
+					representation = representation.substr(0, cursorPosition) + c + representation.substr(cursorPosition);
 				}
 
-				textInput.cursorPosition++;
+				cursorPosition++;
 			}
 		}
 	}
 }
 
-void renderTextInput(const TextInput& textInput, const Shader& shader, const TextRenderer& textRenderer) {
-	renderBoundText(textInput.bt, shader, textRenderer, textInput.representation, textInput.isFocused ? textInput.focusedBackgroundColor : textInput.backgroundColor, textInput.textColor, textInput.cursorPosition);
+void TextInput::render(const Shader& shader, const TextRenderer& textRenderer) {
+	bt.render(shader, textRenderer, representation, isFocused ? focusedBackgroundColor : backgroundColor, textColor, cursorPosition);
 	
-	if (textInput.isFocused) {
-		GLfloat cursorOffset = textRenderer.getStringWidth(textInput.representation.substr(0, textInput.cursorPosition), textInput.bt.scale);
-		Rectangle cursorRect = { textInput.bt.rect.x + textInput.bt.padding + cursorOffset, textInput.bt.rect.y, 2, textRenderer.getFontSize() };
-		renderRectangle(cursorRect, shader, Vector4f { 1, 0, 0, 1 });
+	if (isFocused) {
+		GLfloat cursorOffset = textRenderer.getStringWidth(representation.substr(0, cursorPosition), bt.scale);
+		Rectangle cursorRect = { bt.rect.x + bt.padding + cursorOffset, bt.rect.y, 2, textRenderer.getFontSize() };
+		cursorRect.render(shader, Vector4f { 1, 0, 0, 1 });
 	}
 }

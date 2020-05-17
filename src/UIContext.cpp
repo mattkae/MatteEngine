@@ -94,5 +94,9 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) c
 }
 
 void UIContext::free() {
+	for (size_t eIdx = 0; eIdx < uiElements.numElements; eIdx++) {
+		uiElements[eIdx].free();
+	}
+
 	uiElements.deallocate();
 }

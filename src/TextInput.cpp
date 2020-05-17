@@ -136,3 +136,7 @@ void TextInput::render(const Shader& shader, const TextRenderer& textRenderer) {
 		cursorRect.render(shader, Vector4f { 1, 0, 0, 1 });
 	}
 }
+
+void TextInput::free() {
+	representation.deallocate();
+}

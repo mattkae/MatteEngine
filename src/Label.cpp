@@ -4,3 +4,7 @@
 void Label::render(const Shader& shader, const TextRenderer& textRenderer) {
 	bt.render(shader, textRenderer, text, backgroundColor, textColor);
 }
+
+void Label::free() {
+	text.deallocate();
+}

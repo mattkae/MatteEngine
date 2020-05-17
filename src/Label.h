@@ -13,4 +13,5 @@ struct Label {
 	Vector4f textColor;
 
 	void render(const Shader& shader, const TextRenderer& textRenderer);
+	void free();
 };

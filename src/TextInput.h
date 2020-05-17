@@ -39,4 +39,5 @@ struct TextInput {
 
 	void update(const TextRenderer& textRenderer);
 	void render(const Shader& shader, const TextRenderer& textRenderer);
+	void free();
 };

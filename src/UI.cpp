@@ -80,7 +80,8 @@ size_t UI::showModelSelector(Model* models, size_t numModels) {
 
 	context.uiElements.allocate(numModels + 1);
 	for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
-		UIElement element(UIElementType::BUTTON);
+		UIElement element;
+		element.elementType = UIElementType::BUTTON;
 		Button& button = element.element.button;
 		button.label = "Model";
 		button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
@@ -115,7 +116,8 @@ void UI::showModelPanel(void* modelAddress) {
 	size_t numElements = 4 + 4;
 	context.uiElements.allocate(numElements);
 
-	UIElement translationLabelElement(UIElementType::LABEL);
+	UIElement translationLabelElement;
+	translationLabelElement.elementType = UIElementType::LABEL;
 	Label translationLabel;
 	translationLabel.bt.padding = 2.f;
 	translationLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
@@ -125,7 +127,8 @@ void UI::showModelPanel(void* modelAddress) {
 	context.uiElements.add(&translationLabelElement);
 
 	for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
-		UIElement element(UIElementType::TEXT_INPUT);
+		UIElement element;
+		element.elementType = UIElementType::TEXT_INPUT;
 		TextInput textInput;
 		textInput.bt.padding = 2.f;
 		textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
@@ -137,7 +140,8 @@ void UI::showModelPanel(void* modelAddress) {
 		context.uiElements.add(&element);
 	}
 
-	UIElement scalingLabelElement(UIElementType::LABEL);
+	UIElement scalingLabelElement;
+	scalingLabelElement.elementType = UIElementType::LABEL;
 	Label scalingLabel;
 	scalingLabel.bt.padding = 2.f;
 	scalingLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
@@ -146,7 +150,8 @@ void UI::showModelPanel(void* modelAddress) {
 	scalingLabelElement.element.label = scalingLabel;
 	context.uiElements.add(&scalingLabelElement);
 	for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
-		UIElement element(UIElementType::TEXT_INPUT);
+		UIElement element;
+		element.elementType = UIElementType::TEXT_INPUT;
 		TextInput textInput;
 		textInput.bt.padding = 2.f;
 		textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };

@@ -92,7 +92,7 @@ bool TextRenderer::loadChar(GLchar c)
     return true;
 }
 
-void TextRenderer::renderText(Shader originalShader, std::string str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
+void TextRenderer::renderText(Shader originalShader, String str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
@@ -104,8 +104,8 @@ void TextRenderer::renderText(Shader originalShader, std::string str, Vector2f p
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(mVao);
 
-    for (auto it = str.cbegin(); it != str.cend(); ++it) {
-        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(*it);
+    for (size_t strIdx = 0; strIdx < str.length; strIdx++) {
+        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.value[strIdx]);
 
         GLfloat xStart = position.x + renderInfo.bearing.x * scale;
         GLfloat yStart = position.y - (renderInfo.size.y - renderInfo.bearing.y) * scale;
@@ -148,11 +148,23 @@ void TextRenderer::free() {
 	// @TODO Free all da data
 }
 
-GLfloat TextRenderer::getStringWidth(std::string str, GLfloat scale) const {
+GLfloat TextRenderer::getStringWidth(String str, GLfloat scale) const {
 	GLfloat width = 0;
 
-	for (auto it = str.cbegin(); it != str.cend(); ++it) {
-        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(*it);
+	for (size_t strIdx = 0; strIdx < str.length; strIdx++) {
+        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.value[strIdx]);
+		width += renderInfo.size.x;
+		width += renderInfo.bearing.x;
+    }
+
+	return width;
+}
+
+GLfloat TextRenderer::getStringWidth(StringPointer str, GLfloat scale) const {
+	GLfloat width = 0;
+
+	for (size_t strIdx = 0; strIdx < str.length; strIdx++) {
+        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.value[strIdx]);
 		width += renderInfo.size.x;
 		width += renderInfo.bearing.x;
     }

@@ -6,7 +6,7 @@
 #include "TextRenderer.h"
 #include "Vector3f.h"
 #include "Vector4f.h"
-#include <string>
+#include "String.h"
 
 struct BoundText {
 	GLfloat scale = 1.f;
@@ -14,7 +14,7 @@ struct BoundText {
 	Rectangle rect;
 
 	void render(const Shader& shader, const TextRenderer& textRenderer, 
-		std::string text, const Vector4f& backgroundColor, const Vector4f& textColor, GLint position = 0);
+		String text, const Vector4f& backgroundColor, const Vector4f& textColor, GLint position = 0);
 	
 	inline GLfloat getBoundTextHeight(const TextRenderer& textRenderer) const {
 		return (textRenderer.getFontSize() + 2 * padding) * scale;

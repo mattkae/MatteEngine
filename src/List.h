@@ -11,7 +11,7 @@ struct List {
 	void allocate(size_t size);
 	void add(T* element);
 	void grow(size_t newSize);
-	void free();
+	void deallocate();
 	T* getValue(int index) const;
 	T& operator[](int idx) const; 
 };
@@ -19,25 +19,25 @@ struct List {
 template <typename T>
 void List<T>::allocate(size_t size) {
 	if (data != nullptr) {
-		delete data;
+		deallocate();
 	}
 
-	data = new T[size];
+	data = static_cast<T*>(malloc(sizeof(T) * size));
 	capacity = size;
 	numElements = 0;
 }
 
 template <typename T>
 void List<T>::grow(size_t newSize) {
-	T* newData = new T[newSize];
+	T* newData = static_cast<T*>(malloc(sizeof(T) * newSize));
 
 	if (data != nullptr) {
-		memcpy(newData, this->data, numElements * sizeof(T));
-		delete this->data;
+		memcpy(newData, data, numElements * sizeof(T));
+		delete data;
 	}
 
-	this->data = newData;
-	this->capacity = newSize;
+	data = newData;
+	capacity = newSize;
 }
 
 template <typename T>
@@ -46,32 +46,32 @@ void List<T>::add(T* element) {
 		return;
 	}
 
-	size_t newNumElements = this->numElements + 1;
-	if (newNumElements == this->capacity) {
-		grow(2 * this->capacity);
+	size_t newNumElements = numElements + 1;
+	if (newNumElements > capacity) {
+		grow(2 * capacity);
 	}
 
-	memcpy(&this->data[this->numElements], element, sizeof(T));
-	this->numElements = newNumElements;
+	memcpy(&data[numElements], element, sizeof(T));
+	numElements = newNumElements;
 }
 
 template <typename T>
-void List<T>::free() {
-	if (this->data != nullptr) {
-		delete this->data;
-		this->data = nullptr;
+void List<T>::deallocate() {
+	if (data != nullptr) {
+		free(data);
+		data = nullptr;
 	}
 
-	this->capacity = 0;
-	this->numElements = 0;
+	capacity = 0;
+	numElements = 0;
 }
 
 template <typename T>
 T* List<T>::getValue(int idx) const {
-	return &this->data[idx];
+	return &data[idx];
 }
 
 template <typename T>
 T& List<T>::operator[](int idx) const {
-	return this->data[idx];
+	return data[idx];
 }

@@ -20,9 +20,9 @@ void UIContext::update(const TextRenderer& textRenderer) {
 	
 	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
 		UIElement& element = uiElements[elementIndex];
-		switch (element.type) {
-		case UIElement::BUTTON: {
-			Button& button = std::get<Button>(element.element);
+		switch (element.elementType) {
+		case UIElementType::BUTTON: {
+			Button& button = element.element.button;
 			if (elementIndex == 0) {
 				yOffset -= getButtonHeight(button, textRenderer);
 			}
@@ -32,8 +32,8 @@ void UIContext::update(const TextRenderer& textRenderer) {
 			yOffset -= getButtonHeight(button, textRenderer);
 			break;
 		}
-		case UIElement::TEXT_INPUT: {
-			TextInput& textInput = std::get<TextInput>(element.element);
+		case UIElementType::TEXT_INPUT: {
+			TextInput& textInput = element.element.textInput;
 			if (elementIndex == 0) {
 				yOffset -= textInput.bt.getBoundTextHeight(textRenderer);
 			}
@@ -44,8 +44,8 @@ void UIContext::update(const TextRenderer& textRenderer) {
 			yOffset -= textInput.bt.getBoundTextHeight(textRenderer);
 			break;
 		}
-		case UIElement::LABEL: {
-			Label& label = std::get<Label>(element.element);
+		case UIElementType::LABEL: {
+			Label& label = element.element.label;
 			GLfloat btHeight = label.bt.getBoundTextHeight(textRenderer);
 			if (elementIndex == 0) {
 				yOffset -= btHeight;
@@ -64,7 +64,7 @@ void UIContext::update(const TextRenderer& textRenderer) {
 	}
 }
 
-void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) {
+void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) const {
 	if (!isActive) {
 		return;
 	}
@@ -73,19 +73,19 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) {
 
 	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
 		const UIElement& element = uiElements[elementIndex];
-		switch (element.type) {
-		case UIElement::BUTTON: {
-			Button button = std::get<Button>(element.element);
+		switch (element.elementType) {
+		case UIElementType::BUTTON: {
+			Button button = element.element.button;
 			button.render(shader, textRenderer);
 			break;
 		}
-		case UIElement::TEXT_INPUT: {
-			TextInput textInput = std::get<TextInput>(element.element);
+		case UIElementType::TEXT_INPUT: {
+			TextInput textInput = element.element.textInput;
 			textInput.render(shader, textRenderer);
 			break;
 		}
-		case UIElement::LABEL: {
-			Label label = std::get<Label>(element.element);
+		case UIElementType::LABEL: {
+			Label label = element.element.label;
 			label.render(shader, textRenderer);
 			break;
 		}
@@ -94,5 +94,5 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) {
 }
 
 void UIContext::free() {
-	uiElements.free();
+	uiElements.deallocate();
 }

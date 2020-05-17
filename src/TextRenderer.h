@@ -13,6 +13,7 @@
 #include "GlobalApplicationState.h"
 #include "Vector2f.h"
 #include "Vector3f.h"
+#include "String.h"
 
 struct CharacterRenderInfo {
     GLuint textureId = 0;
@@ -24,10 +25,11 @@ struct CharacterRenderInfo {
 struct TextRenderer {
 public:
     bool initialize(GLint size, GLchar* path);
-    void renderText(Shader originalShader, std::string str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
+    void renderText(Shader originalShader, String str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
     void free();
 	inline GLint getFontSize() const { return mSize; }
-	GLfloat getStringWidth(std::string str, GLfloat scale) const;
+	GLfloat getStringWidth(String str, GLfloat scale) const;
+	GLfloat getStringWidth(StringPointer str, GLfloat scale) const;
 
 private:
     std::map<GLchar, CharacterRenderInfo> mCharToRenderInfoMap;

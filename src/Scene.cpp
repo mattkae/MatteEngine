@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "SceneUI.h"
 #include "Camera.h"
 #include "ImageUtil.h"
 #include "Input.h"

@@ -8,15 +8,62 @@
 #include "Shader.h"
 #include "List.h"
 #include <vector>
-#include <variant>
+
+enum UIElementType {
+	BUTTON = 0,
+	TEXT_INPUT = 1,
+	LABEL = 2
+};
+
+
+struct UIElementUnion {
+	UIElementType elementType;
+
+	UIElementUnion() { }
+
+	UIElementUnion(UIElementType type) {
+		elementType = type;
+		switch (type) {
+		case UIElementType::BUTTON:
+			button = Button();
+			break;
+		case UIElementType::TEXT_INPUT:
+			textInput = TextInput();
+			break;
+		case UIElementType::LABEL:
+			label = Label();
+			break;
+		}
+	}
+
+	~UIElementUnion() {
+		switch (elementType) {
+		case UIElementType::BUTTON:
+			break;
+		case UIElementType::TEXT_INPUT:
+			break;
+		case UIElementType::LABEL:
+			break;
+		}
+	}
+
+	TextInput textInput;
+	Button button;
+	Label label;
+};
 
 struct UIElement {
-	std::variant<TextInput, Button, Label> element;
-	enum {
-		BUTTON = 0,
-		TEXT_INPUT = 1,
-		LABEL = 2
-	} type = UIElement::BUTTON;
+	UIElementUnion element;
+	UIElementType elementType;
+
+	UIElement() { }
+
+	UIElement(UIElementType type) {
+		elementType = type;
+		element = UIElementUnion(type);
+	}
+
+	~UIElement() { }
 };
 
 // TODO: Implement directional contexts, and nested Panels
@@ -34,6 +81,6 @@ struct UIContext {
 	List<UIElement> uiElements;
 
 	void update(const TextRenderer& textRenderer);
-	void render(const Shader& shader, const TextRenderer& renderer);
+	void render(const Shader& shader, const TextRenderer& renderer) const;
 	void free();
 };

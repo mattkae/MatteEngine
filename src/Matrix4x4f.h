@@ -14,6 +14,14 @@ struct Matrix4x4f {
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1 };
+
+	inline Vector3f getTranslation() const {
+		return { values[12], values[13], values[14] };
+	}
+
+	inline Vector3f getScale() const {
+		return { values[0], values[5], values[10] };
+	}
 };
 
 inline Matrix4x4f copyMatrix(const Matrix4x4f matrix) {

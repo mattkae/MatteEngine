@@ -17,12 +17,12 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 
 	switch (textInput.inputType) {
 	case TextInputType::TEXT: 
-		textInput.representation = *textInput.value.sVal;
+		//textInput.representation = *textInput.value.sVal;
 		break;
 	case TextInputType::INT:
 		if (textInput.lastValue.iVal != *textInput.value.iVal) {
 			textInput.lastValue.iVal = *textInput.value.iVal;
-			textInput.representation = std::to_string(*textInput.value.iVal);
+			textInput.representation.fromInteger(*textInput.value.iVal);
 		} else {
 			return;
 		}
@@ -30,7 +30,7 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 	case TextInputType::FLOAT: 
 		if (textInput.lastValue.fVal != *textInput.value.fVal) {
 			textInput.lastValue.fVal = *textInput.value.fVal;
-			textInput.representation = std::to_string(*textInput.value.fVal);
+			textInput.representation.fromFloat(*textInput.value.fVal);
 		} else {
 			return;
 		}
@@ -40,23 +40,23 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 		break;
 	}
 
-	if (textInput.cursorPosition > textInput.representation.length()) {
-		textInput.cursorPosition = textInput.representation.length();
+	if (textInput.cursorPosition > textInput.representation.length) {
+		textInput.cursorPosition = textInput.representation.length;
 	}
 }
 
-inline void onStrChange(TextInput& textInput, std::string v) {
+inline void onStrChange(TextInput& textInput, String v) {
 	switch (textInput.inputType) {
 	case TextInputType::TEXT: {
-		*textInput.value.sVal = v;
+		//*textInput.value.sVal = v;
 		break;
 	}
 	case TextInputType::INT: {
-		*textInput.value.iVal = std::stoi(v);
+		*textInput.value.iVal = v.toInteger();
 		break;
 	}
 	case TextInputType::FLOAT: {
-		*textInput.value.fVal = std::stof(v);
+		*textInput.value.fVal = v.toFloat();
 		break;
 	}
 	default:
@@ -96,12 +96,12 @@ void TextInput::update(const TextRenderer& textRenderer) {
 			cursorPosition = cursorPosition == 0 ? 0 : cursorPosition - 1;
 			break;
 		case GLFW_KEY_RIGHT: {
-			cursorPosition = cursorPosition == representation.length() ? representation.length() : cursorPosition + 1;
+			cursorPosition = cursorPosition == representation.length ? representation.length : cursorPosition + 1;
 			break;
 		}
 		case GLFW_KEY_BACKSPACE:
-			if (!representation.empty() && cursorPosition != 0) {
-				representation.erase(cursorPosition - 1, 1);
+			if (representation.length > 0 && cursorPosition != 0) {
+				representation.erase(cursorPosition - 1);
 				cursorPosition--;
 			}
 			break;
@@ -120,14 +120,7 @@ void TextInput::update(const TextRenderer& textRenderer) {
 					c = std::tolower(c);
 				}
 
-				if (cursorPosition == 0) {
-					representation = c + representation;
-				} else if (cursorPosition == representation.size()) {
-					representation += c;
-				} else {
-					representation = representation.substr(0, cursorPosition) + c + representation.substr(cursorPosition);
-				}
-
+				representation.insert(c, cursorPosition);
 				cursorPosition++;
 			}
 		}
@@ -138,7 +131,7 @@ void TextInput::render(const Shader& shader, const TextRenderer& textRenderer) {
 	bt.render(shader, textRenderer, representation, isFocused ? focusedBackgroundColor : backgroundColor, textColor, cursorPosition);
 	
 	if (isFocused) {
-		GLfloat cursorOffset = textRenderer.getStringWidth(representation.substr(0, cursorPosition), bt.scale);
+		GLfloat cursorOffset = textRenderer.getStringWidth(representation.substring(0, cursorPosition), bt.scale);
 		Rectangle cursorRect = { bt.rect.x + bt.padding + cursorOffset, bt.rect.y, 2, textRenderer.getFontSize() };
 		cursorRect.render(shader, Vector4f { 1, 0, 0, 1 });
 	}

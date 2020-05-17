@@ -7,11 +7,13 @@
 #include "Vector4f.h"
 #include "Vector2f.h"
 #include "Rectangle.h"
+#include "String.h"
 
 struct TextRenderer;
+struct UI;
 
 struct Button {
-	std::string label = "";
+	String label;
 	GLfloat padding = 0;
 	Vector2f position;
 	GLfloat scale = 1.0;
@@ -20,11 +22,15 @@ struct Button {
 	Vector4f textColor;
 	Vector4f borderColor;
 	GLfloat width = 128.f;
-	bool* isClicked = nullptr;
+	bool isClicked = false;
+	UI* uiRef;
+	void (UI::*onClick)(void*);
+	void* data;
 	Rectangle boundingRect;
 	
 	void update(const TextRenderer& textRenderer);
 	void render(const Shader& shader, const TextRenderer& textRenderer);
+	void free();
 };
 
 inline GLfloat getButtonHeight(const Button& button, const TextRenderer& textRenderer) {

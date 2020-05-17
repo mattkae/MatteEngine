@@ -1,5 +1,4 @@
 #include "SceneLoader.h"
-#include "SceneUI.h"
 #include "Sphere.h"
 #include "StringUtil.h"
 #include "FileHelper.h"
@@ -73,6 +72,7 @@ void SceneLoader::loadScene(const char* filepath, Scene& scene) {
     }
 
     scene.ui.init();
+    scene.ui.showModelSelector(scene.models, scene.numModels);
     scene.isDying = false;
     scene.mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
     fclose(file);

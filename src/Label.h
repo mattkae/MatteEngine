@@ -3,11 +3,12 @@
 #include "Vector4f.h"
 #include "Vector3f.h"
 #include "Shader.h"
+#include "String.h"
 
 struct TextRenderer;
 struct Label {
 	BoundText bt;
-	std::string text;
+	String text;
 	Vector4f backgroundColor;
 	Vector4f textColor;
 

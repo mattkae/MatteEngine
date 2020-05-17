@@ -3,8 +3,8 @@
 #include "TextRenderer.h"
 #include "UIEvent.h"
 #include "BoundText.h"
+#include "String.h"
 #include <GL/glew.h>
-#include <string>
 #include <functional>
 
 enum TextInputType {
@@ -16,7 +16,6 @@ enum TextInputType {
 union TextInputValue {
 	int* iVal;
 	float* fVal;
-	std::string* sVal;
 };
 
 union LastValue {
@@ -35,7 +34,7 @@ struct TextInput {
 
 	TextInputType inputType = TextInputType::TEXT;
 	TextInputValue value;
-	std::string representation = "";
+	String representation;
 	LastValue lastValue;
 
 	void update(const TextRenderer& textRenderer);

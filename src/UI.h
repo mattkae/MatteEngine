@@ -6,9 +6,9 @@
 #include "Panel.h"
 #include "UIContext.h"
 #include "List.h"
+#include "Quaternion.h"
 #include <vector>
 
-typedef size_t PanelHandle;
 struct Model;
 struct Terrain;
 
@@ -22,9 +22,10 @@ struct UI {
 	 void render() const;
 	 void free();
 
-	 PanelHandle showModelSelector(Model* models, size_t numModels);
-	 PanelHandle showModelPanel(Model& model);
-	 PanelHandle showTerrainPanel(Terrain& terrain);
+	 size_t getNextPanelIdx();
+	 size_t showModelSelector(Model* models, size_t numModels);
+	 void showModelPanel(void* modelAddress);
+	 size_t showTerrainPanel(Terrain& terrain);
 
-	 void hidePanel(PanelHandle handle);
+	 void hidePanel(size_t index);
 };

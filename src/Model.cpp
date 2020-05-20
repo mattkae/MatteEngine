@@ -5,6 +5,10 @@
 
 void Model::update(float dt) {
     animationController.update(dt, bones, numBones, boneModels, inverseRootNode, rootNode);
+    Matrix4x4f translationMatrix = setTranslation(Matrix4x4f(), translation);
+	Matrix4x4f rotationMatrix = rotation.normalize().toMatrix();
+	Matrix4x4f scalingMatrix = setScale(Matrix4x4f(), scale);
+    model = scalingMatrix * rotationMatrix * translationMatrix;
 }
 
 void Model::render(const Shader& shader, bool withMaterial) const {

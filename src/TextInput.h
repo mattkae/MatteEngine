@@ -1,11 +1,9 @@
 #pragma once
 #include "Shader.h"
 #include "TextRenderer.h"
-#include "UIEvent.h"
 #include "BoundText.h"
 #include "String.h"
 #include <GL/glew.h>
-#include <functional>
 
 enum TextInputType {
 	TEXT = 0,

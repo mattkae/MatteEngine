@@ -52,6 +52,7 @@
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\SceneLoader.cpp" />
     <ClCompile Include="..\..\src\ModelLoader.cpp" />
+    <ClCompile Include="..\..\src\SceneUIController.cpp" />
     <ClCompile Include="..\..\src\Shader.cpp" />
     <ClCompile Include="..\..\src\OpenSimplexNoise.cpp" />
     <ClCompile Include="..\..\src\Skybox.cpp" />
@@ -79,6 +80,7 @@
     <ClInclude Include="..\..\src\Camera.h" />
     <ClInclude Include="..\..\src\DebugRender.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
+    <ClInclude Include="..\..\src\SceneUIController.h" />
     <ClInclude Include="..\..\src\String.h" />
     <ClInclude Include="..\..\src\FileHelper.h" />
     <ClInclude Include="..\..\src\GlobalApplicationState.h" />

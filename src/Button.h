@@ -10,7 +10,8 @@
 #include "String.h"
 
 struct TextRenderer;
-struct UI;
+struct SceneUIController;
+
 
 struct Button {
 	String label;
@@ -22,10 +23,11 @@ struct Button {
 	Vector4f textColor;
 	Vector4f borderColor;
 	GLfloat width = 128.f;
+	int focusToken = -1;
 	bool isClicked = false;
-	UI* uiRef;
-	void (UI::*onClick)(void*);
-	void* data;
+	SceneUIController* uiRef;
+	void (SceneUIController::*onClick)(int);
+	int data;
 	Rectangle boundingRect;
 	
 	void update(const TextRenderer& textRenderer);

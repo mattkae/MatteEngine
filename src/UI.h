@@ -7,25 +7,26 @@
 #include "UIContext.h"
 #include "List.h"
 #include "Quaternion.h"
-#include <vector>
 
 struct Model;
 struct Terrain;
+struct SceneUIController;
 
 struct UI {
-	 Shader mOrthographicShader = 0;
-	 TextRenderer mTextRenderer;
-	 List<UIContext> panels;
+	SceneUIController* controller;
+	Shader mOrthographicShader = 0;
+	TextRenderer mTextRenderer;
+	List<UIContext> panels;
 
-	 void init();
-	 void update(double dt);
-	 void render() const;
-	 void free();
+	void init();
+	void update(double dt);
+	void render() const;
+	void free();
 
-	 size_t getNextPanelIdx();
-	 size_t showModelSelector(Model* models, size_t numModels);
-	 void showModelPanel(void* modelAddress);
-	 size_t showTerrainPanel(Terrain& terrain);
+	size_t getNextPanelIdx();
+	size_t showPanel(UIContext* context, int index);
+	size_t showModelSelector(Model* models, size_t numModels);
+	size_t showModelEditor(Model* model);
 
-	 void hidePanel(size_t index);
+	void hidePanel(size_t index);
 };

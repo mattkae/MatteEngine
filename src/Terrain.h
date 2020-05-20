@@ -20,6 +20,7 @@ struct GenerationParameters {
 struct Terrain {
     Matrix4x4f model;
     Mesh mMesh;
+    GenerationParameters mParams;
 
     void initialize(const GenerationParameters& params);
     void render(const Shader& shader, bool withMaterial = true) const;

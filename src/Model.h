@@ -3,8 +3,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Shader.h"
+#include "Quaternion.h"
 #include <string>
-#include <vector>
 #include "Matrix4x4f.h"
 #include "AnimationController.h"
 
@@ -14,7 +14,12 @@ struct Mesh;
 struct LoadModel;
 
 constexpr unsigned int MAX_BONES = 64;
+
+// @TODO Break this up into ModelRender and ModelUpdate
 struct Model {
+    Vector3f translation;
+    Vector3f scale = Vector3f{ 1.f, 1.f, 1.f };
+    Quaternion rotation;
     Matrix4x4f model;
     Matrix4x4f inverseRootNode;
 

@@ -5,8 +5,16 @@
 #include "Logger.h"
 #include "Ray.h"
 #include "SceneLoader.h"
-#include <fstream>
 #include <GLFW/glfw3.h>
+
+void Scene::initialize() {
+	uiController.scene = this;
+	ui.controller = &uiController;
+	ui.init();
+    ui.showModelSelector(models, numModels);
+    isDying = false;
+    mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
+}
 
 int castRayToModel(Scene& scene) {
 	Ray rayWorld = clickToRay(scene.mCamera);
@@ -29,50 +37,49 @@ int castRayToModel(Scene& scene) {
 	return retval;
 }
 
-void updateScene(Scene& scene, double dt) {
+void Scene::update(double dt) {
 	float dtFloat = static_cast<float>(dt);
-
-    updateCamera(scene.mCamera, dtFloat);
-
-	for (unsigned int modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
-		scene.models[modelIdx].update(dtFloat);
-	}
-
-	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
-		updateParticleEmitter(scene.emitters[eIdx], dtFloat);
-	}
-
 	if (isLeftClickDown() && isDefaultFocused()) {
-		int modelIdx = castRayToModel(scene);
+		int modelIdx = castRayToModel(*this);
 		if (modelIdx > -1) {
-			//scene.ui.openModelPanel(modelIdx);
-			scene.selectedModelIndex = modelIdx;
-			scene.debugModel.debugBox = scene.modelBoundingBoxes[modelIdx];
+			uiController.selectModel(modelIdx);
 		} else {
-			scene.selectedModelIndex = -1;
+			uiController.deselectModel();
 		}
 	}
 
-	if (scene.selectedModelIndex > -1) {
-		updateDebugModel(scene.debugModel, scene.models[scene.selectedModelIndex].model, scene.mCamera);
+	ui.update(dt);
+
+    updateCamera(mCamera, dtFloat);
+
+	for (unsigned int modelIdx = 0; modelIdx < numModels; modelIdx++) {
+		models[modelIdx].update(dtFloat);
 	}
 
-	scene.ui.update(dt);
+	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
+		updateParticleEmitter(emitters[eIdx], dtFloat);
+	}
+
+
+	if (selectedModelIndex > -1) {
+		updateDebugModel(debugModel, models[selectedModelIndex].model, mCamera);
+	}
+
 
 	if (isKeyJustDown(GLFW_KEY_R, 0)) {
-		freeScene(scene);
-		SceneLoader::loadScene("assets/scenes/big_scene.matte", scene);
+		free();
+		SceneLoader::loadScene("assets/scenes/big_scene.matte", *this);
 	}
 }
 
-void renderShadows(const Scene& scene) {
-	if (!scene.mUseShadows)
+void Scene::renderShadows() {
+	if (!mUseShadows)
         return;
 
-	useShader(scene.mShadowShader);
+	useShader(mShadowShader);
 
-    for (auto light : scene.lights) {
-		renderLightShadows(light, scene.mShadowShader, scene);
+    for (auto light : lights) {
+		renderLightShadows(light, mShadowShader, *this);
     }
 
     GLenum err;
@@ -81,40 +88,41 @@ void renderShadows(const Scene& scene) {
     }
 }
 
-void renderGBuffer(const Scene& scene) {
-	if (!scene.useDefferredRendering) {
+void Scene::renderGBuffer() {
+	if (!useDefferredRendering) {
         return;
     }
 
-    scene.mDeferredBuffer.renderToBuffer(scene.mCamera, scene);
+    mDeferredBuffer.renderToBuffer(mCamera, *this);
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error during gBuffer pass: %d\n", err);
     }
 }
 
-void renderNonDeferred(const Scene& scene) {
-	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
-		renderParticleEmitter(scene.emitters[eIdx], scene.mCamera);
+void Scene::renderNonDeferred() {
+	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
+		renderParticleEmitter(emitters[eIdx], mCamera);
 	}
 }
 
-void renderModels(const Scene& scene, const Shader &shader, bool withMaterial) {
-    scene.mTerrain.render(shader, withMaterial);
+void Scene::renderModels(const Shader &shader, bool withMaterial) const {
+    mTerrain.render(shader, withMaterial);
 
-    for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
-		if (scene.selectedModelIndex != modelIdx)
-			scene.models[modelIdx].render(shader, withMaterial);
+    for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
+		if (selectedModelIndex != modelIdx) {
+			models[modelIdx].render(shader, withMaterial);
+		}
     }
 }
 
-void renderDebug(const Scene& scene) {
-	if (scene.selectedModelIndex > -1) {
-		renderDebugModel(scene.debugModel, scene.models[scene.selectedModelIndex].model, scene.mSceneShader);
+void Scene::renderDebug() {
+	if (selectedModelIndex > -1) {
+		renderDebugModel(debugModel, models[selectedModelIndex].model, mSceneShader);
 	}
 }
 
-void renderDirect(const Scene& scene) {
+void Scene::renderDirect() {
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
@@ -124,32 +132,32 @@ void renderDirect(const Scene& scene) {
 	glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	renderSkybox(scene.mSkybox, scene.mCamera);
+	renderSkybox(mSkybox, mCamera);
 
-	if (!scene.useDefferredRendering) {
-		renderNonDeferred(scene);
+	if (!useDefferredRendering) {
+		renderNonDeferred();
 	}
 
-	useShader(scene.mSceneShader);
-    renderCamera(scene.mCamera, scene.mSceneShader, true);
+	useShader(mSceneShader);
+    renderCamera(mCamera, mSceneShader, true);
 
-	setShaderVec3(scene.mSceneShader, "uAmbient", getVec3(0.3f));
-	setShaderInt(scene.mSceneShader, "uNumLights", scene.numLightsUsed);
+	setShaderVec3(mSceneShader, "uAmbient", getVec3(0.3f));
+	setShaderInt(mSceneShader, "uNumLights", numLightsUsed);
 
-    for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
-		renderLight(scene.lights[lidx], scene.mSceneShader, lidx);
+    for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
+		renderLight(lights[lidx], mSceneShader, lidx);
     }
 
-    if (scene.useDefferredRendering) {
-        scene.mDeferredBuffer.renderToScreen(scene.mSceneShader);
+    if (useDefferredRendering) {
+        mDeferredBuffer.renderToScreen(mSceneShader);
     } else {
-        renderModels(scene, scene.mSceneShader);
-		renderDebug(scene);
-		renderNonDeferred(scene);
+        renderModels(mSceneShader);
+		renderDebug();
+		renderNonDeferred();
     }
 
     glDisable(GL_BLEND);
-	scene.ui.render();
+	ui.render();
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -158,50 +166,50 @@ void renderDirect(const Scene& scene) {
 	glDisable(GL_DEPTH_TEST);
 }
 
-void renderScene(const Scene& scene) {
-	renderShadows(scene);
-	renderGBuffer(scene);
-	renderDirect(scene);
+void Scene::render() {
+	renderShadows();
+	renderGBuffer();
+	renderDirect();
 }
 
-void freeScene(Scene& scene) {
-	scene.isDying = true;
+void Scene::free() {
+	isDying = true;
 
 	// Models
-	for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
-        scene.models[modelIdx].free();
+	for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
+        models[modelIdx].free();
     }
-	scene.numModels = 0;
+	numModels = 0;
 	
 	// Lights
-	for (size_t lidx = 0; lidx < scene.numLightsUsed; lidx++) {
-		freeLight(scene.lights[lidx]);
+	for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
+		freeLight(lights[lidx]);
     }
-	scene.numLightsUsed = 0;
+	numLightsUsed = 0;
 
 	// Particle emitters
-	for (size_t eIdx = 0; eIdx < scene.numEmitters; eIdx++) {
-		freeParticleEmitter(scene.emitters[eIdx]);
+	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
+		freeParticleEmitter(emitters[eIdx]);
 	}
-	scene.numEmitters = 0;
+	numEmitters = 0;
 
 	// UI
-	scene.ui.free();
+	ui.free();
 
 	// Skybox
-	freeSkybox(scene.mSkybox);
+	freeSkybox(mSkybox);
 
 	// Terrain
-    scene.mTerrain.free();
+    mTerrain.free();
 
 	// Deferred
-    scene.mDeferredBuffer.free();
+    mDeferredBuffer.free();
 
 	// Shaders
-	if (scene.mShadowShader > 0) {
-		glDeleteProgram(scene.mShadowShader);
+	if (mShadowShader > 0) {
+		glDeleteProgram(mShadowShader);
 	}
 
 	// Debug program
-	freeDebug(scene.debugModel);
+	freeDebug(debugModel);
 }

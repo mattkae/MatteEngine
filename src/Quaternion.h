@@ -3,11 +3,12 @@
 #include "Matrix4x4f.h"
 
 struct Quaternion {
-	GLfloat w = 0;
+	GLfloat w = 1.f;
 	GLfloat x = 0;
 	GLfloat y = 0;
 	GLfloat z = 0;
 
+	GLfloat* operator [](int index);
 	Quaternion operator*(const Quaternion& other) const;
 	Quaternion operator*(const GLfloat& scale) const;
 	Quaternion operator+(const Quaternion& other) const;

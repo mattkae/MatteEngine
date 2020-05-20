@@ -72,21 +72,18 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) c
 	panel.render(shader);
 
 	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
-		const UIElement& element = uiElements[elementIndex];
+		UIElement& element = uiElements[elementIndex];
 		switch (element.elementType) {
 		case UIElementType::BUTTON: {
-			Button button = element.element.button;
-			button.render(shader, textRenderer);
+			element.element.button.render(shader, textRenderer);
 			break;
 		}
 		case UIElementType::TEXT_INPUT: {
-			TextInput textInput = element.element.textInput;
-			textInput.render(shader, textRenderer);
+			element.element.textInput.render(shader, textRenderer);
 			break;
 		}
 		case UIElementType::LABEL: {
-			Label label = element.element.label;
-			label.render(shader, textRenderer);
+			element.element.label.render(shader, textRenderer);
 			break;
 		}
 		}

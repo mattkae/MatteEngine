@@ -11,6 +11,7 @@ struct List {
 	void allocate(size_t size);
 	void add(T* element);
 	void grow(size_t newSize);
+	void set(T* value, size_t index);
 	void deallocate();
 	T* getValue(int index) const;
 	T& operator[](int idx) const; 
@@ -38,6 +39,15 @@ void List<T>::grow(size_t newSize) {
 
 	data = newData;
 	capacity = newSize;
+}
+
+template <typename T>
+void List<T>::set(T* value, size_t index) {
+	if (index >= capacity) {
+		grow(index * 2);
+	}
+
+	memcpy(&data[index], value, sizeof(T));
 }
 
 template <typename T>

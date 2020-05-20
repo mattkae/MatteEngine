@@ -188,7 +188,7 @@ void renderPointShadows(const Light& light, const Shader &shader, const Scene &s
         Matrix4x4f view = getLookAt(light.position, light.position + currentDirection, up);
         Matrix4x4f proj = getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, 0.7853982f, GlobalAppState.aspectRatio);
 		setShaderMat4(shader, "uViewProj", proj * view);
-		renderModels(scene, shader);
+		scene.renderModels(shader);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -208,7 +208,7 @@ void renderDirectionalShadows(const Light& light, const Shader shader, const Sce
 
 	setShaderMat4(shader, "uView", light.view);
 	setShaderMat4(shader, "uProjection", light.projection);
-    renderModels(scene, shader, false);
+    scene.renderModels(shader, false);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);

@@ -10,14 +10,11 @@
 #include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
 #include "UI.h"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <thread>
 #include "shaders/Light.shared.cpp"
 #include "Box.h"
 #include "DebugRender.h"
 #include "ModelLoader.h"
+#include "SceneUIController.h"
 
 struct Scene {
 	ModelLoader modelLoader;
@@ -44,11 +41,19 @@ struct Scene {
     bool mUseShadows = false;
     BetterCamera mCamera;
 	bool isDying = false;
-};
+	SceneUIController uiController;
 
-void updateScene(Scene& scene, double dt);
-void renderScene(const Scene& scene);
-void freeScene(Scene& scene);
-void renderModels(const Scene& scene, const Shader &shader, bool withMaterial = true);
+	void initialize();
+	void update(double dt);
+	void render();
+	void free();
+
+	void renderShadows();
+	void renderGBuffer();
+	void renderNonDeferred();
+	void renderDebug();
+	void renderDirect();
+	void renderModels(const Shader &shader, bool withMaterial = true) const;
+};
 
 #endif

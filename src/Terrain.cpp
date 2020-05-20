@@ -76,6 +76,8 @@ void Terrain::initialize(const GenerationParameters& params) {
     model = translateMatrix(model, getVec3(-halfMapSize, -50, -halfMapSize));
     delete []vertices;
     delete []indicies;
+
+    mParams = params;
 }
 
 void Terrain::render(const Shader& shader, bool withMaterial) const {

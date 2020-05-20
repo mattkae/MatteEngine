@@ -39,8 +39,8 @@ int main(int argc, const char* argv[]) {
 
         glfwPollEvents();
 
-		updateScene(scene, deltaTime);
-		renderScene(scene);
+		scene.update(deltaTime);
+		scene.render();
 
         glfwSwapBuffers(GlobalWindow);
         frameCount++;
@@ -52,7 +52,7 @@ int main(int argc, const char* argv[]) {
 		}
     }
 
-	freeScene(scene);
+    scene.free();
     cleanup();
     return 0;
 }

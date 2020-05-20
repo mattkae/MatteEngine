@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "GlobalApplicationState.h"
 #include "Model.h"
+#include "SceneUIController.h"
 
 void UI::init() {
 	mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
@@ -66,6 +67,12 @@ size_t UI::getNextPanelIdx() {
 	return panelIdx;
 }
 
+size_t UI::showPanel(UIContext* context, int index) {
+	size_t panelIdx = index < 0 ? getNextPanelIdx() : index;
+	panels.set(context, panelIdx);
+	return panelIdx;
+}
+
 size_t UI::showModelSelector(Model* models, size_t numModels) {
 	size_t panelIdx = getNextPanelIdx();
 	UIContext& context = panels[panelIdx];
@@ -78,19 +85,20 @@ size_t UI::showModelSelector(Model* models, size_t numModels) {
 	context.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
 	context.panel.borderWidth = 2.f;
 
-	context.uiElements.allocate(numModels + 1);
+	context.uiElements.allocate(numModels);
 	for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
 		UIElement element;
-		element.elementType = UIElementType::BUTTON;
-		Button& button = element.element.button;
+		Button button;
 		button.label = "Model";
 		button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
 		button.hoverColor = Vector4f { 0.9, 0.1, 0.0, 1.0 };
 		button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
-		button.data = &models[modelIdx];
-		button.uiRef = this;
-		button.onClick = &UI::showModelPanel;
+		button.data = modelIdx;
+		button.uiRef = controller;
+		button.onClick = &SceneUIController::selectModel;
 		button.padding = 2.f;
+		element.elementType = UIElementType::BUTTON;
+		element.element.button = button;
 		context.uiElements.add(&element);
 	}
 
@@ -99,10 +107,8 @@ size_t UI::showModelSelector(Model* models, size_t numModels) {
 
 const size_t numVec3 = 3;
 
-void UI::showModelPanel(void* modelAddress) {
+size_t UI::showModelEditor(Model* model) {
 	size_t panelIdx = getNextPanelIdx();
-	Model* model = static_cast<Model*>(modelAddress);
-
 	UIContext& context = panels[panelIdx];
 	context.shouldOpen = true;
 	context.panel.percentageHeight = 0.9f;
@@ -113,53 +119,92 @@ void UI::showModelPanel(void* modelAddress) {
 	context.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
 	context.panel.borderWidth = 2.f;
 
-	size_t numElements = 4 + 4;
+	size_t numElements = 3 * (numVec3 + 1); // Translation, scaling, rotation with labels
 	context.uiElements.allocate(numElements);
 
-	UIElement translationLabelElement;
-	translationLabelElement.elementType = UIElementType::LABEL;
-	Label translationLabel;
-	translationLabel.bt.padding = 2.f;
-	translationLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-	translationLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
-	translationLabel.text = "Translation";
-	translationLabelElement.element.label = translationLabel;
-	context.uiElements.add(&translationLabelElement);
+	{
+		UIElement translationLabelElement;
+		Label translationLabel;
+		translationLabel.bt.padding = 2.f;
+		translationLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
+		translationLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
+		translationLabel.text = "Translation";
+		translationLabelElement.elementType = UIElementType::LABEL;
+		translationLabelElement.element.label = translationLabel;
+		context.uiElements.add(&translationLabelElement);
 
-	for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
-		UIElement element;
-		element.elementType = UIElementType::TEXT_INPUT;
-		TextInput textInput;
-		textInput.bt.padding = 2.f;
-		textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
-		textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
-		textInput.inputType = TextInputType::FLOAT;
-		textInput.textColor = Vector4f { 1, 1, 1, 1 };
-		textInput.value.fVal = &model->model.values[12 + tIdx];
-		element.element.textInput = textInput;
-		context.uiElements.add(&element);
+		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
+			UIElement element;
+			TextInput textInput;
+			textInput.bt.padding = 2.f;
+			textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
+			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
+			textInput.inputType = TextInputType::FLOAT;
+			textInput.textColor = Vector4f { 1, 1, 1, 1 };
+			textInput.value.fVal = model->translation[tIdx];
+			element.elementType = UIElementType::TEXT_INPUT;
+			element.element.textInput = textInput;
+			context.uiElements.add(&element);
+		}
 	}
 
-	UIElement scalingLabelElement;
-	scalingLabelElement.elementType = UIElementType::LABEL;
-	Label scalingLabel;
-	scalingLabel.bt.padding = 2.f;
-	scalingLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-	scalingLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
-	scalingLabel.text = "Scale";
-	scalingLabelElement.element.label = scalingLabel;
-	context.uiElements.add(&scalingLabelElement);
-	for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
-		UIElement element;
-		element.elementType = UIElementType::TEXT_INPUT;
-		TextInput textInput;
-		textInput.bt.padding = 2.f;
-		textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
-		textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
-		textInput.inputType = TextInputType::FLOAT;
-		textInput.textColor = Vector4f { 1, 1, 1, 1 };
-		textInput.value.fVal = &model->model.values[5 * tIdx];
-		element.element.textInput = textInput;
-		context.uiElements.add(&element);
+	{
+		UIElement scalingLabelElement;
+		Label scalingLabel;
+		scalingLabel.bt.padding = 2.f;
+		scalingLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
+		scalingLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
+		scalingLabel.text = "Scale";
+		scalingLabelElement.elementType = UIElementType::LABEL;
+		scalingLabelElement.element.label = scalingLabel;
+		context.uiElements.add(&scalingLabelElement);
+		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
+			UIElement element;
+			TextInput textInput;
+			textInput.bt.padding = 2.f;
+			textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
+			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
+			textInput.inputType = TextInputType::FLOAT;
+			textInput.textColor = Vector4f { 1, 1, 1, 1 };
+			textInput.value.fVal = model->scale[tIdx];
+			element.elementType = UIElementType::TEXT_INPUT;
+			element.element.textInput = textInput;
+			context.uiElements.add(&element);
+		}
 	}
+
+	{
+		UIElement rotationLabelElement;
+		Label rotationLabel;
+		rotationLabel.bt.padding = 2.f;
+		rotationLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
+		rotationLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
+		rotationLabel.text = "Rotation";
+		rotationLabelElement.elementType = UIElementType::LABEL;
+		rotationLabelElement.element.label = rotationLabel;
+		context.uiElements.add(&rotationLabelElement);
+		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
+			UIElement element;
+			TextInput textInput;
+			textInput.bt.padding = 2.f;
+			textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
+			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
+			textInput.inputType = TextInputType::FLOAT;
+			textInput.textColor = Vector4f { 1, 1, 1, 1 };
+			textInput.value.fVal = model->rotation[tIdx];
+			element.elementType = UIElementType::TEXT_INPUT;
+			element.element.textInput = textInput;
+			context.uiElements.add(&element);
+		}
+	}
+
+	return panelIdx;
+}
+
+void UI::hidePanel(size_t index) {
+	if (index >= panels.numElements) {
+		return;
+	}
+
+	panels[index].isActive = false;
 }

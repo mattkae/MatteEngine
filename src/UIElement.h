@@ -4,20 +4,24 @@
 #include "Label.h"
 
 enum UIElementType {
-	BUTTON = 0,
-	TEXT_INPUT = 1,
-	LABEL = 2
+	NO_ELEMENT = 0,
+	BUTTON = 1,
+	TEXT_INPUT = 2,
+	LABEL = 3
 };
 
 
-struct UIElementUnion {
+union UIElementUnion {
 	TextInput textInput;
 	Button button;
 	Label label;
+
+	UIElementUnion() { };
+	UIElementUnion(const UIElementUnion&c) { /*...*/ }
 };
 
 struct UIElement {
-	UIElementUnion element;
 	UIElementType elementType;
+	UIElementUnion element;
 	void free();
 };

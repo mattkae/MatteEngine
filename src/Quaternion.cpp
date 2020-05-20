@@ -1,5 +1,18 @@
 #include "Quaternion.h"
 
+GLfloat* Quaternion::operator [](int index) {
+	switch (index) {
+	case 0:
+		return &x;
+	case 1:
+		return &y;
+	case 2:
+		return &z;
+	case 3:
+		return &z;
+	}
+}
+
 Quaternion Quaternion::operator*(const Quaternion& other) const {
 	return {
 		w * other.w - x * other.x - y * other.y - z * other.z,  // w

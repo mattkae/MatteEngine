@@ -106,7 +106,7 @@ void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Sc
 
 	useShader(mShader);
     renderCamera(camera, mShader);
-	renderModels(scene, mShader, true);
+	scene.renderModels(mShader, true);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

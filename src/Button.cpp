@@ -1,7 +1,7 @@
 #include "Button.h"
 #include "TextRenderer.h"
 #include "Vector2f.h"
-#include "UI.h"
+#include "SceneUIController.h"
 
 Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 	return { button.position.x, button.position.y, button.width, getButtonHeight(button, textRenderer) };
@@ -11,11 +11,13 @@ void Button::update(const TextRenderer& textRenderer) {
 	boundingRect = getRectangle(*this, textRenderer);
 	if (boundingRect.isClicked()) {
 		if (!isClicked) {
+			focusToken = grabFocus();
 			isClicked = true;
 			(uiRef->*onClick)(data);
 		}
 	} else if (isClicked) {
 		isClicked = false;
+		returnFocus(focusToken);
 	}
 }
 

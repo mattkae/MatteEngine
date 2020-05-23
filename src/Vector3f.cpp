@@ -113,13 +113,13 @@ Vector3f Vector3f::interpolate(const Vector3f& other, const GLfloat factor) {
 	return *this + ((*this - other) * factor);
 }
 
-GLfloat* Vector3f::operator [](int index) {
+GLfloat Vector3f::operator [](int index) {
 	switch (index) {
 	case 0:
-		return &x;
+		return x;
 	case 1:
-		return &y;
+		return y;
 	case 2:
-		return &z;
+		return z;
 	}
 }

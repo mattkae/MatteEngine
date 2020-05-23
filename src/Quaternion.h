@@ -8,7 +8,7 @@ struct Quaternion {
 	GLfloat y = 0;
 	GLfloat z = 0;
 
-	GLfloat* operator [](int index);
+	GLfloat operator [](int index);
 	Quaternion operator*(const Quaternion& other) const;
 	Quaternion operator*(const GLfloat& scale) const;
 	Quaternion operator+(const Quaternion& other) const;

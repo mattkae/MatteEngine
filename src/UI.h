@@ -10,13 +10,13 @@
 
 struct Model;
 struct Terrain;
-struct SceneUIController;
+struct UIEventProcessor;
 
 struct UI {
-	SceneUIController* controller;
 	Shader mOrthographicShader = 0;
 	TextRenderer mTextRenderer;
 	List<UIContext> panels;
+	UIEventProcessor* eventProcessor;
 
 	void init();
 	void update(double dt);
@@ -25,8 +25,9 @@ struct UI {
 
 	size_t getNextPanelIdx();
 	size_t showPanel(UIContext* context, int index);
-	size_t showModelSelector(Model* models, size_t numModels);
+	size_t showGlobalSelector(Scene& scene);
 	size_t showModelEditor(Model* model);
+	size_t showTerrainEditor(Terrain* terrain);
 
 	void hidePanel(size_t index);
 };

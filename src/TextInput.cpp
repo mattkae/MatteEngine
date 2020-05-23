@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "TextRenderer.h"
 #include "Logger.h"
+#include "UIEventProcessor.h"
 #include <GLFW/glfw3.h>
 
 Rectangle getRectangle(const TextInput& input, const TextRenderer& textRenderer) {
@@ -20,17 +21,17 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 		//textInput.representation = *textInput.value.sVal;
 		break;
 	case TextInputType::INT:
-		if (textInput.lastValue.iVal != *textInput.value.iVal) {
-			textInput.lastValue.iVal = *textInput.value.iVal;
-			textInput.representation.fromInteger(*textInput.value.iVal);
+		if (textInput.lastValue.iVal != textInput.value.iVal) {
+			textInput.lastValue.iVal = textInput.value.iVal;
+			textInput.representation.fromInteger(textInput.value.iVal);
 		} else {
 			return;
 		}
 		break;
 	case TextInputType::FLOAT: 
-		if (textInput.lastValue.fVal != *textInput.value.fVal) {
-			textInput.lastValue.fVal = *textInput.value.fVal;
-			textInput.representation.fromFloat(*textInput.value.fVal);
+		if (textInput.lastValue.fVal != textInput.value.fVal) {
+			textInput.lastValue.fVal = textInput.value.fVal;
+			textInput.representation.fromFloat(textInput.value.fVal);
 		} else {
 			return;
 		}
@@ -45,18 +46,21 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 	}
 }
 
-inline void onStrChange(TextInput& textInput, String v) {
+inline void onStrChange(TextInput& textInput, String v, UIEvent& uiEvent) {
+	uiEvent.type = textInput.eventType;
 	switch (textInput.inputType) {
 	case TextInputType::TEXT: {
 		//*textInput.value.sVal = v;
 		break;
 	}
 	case TextInputType::INT: {
-		*textInput.value.iVal = v.toInteger();
+		textInput.value.iVal = v.toInteger();
+		uiEvent.data = &textInput.value.iVal;
 		break;
 	}
 	case TextInputType::FLOAT: {
-		*textInput.value.fVal = v.toFloat();
+		textInput.value.fVal = v.toFloat();
+		uiEvent.data = &textInput.value.fVal;
 		break;
 	}
 	default:
@@ -67,7 +71,7 @@ inline void onStrChange(TextInput& textInput, String v) {
 	setInternalRepresentation(textInput, true);
 }
 
-void TextInput::update(const TextRenderer& textRenderer) {
+void TextInput::update(const TextRenderer& textRenderer, UIEvent& uiEvent) {
 	setInternalRepresentation(*this, false);
 	bt.rect = getRectangle(*this, textRenderer);
 
@@ -80,7 +84,7 @@ void TextInput::update(const TextRenderer& textRenderer) {
 		if (isLeftClickDown() && !bt.rect.isClicked()) {
 			returnFocus(focusToken);
 			isFocused = false;
-			onStrChange(*this, representation);
+			onStrChange(*this, representation, uiEvent);
 		}
 	}
 
@@ -90,7 +94,7 @@ void TextInput::update(const TextRenderer& textRenderer) {
 	if (key > -1 && isKeyJustDown(key, focusToken)) {
 		switch (key) {
 		case GLFW_KEY_ENTER:
-			onStrChange(*this, representation);
+			onStrChange(*this, representation, uiEvent);
 			break;
 		case GLFW_KEY_LEFT:
 			cursorPosition = cursorPosition == 0 ? 0 : cursorPosition - 1;

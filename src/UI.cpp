@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "GlobalApplicationState.h"
 #include "Model.h"
-#include "SceneUIController.h"
+#include "UIEventProcessor.h"
 
 void UI::init() {
 	mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
@@ -24,7 +24,7 @@ void UI::update(double dt) {
 			}
 		}
 
-		panel.update(mTextRenderer);
+		panel.update(mTextRenderer, eventProcessor->activeEvent);
 	}
 }
 
@@ -73,7 +73,19 @@ size_t UI::showPanel(UIContext* context, int index) {
 	return panelIdx;
 }
 
-size_t UI::showModelSelector(Model* models, size_t numModels) {
+void addStandardLabel(const char* str, UIContext& context) {
+	UIElement labelElement;
+	Label label;
+	label.bt.padding = 2.f;
+	label.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
+	label.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
+	label.text = str;
+	labelElement.elementType = UIElementType::LABEL;
+	labelElement.element.label = label;
+	context.uiElements.add(&labelElement);
+}
+
+size_t UI::showGlobalSelector(Scene& scene) {
 	size_t panelIdx = getNextPanelIdx();
 	UIContext& context = panels[panelIdx];
 	context.shouldOpen = true;
@@ -85,17 +97,48 @@ size_t UI::showModelSelector(Model* models, size_t numModels) {
 	context.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
 	context.panel.borderWidth = 2.f;
 
-	context.uiElements.allocate(numModels);
-	for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
+	int numElements = 0;
+
+	if (scene.numModels && scene.models) {
+		numElements += scene.numModels + 1;
+	}
+
+	if (scene.mTerrain.isInitialized) {
+		numElements += 2;
+	}
+
+	context.uiElements.allocate(numElements);
+	addStandardLabel("Models", context);
+	String modelName;
+	modelName = "Model ";
+	for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
+		String indexStr;
+		indexStr.fromInteger(modelIdx + 1);
 		UIElement element;
 		Button button;
-		button.label = "Model";
+		button.label.append(modelName);
+		button.label.append(indexStr);
 		button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
 		button.hoverColor = Vector4f { 0.9, 0.1, 0.0, 1.0 };
 		button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
+		button.eventType = UIEventType::SHOW_MODEL;
 		button.data = modelIdx;
-		button.uiRef = controller;
-		button.onClick = &SceneUIController::selectModel;
+		button.padding = 2.f;
+		element.elementType = UIElementType::BUTTON;
+		element.element.button = button;
+		context.uiElements.add(&element);
+		indexStr.deallocate();
+	}
+
+	addStandardLabel("Terrain", context);
+	if (scene.mTerrain.isInitialized) {
+		UIElement element;
+		Button button;
+		button.label = "Edit Terrain";
+		button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
+		button.hoverColor = Vector4f { 0.9, 0.1, 0.0, 1.0 };
+		button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
+		button.eventType = UIEventType::SHOW_TERRAIN;
 		button.padding = 2.f;
 		element.elementType = UIElementType::BUTTON;
 		element.element.button = button;
@@ -123,16 +166,7 @@ size_t UI::showModelEditor(Model* model) {
 	context.uiElements.allocate(numElements);
 
 	{
-		UIElement translationLabelElement;
-		Label translationLabel;
-		translationLabel.bt.padding = 2.f;
-		translationLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-		translationLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
-		translationLabel.text = "Translation";
-		translationLabelElement.elementType = UIElementType::LABEL;
-		translationLabelElement.element.label = translationLabel;
-		context.uiElements.add(&translationLabelElement);
-
+		addStandardLabel("Translation", context);
 		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
 			UIElement element;
 			TextInput textInput;
@@ -142,6 +176,7 @@ size_t UI::showModelEditor(Model* model) {
 			textInput.inputType = TextInputType::FLOAT;
 			textInput.textColor = Vector4f { 1, 1, 1, 1 };
 			textInput.value.fVal = model->translation[tIdx];
+			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_TRANSLATION_X + tIdx);
 			element.elementType = UIElementType::TEXT_INPUT;
 			element.element.textInput = textInput;
 			context.uiElements.add(&element);
@@ -149,15 +184,7 @@ size_t UI::showModelEditor(Model* model) {
 	}
 
 	{
-		UIElement scalingLabelElement;
-		Label scalingLabel;
-		scalingLabel.bt.padding = 2.f;
-		scalingLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-		scalingLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
-		scalingLabel.text = "Scale";
-		scalingLabelElement.elementType = UIElementType::LABEL;
-		scalingLabelElement.element.label = scalingLabel;
-		context.uiElements.add(&scalingLabelElement);
+		addStandardLabel("Scaling", context);
 		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
 			UIElement element;
 			TextInput textInput;
@@ -167,6 +194,7 @@ size_t UI::showModelEditor(Model* model) {
 			textInput.inputType = TextInputType::FLOAT;
 			textInput.textColor = Vector4f { 1, 1, 1, 1 };
 			textInput.value.fVal = model->scale[tIdx];
+			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_SCALE_X + tIdx);
 			element.elementType = UIElementType::TEXT_INPUT;
 			element.element.textInput = textInput;
 			context.uiElements.add(&element);
@@ -174,15 +202,7 @@ size_t UI::showModelEditor(Model* model) {
 	}
 
 	{
-		UIElement rotationLabelElement;
-		Label rotationLabel;
-		rotationLabel.bt.padding = 2.f;
-		rotationLabel.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-		rotationLabel.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
-		rotationLabel.text = "Rotation";
-		rotationLabelElement.elementType = UIElementType::LABEL;
-		rotationLabelElement.element.label = rotationLabel;
-		context.uiElements.add(&rotationLabelElement);
+		addStandardLabel("Rotation", context);
 		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
 			UIElement element;
 			TextInput textInput;
@@ -192,6 +212,7 @@ size_t UI::showModelEditor(Model* model) {
 			textInput.inputType = TextInputType::FLOAT;
 			textInput.textColor = Vector4f { 1, 1, 1, 1 };
 			textInput.value.fVal = model->rotation[tIdx];
+			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_ROTATION_X + tIdx);
 			element.elementType = UIElementType::TEXT_INPUT;
 			element.element.textInput = textInput;
 			context.uiElements.add(&element);

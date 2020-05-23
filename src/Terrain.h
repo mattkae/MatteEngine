@@ -21,6 +21,7 @@ struct Terrain {
     Matrix4x4f model;
     Mesh mMesh;
     GenerationParameters mParams;
+    bool isInitialized = false;
 
     void initialize(const GenerationParameters& params);
     void render(const Shader& shader, bool withMaterial = true) const;

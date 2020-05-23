@@ -66,6 +66,7 @@
     <ClCompile Include="..\..\src\UI.cpp" />
     <ClCompile Include="..\..\src\UIContext.cpp" />
     <ClCompile Include="..\..\src\UIElement.cpp" />
+    <ClCompile Include="..\..\src\UIEventProcessor.cpp" />
     <ClCompile Include="..\..\src\Vector2f.cpp" />
     <ClCompile Include="..\..\src\Vector3f.cpp" />
     <ClCompile Include="..\..\src\Vector4f.cpp" />
@@ -114,7 +115,7 @@
     <ClInclude Include="..\..\src\UI.h" />
     <ClInclude Include="..\..\src\UIContext.h" />
     <ClInclude Include="..\..\src\UIElement.h" />
-    <ClInclude Include="..\..\src\UIEvent.h" />
+    <ClInclude Include="..\..\src\UIEventProcessor.h" />
     <ClInclude Include="..\..\src\Vector2f.h" />
     <ClInclude Include="..\..\src\Vector3f.h" />
     <ClInclude Include="..\..\src\Mesh.h" />

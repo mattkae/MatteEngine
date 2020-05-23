@@ -1,15 +1,15 @@
 #include "Quaternion.h"
 
-GLfloat* Quaternion::operator [](int index) {
+GLfloat Quaternion::operator [](int index) {
 	switch (index) {
 	case 0:
-		return &x;
+		return x;
 	case 1:
-		return &y;
+		return y;
 	case 2:
-		return &z;
+		return z;
 	case 3:
-		return &z;
+		return w;
 	}
 }
 

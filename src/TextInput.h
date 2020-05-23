@@ -3,6 +3,7 @@
 #include "TextRenderer.h"
 #include "BoundText.h"
 #include "String.h"
+#include "UIEventProcessor.h"
 #include <GL/glew.h>
 
 enum TextInputType {
@@ -12,11 +13,6 @@ enum TextInputType {
 };
 
 union TextInputValue {
-	int* iVal;
-	float* fVal;
-};
-
-union LastValue {
 	int iVal;
 	float fVal;
 };
@@ -32,10 +28,11 @@ struct TextInput {
 
 	TextInputType inputType = TextInputType::TEXT;
 	TextInputValue value;
+	TextInputValue lastValue;
 	String representation;
-	LastValue lastValue;
+	UIEventType eventType;
 
-	void update(const TextRenderer& textRenderer);
+	void update(const TextRenderer& textRenderer, UIEvent& uiEvent);
 	void render(const Shader& shader, const TextRenderer& textRenderer);
 	void free();
 };

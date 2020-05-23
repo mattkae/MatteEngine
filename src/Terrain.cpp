@@ -78,9 +78,14 @@ void Terrain::initialize(const GenerationParameters& params) {
     delete []indicies;
 
     mParams = params;
+    isInitialized = true;
 }
 
 void Terrain::render(const Shader& shader, bool withMaterial) const {
+    if (!isInitialized) {
+        return;
+    }
+
 	setShaderMat4(shader, "uModel", model);
 	setShaderBool(shader, "uDisableBones", true);
 	mMesh.render(shader, withMaterial);
@@ -88,4 +93,5 @@ void Terrain::render(const Shader& shader, bool withMaterial) const {
 
 void Terrain::free() {
     mMesh.free();
+    isInitialized = false;
 }

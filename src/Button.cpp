@@ -7,13 +7,14 @@ Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 	return { button.position.x, button.position.y, button.width, getButtonHeight(button, textRenderer) };
 }
 
-void Button::update(const TextRenderer& textRenderer) {
+void Button::update(const TextRenderer& textRenderer, UIEvent& event) {
 	boundingRect = getRectangle(*this, textRenderer);
 	if (boundingRect.isClicked()) {
 		if (!isClicked) {
 			focusToken = grabFocus();
 			isClicked = true;
-			(uiRef->*onClick)(data);
+			event.type = eventType;
+			event.data = &data;
 		}
 	} else if (isClicked) {
 		isClicked = false;

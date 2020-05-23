@@ -8,10 +8,10 @@
 #include "Vector2f.h"
 #include "Rectangle.h"
 #include "String.h"
+#include "UIEventProcessor.h"
 
 struct TextRenderer;
 struct SceneUIController;
-
 
 struct Button {
 	String label;
@@ -25,12 +25,12 @@ struct Button {
 	GLfloat width = 128.f;
 	int focusToken = -1;
 	bool isClicked = false;
-	SceneUIController* uiRef;
-	void (SceneUIController::*onClick)(int);
+
+	UIEventType eventType;
 	int data;
 	Rectangle boundingRect;
 	
-	void update(const TextRenderer& textRenderer);
+	void update(const TextRenderer& textRenderer, UIEvent& event);
 	void render(const Shader& shader, const TextRenderer& textRenderer);
 	void free();
 };

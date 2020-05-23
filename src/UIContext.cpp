@@ -1,7 +1,7 @@
 #include "UIContext.h"
 #include "GlobalApplicationState.h"
 
-void UIContext::update(const TextRenderer& textRenderer) {
+void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
 	if (shouldOpen && !isActive) {
 		isActive = true;
 		shouldOpen = false;
@@ -28,7 +28,7 @@ void UIContext::update(const TextRenderer& textRenderer) {
 			}
 			button.position = Vector2f { xPosition, yOffset };
 			button.width = GlobalAppState.floatWidth * panel.percentageWidth - 2 * button.padding;
-			button.update(textRenderer);
+			button.update(textRenderer, event);
 			yOffset -= getButtonHeight(button, textRenderer);
 			break;
 		}
@@ -40,7 +40,7 @@ void UIContext::update(const TextRenderer& textRenderer) {
 			textInput.bt.rect.x = xPosition;
 			textInput.bt.rect.y = yOffset;
 			textInput.bt.rect.w = GlobalAppState.floatWidth * panel.percentageWidth - 2 * textInput.bt.padding;
-			textInput.update(textRenderer);
+			textInput.update(textRenderer,  event);
 			yOffset -= textInput.bt.getBoundTextHeight(textRenderer);
 			break;
 		}

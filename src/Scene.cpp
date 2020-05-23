@@ -8,10 +8,10 @@
 #include <GLFW/glfw3.h>
 
 void Scene::initialize() {
-	uiController.scene = this;
-	ui.controller = &uiController;
+	eventProcessor.scene = this;
+	ui.eventProcessor = &eventProcessor;
 	ui.init();
-    ui.showModelSelector(models, numModels);
+    ui.showGlobalSelector(*this);
     isDying = false;
     mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
 }
@@ -38,17 +38,27 @@ int castRayToModel(Scene& scene) {
 }
 
 void Scene::update(double dt) {
+	if (isKeyJustDown(GLFW_KEY_R, 0)) {
+		free();
+		SceneLoader::loadScene("assets/scenes/big_scene.matte", *this);
+		return;
+	}
+
+	ui.update(dt);
+
 	float dtFloat = static_cast<float>(dt);
 	if (isLeftClickDown() && isDefaultFocused()) {
 		int modelIdx = castRayToModel(*this);
 		if (modelIdx > -1) {
-			uiController.selectModel(modelIdx);
+			UIEvent selectionEvent = {UIEventType::SHOW_MODEL, &modelIdx };
+			eventProcessor.addEvent(selectionEvent);
 		} else {
-			uiController.deselectModel();
+			UIEvent selectionEvent = { UIEventType::HIDE_MODEL };
+			eventProcessor.addEvent(selectionEvent);
 		}
 	}
 
-	ui.update(dt);
+	eventProcessor.processEvent();
 
     updateCamera(mCamera, dtFloat);
 
@@ -65,11 +75,6 @@ void Scene::update(double dt) {
 		updateDebugModel(debugModel, models[selectedModelIndex].model, mCamera);
 	}
 
-
-	if (isKeyJustDown(GLFW_KEY_R, 0)) {
-		free();
-		SceneLoader::loadScene("assets/scenes/big_scene.matte", *this);
-	}
 }
 
 void Scene::renderShadows() {
@@ -110,9 +115,7 @@ void Scene::renderModels(const Shader &shader, bool withMaterial) const {
     mTerrain.render(shader, withMaterial);
 
     for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
-		if (selectedModelIndex != modelIdx) {
-			models[modelIdx].render(shader, withMaterial);
-		}
+		models[modelIdx].render(shader, withMaterial);
     }
 }
 

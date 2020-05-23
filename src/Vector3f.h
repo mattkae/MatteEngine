@@ -13,7 +13,7 @@ struct Vector3f {
 	GLfloat x = 0;
 	GLfloat y = 0;
 	GLfloat z = 0;
-	GLfloat* operator [](int index);
+	GLfloat operator [](int index);
 	Vector3f interpolate(const Vector3f& other, const GLfloat factor);
 };
 

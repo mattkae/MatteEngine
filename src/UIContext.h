@@ -23,7 +23,7 @@ struct UIContext {
 	GLfloat spaceBetweenElements = 2.f;
 	List<UIElement> uiElements;
 
-	void update(const TextRenderer& textRenderer);
+	void update(const TextRenderer& textRenderer, UIEvent& event);
 	void render(const Shader& shader, const TextRenderer& renderer) const;
 	void free();
 };

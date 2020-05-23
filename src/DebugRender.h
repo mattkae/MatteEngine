@@ -19,7 +19,7 @@ struct DebugArrow {
 void updateDebugArrow(DebugArrow& arrow, Box& debugBox, const Matrix4x4f& model);
 void renderDebugArrow(const DebugArrow& arrow, const Shader& shader);
 
-enum DebugClickState {
+enum class DebugClickState {
 	NONE,
 	X_AXIS,
 	Y_AXIS,

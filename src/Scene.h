@@ -14,7 +14,7 @@
 #include "Box.h"
 #include "DebugRender.h"
 #include "ModelLoader.h"
-#include "SceneUIController.h"
+#include "UIEventProcessor.h"
 
 struct Scene {
 	ModelLoader modelLoader;
@@ -41,7 +41,7 @@ struct Scene {
     bool mUseShadows = false;
     BetterCamera mCamera;
 	bool isDying = false;
-	SceneUIController uiController;
+	UIEventProcessor eventProcessor;
 
 	void initialize();
 	void update(double dt);

@@ -49,7 +49,7 @@ void Material::render(const Shader &shader) const {
 	setShaderFloat(shader, "uMaterial.opacity", transparency);
 
 	setShaderBVec3(shader, "uMaterial.useTexture", diffuseTexture > 0, specularTexture > 0, ambientTexture > 0);
-	renderTexture(shader, TextureUniformConstants::DIFFUSE_TEXTURE_POSTIION, diffuseTexture, "uMaterial.diffuseTexture");
-	renderTexture(shader, TextureUniformConstants::SPECULAR_TEXTURE_POSTIION, specularTexture, "uMaterial.specularTexture");
-	renderTexture(shader, TextureUniformConstants::AMBIENT_TEXTURE_POSITION, ambientTexture, "uMaterial.ambientTexture");
+	renderTexture(shader, TextureUniformConstants::DIFFUSE_TEXTURE_POSTIION, diffuseTexture, "uDiffuseList[0]");
+	renderTexture(shader, TextureUniformConstants::SPECULAR_TEXTURE_POSTIION, specularTexture, "uSpecularList[0]");
+	renderTexture(shader, TextureUniformConstants::AMBIENT_TEXTURE_POSITION, ambientTexture, "uAmbientList[0]");
 }

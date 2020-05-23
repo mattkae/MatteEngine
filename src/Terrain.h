@@ -4,17 +4,22 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Matrix4x4f.h"
+#include "String.h"
 #include <GL/glew.h>
 
 struct GenerationParameters {
-    int size = 512;
+    int size = 1000;
     int granularity = 64;
-    int permSize = 64;
-    float scaleFactor = 0.02f;
-    float minMaxHeight = 10.f;
-    float ampFactor = 0.5f;
-    float frequencyFactor = 1.8f;
-    int numOctaves = 16;
+    int permSize = 1000;
+    float scaleFactor = 0.004f;
+    float minMaxHeight = 32.f;
+    float ampFactor = 0.6f;
+    float frequencyFactor = 1.5f;
+    int numOctaves = 64;
+
+    String grassTexture;
+    String rockTexture;
+    String dirtTexture;
 };
 
 struct Terrain {

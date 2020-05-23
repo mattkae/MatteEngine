@@ -119,6 +119,46 @@ void UIEventProcessor::processEvent() {
 			scene->models[scene->selectedModelIndex].rotation.z = value;
 			break;
 		}
+		case UIEventType::SHOW_TERRAIN: {
+			scene->ui.showTerrainEditor(&scene->mTerrain);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_SIZE: {
+			scene->mTerrain.mParams.size = *static_cast<int*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_GRANULARITY: {
+			scene->mTerrain.mParams.granularity = *static_cast<int*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_PERM: {
+			scene->mTerrain.mParams.permSize = *static_cast<int*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_SCALE: {
+			scene->mTerrain.mParams.scaleFactor = *static_cast<float*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_MIN_MAX: {
+			scene->mTerrain.mParams.minMaxHeight = *static_cast<float*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_AMP: {
+			scene->mTerrain.mParams.ampFactor = *static_cast<float*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_FREQ: {
+			scene->mTerrain.mParams.frequencyFactor = *static_cast<float*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_OCT: {
+			scene->mTerrain.mParams.numOctaves = *static_cast<int*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::EDIT_TERRAIN_APPLY: {
+			scene->mTerrain.initialize(scene->mTerrain.mParams);
+			break;
+		};
 	}
 
 	activeEvent.type = UIEventType::NONE;

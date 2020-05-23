@@ -63,6 +63,7 @@
     <ClCompile Include="..\..\src\TextRenderer.cpp" />
     <ClCompile Include="..\..\src\Texture.cpp" />
     <ClCompile Include="..\..\src\TextureInfo.cpp" />
+    <ClCompile Include="..\..\src\TextureLoader.cpp" />
     <ClCompile Include="..\..\src\UI.cpp" />
     <ClCompile Include="..\..\src\UIContext.cpp" />
     <ClCompile Include="..\..\src\UIElement.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="..\..\src\TextInput.h" />
     <ClInclude Include="..\..\src\TextureInfo.h" />
     <ClInclude Include="..\..\src\TextureListItem.h" />
+    <ClInclude Include="..\..\src\TextureLoader.h" />
     <ClInclude Include="..\..\src\TextureUniformConstants.h" />
     <ClInclude Include="..\..\src\UI.h" />
     <ClInclude Include="..\..\src\UIContext.h" />

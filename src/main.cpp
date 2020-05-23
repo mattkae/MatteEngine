@@ -84,6 +84,7 @@ void initialize(int argc, const char* argv[]) {
 	initializeInputSystem(GlobalWindow);
     glfwMakeContextCurrent(GlobalWindow);
 	glfwSetWindowSizeCallback(GlobalWindow, setApplicationDimensions);
+    glfwSwapInterval(0);
 
     // GLEW
     GLenum err = glewInit();

@@ -85,6 +85,19 @@ void addStandardLabel(const char* str, UIContext& context) {
 	context.uiElements.add(&labelElement);
 }
 
+void addFieldLabel(const char* str, UIContext& context) {
+	UIElement labelElement;
+	Label label;
+	label.bt.padding = 2.f;
+	label.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 1.f };
+	label.textColor = Vector4f { 1.f, 1.f, 1.f , 1.f };
+	label.text = str;
+	label.bt.scale = 0.75f;
+	labelElement.elementType = UIElementType::LABEL;
+	labelElement.element.label = label;
+	context.uiElements.add(&labelElement);
+}
+
 size_t UI::showGlobalSelector(Scene& scene) {
 	size_t panelIdx = getNextPanelIdx();
 	UIContext& context = panels[panelIdx];
@@ -131,19 +144,17 @@ size_t UI::showGlobalSelector(Scene& scene) {
 	}
 
 	addStandardLabel("Terrain", context);
-	if (scene.mTerrain.isInitialized) {
-		UIElement element;
-		Button button;
-		button.label = "Edit Terrain";
-		button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
-		button.hoverColor = Vector4f { 0.9, 0.1, 0.0, 1.0 };
-		button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
-		button.eventType = UIEventType::SHOW_TERRAIN;
-		button.padding = 2.f;
-		element.elementType = UIElementType::BUTTON;
-		element.element.button = button;
-		context.uiElements.add(&element);
-	}
+	UIElement element;
+	Button button;
+	button.label = "Edit Terrain";
+	button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
+	button.hoverColor = Vector4f { 0.9, 0.1, 0.0, 1.0 };
+	button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
+	button.eventType = UIEventType::SHOW_TERRAIN;
+	button.padding = 2.f;
+	element.elementType = UIElementType::BUTTON;
+	element.element.button = button;
+	context.uiElements.add(&element);
 
 	return panelIdx;
 }
@@ -217,6 +228,91 @@ size_t UI::showModelEditor(Model* model) {
 			element.element.textInput = textInput;
 			context.uiElements.add(&element);
 		}
+	}
+
+	return panelIdx;
+}
+
+void addTextInput(UIContext& context, 
+	TextInputValue value, 
+	TextInputType inputType,
+	UIEventType eventType) 
+{
+	UIElement element;
+	UIElement labelElement;
+	TextInput textInput;
+	textInput.bt.padding = 2.f;
+	textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
+	textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
+	textInput.inputType = inputType;
+	textInput.textColor = Vector4f { 1, 1, 1, 1 };
+	textInput.value = value;
+	textInput.eventType = eventType;
+	element.elementType = UIElementType::TEXT_INPUT;
+	element.element.textInput = textInput;
+	context.uiElements.add(&element);
+}
+
+size_t UI::showTerrainEditor(Terrain* terrain)  {
+	size_t panelIdx = getNextPanelIdx();
+	UIContext& context = panels[panelIdx];
+	context.shouldOpen = true;
+	context.panel.percentageHeight = 0.9f;
+	context.panel.percentageWidth = 0.2f;
+	context.panel.vertical = UIPositioning::CENTER;
+	context.panel.horizontal = UIPositioning::RIGHT;
+	context.panel.backgroundColor = Vector4f { 0.1, 0.1, 0.1, 0.5 };
+	context.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
+	context.panel.borderWidth = 2.f;
+	context.uiElements.allocate(18);
+	addStandardLabel("Terrain Editor", context);
+	
+	TextInputValue value;
+
+	addFieldLabel("Size", context);
+	value.iVal = terrain->mParams.size;
+	addTextInput(context, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_SIZE);
+
+	addFieldLabel("Granularity", context);
+	value.iVal = terrain->mParams.granularity;
+	addTextInput(context, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_GRANULARITY);
+
+	addFieldLabel("Perm Size", context);
+	value.iVal = terrain->mParams.permSize;
+	addTextInput(context, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_PERM);
+
+	addFieldLabel("Scale Factor", context);
+	value.fVal = terrain->mParams.scaleFactor;
+	addTextInput(context, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_SCALE);
+
+	addFieldLabel("Min/Max height", context);
+	value.fVal = terrain->mParams.minMaxHeight;
+	addTextInput(context, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_MIN_MAX);
+
+	addFieldLabel("Amplitude", context);
+	value.fVal = terrain->mParams.ampFactor;
+	addTextInput(context, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_AMP);
+
+	addFieldLabel("Frequency", context);
+	value.fVal = terrain->mParams.frequencyFactor;
+	addTextInput(context, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_FREQ);
+
+	addFieldLabel("Octaves", context);
+	value.iVal = terrain->mParams.numOctaves;
+	addTextInput(context, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_OCT);
+
+	{
+		UIElement element;
+		Button button;
+		button.label = "Create";
+		button.buttonColor = Vector4f { 0.0, 0.6, 0.3, 1.0 };
+		button.hoverColor = Vector4f { 0.0, 0.9, 0.1, 1.0 };
+		button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
+		button.eventType = UIEventType::EDIT_TERRAIN_APPLY;
+		button.padding = 2.f;
+		element.elementType = UIElementType::BUTTON;
+		element.element.button = button;
+		context.uiElements.add(&element);
 	}
 
 	return panelIdx;

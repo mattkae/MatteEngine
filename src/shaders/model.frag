@@ -3,17 +3,23 @@
 #include Material.glsl
 #include Light.shared.cpp
 
+#define MAX_TEXTURES 4
+
 // Output color
 out vec4 Color;
 
 // Input from vertex shader
 in vec4 oFragPos;
 in vec3 oNormal;
-in vec2 oTexCoords;
+in vec3 oTexCoords;
 in vec3 oEye;
 
 // Uniform variables
 uniform Material uMaterial;
+uniform sampler2D uDiffuseList[MAX_TEXTURES];
+uniform sampler2D uSpecularList[MAX_TEXTURES];
+uniform sampler2D uAmbientList[MAX_TEXTURES];
+
 uniform int uNumLights;
 uniform vec3 uAmbient;
 uniform vec2 uFarNear;
@@ -35,14 +41,17 @@ void main() {
     vec3 emissive = uMaterial.emissive;
     vec3 ambient = uAmbient;
 
+    vec2 textureCoordinates = vec2(oTexCoords.x, oTexCoords.y);
+    int textureIndex = int(oTexCoords.z);
+
     if (uMaterial.useTexture[0]) {
-        diffuse = texture(uMaterial.diffuseTexture, oTexCoords).rgb;
+        diffuse = texture(uDiffuseList[textureIndex], textureCoordinates).rgb;
     }
     if (uMaterial.useTexture[1]) {
-        specular = texture(uMaterial.specularTexture, oTexCoords).rgb;
+        specular = texture(uSpecularList[textureIndex], textureCoordinates).rgb;
     }
     if (uMaterial.useTexture[2]) {
-        ambient = texture(uMaterial.ambientTexture, oTexCoords).rgb;
+        ambient = texture(uAmbientList[textureIndex], textureCoordinates).rgb;
     }
 
     vec3 finalColor = ambient * diffuse + emissive;

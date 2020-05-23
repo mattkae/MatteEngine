@@ -2,13 +2,13 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 texCoords;
+layout (location = 2) in vec3 texCoords;
 layout (location = 3) in vec4 boneWeights;
 layout (location = 4) in ivec4 boneIndices;
 
 out vec4 oFragPos;
 out vec3 oNormal;
-out vec2 oTexCoords;
+out vec3 oTexCoords;
 out vec3 oEye;
 
 uniform int uNumLights;

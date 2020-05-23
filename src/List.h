@@ -19,6 +19,10 @@ struct List {
 
 template <typename T>
 void List<T>::allocate(size_t size) {
+	if (size == 0) {
+		return;
+	}
+
 	if (data != nullptr) {
 		deallocate();
 	}
@@ -30,6 +34,10 @@ void List<T>::allocate(size_t size) {
 
 template <typename T>
 void List<T>::grow(size_t newSize) {
+	if (newSize == 0) {
+		return;
+	}
+
 	T* newData = static_cast<T*>(malloc(sizeof(T) * newSize));
 
 	if (data != nullptr) {
@@ -53,7 +61,7 @@ void List<T>::set(T* value, size_t index) {
 template <typename T>
 void List<T>::add(T* element) {
 	if (element == nullptr || data == nullptr) {
-		return;
+		allocate(4);
 	}
 
 	size_t newNumElements = numElements + 1;

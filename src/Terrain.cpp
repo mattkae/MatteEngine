@@ -8,6 +8,10 @@ inline static float randomFloat(float min, float max) {
 }
 
 void Terrain::initialize(const GenerationParameters& params) {
+    if (isInitialized) {
+        free();
+    }
+
     Logger::logInfo("Generating terrain...");
 
     float squareSize = ((float)params.size / (float)params.granularity) / 2.f;
@@ -71,7 +75,7 @@ void Terrain::initialize(const GenerationParameters& params) {
     mMesh.initialize(vertices, numVertices, indicies, numIndices, material);
 	mMesh.material.diffuse = { 0, 0.2, 0 };
 
-    int halfMapSize = params.granularity / 2;
+    int halfMapSize = squareSize * (params.granularity / 2);
 	model = Matrix4x4f { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
     model = translateMatrix(model, getVec3(-halfMapSize, -50, -halfMapSize));
     delete []vertices;

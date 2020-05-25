@@ -17,8 +17,7 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 	//}
 
 	switch (textInput.inputType) {
-	case TextInputType::TEXT: 
-		//textInput.representation = *textInput.value.sVal;
+	case TextInputType::STRING: 
 		break;
 	case TextInputType::INT:
 		if (textInput.lastValue.iVal != textInput.value.iVal) {
@@ -49,8 +48,8 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 inline void onStrChange(TextInput& textInput, String v, UIEvent& uiEvent) {
 	uiEvent.type = textInput.eventType;
 	switch (textInput.inputType) {
-	case TextInputType::TEXT: {
-		//*textInput.value.sVal = v;
+	case TextInputType::STRING: {
+		uiEvent.data = &textInput.representation;
 		break;
 	}
 	case TextInputType::INT: {

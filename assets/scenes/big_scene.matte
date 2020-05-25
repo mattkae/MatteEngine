@@ -28,7 +28,7 @@ textures                assets/texture-info.mattl
     ;;
 ;;
 
-::models
+//::models
     ::
         path        assets/models/Astroboy/astroBoy_walk.mattl
         transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -5 -30 1

@@ -103,7 +103,7 @@ void Mesh::free() {
     if (ebo) glDeleteBuffers(1, &ebo);
 }
 
-void Mesh::render(const Shader& shader, bool withMaterial) const {
+void Mesh::render(const Shader& shader, bool withMaterial, GLint drawType) const {
 	if (vao == 0) {
 		return;
 	}
@@ -113,6 +113,6 @@ void Mesh::render(const Shader& shader, bool withMaterial) const {
     }
 
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+    glDrawElements(drawType, numIndices, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

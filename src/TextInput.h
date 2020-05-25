@@ -6,10 +6,11 @@
 #include "UIEventProcessor.h"
 #include <GL/glew.h>
 
-enum TextInputType {
-	TEXT = 0,
-	INT = 1,
-	FLOAT = 2
+enum class TextInputType {
+	NONE = 0,
+	STRING = 1,
+	INT = 2,
+	FLOAT = 3
 };
 
 union TextInputValue {
@@ -26,7 +27,7 @@ struct TextInput {
 	size_t cursorPosition = 0;
 	bool isFocused = false;
 
-	TextInputType inputType = TextInputType::TEXT;
+	TextInputType inputType = TextInputType::NONE;
 	TextInputValue value;
 	TextInputValue lastValue;
 	String representation;

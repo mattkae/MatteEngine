@@ -11,9 +11,9 @@ class BinarySerializer;
 
 struct LoadMaterial {
 	Vector3f emissive = { 0.f, 0.f, 0.f };
-    Vector3f ambient = { 1.f, 1.f, 1.f };
+    Vector3f ambient = { 0.f, 0.f, 0.f };
     Vector3f diffuse = { 1.f, 1.f, 1.f };
-    Vector3f specular = { 1.f, 1.f, 1.f };
+    Vector3f specular = { 0.f, 0.f, 0.f };
     Vector3f diffuseProperty = { 1.f, 1.f, 1.f };
     Vector3f specularProperty = { 1.f, 1.f, 1.f };
     GLfloat specularComponent = 20.f;

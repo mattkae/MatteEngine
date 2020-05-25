@@ -248,8 +248,13 @@ void addTextInput(UIContext& context,
 	textInput.textColor = Vector4f { 1, 1, 1, 1 };
 	textInput.value = value;
 	textInput.eventType = eventType;
+	if (inputType == TextInputType::STRING) {
+		textInput.representation.allocate(32);
+	}
 	element.elementType = UIElementType::TEXT_INPUT;
 	element.element.textInput = textInput;
+
+
 	context.uiElements.add(&element);
 }
 
@@ -264,7 +269,7 @@ size_t UI::showTerrainEditor(Terrain* terrain)  {
 	context.panel.backgroundColor = Vector4f { 0.1, 0.1, 0.1, 0.5 };
 	context.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
 	context.panel.borderWidth = 2.f;
-	context.uiElements.allocate(18);
+	context.uiElements.allocate(24);
 	addStandardLabel("Terrain Editor", context);
 	
 	TextInputValue value;
@@ -300,6 +305,15 @@ size_t UI::showTerrainEditor(Terrain* terrain)  {
 	addFieldLabel("Octaves", context);
 	value.iVal = terrain->mParams.numOctaves;
 	addTextInput(context, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_OCT);
+
+	addFieldLabel("Grass Texture", context);
+	addTextInput(context, value, TextInputType::STRING, UIEventType::EDIT_TERRAIN_GRASS_PATH);
+
+	addFieldLabel("Rock Texture", context);
+	addTextInput(context, value, TextInputType::STRING, UIEventType::EDIT_TERRAIN_ROCK_PATH);
+
+	addFieldLabel("Dirt Texture", context);
+	addTextInput(context, value, TextInputType::STRING, UIEventType::EDIT_TERRAIN_DIRT_PATH);
 
 	{
 		UIElement element;

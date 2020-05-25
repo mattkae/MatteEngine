@@ -26,7 +26,7 @@ struct Mesh {
 	);
 	void initialize(LoadMesh& loadMesh, List<TextureListItem>* list);
 	void free();
-	void render(const Shader& shader, bool withMaterial = true) const;
+	void render(const Shader& shader, bool withMaterial = true, GLint drawType = GL_TRIANGLES) const;
 };
 
 #endif

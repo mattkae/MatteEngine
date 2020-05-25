@@ -16,10 +16,11 @@ struct GenerationParameters {
     float ampFactor = 0.6f;
     float frequencyFactor = 1.5f;
     int numOctaves = 64;
+    int verticesPerTexture = 16;
 
-    String grassTexture;
-    String rockTexture;
-    String dirtTexture;
+    String grassTexturePath;
+    String rockTexturePath;
+    String dirtTexturePath;
 };
 
 struct Terrain {
@@ -28,7 +29,10 @@ struct Terrain {
     GenerationParameters mParams;
     bool isInitialized = false;
 
+    GLuint textures[3]; // Grass, rock, dirt
+
     void initialize(const GenerationParameters& params);
+    void loadTextures(const GenerationParameters& params);
     void render(const Shader& shader, bool withMaterial = true) const;
     void free();
 };

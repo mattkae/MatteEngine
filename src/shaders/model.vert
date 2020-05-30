@@ -2,13 +2,15 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
-layout (location = 2) in vec3 texCoords;
-layout (location = 3) in vec4 boneWeights;
-layout (location = 4) in ivec4 boneIndices;
+layout (location = 2) in vec2 texCoords;
+layout (location = 3) in vec3 texWeights;
+layout (location = 4) in vec4 boneWeights;
+layout (location = 5) in ivec4 boneIndices;
 
 out vec4 oFragPos;
 out vec3 oNormal;
-out vec3 oTexCoords;
+out vec2 oTexCoords;
+out vec3 oTexWeights;
 out vec3 oEye;
 
 uniform int uNumLights;
@@ -34,6 +36,7 @@ void main() {
   gl_Position = uVp * fragPos;
   oFragPos = fragPos;
   oTexCoords = texCoords;
+  oTexWeights = texWeights;
   oNormal = outNormal;
   oEye = uEye;
 }

@@ -25,7 +25,7 @@ struct CharacterRenderInfo {
 struct TextRenderer {
 public:
     bool initialize(GLint size, GLchar* path);
-    void renderText(Shader originalShader, String str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
+    void renderText(Shader originalShader, String& str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
     void free();
 	inline GLint getFontSize() const { return mSize; }
 	GLfloat getStringWidth(String str, GLfloat scale) const;

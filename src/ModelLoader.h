@@ -2,7 +2,7 @@
 #include "Model.h"
 #include "Box.h"
 #include "List.h"
-#include "TextureListItem.h"
+#include "GeneratedTexture.h"
 #include <vector>
 
 struct LoadModel;
@@ -13,7 +13,7 @@ struct ModelLoader {
 		Box box;
 	};
 
-	List<TextureListItem> textureList;
+	List<GeneratedTexture> textureList;
 	void loadTextureList(const char* path);
 	ModelLoadResult loadSerializedModel(const char* path);
 	ModelLoadResult loadFromLoadModel(LoadModel& intermediateModel);

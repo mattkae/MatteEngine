@@ -11,6 +11,10 @@ struct String {
 	size_t length = 0;
 	size_t capacity = 0;
 
+	String();
+	String(const char* str);
+	String(const String& str);
+
 	void operator =(const char* str);
 	void set(const char* str);
 	void allocate(size_t capacity = 0);
@@ -25,6 +29,7 @@ struct String {
 	void insert(const char& c, size_t index);
 	void erase(size_t index);
 	StringPointer substring(size_t start, size_t end);
+	void insertInteger(int value);
 
 	void fromInteger(int i);
 	void fromFloat(float f);

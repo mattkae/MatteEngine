@@ -5,9 +5,7 @@
 #include "TextureInfo.h"
 #include "List.h"
 
-using namespace std;
-
-void Mesh::initialize(LoadMesh& loadMesh, List<TextureListItem>* list) {
+void Mesh::initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list) {
     Vertex* vertices = new Vertex[loadMesh.vertices.size()];
     for (size_t index = 0; index < loadMesh.vertices.size(); index++) {
         Vertex* v = &vertices[index];
@@ -36,15 +34,19 @@ void Mesh::initialize(LoadMesh& loadMesh, List<TextureListItem>* list) {
 
     // Texture Coordinate
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
+
+    // Texture weights
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, textureWeights));
 
     // Bone weights
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
 
     // Bone indices
-    glEnableVertexAttribArray(4);
-    glVertexAttribIPointer(4, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
+    glEnableVertexAttribArray(5);
+    glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
 
     glBindVertexArray(0);
 
@@ -83,13 +85,17 @@ void Mesh::initialize(Vertex* vertices,
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
 
-    // Bone weights
+    // Texture weights
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, textureWeights));
+
+    // Bone weights
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
 
     // Bone indices
-    glEnableVertexAttribArray(4);
-    glVertexAttribIPointer(4, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
+    glEnableVertexAttribArray(5);
+    glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
 
     glBindVertexArray(0);
 

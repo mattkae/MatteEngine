@@ -9,12 +9,12 @@
 
 struct GenerationParameters {
     int size = 1000;
-    int granularity = 64;
+    int granularity = 100;
     int permSize = 1000;
     float scaleFactor = 0.004f;
-    float minMaxHeight = 32.f;
+    float minMaxHeight = 64.f;
     float ampFactor = 0.6f;
-    float frequencyFactor = 1.5f;
+    float frequencyFactor = 2.f;
     int numOctaves = 64;
     int verticesPerTexture = 16;
 
@@ -29,7 +29,7 @@ struct Terrain {
     GenerationParameters mParams;
     bool isInitialized = false;
 
-    GLuint textures[3]; // Grass, rock, dirt
+    GLuint textures[3] = { 0, 0, 0 }; // Grass, dirt, rock
 
     void initialize(const GenerationParameters& params);
     void loadTextures(const GenerationParameters& params);

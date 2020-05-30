@@ -3,7 +3,7 @@
 
 #include "Material.h"
 #include "Shader.h"
-#include "TextureListItem.h"
+#include "GeneratedTexture.h"
 #include <GL/glew.h>
 #include <vector>
 
@@ -24,7 +24,7 @@ struct Mesh {
 		unsigned int numIndices,
 		LoadMaterial& loadMaterial
 	);
-	void initialize(LoadMesh& loadMesh, List<TextureListItem>* list);
+	void initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list);
 	void free();
 	void render(const Shader& shader, bool withMaterial = true, GLint drawType = GL_TRIANGLES) const;
 };

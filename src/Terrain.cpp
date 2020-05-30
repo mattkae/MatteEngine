@@ -4,6 +4,14 @@
 #include "Vertex.h"
 #include "TextureLoader.h"
 
+enum class TerrainClassification {
+    DIRT,
+    DIRT_GRASS,
+    GRASS,
+    GRASS_ROCK,
+    ROCK
+};
+
 inline static float randomFloat(float min, float max) {
     return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min))));
 }
@@ -36,6 +44,31 @@ static inline GLfloat calculateTextureCoordinate(int coord, float portionOfTextu
     }
 
     return ((coord % verticesPerTexture) * portionOfTexturePerVertex);
+}
+
+TerrainClassification classifyTerrain(float height, float maxHeight) {
+    if (height < 0) {
+        height = -height;
+        if (height > maxHeight * (2.f / 3.f)) {
+            // Upper two-thirds gets dirt
+            return TerrainClassification::DIRT;
+        } else if (height > maxHeight / 3.f) {
+            // Middle two thirds gets mix
+            return TerrainClassification::DIRT_GRASS;
+        } else {
+            return TerrainClassification::GRASS;
+        }
+    } else {
+        if (height > maxHeight * (2.f / 3.f)) {
+            // Upper two-thirds gets rock
+            return TerrainClassification::ROCK;
+        } else if (height > maxHeight / 3.f) {
+            // Middle two thirds gets mix
+            return TerrainClassification::GRASS_ROCK;
+        } else {
+            return TerrainClassification::GRASS;
+        }
+    }
 }
 
 void Terrain::initialize(const GenerationParameters& params) {
@@ -71,9 +104,39 @@ void Terrain::initialize(const GenerationParameters& params) {
                 params.numOctaves, perm, permIndexCap);
             Vertex vertex;
             vertex.position = getVec3(squareSize * xCoord, height, squareSize * yCoord);
-            vertex.texCoords = getVec3(vertexCoordinates.x, vertexCoordinates.y, 0.f);
-            vertices[vertexIdx++] = vertex;
+            vertex.texCoords = vertexCoordinates;
 
+            TerrainClassification classification = classifyTerrain(height, params.minMaxHeight);
+            switch (classification) {
+            case TerrainClassification::DIRT:
+                vertex.textureWeights[0] = 0;
+                vertex.textureWeights[1] = 1;
+                vertex.textureWeights[2] = 0;
+                break;
+            case TerrainClassification::DIRT_GRASS:
+                vertex.textureWeights[0] = 0.5;
+                vertex.textureWeights[1] = 0.5;
+                vertex.textureWeights[2] = 0;
+                break;
+            case TerrainClassification::GRASS:
+                vertex.textureWeights[0] = 1;
+                vertex.textureWeights[1] = 0;
+                vertex.textureWeights[2] = 0;
+                break;
+            case TerrainClassification::GRASS_ROCK:
+                vertex.textureWeights[0] = 0;
+                vertex.textureWeights[1] = 0.5;
+                vertex.textureWeights[2] = 0.5;
+                break;
+            case TerrainClassification::ROCK:
+                vertex.textureWeights[0] = 0;
+                vertex.textureWeights[1] = 0;
+                vertex.textureWeights[2] = 1;
+                break;
+
+            }
+
+            vertices[vertexIdx++] = vertex;
             if (yCoord != params.granularity - 1 && xCoord != params.granularity - 1) {
                 GLuint idx = yCoord * params.granularity + xCoord;
                 indicies[indicesIdx++] = idx;
@@ -115,13 +178,19 @@ void Terrain::initialize(const GenerationParameters& params) {
     Logger::logInfo("Finished generating terrain!");
 
     LoadMaterial material;
-    material.diffuse = Vector3f { 0, 0.2, 0 };
-    material.ambient = Vector3f { 0, 0.2, 0 };
-    material.specular = Vector3f { 0, 0.2, 0 };
+    material.diffuse = Vector3f { 0, 0.0, 0 };
+    material.ambient = Vector3f { 0, 0.0, 0 };
+    material.specular = Vector3f { 0, 0.0, 0 };
     mMesh.initialize(vertices, numVertices, indicies, numIndices, material);
 
     if (textures[0] > 0) {
-        mMesh.material.diffuseTexture = textures[0];
+        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[0]);
+    }
+    if (textures[1] > 0) {
+        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[1]);
+    }
+    if (textures[2] > 0) {
+        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[2]);
     }
 
     int halfMapSize = squareSize * (params.granularity / 2);

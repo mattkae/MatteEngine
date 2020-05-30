@@ -20,7 +20,7 @@ void ModelLoader::loadTextureList(const char* path) {
 		TextureInfo info;
 		info.read(serializer);
 
-		TextureListItem item;
+		GeneratedTexture item;
 		item.uniqueId = info.uniqueId;
 		item.texture = loadTexture(info.fullpath);
 		textureList.add(&item);

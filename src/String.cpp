@@ -12,7 +12,18 @@ void String::set(const char* str) {
 	}
 
 	memcpy(value, str, newLength);
+	value[newLength] = '\0';
 	length = newLength;
+}
+
+String::String() { };
+
+String::String(const char* str) {
+	set(str);
+}
+
+String::String(const String& str) {
+	set(str.value);
 }
 
 void String::operator =(const char* str) {
@@ -155,6 +166,10 @@ StringPointer String::substring(size_t start, size_t end) {
 	retval.value = &value[start];
 	retval.length = end - start;
 	return retval;
+}
+
+void String::insertInteger(int i) {
+	snprintf(value, 10, value, i);
 }
 
 void String::fromInteger(int i) {

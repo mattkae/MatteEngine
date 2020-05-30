@@ -2,6 +2,7 @@
 #include "Sphere.h"
 #include "StringUtil.h"
 #include "FileHelper.h"
+#include "ShaderUniformMapping.h"
 
 const char* START_OBJECT_TOKEN = "::";
 const char* END_OBJECT_TOKEN = ";;";
@@ -63,6 +64,8 @@ void SceneLoader::loadScene(const char* filepath, Scene& scene) {
                 setShaderInt(scene.mSceneShader, "uMaterialInfo", 5);
             } else {
                 scene.mSceneShader = loadShader("src/shaders/model.vert", "src/shaders/model.frag");
+                useShader(scene.mSceneShader);
+                ShaderUniformMapping::initialize(scene.mSceneShader);
             }
         } else if (StringUtil::startsWith(ptr, IGNORE_OBJECT_TOKEN)) {
             ignoreObject(file, buffer);

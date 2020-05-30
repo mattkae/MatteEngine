@@ -92,7 +92,7 @@ bool TextRenderer::loadChar(GLchar c)
     return true;
 }
 
-void TextRenderer::renderText(Shader originalShader, String str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
+void TextRenderer::renderText(Shader originalShader, String& str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);

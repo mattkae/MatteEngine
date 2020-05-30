@@ -1,7 +1,6 @@
 #include "Button.h"
 #include "TextRenderer.h"
 #include "Vector2f.h"
-#include "SceneUIController.h"
 
 Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 	return { button.position.x, button.position.y, button.width, getButtonHeight(button, textRenderer) };

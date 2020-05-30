@@ -41,6 +41,7 @@
     <ClCompile Include="..\..\src\Matrix3x3f.cpp" />
     <ClCompile Include="..\..\src\Matrix4x4f.cpp" />
     <ClCompile Include="..\..\src\Mesh.cpp" />
+    <ClCompile Include="..\..\src\MeshTexture.cpp" />
     <ClCompile Include="..\..\src\Model.cpp" />
     <ClCompile Include="..\..\src\Panel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
@@ -52,9 +53,9 @@
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\SceneLoader.cpp" />
     <ClCompile Include="..\..\src\ModelLoader.cpp" />
-    <ClCompile Include="..\..\src\SceneUIController.cpp" />
     <ClCompile Include="..\..\src\Shader.cpp" />
     <ClCompile Include="..\..\src\OpenSimplexNoise.cpp" />
+    <ClCompile Include="..\..\src\ShaderUniformMapping.cpp" />
     <ClCompile Include="..\..\src\Skybox.cpp" />
     <ClCompile Include="..\..\src\Sphere.cpp" />
     <ClCompile Include="..\..\src\String.cpp" />
@@ -80,9 +81,11 @@
     <ClInclude Include="..\..\src\Box.h" />
     <ClInclude Include="..\..\src\Button.h" />
     <ClInclude Include="..\..\src\Camera.h" />
+    <ClInclude Include="..\..\src\Constants.h" />
     <ClInclude Include="..\..\src\DebugRender.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
-    <ClInclude Include="..\..\src\SceneUIController.h" />
+    <ClInclude Include="..\..\src\MeshTexture.h" />
+    <ClInclude Include="..\..\src\ShaderUniformMapping.h" />
     <ClInclude Include="..\..\src\String.h" />
     <ClInclude Include="..\..\src\FileHelper.h" />
     <ClInclude Include="..\..\src\GlobalApplicationState.h" />
@@ -111,7 +114,7 @@
     <ClInclude Include="..\..\src\StringUtil.h" />
     <ClInclude Include="..\..\src\TextInput.h" />
     <ClInclude Include="..\..\src\TextureInfo.h" />
-    <ClInclude Include="..\..\src\TextureListItem.h" />
+    <ClInclude Include="..\..\src\GeneratedTexture.h" />
     <ClInclude Include="..\..\src\TextureLoader.h" />
     <ClInclude Include="..\..\src\TextureUniformConstants.h" />
     <ClInclude Include="..\..\src\UI.h" />

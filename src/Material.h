@@ -5,9 +5,9 @@
 #include "Shader.h"
 #include "Vector3f.h"
 #include "List.h"
-#include "TextureListItem.h"
+#include "GeneratedTexture.h"
+#include "MeshTexture.h"
 #include <GL/glew.h>
-#include <vector>
 
 struct LoadMaterial;
 
@@ -22,11 +22,9 @@ struct Material {
     float specularComponent = 20.f;
     float transparency = 1.0;
 
-	GLuint diffuseTexture = 0;
-	GLuint specularTexture = 0;
-	GLuint ambientTexture = 0;
+	MeshTexture textureList;
 
-    void initialize(LoadMaterial& material, List<TextureListItem>* list);
+    void initialize(LoadMaterial& material, List<GeneratedTexture>* list);
     void render(const Shader& shader) const;
 };
 

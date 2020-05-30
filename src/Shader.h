@@ -36,6 +36,10 @@ inline void setShaderInt(const Shader& shader, const GLchar* name, GLint value) 
 	glUniform1i(getShaderUniform(shader, name), value);
 }
 
+inline void setShaderIntWithUniform(const GLint uniform, GLint value) {
+	glUniform1i(uniform, value);
+}
+
 inline void setShaderUint(const Shader& shader, const GLchar* name, GLuint value) {
 	glUniform1ui(getShaderUniform(shader, name), value);
 }

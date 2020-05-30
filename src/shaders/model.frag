@@ -3,7 +3,7 @@
 #include Material.glsl
 #include Light.shared.cpp
 
-#define MAX_TEXTURES 4
+#define MAX_TEXTURES 3
 
 // Output color
 out vec4 Color;
@@ -11,7 +11,8 @@ out vec4 Color;
 // Input from vertex shader
 in vec4 oFragPos;
 in vec3 oNormal;
-in vec3 oTexCoords;
+in vec3 oTexWeights;
+in vec2 oTexCoords;
 in vec3 oEye;
 
 // Uniform variables
@@ -19,6 +20,7 @@ uniform Material uMaterial;
 uniform sampler2D uDiffuseList[MAX_TEXTURES];
 uniform sampler2D uSpecularList[MAX_TEXTURES];
 uniform sampler2D uAmbientList[MAX_TEXTURES];
+//uniform sampler2D uNormalMapList[MAX_TEXTURES];
 
 uniform int uNumLights;
 uniform vec3 uAmbient;
@@ -36,22 +38,21 @@ float getDirVisibility(const in int lightIndex, vec4 fragPosInLightSpace);
 void main() {
     vec3 viewDir = normalize(oEye - oFragPos.xyz);
     vec3 normal = normalize(oNormal);
-    vec3 diffuse = uMaterial.diffuse;
-    vec3 specular = uMaterial.specular;
+    vec3 diffuse = uMaterial.useTexture[0] ? vec3(0, 0, 0) : uMaterial.diffuse;
+    vec3 specular = uMaterial.useTexture[1] ? vec3(0, 0, 0) : uMaterial.specular;
     vec3 emissive = uMaterial.emissive;
-    vec3 ambient = uAmbient;
+    vec3 ambient = uMaterial.useTexture[2] ? vec3(0, 0, 0) : uAmbient;
 
-    vec2 textureCoordinates = vec2(oTexCoords.x, oTexCoords.y);
-    int textureIndex = int(oTexCoords.z);
-
-    if (uMaterial.useTexture[0]) {
-        diffuse = texture(uDiffuseList[textureIndex], textureCoordinates).rgb;
-    }
-    if (uMaterial.useTexture[1]) {
-        specular = texture(uSpecularList[textureIndex], textureCoordinates).rgb;
-    }
-    if (uMaterial.useTexture[2]) {
-        ambient = texture(uAmbientList[textureIndex], textureCoordinates).rgb;
+    for (int textureIndex = 0; textureIndex < MAX_TEXTURES; textureIndex++) {
+        if (uMaterial.useTexture[0]) {
+            diffuse += oTexWeights[textureIndex] * texture(uDiffuseList[textureIndex], oTexCoords).rgb;
+        }
+        if (uMaterial.useTexture[1]) {
+            specular += oTexWeights[textureIndex] * texture(uSpecularList[textureIndex], oTexCoords).rgb;
+        }
+        if (uMaterial.useTexture[2]) {
+            ambient += oTexWeights[textureIndex] * texture(uAmbientList[textureIndex], oTexCoords).rgb;
+        }
     }
 
     vec3 finalColor = ambient * diffuse + emissive;
@@ -96,8 +97,7 @@ vec3 getColorFromLight(Light light, vec3 normal, vec3 viewDir, vec3 diffuse, vec
     }
 
     // Calculate intensity of the light (Directional and Point have no drop off)
-    float attenuation = (light.constant + delta * light.linear +
-                         delta * delta * light.quadratic);
+    float attenuation = (light.constant + delta * light.linear + delta * delta * light.quadratic);
     vec3 intensity =
         (light.color * pow(angleBetween, light.dropOff)) / attenuation;
 

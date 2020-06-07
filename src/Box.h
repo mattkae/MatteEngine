@@ -6,7 +6,7 @@
 #include "Ray.h"
 #include "Material.h"
 #include <algorithm>
-#include "Shader.h"
+#include "ShaderUniformMapping.h"
 #include <GL/glew.h>
 
 struct Box {
@@ -69,5 +69,5 @@ inline Vector4f getCenter(const Box& box) {
 }
 
 void updateBox(Box& box, const Matrix4x4f& model);
-void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader);
+void renderBoxOutline(const Box& box, const Matrix4x4f& model, const ModelUniformMapping& mapping);
 GLfloat getDistanceFromCamera(const Box& box, const BetterCamera& camera, const Matrix4x4f& model);

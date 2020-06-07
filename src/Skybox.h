@@ -11,7 +11,6 @@ using json = nlohmann::json;
 struct Skybox {
     GLuint mTexture;
     GLuint vao = 0, vbo = 0, ebo = 0;
-    Shader mSkyboxShader;
 };
 
 void initSkybox(Skybox& skybox, const char paths[6][128]);

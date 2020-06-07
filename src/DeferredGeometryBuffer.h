@@ -23,7 +23,6 @@ private:
     GLuint mDepth;
     bool mHasGenerated = false;
     GLuint* mAttachments;
-    Shader mShader;
     Quad mQuad;
 
     GLint width;

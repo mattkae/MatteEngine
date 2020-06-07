@@ -28,67 +28,47 @@ inline void useShader(const Shader& shader) {
 	glUseProgram(shader);
 }
 
-inline void setShaderFloat(const Shader& shader, const GLchar* name, GLfloat value) {
-    glUniform1f(getShaderUniform(shader, name), value);
+inline void setShaderFloat(GLint location, GLfloat value) {
+    glUniform1f(location, value);
 }
 
-inline void setShaderInt(const Shader& shader, const GLchar* name, GLint value) {
-	glUniform1i(getShaderUniform(shader, name), value);
+inline void setShaderInt(GLint location, GLint value) {
+	glUniform1i(location, value);
 }
 
-inline void setShaderIntWithUniform(const GLint uniform, GLint value) {
-	glUniform1i(uniform, value);
+inline void setShaderUint(GLint location, GLuint value) {
+	glUniform1ui(location, value);
 }
 
-inline void setShaderUint(const Shader& shader, const GLchar* name, GLuint value) {
-	glUniform1ui(getShaderUniform(shader, name), value);
+inline void setShaderVec2(GLint location, const Vector2f& value) {
+	glUniform2f(location, value.x, value.y);
 }
 
-inline void setShaderVec2(const Shader& shader, const GLchar* name, const Vector2f& value) {
-	glUniform2f(getShaderUniform(shader, name), value.x, value.y);
+inline void setShaderVec4(GLint location, const Vector4f& value) {
+	glUniform4f(location, value.x, value.y, value.z, value.w);
 }
 
-inline void setShaderVec4(const Shader& shader, const GLchar* name, const Vector4f& value) {
-	glUniform4f(getShaderUniform(shader, name), value.x, value.y, value.z, value.w);
+inline void setShaderMat3(GLint location, const Matrix3x3f& matrix) {
+	glUniformMatrix3fv(location, 1, GL_FALSE, matrix.values);
 }
 
-inline void setShaderMat3(const Shader& shader, const GLchar* name, const Matrix3x3f& matrix) {
-	glUniformMatrix3fv(getShaderUniform(shader, name), 1, GL_FALSE, matrix.values);
+inline void setShaderMat4(GLint location, const Matrix4x4f& matrix) {
+	glUniformMatrix4fv(location, 1, GL_FALSE, matrix.values);
 }
 
-inline void setShaderMat4(const Shader& shader, const GLchar* name, const Matrix4x4f& matrix) {
-	glUniformMatrix4fv(getShaderUniform(shader, name), 1, GL_FALSE, matrix.values);
+inline void setShaderMat4Multiple(GLint location, GLuint size, const Matrix4x4f* matrices) {
+	glUniformMatrix4fv(location, size, GL_FALSE, (const GLfloat*)matrices);
 }
 
-inline void setShaderMat4Multiple(const Shader& shader, const GLchar* name,  GLuint size, const Matrix4x4f* matrices) {
-	glUniformMatrix4fv(getShaderUniform(shader, name), size, GL_FALSE, (const GLfloat*)matrices);
+inline void setShaderVec3(GLint location, const Vector3f& value) {
+	glUniform3f(location, value.x, value.y, value.z);
 }
 
-inline void setShaderVec3(const Shader& shader, const GLchar* name, const Vector3f& value) {
-	glUniform3f(getShaderUniform(shader, name), value.x, value.y, value.z);
+inline void setShaderBVec3(GLint location, bool first, bool second, bool third) {
+	glUniform3i(location, first, second, third);
 }
 
-inline void setShaderBVec3(const Shader& shader, const GLchar* name, bool first, bool second, bool third) {
-	glUniform3i(getShaderUniform(shader, name), first, second, third);
-}
-
-inline void setShaderBool(const Shader& shader, const GLchar* name, bool value) {
-	glUniform1i(getShaderUniform(shader, name), value);
-}
-
-inline void setShaderVec3WithUniform(const Shader& shader, GLint uniform, const Vector3f& value) {
-	glUniform3f(uniform, value.x, value.y, value.z);
-}
-
-inline void setShaderFloatWithUniform(const Shader& shader, GLint uniform, GLfloat value) {
-    glUniform1f(uniform, value);
-}
-
-inline void setShaderIntWithUniform(const Shader& shader, GLint uniform, GLint value) {
-	glUniform1i(uniform, value);
-}
-
-inline void setShaderMat4WithUniform(const Shader& shader, GLint uniform, const Matrix4x4f& matrix) {
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, matrix.values);
+inline void setShaderBool(GLint location, bool value) {
+	glUniform1i(location, value);
 }
 #endif

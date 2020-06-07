@@ -6,6 +6,7 @@
 #include "Box.h"
 #include "Camera.h"
 #include "MathHelper.h"
+#include "ShaderUniformMapping.h"
 
 struct DebugArrow {
 	Vector3f rotation;
@@ -17,7 +18,7 @@ struct DebugArrow {
 };
 
 void updateDebugArrow(DebugArrow& arrow, Box& debugBox, const Matrix4x4f& model);
-void renderDebugArrow(const DebugArrow& arrow, const Shader& shader);
+void renderDebugArrow(const DebugArrow& arrow, const ModelUniformMapping& mapping);
 
 enum class DebugClickState {
 	NONE,
@@ -46,5 +47,5 @@ struct DebugModel {
 };
 
 void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera);
-void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const Shader& shader);
+void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const ModelUniformMapping& mapping);
 void freeDebug(DebugModel& dbgModel);

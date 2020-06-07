@@ -1,7 +1,6 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
-#include "Shader.h"
 #include "Input.h"
 #include <GL/glew.h>
 #include "Vector4f.h"
@@ -28,7 +27,7 @@ struct Rectangle {
 		return isLeftClickDown() && !isMouseHovered();
 	}
 
-	void render(const Shader& shader, const Vector4f& backgroundColor, 
+	void render(const Vector4f& backgroundColor, 
 		const Vector4f& borderColor = Vector4f{0, 0, 0, 0}, GLfloat borderWidth = 0) const;
 };
 

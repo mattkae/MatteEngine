@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Scene.h"
 #include "OpenGLUtil.h"
+#include "ShaderUniformMapping.h"
 
 GLuint generateColorTexture(GLint width, GLint height) {
 	GLuint texture = 0;
@@ -26,8 +27,6 @@ void DeferredGeometryBuffer::generate()
     delete dims;
 
     GLenum err;
-    mShader = loadShader("src/shaders/GBufferShader.vert", "src/shaders/GBufferShader.frag");
-
     glGenFramebuffers(1, &this->mBuffer);
 
     glGenTextures(1, &this->mPositionTexture);
@@ -89,13 +88,12 @@ void DeferredGeometryBuffer::free()
         glDeleteTextures(1, &this->mMaterialInfoTexture);
         glDeleteBuffers(1, &this->mDepth);
         delete mAttachments;
-        glDeleteProgram(this->mShader);
         mHasGenerated = false;
     }
 }
 
-void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Scene& scene) const
-{
+void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Scene& scene) const {
+    // @TODO: This won't work for now, it's ok, let's get back to it later
     if (!mHasGenerated) {
         return;
     }
@@ -104,9 +102,9 @@ void DeferredGeometryBuffer::renderToBuffer(const BetterCamera& camera, const Sc
     glBindFramebuffer(GL_FRAMEBUFFER, this->mBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	useShader(mShader);
-    renderCamera(camera, mShader);
-	scene.renderModels(mShader, true);
+	useShader(ShaderUniformMapping::GlobalDeferredShaderMapping.shader);
+    //renderCamera(camera, mShader);
+	//scene.renderModels(mShader, true);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

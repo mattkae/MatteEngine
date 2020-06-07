@@ -203,14 +203,14 @@ void Terrain::initialize(const GenerationParameters& params) {
     isInitialized = true;
 }
 
-void Terrain::render(const Shader& shader, bool withMaterial) const {
+void Terrain::render(const ModelUniformMapping& mapping, bool withMaterial) const {
     if (!isInitialized) {
         return;
     }
 
-	setShaderMat4(shader, "uModel", model);
-	setShaderBool(shader, "uDisableBones", true);
-	mMesh.render(shader, withMaterial);
+	setShaderMat4(mapping.MODEL, model);
+	setShaderBool(mapping.DISABLE_BONES, true);
+	mMesh.render(mapping.materialUniformMapping, withMaterial);
 
 }
 

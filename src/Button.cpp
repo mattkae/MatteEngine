@@ -23,7 +23,7 @@ void Button::update(const TextRenderer& textRenderer, UIEvent& event) {
 
 void Button::render(const Shader& shader, const TextRenderer& textRenderer) {
 	Vector2f textPosition = position + Vector2f{2 * padding, 2 * padding};
-	boundingRect.render(shader, isClicked ? hoverColor : buttonColor);
+	boundingRect.render(isClicked ? hoverColor : buttonColor);
 	textRenderer.renderText(shader, label, textPosition, scale, textColor);
 }
 

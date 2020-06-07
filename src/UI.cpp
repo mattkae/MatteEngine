@@ -3,9 +3,9 @@
 #include "GlobalApplicationState.h"
 #include "Model.h"
 #include "UIEventProcessor.h"
+#include "ShaderUniformMapping.h"
 
 void UI::init() {
-	mOrthographicShader = loadShader("src/shaders/Orthographic.vert","src/shaders/Orthographic.frag");
 	mTextRenderer.initialize(16, (GLchar*)"assets/fonts/consola.ttf");
 	panels.allocate(8);
 }
@@ -30,12 +30,12 @@ void UI::update(double dt) {
 
 
 void UI::render() const {
-	useShader(mOrthographicShader);
+	useShader(ShaderUniformMapping::GlobalOrthographicShaderMapping.shader);
 	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
-	setShaderMat4(mOrthographicShader, "uProjection", projection);
+	setShaderMat4(ShaderUniformMapping::GlobalOrthographicShaderMapping.PROJECTION, projection);
 
 	for (size_t idx = 0; idx < panels.numElements; idx++) {
-		panels[idx].render(mOrthographicShader, mTextRenderer);
+		panels[idx].render(ShaderUniformMapping::GlobalOrthographicShaderMapping.shader, mTextRenderer);
 	}
 }
 
@@ -46,10 +46,6 @@ void UI::free() {
 	}
 
 	panels.deallocate();
-
-	if (mOrthographicShader > 0) {
-		glDeleteProgram(mOrthographicShader);
-	}
 }
 
 size_t UI::getNextPanelIdx() {

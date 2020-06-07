@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include "Shader.h"
 #include "Constants.h"
+#include "ShaderUniformMapping.h"
 
 enum class TextureType {
 	NONE,
@@ -20,5 +21,5 @@ struct MeshTexture {
 	bool useTexture[3]  = { false, false, false };
 
 	void add(TextureType type, GLuint texture);
-	void render(const Shader& shader) const;
+	void render(const MaterialUniformMapping& mapping) const;
 };

@@ -1,11 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-#define GLM_ENABLE_EXPERIMENTAL
 
 #include "GlobalApplicationState.h"
-#include "Shader.h"
 #include "Vector4f.h"
 #include "Matrix4x4f.h"
+#include "ShaderUniformMapping.h"
 
 struct BetterCamera {
 	Vector3f position = { 0, 0, 5 };
@@ -26,5 +25,5 @@ struct BetterCamera {
 void updateCamera(BetterCamera& camera, float dt);
 Matrix4x4f getCameraViewMatrix(const BetterCamera& camera);
 Matrix4x4f getCameraProjection(const BetterCamera& camera);
-void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye = false);
+void renderCamera(const BetterCamera& camera, const CameraUniformMapping& cameraMapping);
 #endif

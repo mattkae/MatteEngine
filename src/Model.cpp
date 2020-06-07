@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Bone.h"
+#include "ShaderUniformMapping.h"
 #include <GL/glew.h>
 
 void Model::update(float dt) {
@@ -11,11 +12,12 @@ void Model::update(float dt) {
     model = scalingMatrix * rotationMatrix * translationMatrix;
 }
 
-void Model::render(const Shader& shader, bool withMaterial) const {
-    setShaderMat4(shader, "uModel", model);
-    setShaderMat4Multiple(shader, "uBones", numBones, boneModels);
+void Model::render(const ModelUniformMapping& mapping, bool withMaterial) const {
+    setShaderMat4(mapping.MODEL, model);
+    setShaderBool(mapping.DISABLE_BONES, numBones <= 0);
+    setShaderMat4Multiple(mapping.BONES, numBones, boneModels);
 	for (int meshIdx = 0; meshIdx < numMeshes; meshIdx++) {
-		meshes[meshIdx].render(shader, withMaterial);
+		meshes[meshIdx].render(mapping.materialUniformMapping, withMaterial);
     }
 }
 

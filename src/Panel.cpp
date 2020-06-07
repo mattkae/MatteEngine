@@ -32,5 +32,5 @@ void Panel::update() {
 }
 
 void Panel::render(const Shader& shader) const {
-	boundingRect.render(shader, backgroundColor, borderColor, borderWidth);
+	boundingRect.render(backgroundColor, borderColor, borderWidth);
 }

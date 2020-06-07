@@ -4,7 +4,7 @@
 
 void BoundText::render(const Shader& shader, const TextRenderer& textRenderer, 
 	String& text, const Vector4f& backgroundColor, const Vector4f& textColor, GLint scrollOffset) {
-	rect.render(shader, backgroundColor);
+	rect.render(backgroundColor);
 	Vector2f textPosition = Vector2f { padding + rect.x, padding + rect.y };
 	GLfloat textWidthOffset = textRenderer.getStringWidth(text.substring(0, scrollOffset), scale);
 

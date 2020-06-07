@@ -10,6 +10,7 @@
 struct LoadMesh;
 struct LoadMaterial;
 struct Vertex;
+struct MaterialUniformMapping;
 
 struct Mesh {
     Material material;
@@ -26,7 +27,7 @@ struct Mesh {
 	);
 	void initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list);
 	void free();
-	void render(const Shader& shader, bool withMaterial = true, GLint drawType = GL_TRIANGLES) const;
+	void render(const MaterialUniformMapping& mapping, bool withMaterial = true, GLint drawType = GL_TRIANGLES) const;
 };
 
 #endif

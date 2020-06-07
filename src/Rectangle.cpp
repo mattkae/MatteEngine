@@ -1,5 +1,6 @@
 #include "Rectangle.h"
 #include "Input.h"
+#include "ShaderUniformMapping.h"
 
 struct RenderableRectangle {
 	Rectangle r;
@@ -59,7 +60,7 @@ void bufferRect(const Rectangle& rect) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Rectangle::render(const Shader& shader, const Vector4f& backgroundColor, const Vector4f& borderColor, GLfloat borderWidth) const {
+void Rectangle::render(const Vector4f& backgroundColor, const Vector4f& borderColor, GLfloat borderWidth) const {
 	if (globalRect.mVao == 0) {
 		globalRect.init(true);
 	}
@@ -69,13 +70,13 @@ void Rectangle::render(const Shader& shader, const Vector4f& backgroundColor, co
 	borderRect.y = y - borderWidth;
 	borderRect.h = h + 2.f * borderWidth;
 	borderRect.w = w + 2.f * borderWidth;
-	setShaderVec4(shader, "uColor", borderColor);
+	setShaderVec4(ShaderUniformMapping::GlobalOrthographicShaderMapping.COLOR, borderColor);
 	bufferRect(borderRect);
 	glBindVertexArray(globalRect.mVao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 
-	setShaderVec4(shader, "uColor", backgroundColor);
+	setShaderVec4(ShaderUniformMapping::GlobalOrthographicShaderMapping.COLOR, backgroundColor);
 	bufferRect(*this);
 	glBindVertexArray(globalRect.mVao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -44,8 +44,8 @@ void updateDebugArrow(DebugArrow& arrow, Box& box, const Matrix4x4f& model) {
 	arrow.model.model = translateMatrix(arrow.model.model, centerOfBox);
 }
 
-void renderDebugArrow(const DebugArrow& arrow, const Shader& shader) {
-	arrow.model.render(shader);
+void renderDebugArrow(const DebugArrow& arrow, const ModelUniformMapping& mapping) {
+	arrow.model.render(mapping);
 }
 
 void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera) {
@@ -142,11 +142,11 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamer
 	}
 }
 
-void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const Shader& shader) {
-	renderDebugArrow(dbgModel.xArrow, shader);
-	renderDebugArrow(dbgModel.yArrow, shader);
-	renderDebugArrow(dbgModel.zArrow, shader);
-	renderBoxOutline(dbgModel.debugBox, model, shader);
+void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const ModelUniformMapping& mapping) {
+	renderDebugArrow(dbgModel.xArrow, mapping);
+	renderDebugArrow(dbgModel.yArrow, mapping);
+	renderDebugArrow(dbgModel.zArrow, mapping);
+	renderBoxOutline(dbgModel.debugBox, model, mapping);
 }
 
 void freeDebug(DebugModel& dbgModel) {

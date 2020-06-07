@@ -37,7 +37,6 @@ private:
     FT_Library mLib;
     FT_Face mFace;
     GLint mSize;
-    Shader mShader;
 
 	GLuint mVao;
     GLuint mVbo;

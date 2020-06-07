@@ -10,6 +10,7 @@
 #include <GL/glew.h>
 
 struct LoadMaterial;
+struct MaterialUniformMapping;
 
 struct Material {
     std::string name;
@@ -25,7 +26,7 @@ struct Material {
 	MeshTexture textureList;
 
     void initialize(LoadMaterial& material, List<GeneratedTexture>* list);
-    void render(const Shader& shader) const;
+    void render(const MaterialUniformMapping& mapping) const;
 };
 
 #endif

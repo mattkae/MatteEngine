@@ -32,8 +32,6 @@ struct Scene {
 
     Terrain mTerrain;
     Skybox mSkybox;
-    Shader mSceneShader;
-    Shader mShadowShader;
     bool useDefferredRendering = false;
     DeferredGeometryBuffer mDeferredBuffer;
 	UI ui;
@@ -53,7 +51,7 @@ struct Scene {
 	void renderNonDeferred();
 	void renderDebug();
 	void renderDirect();
-	void renderModels(const Shader &shader, bool withMaterial = true) const;
+	void renderModels(const ModelUniformMapping& mapping, bool withMaterial = true) const;
 };
 
 #endif

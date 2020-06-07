@@ -136,7 +136,7 @@ void TextInput::render(const Shader& shader, const TextRenderer& textRenderer) {
 	if (isFocused) {
 		GLfloat cursorOffset = textRenderer.getStringWidth(representation.substring(0, cursorPosition), bt.scale);
 		Rectangle cursorRect = { bt.rect.x + bt.padding + cursorOffset, bt.rect.y, 2, textRenderer.getFontSize() };
-		cursorRect.render(shader, Vector4f { 1, 0, 0, 1 });
+		cursorRect.render(Vector4f { 1, 0, 0, 1 });
 	}
 }
 

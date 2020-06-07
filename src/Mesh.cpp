@@ -109,13 +109,13 @@ void Mesh::free() {
     if (ebo) glDeleteBuffers(1, &ebo);
 }
 
-void Mesh::render(const Shader& shader, bool withMaterial, GLint drawType) const {
+void Mesh::render(const MaterialUniformMapping& mapping, bool withMaterial, GLint drawType) const {
 	if (vao == 0) {
 		return;
 	}
 
     if (withMaterial) {
-        material.render(shader);
+        material.render(mapping);
     }
 
     glBindVertexArray(vao);

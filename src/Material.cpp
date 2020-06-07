@@ -1,11 +1,8 @@
 #include "Material.h"
-#include "TextureUniformConstants.h"
 #include "Logger.h"
 #include "LoadModel.h"
 #include "ModelLoader.h"
-#include <iostream>
-#include <sstream>
-#include <string>
+#include "ShaderUniformMapping.h"
 
 void Material::initialize(LoadMaterial& material, List<GeneratedTexture>* list) {
 	emissive = material.emissive;
@@ -32,14 +29,14 @@ void Material::initialize(LoadMaterial& material, List<GeneratedTexture>* list) 
 }
 
 
-void Material::render(const Shader& shader) const {
-	setShaderVec3(shader, "uMaterial.diffuse", diffuse);
-	setShaderVec3(shader, "uMaterial.specular", specular);
-	setShaderVec3(shader, "uMaterial.emissive", emissive);
-	setShaderVec3(shader, "uMaterial.diffuseProperty", diffuseProperty);
-	setShaderVec3(shader, "uMaterial.specularProperty", specularProperty);
+void Material::render(const MaterialUniformMapping& mapping) const {
+	setShaderVec3(mapping.MATERIAL_DIFFUSE, diffuse);
+	setShaderVec3(mapping.MATERIAL_SPECULAR, specular);
+	setShaderVec3(mapping.MATERIAL_EMISSIVE, emissive);
+	setShaderVec3(mapping.MATERIAL_DIFFUSE_PROPERTY, diffuseProperty);
+	setShaderVec3(mapping.MATERIAL_SPECULAR_PROPERTY, specularProperty);
 	//setShaderFloat(shader, "uMaterial.shininess", specularComponent);
-	setShaderFloat(shader, "uMaterial.opacity", transparency);
-	setShaderBVec3(shader, "uMaterial.useTexture", textureList.useTexture[0], textureList.useTexture[1], textureList.useTexture[2]);
-	textureList.render(shader);
+	setShaderFloat(mapping.MATERIAL_OPACITY, transparency);
+	setShaderBVec3(mapping.MATERIAL_USE_TEXTURE, textureList.useTexture[0], textureList.useTexture[1], textureList.useTexture[2]);
+	textureList.render(mapping);
 }

@@ -1,4 +1,5 @@
 #include "ParticleEmitter.h"
+#include "ShaderUniformMapping.h"
 #include <array>
 #include <cmath>
 #include <iostream>
@@ -23,7 +24,6 @@ inline void spawnParticles(ParticleEmitter& emitter, size_t numParticlesToSpawn)
 void initializeParticleEmitter(ParticleEmitter& emitter, size_t initialParticleCount) {
 	emitter.particleUpdateVariables = new ParticleUpdateVariables[emitter.maxParticles];
 	emitter.particleRenderVariables = new ParticleRenderVariables[emitter.maxParticles];
-    emitter.mParticleShader = loadShader("src/shaders/particle.vert", "src/shaders/particle.frag");
 
     int verticesCount = 6 * emitter.numVertices;
     GLfloat* vertices = new GLfloat[verticesCount];
@@ -142,12 +142,12 @@ void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& c
         return;
     }
 
-	useShader(emitter.mParticleShader);
-    renderCamera(camera, emitter.mParticleShader);
+	useShader(ShaderUniformMapping::GlobalParticleShaderMapping.shader);
+    renderCamera(camera, ShaderUniformMapping::GlobalParticleShaderMapping.cameraMapping);
 
-	setShaderMat4(emitter.mParticleShader, "uModel", emitter.model);
-	setShaderVec3(emitter.mParticleShader, "uCameraUp", camera.up);
-	setShaderVec3(emitter.mParticleShader, "uCameraRight", camera.right);
+	setShaderMat4(ShaderUniformMapping::GlobalParticleShaderMapping.MODEL, emitter.model);
+	setShaderVec3(ShaderUniformMapping::GlobalParticleShaderMapping.CAMERA_UP, camera.up);
+	setShaderVec3(ShaderUniformMapping::GlobalParticleShaderMapping.CAMERA_RIGHT, camera.right);
 
 	glBindVertexArray(emitter.vao);
 
@@ -178,9 +178,5 @@ void freeParticleEmitter(ParticleEmitter& emitter) {
 
 	if (emitter.instanceVbo > 0) {
 		glDeleteFramebuffers(1, &emitter.instanceVbo);
-	}
-
-	if (emitter.mParticleShader > 0) {
-		glDeleteShader(emitter.mParticleShader);
 	}
 }

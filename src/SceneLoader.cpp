@@ -9,7 +9,7 @@ const char* END_OBJECT_TOKEN = ";;";
 const char* IGNORE_OBJECT_TOKEN = "//";
 
 void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE], const Shader& shader);
+void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
@@ -41,7 +41,7 @@ void SceneLoader::loadScene(const char* filepath, Scene& scene) {
             if (StringUtil::startsWith(ptr, "skybox")) {
                 loadSkybox(file, scene.mSkybox, buffer);
             } else if (StringUtil::startsWith(ptr, "lights")) {
-                loadLights(file, scene.lights, scene.numLightsUsed, buffer, scene.mSceneShader);
+                loadLights(file, scene.lights, scene.numLightsUsed, buffer);
             } else if (StringUtil::startsWith(ptr, "models")) {
                 loadModels(file, scene, scene.numModels, buffer);
             } else if (StringUtil::startsWith(ptr, "spheres")) {
@@ -53,20 +53,6 @@ void SceneLoader::loadScene(const char* filepath, Scene& scene) {
             }
         } else if (StringUtil::ifEqualWalkToValue(ptr, "useDeferredRendering")) {
             StringUtil::strToBool(ptr, scene.useDefferredRendering);
-            if (scene.useDefferredRendering) {
-                scene.mSceneShader = loadShader("src/shaders/DefferedModel.vert", "src/shaders/DefferedModel.frag");
-                useShader(scene.mSceneShader); 
-                setShaderInt(scene.mSceneShader, "uPosition", 0);
-                setShaderInt(scene.mSceneShader, "uNormal", 1);
-                setShaderInt(scene.mSceneShader, "uDiffuse", 2);
-                setShaderInt(scene.mSceneShader, "uSpecular", 3);
-                setShaderInt(scene.mSceneShader, "uEmissive", 4);
-                setShaderInt(scene.mSceneShader, "uMaterialInfo", 5);
-            } else {
-                scene.mSceneShader = loadShader("src/shaders/model.vert", "src/shaders/model.frag");
-                useShader(scene.mSceneShader);
-                ShaderUniformMapping::initialize(scene.mSceneShader);
-            }
         } else if (StringUtil::startsWith(ptr, IGNORE_OBJECT_TOKEN)) {
             ignoreObject(file, buffer);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "textures")) {
@@ -115,7 +101,7 @@ void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFF
     initSkybox(skybox, facePaths);
 }
 
-inline void loadLight(FILE* file, Light& light, int numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE], const Shader& shader) {
+inline void loadLight(FILE* file, Light& light, int numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
     while (StringUtil::processLine(file, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "type")) {
@@ -149,15 +135,15 @@ inline void loadLight(FILE* file, Light& light, int numLights, char buffer[Strin
         }
     }
 
-    initLight(light, shader, numLights);
+    light.initialize(numLights);
 }
 
-void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE], const Shader& shader) {
+void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     numLights = 0;
     char* ptr;
     while (StringUtil::processLine(file, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadLight(file, lights[numLights], numLights, buffer, shader);
+            loadLight(file, lights[numLights], numLights, buffer);
             numLights++;
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;

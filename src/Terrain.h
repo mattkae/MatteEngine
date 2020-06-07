@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Matrix4x4f.h"
 #include "String.h"
+#include "ShaderUniformMapping.h"
 #include <GL/glew.h>
 
 struct GenerationParameters {
@@ -33,7 +34,7 @@ struct Terrain {
 
     void initialize(const GenerationParameters& params);
     void loadTextures(const GenerationParameters& params);
-    void render(const Shader& shader, bool withMaterial = true) const;
+    void render(const ModelUniformMapping& mapping, bool withMaterial = true) const;
     void free();
 };
 

@@ -12,6 +12,7 @@ struct Bone;
 struct BoneTreeNode;
 struct Mesh;
 struct LoadModel;
+struct ModelUniformMapping;
 
 constexpr unsigned int MAX_BONES = 64;
 
@@ -34,7 +35,7 @@ struct Model {
     AnimationController animationController;
 
     void update(float dt);
-    void render(const Shader& shader, bool withMaterial = true) const;
+    void render(const ModelUniformMapping& mapping, bool withMaterial = true) const;
     void free();
 };
 

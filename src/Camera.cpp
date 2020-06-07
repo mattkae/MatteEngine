@@ -1,13 +1,10 @@
-#define GLM_ENABLE_EXPERIMENTAL
-
 #include "Camera.h"
 #include "Input.h"
 #include "MathHelper.h"
+#include "ShaderUniformMapping.h"
 #include <GLFW/glfw3.h>
 #include <cmath>
-#include <iostream>
 
-using namespace std;
 const Vector3f WORLD_UP{0.0, 1.0, 0.0};
 
 void updateCamera(BetterCamera& camera, float dt) {
@@ -64,13 +61,13 @@ inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
 	return getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, camera.fov, GlobalAppState.aspectRatio);
 };
 
-void renderCamera(const BetterCamera& camera, const Shader& shader, bool withEye) {
+void renderCamera(const BetterCamera& camera, const CameraUniformMapping& cameraMapping) {
 	auto view = getCameraViewMatrix(camera);
 	auto proj = getCameraProjection(camera);
 	auto uVp = view * proj;
 
-	setShaderMat4(shader, "uVp", uVp);
-	if (withEye) {
-		setShaderVec3(shader, "uEye", camera.position);
+	setShaderMat4(cameraMapping.CAMERA_MATRIX, uVp);
+	if (cameraMapping.WITH_EYE) {
+		setShaderVec3(cameraMapping.EYE_MATRIX, camera.position);
 	}
 }

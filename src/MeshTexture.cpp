@@ -2,10 +2,9 @@
 #include "MeshTexture.h"
 #include "String.h"
 #include "TextureUniformConstants.h"
-#include "ShaderUniformMapping.h"
 
 inline void renderTexture(GLint index, GLuint textureHandle, const GLint uniform) {
- 	setShaderIntWithUniform(uniform, index);
+ 	setShaderInt(uniform, index);
 	if (textureHandle > 0) {
 		glActiveTexture(GL_TEXTURE0 + index);
 		glBindTexture(GL_TEXTURE_2D, textureHandle);
@@ -44,15 +43,15 @@ void MeshTexture::add(TextureType type, GLuint texture) {
 	}
 }
 
-void MeshTexture::render(const Shader& shader) const {
+void MeshTexture::render(const MaterialUniformMapping& mapping) const {
 	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::DIFFUSE_TEXTURE_POSTIION + textureIndex, diffuse[textureIndex], ShaderUniformMapping::ModelShader::DIFFUSE_LIST[textureIndex]);
+		renderTexture(TextureUniformConstants::DIFFUSE_TEXTURE_POSTIION + textureIndex, diffuse[textureIndex], mapping.DIFFUSE_LIST[textureIndex]);
 	}
 	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::SPECULAR_TEXTURE_POSTIION + textureIndex, specular[textureIndex], ShaderUniformMapping::ModelShader::SPECULAR_LIST[textureIndex]);
+		renderTexture(TextureUniformConstants::SPECULAR_TEXTURE_POSTIION + textureIndex, specular[textureIndex], mapping.SPECULAR_LIST[textureIndex]);
 	}
 	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::AMBIENT_TEXTURE_POSITION + textureIndex, ambient[textureIndex], ShaderUniformMapping::ModelShader::AMBIENT_LIST[textureIndex]);
+		renderTexture(TextureUniformConstants::AMBIENT_TEXTURE_POSITION + textureIndex, ambient[textureIndex], mapping.AMBIENT_LIST[textureIndex]);
 	}
 	/*for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
 		renderTexture(TextureUniformConstants::NORMAL_TEXTURE_POSITION + textureIndex, normal[textureIndex], ShaderUniformMapping::ModelShader::NORMAL_LIST[textureIndex]);

@@ -1,16 +1,12 @@
 #include "Skybox.h"
+#include "ShaderUniformMapping.h"
 #include <SOIL.h>
-#include <iostream>
-
-using namespace std;
 
 const GLfloat vertices[] = {1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f};
 
 const GLuint indices[] = {0, 1, 3, 1, 2, 3};
 
 void initSkybox(Skybox& skybox, const char paths[6][128]) {
-    skybox.mSkyboxShader = loadShader("src/shaders/skybox.vert", "src/shaders/skybox.frag");
-
     glGenTextures(1, &skybox.mTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.mTexture);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -24,12 +20,12 @@ void initSkybox(Skybox& skybox, const char paths[6][128]) {
         GLint w, h;
         unsigned char *image = SOIL_load_image(paths[fidx], &w, &h, 0, SOIL_LOAD_RGBA);
         if (!image) {
-            cerr << "Unable to load image for skybox from path " << paths[fidx] << endl;
+            Logger::logError("Unable to load image for skybox from path " + std::string(paths[fidx]));
 			return;
         }
 
         if (w != h) {
-            cerr << "Width and height are unequal in skybox: " << w << " != " << h << endl;
+            Logger::logError("Width and height are unequal in skybox: " + std::string(paths[fidx]));
             return;
         }
 
@@ -66,13 +62,13 @@ void renderSkybox(const Skybox& skybox, const BetterCamera &camera) {
         return;
 	}
 
-	useShader(skybox.mSkyboxShader);
+	useShader(ShaderUniformMapping::GlobalSkyboxShaderMapping.shader);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.mTexture);
     glDisable(GL_DEPTH_TEST);
 	
-	setShaderMat3(skybox.mSkyboxShader, "uView", fromMat4(getCameraViewMatrix(camera)));
-	setShaderMat4(skybox.mSkyboxShader, "uProjection", getCameraProjection(camera));
+	setShaderMat3(ShaderUniformMapping::GlobalSkyboxShaderMapping.VIEW, fromMat4(getCameraViewMatrix(camera)));
+	setShaderMat4(ShaderUniformMapping::GlobalSkyboxShaderMapping.PROJECTION, getCameraProjection(camera));
 
     glBindVertexArray(skybox.vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

@@ -1,5 +1,4 @@
 #pragma once
-#include "Shader.h"
 #include "Button.h"
 #include "TextRenderer.h"
 #include "TextInput.h"
@@ -13,7 +12,6 @@ struct Terrain;
 struct UIEventProcessor;
 
 struct UI {
-	Shader mOrthographicShader = 0;
 	TextRenderer mTextRenderer;
 	List<UIContext> panels;
 	UIEventProcessor* eventProcessor;

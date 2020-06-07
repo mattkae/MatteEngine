@@ -1,6 +1,5 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
-#include "Shader.h"
 #include "Camera.h"
 #include "Randomizable.h"
 #include "Functional.h"
@@ -41,7 +40,6 @@ public:
 	ParticleRenderVariables* particleRenderVariables = nullptr;
 	ParticleUpdateVariables* particleUpdateVariables = nullptr;
 	size_t nextParticleIndex = 0;
-    Shader mParticleShader = 0;
     float timeUntilSpawnSeconds = 0;
     GLuint vao = 0;
     GLuint vbo = 0;

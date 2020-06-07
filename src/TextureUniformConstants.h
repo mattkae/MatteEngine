@@ -1,5 +1,4 @@
 #pragma once
-#include <GL/glew.h>
 
 namespace TextureUniformConstants {
 	const int LIGHT_SHADOW_TEXTURE_POSITION_START = 0;

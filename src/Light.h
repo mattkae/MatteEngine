@@ -39,22 +39,11 @@ struct Light {
 
 	Matrix4x4f projection;
 	Matrix4x4f view;
-	
-	GLint colorUniform;
-	GLint directionUniform;
-	GLint positionUniform;
-	GLint constantUniform;
-	GLint linearUniform;
-	GLint quadraticUniform;
-	GLint cosineCutoffUniform;
-	GLint dropOffUniform;
-	GLint usesShadowsUniform;
-	GLint dirShadowUniform;
-	GLint shadowMatrixUniform;
+
+    void initialize(int lightIndex);
+    void renderShadows(const Scene& scene);
+    void render(const int index) const;
+    void free();
 };
 
-bool initLight(Light& light, const Shader& shader, int lightIndex);
-void renderLightShadows(const Light& light, const Shader shader, const Scene& scene);
-void renderLight(const Light& light, const Shader shader, const int index);
-void freeLight(Light& light);
 #endif

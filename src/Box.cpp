@@ -44,9 +44,9 @@ void updateBox(Box& box, const Matrix4x4f& model) {
 	}
 }
 
-void renderBoxOutline(const Box& box, const Matrix4x4f& model, const Shader& shader) {
-	setShaderMat4(shader, "uModel", model);
-	box.material.render(shader);
+void renderBoxOutline(const Box& box, const Matrix4x4f& model, const ModelUniformMapping& mapping) {
+	setShaderMat4(mapping.MODEL, model);
+	box.material.render(mapping.materialUniformMapping);
 
 	glBindVertexArray(box.vao);
     glDrawElements(GL_TRIANGLE_STRIP, 14, GL_UNSIGNED_INT, 0);

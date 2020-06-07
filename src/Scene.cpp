@@ -5,6 +5,7 @@
 #include "Logger.h"
 #include "Ray.h"
 #include "SceneLoader.h"
+#include "ShaderUniformMapping.h"
 #include <GLFW/glfw3.h>
 
 void Scene::initialize() {
@@ -13,7 +14,7 @@ void Scene::initialize() {
 	ui.init();
     ui.showGlobalSelector(*this);
     isDying = false;
-    mShadowShader = loadShader("src/shaders/shadows.vert", "src/shaders/shadows.frag");
+	ShaderUniformMapping::initialize();
 }
 
 int castRayToModel(Scene& scene) {
@@ -81,10 +82,10 @@ void Scene::renderShadows() {
 	if (!mUseShadows)
         return;
 
-	useShader(mShadowShader);
+	useShader(ShaderUniformMapping::GlobalShadowShaderMapping.shader);
 
     for (auto light : lights) {
-		renderLightShadows(light, mShadowShader, *this);
+		light.renderShadows(*this);
     }
 
     GLenum err;
@@ -111,17 +112,17 @@ void Scene::renderNonDeferred() {
 	}
 }
 
-void Scene::renderModels(const Shader &shader, bool withMaterial) const {
-    mTerrain.render(shader, withMaterial);
+void Scene::renderModels(const ModelUniformMapping& mapping, bool withMaterial) const {
+    mTerrain.render(mapping, withMaterial);
 
     for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
-		models[modelIdx].render(shader, withMaterial);
+		models[modelIdx].render(mapping, withMaterial);
     }
 }
 
 void Scene::renderDebug() {
 	if (selectedModelIndex > -1) {
-		renderDebugModel(debugModel, models[selectedModelIndex].model, mSceneShader);
+		renderDebugModel(debugModel, models[selectedModelIndex].model, ShaderUniformMapping::GlobalModelShaderMapping.modelUniformMapping);
 	}
 }
 
@@ -141,20 +142,21 @@ void Scene::renderDirect() {
 		renderNonDeferred();
 	}
 
-	useShader(mSceneShader);
-    renderCamera(mCamera, mSceneShader, true);
+	useShader(ShaderUniformMapping::GlobalModelShaderMapping.shader);
+    renderCamera(mCamera, ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);
 
-	setShaderVec3(mSceneShader, "uAmbient", getVec3(0.3f));
-	setShaderInt(mSceneShader, "uNumLights", numLightsUsed);
+	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_AMBIENT, getVec3(0.3f));
+	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
 
     for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
-		renderLight(lights[lidx], mSceneShader, lidx);
+		lights[lidx].render(lidx);
     }
 
     if (useDefferredRendering) {
-        mDeferredBuffer.renderToScreen(mSceneShader);
+		// @TODO: Deferred rendering work
+        //mDeferredBuffer.renderToScreen(mSceneShader);
     } else {
-        renderModels(mSceneShader);
+        renderModels(ShaderUniformMapping::GlobalModelShaderMapping.modelUniformMapping);
 		renderDebug();
 		renderNonDeferred();
     }
@@ -186,7 +188,7 @@ void Scene::free() {
 	
 	// Lights
 	for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
-		freeLight(lights[lidx]);
+		lights[lidx].free();
     }
 	numLightsUsed = 0;
 
@@ -209,9 +211,7 @@ void Scene::free() {
     mDeferredBuffer.free();
 
 	// Shaders
-	if (mShadowShader > 0) {
-		glDeleteProgram(mShadowShader);
-	}
+	// @TODO: Free shaders
 
 	// Debug program
 	freeDebug(debugModel);

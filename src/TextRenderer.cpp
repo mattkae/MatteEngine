@@ -1,5 +1,6 @@
 #include "TextRenderer.h"
 #include "Logger.h"
+#include "ShaderUniformMapping.h"
 
 bool TextRenderer::initialize(GLint size, GLchar* path)
 {
@@ -28,8 +29,6 @@ bool TextRenderer::initialize(GLint size, GLchar* path)
     for (GLubyte c = 0; c < 128; c++) {
         this->loadChar(c);   
 	}
-
-	mShader = loadShader("src/shaders/Text.vert", "src/shaders/Text.frag");
 
 	// Initialize render VAO for a a single character
     glGenVertexArrays(1, &mVao);
@@ -97,10 +96,11 @@ void TextRenderer::renderText(Shader originalShader, String& str, Vector2f posit
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
 	
-	useShader(mShader);
-	setShaderFloat(mShader, "scrollX", scrollX);
-	setShaderMat4(mShader, "uProjection", projection);
-	setShaderVec4(mShader, "uColor", color);
+	useShader(ShaderUniformMapping::GlobalTextShaderMapping.shader);
+	setShaderFloat(ShaderUniformMapping::GlobalTextShaderMapping.SCROLL_X, scrollX);
+	setShaderMat4(ShaderUniformMapping::GlobalTextShaderMapping.PROJECTION, projection);
+	setShaderVec4(ShaderUniformMapping::GlobalTextShaderMapping.COLOR, color);
+	setShaderInt(ShaderUniformMapping::GlobalTextShaderMapping.GLYPH_TEXTURE, 0);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(mVao);
 

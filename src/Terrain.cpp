@@ -8,33 +8,63 @@ enum class TerrainClassification {
     DIRT,
     DIRT_GRASS,
     GRASS,
-    GRASS_ROCK,
-    ROCK
+    SNOW_GRASS,
+    SNOW
 };
 
 inline static float randomFloat(float min, float max) {
     return (min + (rand() / (static_cast<float>(RAND_MAX) / (max - min))));
 }
 
+void loadTerrainTexture(TerrainTexture& terrainTexture, String& path) {
+    String diffusePath = path;
+    diffusePath.append("diffuse.jpg");
+    terrainTexture.textures[0] = TextureLoader::loadRGBATileTexture(diffusePath);
+
+    String specularPath = path;
+    specularPath.append("specular.jpg");
+    terrainTexture.textures[1] = TextureLoader::loadRGBATileTexture(specularPath);
+
+    String normalPath = path;
+    normalPath.append("normal.jpg");
+    terrainTexture.textures[2] = TextureLoader::loadRGBATileTexture(normalPath);
+
+    diffusePath.deallocate();
+    specularPath.deallocate();
+    normalPath.deallocate();
+}
+
 const char* pathToTextures = "./assets/terrain/textures/";
 void Terrain::loadTextures(const GenerationParameters& params) {
-    if (params.grassTexturePath.value != nullptr) {
-        String pathToGrass;
-        pathToGrass = pathToTextures;
-        pathToGrass.append(params.grassTexturePath);
-        textures[0] = TextureLoader::loadRGBATileTexture(pathToGrass);
+    // @TODO: Assuming all directory names exist for now
+    {
+        String grassPath = pathToTextures;
+        grassPath.append("grass/");
+        loadTerrainTexture(textures[0], grassPath);
+        grassPath.deallocate();
     }
-    if (params.rockTexturePath.value != nullptr) {
-        String pathToRock;
-        pathToRock = pathToTextures;
-        pathToRock.append(params.rockTexturePath);
-        textures[1] = TextureLoader::loadRGBATileTexture(pathToRock);
+
+    {
+        String dirtPath = pathToTextures;
+        dirtPath.append("sand/");
+        loadTerrainTexture(textures[1], dirtPath);
+        dirtPath.deallocate();
     }
-    if (params.dirtTexturePath.value != nullptr) {
-        String pathToDirt;
-        pathToDirt = pathToTextures;
-        pathToDirt.append(params.dirtTexturePath);
-        textures[2] = TextureLoader::loadRGBATileTexture(pathToDirt);
+
+    {
+        String snowPath = pathToTextures;
+        snowPath.append("snow/");
+        loadTerrainTexture(textures[2], snowPath);
+        snowPath.deallocate();
+    }
+
+    {
+        // @TODO Investigate using Sampler2DArray or some other thing (maybe one giant
+        // terrain texture and a way to index into it
+      /*  String sandPath = pathToTextures;
+        sandPath.append("sand/");
+        loadTerrainTexture(textures[3], sandPath);
+        sandPath.deallocate(); */
     }
 }
 
@@ -61,10 +91,10 @@ TerrainClassification classifyTerrain(float height, float maxHeight) {
     } else {
         if (height > maxHeight * (2.f / 3.f)) {
             // Upper two-thirds gets rock
-            return TerrainClassification::ROCK;
+            return TerrainClassification::SNOW;
         } else if (height > maxHeight / 3.f) {
             // Middle two thirds gets mix
-            return TerrainClassification::GRASS_ROCK;
+            return TerrainClassification::SNOW_GRASS;
         } else {
             return TerrainClassification::GRASS;
         }
@@ -123,12 +153,12 @@ void Terrain::initialize(const GenerationParameters& params) {
                 vertex.textureWeights[1] = 0;
                 vertex.textureWeights[2] = 0;
                 break;
-            case TerrainClassification::GRASS_ROCK:
+            case TerrainClassification::SNOW_GRASS:
                 vertex.textureWeights[0] = 0;
                 vertex.textureWeights[1] = 0.5;
                 vertex.textureWeights[2] = 0.5;
                 break;
-            case TerrainClassification::ROCK:
+            case TerrainClassification::SNOW:
                 vertex.textureWeights[0] = 0;
                 vertex.textureWeights[1] = 0;
                 vertex.textureWeights[2] = 1;
@@ -183,14 +213,10 @@ void Terrain::initialize(const GenerationParameters& params) {
     material.specular = Vector3f { 0, 0.0, 0 };
     mMesh.initialize(vertices, numVertices, indicies, numIndices, material);
 
-    if (textures[0] > 0) {
-        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[0]);
-    }
-    if (textures[1] > 0) {
-        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[1]);
-    }
-    if (textures[2] > 0) {
-        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[2]);
+    for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
+        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[textureIndex].textures[0]);
+        mMesh.material.textureList.add(TextureType::SPECULAR, textures[textureIndex].textures[1]);
+        mMesh.material.textureList.add(TextureType::NORMAL, textures[textureIndex].textures[2]);
     }
 
     int halfMapSize = squareSize * (params.granularity / 2);
@@ -217,5 +243,5 @@ void Terrain::render(const ModelUniformMapping& mapping, bool withMaterial) cons
 void Terrain::free() {
     mMesh.free();
     isInitialized = false;
-    glDeleteTextures(3, textures);
+    glDeleteTextures(9, textures->textures);
 }

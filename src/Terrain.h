@@ -6,6 +6,7 @@
 #include "Matrix4x4f.h"
 #include "String.h"
 #include "ShaderUniformMapping.h"
+#include "Constants.h"
 #include <GL/glew.h>
 
 struct GenerationParameters {
@@ -18,10 +19,10 @@ struct GenerationParameters {
     float frequencyFactor = 2.f;
     int numOctaves = 64;
     int verticesPerTexture = 16;
+};
 
-    String grassTexturePath;
-    String rockTexturePath;
-    String dirtTexturePath;
+struct TerrainTexture {
+    GLuint textures[3] = { 0, 0, 0 }; // Diffuse, specular, normal
 };
 
 struct Terrain {
@@ -29,8 +30,7 @@ struct Terrain {
     Mesh mMesh;
     GenerationParameters mParams;
     bool isInitialized = false;
-
-    GLuint textures[3] = { 0, 0, 0 }; // Grass, dirt, rock
+    TerrainTexture textures[Constants::Rendering::MAX_TEXTURES_PER_MESH] = {0, 0, 0}; // Grass, dirt, snow, sand
 
     void initialize(const GenerationParameters& params);
     void loadTextures(const GenerationParameters& params);

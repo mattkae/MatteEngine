@@ -100,12 +100,9 @@ void MaterialUniformMapping::initialize(const Shader& shader) {
 	AMBIENT_LIST[1] = getShaderUniform(shader, "uAmbientList[1]");
 	AMBIENT_LIST[2] = getShaderUniform(shader, "uAmbientList[2]");
 
-	/*
-	@TODO: Turn these on once they're being used!
-	ModelShader::NORMAL_LIST[0] = getShaderUniform(shader, "uNormalMapList[0]");
-	ModelShader::NORMAL_LIST[1] = getShaderUniform(shader, "uNormalMapList[1]");
-	ModelShader::NORMAL_LIST[2] = getShaderUniform(shader, "uNormalMapList[2]");
-	*/
+	NORMAL_LIST[0] = getShaderUniform(shader, "uNormalMapList[0]");
+	NORMAL_LIST[1] = getShaderUniform(shader, "uNormalMapList[1]");
+	NORMAL_LIST[2] = getShaderUniform(shader, "uNormalMapList[2]");
 }
 
 void CameraUniformMapping::initialize(const Shader& shader, bool withEye) {

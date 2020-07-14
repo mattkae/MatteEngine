@@ -37,6 +37,6 @@ void Material::render(const MaterialUniformMapping& mapping) const {
 	setShaderVec3(mapping.MATERIAL_SPECULAR_PROPERTY, specularProperty);
 	//setShaderFloat(shader, "uMaterial.shininess", specularComponent);
 	setShaderFloat(mapping.MATERIAL_OPACITY, transparency);
-	setShaderBVec3(mapping.MATERIAL_USE_TEXTURE, textureList.useTexture[0], textureList.useTexture[1], textureList.useTexture[2]);
+	setShaderBVec4(mapping.MATERIAL_USE_TEXTURE, textureList.useTexture[0], textureList.useTexture[1], textureList.useTexture[2], textureList.useTexture[3]);
 	textureList.render(mapping);
 }

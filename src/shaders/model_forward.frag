@@ -20,7 +20,7 @@ uniform Material uMaterial;
 uniform sampler2D uDiffuseList[MAX_TEXTURES];
 uniform sampler2D uSpecularList[MAX_TEXTURES];
 uniform sampler2D uAmbientList[MAX_TEXTURES];
-//uniform sampler2D uNormalMapList[MAX_TEXTURES];
+uniform sampler2D uNormalMapList[MAX_TEXTURES];
 
 uniform int uNumLights;
 uniform vec3 uAmbient;
@@ -37,12 +37,13 @@ float getDirVisibility(const in int lightIndex, vec4 fragPosInLightSpace);
 
 void main() {
     vec3 viewDir = normalize(oEye - oFragPos.xyz);
-    vec3 normal = normalize(oNormal);
+    vec3 normal = oNormal;
     vec3 diffuse = uMaterial.useTexture[0] ? vec3(0, 0, 0) : uMaterial.diffuse;
     vec3 specular = uMaterial.useTexture[1] ? vec3(0, 0, 0) : uMaterial.specular;
     vec3 emissive = uMaterial.emissive;
     vec3 ambient = uMaterial.useTexture[2] ? vec3(0, 0, 0) : uAmbient;
 
+    // @TODO Only using a single texture for now, this stuff got weird
     for (int textureIndex = 0; textureIndex < MAX_TEXTURES; textureIndex++) {
         if (uMaterial.useTexture[0]) {
             diffuse += oTexWeights[textureIndex] * texture(uDiffuseList[textureIndex], oTexCoords).rgb;
@@ -53,7 +54,12 @@ void main() {
         if (uMaterial.useTexture[2]) {
             ambient += oTexWeights[textureIndex] * texture(uAmbientList[textureIndex], oTexCoords).rgb;
         }
+        if (uMaterial.useTexture[3]) {
+            //normal += oTexWeights[textureIndex] * texture(uNormalMapList[textureIndex], oTexCoords).rgb;
+        }
     }
+
+    normal = normalize(normal);
 
     vec3 finalColor = ambient * diffuse + emissive;
     for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {

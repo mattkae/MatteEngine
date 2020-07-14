@@ -6,5 +6,5 @@ struct Material {
     vec3 specularProperty;
     float shininess;
     float opacity;
-    bvec3 useTexture;
+    bvec4 useTexture;
 };

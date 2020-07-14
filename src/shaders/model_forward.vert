@@ -2,16 +2,20 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 texCoords;
-layout (location = 3) in vec3 texWeights;
-layout (location = 4) in vec4 boneWeights;
-layout (location = 5) in ivec4 boneIndices;
+layout (location = 2) in vec3 tangent;
+layout (location = 3) in vec3 bitangent;
+layout (location = 4) in vec2 texCoords;
+layout (location = 5) in vec3 texWeights;
+layout (location = 6) in vec4 boneWeights;
+layout (location = 7) in ivec4 boneIndices;
 
 out vec4 oFragPos;
 out vec3 oNormal;
 out vec2 oTexCoords;
 out vec3 oTexWeights;
 out vec3 oEye;
+out vec3 vertTangent;
+out vec3 vertBitangent;
 
 uniform int uNumLights;
 uniform mat4 uVp;
@@ -39,4 +43,6 @@ void main() {
   oTexWeights = texWeights;
   oNormal = outNormal;
   oEye = uEye;
+  vertTangent = tangent;
+  vertBitangent = bitangent;
 }

@@ -302,14 +302,9 @@ size_t UI::showTerrainEditor(Terrain* terrain)  {
 	value.iVal = terrain->mParams.numOctaves;
 	addTextInput(context, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_OCT);
 
-	addFieldLabel("Grass Texture", context);
-	addTextInput(context, value, TextInputType::STRING, UIEventType::EDIT_TERRAIN_GRASS_PATH);
-
-	addFieldLabel("Rock Texture", context);
-	addTextInput(context, value, TextInputType::STRING, UIEventType::EDIT_TERRAIN_ROCK_PATH);
-
-	addFieldLabel("Dirt Texture", context);
-	addTextInput(context, value, TextInputType::STRING, UIEventType::EDIT_TERRAIN_DIRT_PATH);
+	addFieldLabel("Vertices per Texture", context);
+	value.iVal = terrain->mParams.verticesPerTexture;
+	addTextInput(context, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_NUM_VERTICES);
 
 	{
 		UIElement element;

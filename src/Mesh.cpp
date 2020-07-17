@@ -5,13 +5,7 @@
 #include "TextureInfo.h"
 #include "List.h"
 
-void Mesh::initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list) {
-    Vertex* vertices = new Vertex[loadMesh.vertices.size()];
-    for (size_t index = 0; index < loadMesh.vertices.size(); index++) {
-        Vertex* v = &vertices[index];
-        v->initialize(loadMesh.vertices[index]);
-    }
-
+void Mesh::enableVertexData(Vertex* vertices, unsigned int numVertices, GLint* indices, unsigned int numIndices) {
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
@@ -19,10 +13,10 @@ void Mesh::initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list) {
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, loadMesh.vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, loadMesh.indices.size() * sizeof(GLuint), &loadMesh.indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 
     // Position
     glEnableVertexAttribArray(0);
@@ -32,23 +26,41 @@ void Mesh::initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list) {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, normal));
 
-    // Texture Coordinate
+    // Tangent
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, tangent));
+
+    // Bitangent
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, bitangent));
+
+    // Texture Coordinate
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
 
     // Texture weights
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, textureWeights));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, textureWeights));
 
     // Bone weights
-    glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
 
     // Bone indices
-    glEnableVertexAttribArray(5);
-    glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
+    glEnableVertexAttribArray(7);
+    glVertexAttribIPointer(7, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
 
     glBindVertexArray(0);
+}
+
+void Mesh::initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list) {
+    Vertex* vertices = new Vertex[loadMesh.vertices.size()];
+    for (size_t index = 0; index < loadMesh.vertices.size(); index++) {
+        Vertex* v = &vertices[index];
+        v->initialize(loadMesh.vertices[index]);
+    }
+
+    enableVertexData(vertices, loadMesh.vertices.size(), &loadMesh.indices[0], loadMesh.indices.size());
 
     numIndices = loadMesh.indices.size();
     material.initialize(loadMesh.material, list);
@@ -61,43 +73,8 @@ void Mesh::initialize(Vertex* vertices,
     GLint* indices, 
     unsigned int inNumIndices,
     LoadMaterial& loadMat) {
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
 
-    glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, inNumIndices * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
-
-    // Position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)0);
-
-    // Normal
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, normal));
-
-    // Texture Coordinate
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
-
-    // Texture weights
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, textureWeights));
-
-    // Bone weights
-    glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
-
-    // Bone indices
-    glEnableVertexAttribArray(5);
-    glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
-
-    glBindVertexArray(0);
+    enableVertexData(vertices, numVertices, indices,inNumIndices);
 
     numIndices = inNumIndices;
     material.initialize(loadMat, nullptr);

@@ -68,6 +68,10 @@ inline void setShaderBVec3(GLint location, bool first, bool second, bool third) 
 	glUniform3i(location, first, second, third);
 }
 
+inline void setShaderBVec4(GLint location, bool first, bool second, bool third, bool fourth) {
+	glUniform4i(location, first, second, third, fourth);
+}
+
 inline void setShaderBool(GLint location, bool value) {
 	glUniform1i(location, value);
 }

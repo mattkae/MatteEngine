@@ -125,6 +125,8 @@ bool compareLoadVertexBoneData(LoadVertexBoneData first, LoadVertexBoneData seco
 void LoadVertex::write(BinarySerializer& serializer) {
 	serializer.writeVec3(position);
 	serializer.writeVec3(normal);
+	serializer.writeVec3(tangent);
+	serializer.writeVec3(bitangent);
 	serializer.writeVec2(texCoords);
 	serializer.writeUint32(boneInfoList.size());
 
@@ -139,6 +141,8 @@ void LoadVertex::write(BinarySerializer& serializer) {
 void LoadVertex::read(BinarySerializer& serializer) {
 	position = serializer.readVec3();
 	normal = serializer.readVec3();
+	tangent = serializer.readVec3();
+	bitangent = serializer.readVec3();
 	texCoords = serializer.readVec2();
 
 	boneInfoList.resize(serializer.readUint32());

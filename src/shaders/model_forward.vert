@@ -2,19 +2,24 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
-layout (location = 2) in vec2 texCoords;
-layout (location = 3) in vec3 texWeights;
-layout (location = 4) in vec4 boneWeights;
-layout (location = 5) in ivec4 boneIndices;
+layout (location = 2) in vec3 tangent;
+layout (location = 3) in vec3 bitangent;
+layout (location = 4) in vec2 texCoords;
+layout (location = 5) in vec3 texWeights;
+layout (location = 6) in vec4 boneWeights;
+layout (location = 7) in ivec4 boneIndices;
 
 out vec4 oFragPos;
 out vec3 oNormal;
 out vec2 oTexCoords;
 out vec3 oTexWeights;
-out vec3 oEye;
+out vec3 vertexViewDir;
+out mat3 vertexTBN;
+out vec3 vertexDebugColor;
 
 uniform int uNumLights;
-uniform mat4 uVp;
+uniform mat4 uProjection;
+uniform mat4 uView;
 uniform mat4 uModel;
 uniform mat4 uBones[64];
 uniform vec3 uEye;
@@ -33,10 +38,20 @@ void main() {
   }
 
   vec4 fragPos = uModel * bonePosition;
-  gl_Position = uVp * fragPos;
+  gl_Position = uProjection * uView * fragPos;
   oFragPos = fragPos;
   oTexCoords = texCoords;
   oTexWeights = texWeights;
   oNormal = outNormal;
-  oEye = uEye;
+  vertexViewDir = uEye - fragPos.xyz;
+  vertexDebugColor = tangent;
+
+  vec3 vertTangent_CameraSpace = normalize((uModel * vec4(tangent, 0.0)).xyz);
+  vec3 vertBitangent_CameraSpace = normalize((uModel * vec4(bitangent, 0.0)).xyz);
+  vec3 vertexNormal_CameraSpace = normalize((uModel * vec4(oNormal, 0.0)).xyz);
+  vertexTBN = mat3(
+      vertTangent_CameraSpace,
+      vertBitangent_CameraSpace,
+      vertexNormal_CameraSpace
+  );
 }

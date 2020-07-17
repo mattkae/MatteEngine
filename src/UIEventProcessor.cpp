@@ -155,20 +155,12 @@ void UIEventProcessor::processEvent() {
 			scene->mTerrain.mParams.numOctaves = *static_cast<int*>(activeEvent.data);
 			break;
 		}
+		case UIEventType::EDIT_TERRAIN_NUM_VERTICES: {
+			scene->mTerrain.mParams.verticesPerTexture = *static_cast<int*>(activeEvent.data);
+			break;
+		}
 		case UIEventType::EDIT_TERRAIN_APPLY: {
 			scene->mTerrain.initialize(scene->mTerrain.mParams);
-			break;
-		}
-		case UIEventType::EDIT_TERRAIN_GRASS_PATH: {
-			scene->mTerrain.mParams.grassTexturePath = *static_cast<String*>(activeEvent.data);
-			break;
-		}
-		case UIEventType::EDIT_TERRAIN_ROCK_PATH: {
-			scene->mTerrain.mParams.rockTexturePath = *static_cast<String*>(activeEvent.data);
-			break;
-		}
-		case UIEventType::EDIT_TERRAIN_DIRT_PATH: {
-			scene->mTerrain.mParams.dirtTexturePath = *static_cast<String*>(activeEvent.data);
 			break;
 		}
 	}

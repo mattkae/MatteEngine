@@ -35,6 +35,8 @@ struct LoadVertexBoneData {
 struct LoadVertex {
     Vector3f position;
     Vector3f normal;
+    Vector3f tangent;
+    Vector3f bitangent;
     Vector2f texCoords;
     std::vector<LoadVertexBoneData> boneInfoList;
 

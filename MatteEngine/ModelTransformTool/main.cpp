@@ -6,7 +6,6 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h> 
 #include <assimp/postprocess.h>
-#include <map>
 
 #include "Logger.h"
 #include "Vector3f.cpp"
@@ -124,6 +123,35 @@ void processNode(std::string fullPath,
             for (unsigned int indexIndex = 0; indexIndex < face.mNumIndices; indexIndex++) {
                 mesh.indices.push_back(face.mIndices[indexIndex]);
             }
+        }
+
+        // Fill in tangents and bitangents for each vetex
+        for (int indexIndex = 0; indexIndex < mesh.indices.size(); indexIndex+=3) {
+            GLint firstIndex = mesh.indices[indexIndex];
+            GLint secondIndex = mesh.indices[indexIndex + 1];
+            GLint thirdIndex = mesh.indices[indexIndex + 2];
+
+            LoadVertex& firstVertex = mesh.vertices[firstIndex];
+            LoadVertex& secondVertex = mesh.vertices[secondIndex];
+            LoadVertex& thirdVertex = mesh.vertices[thirdIndex];
+
+            Vector3f deltaPosition1 = secondVertex.position - firstVertex.position;
+            Vector3f deltaPosition2 = thirdVertex.position - firstVertex.position;
+
+            Vector2f deltaUV1 = secondVertex.texCoords - firstVertex.texCoords;
+            Vector2f deltaUV2 = thirdVertex.texCoords - firstVertex.texCoords;
+
+            float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+            Vector3f tangent = (deltaPosition1 * deltaUV2.y   - deltaPosition2 * deltaUV1.y)*r;
+            Vector3f bitangent = (deltaPosition2 * deltaUV1.x   - deltaPosition1 * deltaUV2.x)*r;
+
+            firstVertex.tangent = tangent;
+            secondVertex.tangent = tangent;
+            thirdVertex.tangent = tangent;
+
+            firstVertex.bitangent = bitangent;
+            secondVertex.bitangent = bitangent;
+            thirdVertex.bitangent = bitangent;
         }
 
         // Read bones

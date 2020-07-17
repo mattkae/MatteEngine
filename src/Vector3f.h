@@ -15,12 +15,12 @@ struct Vector3f {
 	GLfloat z = 0;
 	GLfloat operator [](int index);
 	Vector3f interpolate(const Vector3f& other, const GLfloat factor);
+
 };
 
 // Creation
 Vector3f getVec3(GLfloat value);
 Vector3f getVec3(GLfloat x, GLfloat y, GLfloat z);
-
 
 // Methods
 Vector3f addVector(const Vector3f& first, const Vector3f& second);

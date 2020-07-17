@@ -29,6 +29,7 @@ void MeshTexture::add(TextureType type, GLuint texture) {
 		textureMapping = specular;
 		break;
 	case TextureType::NORMAL:
+		useTexture[3] = true;
 		textureMapping = normal;
 		break;
 	}
@@ -53,7 +54,7 @@ void MeshTexture::render(const MaterialUniformMapping& mapping) const {
 	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
 		renderTexture(TextureUniformConstants::AMBIENT_TEXTURE_POSITION + textureIndex, ambient[textureIndex], mapping.AMBIENT_LIST[textureIndex]);
 	}
-	/*for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::NORMAL_TEXTURE_POSITION + textureIndex, normal[textureIndex], ShaderUniformMapping::ModelShader::NORMAL_LIST[textureIndex]);
-	}*/
+	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
+		renderTexture(TextureUniformConstants::NORMAL_TEXTURE_POSITION + textureIndex, normal[textureIndex], mapping.NORMAL_LIST[textureIndex]);
+	}
 }

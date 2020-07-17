@@ -29,7 +29,8 @@ struct ModelUniformMapping {
 
 
 struct CameraUniformMapping {
-	int CAMERA_MATRIX;
+	int PROJECTION_MATRIX;
+	int VIEW_MATRIX;
 	int EYE_MATRIX;
 	bool WITH_EYE;
 	void initialize(const Shader& shader, bool withEye);

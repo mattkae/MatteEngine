@@ -184,13 +184,13 @@ void Terrain::initialize(const GenerationParameters& params) {
         vertexCoordinates.y += portionOfTexturePerVertex;
     }
 
-    // Calculate normals
+    // Calculate normals, tangents, and bitangents
     for (size_t indexIndex = 0; indexIndex < numIndices; indexIndex += 3) {
         if (indexIndex + 2 >= numIndices) {
             break;
         }
 
-        auto thirdIndex = indicies[indexIndex + 2];
+        GLint thirdIndex = indicies[indexIndex + 2];
         if (static_cast<size_t>(thirdIndex) >= numVertices) {
             break;
 		}
@@ -198,15 +198,41 @@ void Terrain::initialize(const GenerationParameters& params) {
         GLint firstIndex = indicies[indexIndex];
         GLint secondIndex = indicies[indexIndex + 1];
 
+        Vertex& firstVertex = vertices[firstIndex];
+        Vertex& secondVertex = vertices[secondIndex];
+        Vertex& thirdVertex = vertices[thirdIndex];
+
         Vector3f normal = normalize(cross(vertices[firstIndex].position - vertices[secondIndex].position, 
 			vertices[thirdIndex].position - vertices[secondIndex].position));
-        vertices[firstIndex].normal = normal;
-        vertices[secondIndex].normal = normal;
-        vertices[thirdIndex].normal = normal;
+        firstVertex.normal = normal;
+        secondVertex.normal = normal;
+        thirdVertex.normal = normal;
+
+        // @TODO: This is copy and pasted in `main.cpp` of the ModelTransformTool.
+        // Need to refactor that ASAP
+        Vector3f deltaPosition1 = secondVertex.position - firstVertex.position;
+        Vector3f deltaPosition2 = thirdVertex.position - firstVertex.position;
+
+        Vector2f deltaUV1 = secondVertex.texCoords - firstVertex.texCoords;
+        Vector2f deltaUV2 = thirdVertex.texCoords - firstVertex.texCoords;
+
+        float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+        Vector3f tangent = (deltaPosition1 * deltaUV2.y - deltaPosition2 * deltaUV1.y) * r;
+        tangent = normalize(tangent - (normal * dotProduct(tangent, normal)));
+        Vector3f bitangent = cross(normal, tangent);
+
+        firstVertex.tangent = tangent;
+        secondVertex.tangent = tangent;
+        thirdVertex.tangent = tangent;
+
+        firstVertex.bitangent = bitangent;
+        secondVertex.bitangent = bitangent;
+        thirdVertex.bitangent = bitangent;
     }
 
     Logger::logInfo("Finished generating terrain!");
 
+    // Set up the material
     LoadMaterial material;
     material.diffuse = Vector3f { 0, 0.0, 0 };
     material.ambient = Vector3f { 0, 0.0, 0 };

@@ -15,6 +15,8 @@ struct Vertex {
     void initialize(const LoadVertex& vertex) {
         position = vertex.position;
         normal = vertex.normal;
+        tangent = vertex.tangent;
+        bitangent = vertex.bitangent;
         texCoords = vertex.texCoords;
 
         size_t max = fmin(vertex.boneInfoList.size(), 4);

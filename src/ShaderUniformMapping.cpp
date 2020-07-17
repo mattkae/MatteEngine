@@ -106,7 +106,8 @@ void MaterialUniformMapping::initialize(const Shader& shader) {
 }
 
 void CameraUniformMapping::initialize(const Shader& shader, bool withEye) {
-	CAMERA_MATRIX = getShaderUniform(shader, "uVp");
+	PROJECTION_MATRIX = getShaderUniform(shader, "uProjection");
+	VIEW_MATRIX = getShaderUniform(shader, "uView");
 	WITH_EYE = withEye;
 	if (withEye) {
 		EYE_MATRIX = getShaderUniform(shader, "uEye");

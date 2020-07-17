@@ -26,6 +26,7 @@ struct Mesh {
 		LoadMaterial& loadMaterial
 	);
 	void initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list);
+	void enableVertexData(Vertex* vertices, unsigned int numVertices, GLint* indices, unsigned int numIndices);
 	void free();
 	void render(const MaterialUniformMapping& mapping, bool withMaterial = true, GLint drawType = GL_TRIANGLES) const;
 };

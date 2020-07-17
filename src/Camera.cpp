@@ -62,11 +62,10 @@ inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
 };
 
 void renderCamera(const BetterCamera& camera, const CameraUniformMapping& cameraMapping) {
-	auto view = getCameraViewMatrix(camera);
-	auto proj = getCameraProjection(camera);
-	auto uVp = view * proj;
-
-	setShaderMat4(cameraMapping.CAMERA_MATRIX, uVp);
+	Matrix4x4f view = getCameraViewMatrix(camera);
+	Matrix4x4f proj = getCameraProjection(camera);
+	setShaderMat4(cameraMapping.PROJECTION_MATRIX, proj);
+	setShaderMat4(cameraMapping.VIEW_MATRIX, view);
 	if (cameraMapping.WITH_EYE) {
 		setShaderVec3(cameraMapping.EYE_MATRIX, camera.position);
 	}

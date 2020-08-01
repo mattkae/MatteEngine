@@ -15,6 +15,7 @@ struct String {
 	String(const char* str);
 	String(const String& str);
 
+	bool isInited();
 	void operator =(const char* str);
 	void set(const char* str);
 	void allocate(size_t capacity = 0);

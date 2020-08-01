@@ -17,6 +17,11 @@ void UIEventProcessor::processEvent() {
 	switch (activeEvent.type) {
 		case UIEventType::NONE:
 			return;
+		case UIEventType::CLOSE_PANEL: {
+			scene->ui.hidePanel(*static_cast<int*>(activeEvent.data));
+			resetFocus();
+			break;
+		}
 		case UIEventType::SHOW_MODEL: {
 			int modelIdx = *static_cast<int*>(activeEvent.data);
 			if (modelIdx == scene->selectedModelIndex) {

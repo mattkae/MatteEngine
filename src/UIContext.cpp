@@ -1,6 +1,20 @@
 #include "UIContext.h"
 #include "GlobalApplicationState.h"
 
+void UIContext::init(int panelIndex) {
+	if (isClosable && !closeButton.label.isInited()) {
+		closeButton.width = 16;
+		closeButton.textColor = Vector4f{ 1.f, 1.f, 1.f, 1.f };
+		closeButton.buttonColor = Vector4f{ 1.f, 1.f, 1.f, 1.f };
+		closeButton.label = "X";
+		closeButton.padding = 2.f;
+		closeButton.buttonColor = 0xff3232;
+		closeButton.hoverColor = 0xff6666;
+		closeButton.data = panelIndex;
+		closeButton.eventType = UIEventType::CLOSE_PANEL;
+	}
+}
+
 void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
 	// @TODO: Could add some opening and closing animations around these
 	if (shouldOpen && !isActive) {
@@ -17,6 +31,7 @@ void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
 
 	panel.update();
 
+
 	// Y=0 is the bottom of the screen here.
 	// To get to the start of the panel, we go to the top of the screen, and move
 	// to the start of the panel (the panel's y-position plus its padding)
@@ -24,6 +39,14 @@ void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
 
 	// X=0 is at the left of the screen
 	GLfloat xPosition = panel.boundingRect.x + panel.padding;
+
+	if (isClosable) {
+		GLfloat elementHeight = getButtonHeight(closeButton, textRenderer);
+		closeButton.position.x = xPosition + (panel.boundingRect.w - panel.padding - 16); // Right align
+		closeButton.position.y = yOffset - elementHeight;
+		closeButton.update(textRenderer, event);
+		yOffset -= (elementHeight + spaceBetweenElements);
+	}
 	
 	// Organize thte elements vertically
 	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
@@ -69,6 +92,10 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) c
 
 	panel.render(shader);
 
+	if (isClosable) {
+		closeButton.render(shader, textRenderer);
+	}
+
 	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
 		UIElement& element = uiElements[elementIndex];
 		switch (element.elementType) {
@@ -89,6 +116,8 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) c
 }
 
 void UIContext::free() {
+	closeButton.free();
+
 	for (size_t eIdx = 0; eIdx < uiElements.numElements; eIdx++) {
 		uiElements[eIdx].free();
 	}

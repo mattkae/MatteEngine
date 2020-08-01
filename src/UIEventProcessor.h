@@ -2,6 +2,9 @@
 
 enum class UIEventType {
 	NONE = 0,
+
+	CLOSE_PANEL,
+
 	SHOW_MODEL,
 	EDIT_TRANSLATION_X,
 	EDIT_TRANSLATION_Y,

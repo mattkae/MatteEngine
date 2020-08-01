@@ -8,6 +8,28 @@ struct Vector4f {
 	GLfloat y = 0;
 	GLfloat z = 0;
 	GLfloat w = 1;
+
+	Vector4f() {};
+
+	Vector4f(GLfloat otherX, GLfloat otherY, GLfloat otherZ, GLfloat otherW) {
+		x = otherX;
+		y = otherY;
+		z = otherZ;
+		w = otherW;
+	}
+
+	Vector4f(const Vector4f& other) {
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		w = other.w;
+	}
+
+	Vector4f(int hexValue) {
+		x = ((hexValue >> 16) & 0xFF) / 255.f;  // Extract the RR byte
+		y = ((hexValue >> 8) & 0xFF) / 255.f;   // Extract the GG byte
+		z = ((hexValue) & 0xFF) / 255.f;        // Extract the BB byte
+	}
 };
 
 // Creation

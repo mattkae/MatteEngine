@@ -31,7 +31,7 @@ struct Button {
 	Rectangle boundingRect;
 	
 	void update(const TextRenderer& textRenderer, UIEvent& event);
-	void render(const Shader& shader, const TextRenderer& textRenderer);
+	void render(const Shader& shader, const TextRenderer& textRenderer) const;
 	void free();
 };
 

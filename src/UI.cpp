@@ -148,6 +148,7 @@ size_t UI::showGlobalSelector(Scene& scene) {
 	element.element.button = button;
 	context.uiElements.add(&element);
 
+	context.init(panelIdx);
 	return panelIdx;
 }
 
@@ -222,6 +223,7 @@ size_t UI::showModelEditor(Model* model) {
 		}
 	}
 
+	context.init(panelIdx);
 	return panelIdx;
 }
 
@@ -316,6 +318,7 @@ size_t UI::showTerrainEditor(Terrain* terrain)  {
 		context.uiElements.add(&element);
 	}
 
+	context.init(panelIdx);
 	return panelIdx;
 }
 

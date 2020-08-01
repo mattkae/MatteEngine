@@ -23,9 +23,12 @@ struct UIContext {
 	bool isActive = true;
 	bool shouldOpen = false;
 	bool shouldClose = false;
+	bool isClosable = true;
 	GLfloat spaceBetweenElements = 2.f;
+	Button closeButton;
 	List<UIElement> uiElements;
 
+	void init(int panelIndex);
 	void update(const TextRenderer& textRenderer, UIEvent& event);
 	void render(const Shader& shader, const TextRenderer& renderer) const;
 	void free();

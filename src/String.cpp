@@ -30,6 +30,10 @@ void String::operator =(const char* str) {
 	set(str);
 }
 
+bool String::isInited() {
+	return value != NULL;
+}
+
 void String::allocate(size_t capacity) {
 	if (capacity == 0) {
 		capacity = defaultSize;

@@ -13,6 +13,7 @@ bool isKeyJustUp(int key, int focusToken);
 bool isLeftClickDown();
 bool isRightClickDown();
 Vector2f getCursorPosition();
+void resetFocus();
 int grabFocus();
 void returnFocus(int focusToken);
 int getInputFocus();

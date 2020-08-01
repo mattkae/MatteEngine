@@ -32,6 +32,10 @@ inline bool checkFocusToken(int focusToken) {
 	return focusToken == globalInput.focusToken;
 }
 
+void resetFocus() {
+	globalInput.focusToken = DEFAULT_FOCUS_TOKEN;
+}
+
 int grabFocus() {
 	globalInput.focusToken = globalInput.nextFocusToken++;
 	return globalInput.focusToken;

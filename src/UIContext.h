@@ -15,6 +15,9 @@ enum ContextDirection {
 	HORIZONTAL = 1
 };
 
+/**
+ * Manages a selection of UI Elements inside of a single panel.
+*/
 struct UIContext {
 	Panel panel;
 	bool isActive = true;

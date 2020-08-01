@@ -72,9 +72,7 @@ size_t UI::showPanel(UIContext* context, int index) {
 void addStandardLabel(const char* str, UIContext& context) {
 	UIElement labelElement;
 	Label label;
-	label.bt.padding = 2.f;
-	label.backgroundColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-	label.textColor = Vector4f { 0.f, 0.f, 0.f , 1.f };
+	label.build(2.f, { 1.f, 1.f, 1.f, 1.f }, { 0.f, 0.f, 0.f , 1.f });
 	label.text = str;
 	labelElement.elementType = UIElementType::LABEL;
 	labelElement.element.label = label;
@@ -84,9 +82,7 @@ void addStandardLabel(const char* str, UIContext& context) {
 void addFieldLabel(const char* str, UIContext& context) {
 	UIElement labelElement;
 	Label label;
-	label.bt.padding = 2.f;
-	label.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 1.f };
-	label.textColor = Vector4f { 1.f, 1.f, 1.f , 1.f };
+	label.build(2.f, { 0.1f, 0.1f, 0.1f, 1.f }, { 1.f, 1.f, 1.f , 1.f }, 0.75f);
 	label.text = str;
 	label.bt.scale = 0.75f;
 	labelElement.elementType = UIElementType::LABEL;

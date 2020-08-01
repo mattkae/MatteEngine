@@ -2,6 +2,7 @@
 #include "GlobalApplicationState.h"
 
 void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
+	// @TODO: Could add some opening and closing animations around these
 	if (shouldOpen && !isActive) {
 		isActive = true;
 		shouldOpen = false;
@@ -15,52 +16,49 @@ void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
 	}
 
 	panel.update();
-	GLfloat yOffset = GlobalAppState.floatHeight - panel.boundingRect.y - panel.padding;
+
+	// Y=0 is the bottom of the screen here.
+	// To get to the start of the panel, we go to the top of the screen, and move
+	// to the start of the panel (the panel's y-position plus its padding)
+	GLfloat yOffset = GlobalAppState.floatHeight - (panel.boundingRect.y + panel.padding);
+
+	// X=0 is at the left of the screen
 	GLfloat xPosition = panel.boundingRect.x + panel.padding;
 	
+	// Organize thte elements vertically
 	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
+		GLfloat elementHeight = 0; // Basically how much to move the context by for each element
 		UIElement& element = uiElements[elementIndex];
 		switch (element.elementType) {
 		case UIElementType::BUTTON: {
 			Button& button = element.element.button;
-			if (elementIndex == 0) {
-				yOffset -= getButtonHeight(button, textRenderer);
-			}
-			button.position = Vector2f { xPosition, yOffset };
+			elementHeight = getButtonHeight(button, textRenderer);
+			button.position = Vector2f { xPosition, yOffset - elementHeight};
 			button.width = GlobalAppState.floatWidth * panel.percentageWidth - 2 * button.padding;
 			button.update(textRenderer, event);
-			yOffset -= getButtonHeight(button, textRenderer);
 			break;
 		}
 		case UIElementType::TEXT_INPUT: {
 			TextInput& textInput = element.element.textInput;
-			if (elementIndex == 0) {
-				yOffset -= textInput.bt.getBoundTextHeight(textRenderer);
-			}
+			elementHeight = textInput.bt.getBoundTextHeight(textRenderer);
 			textInput.bt.rect.x = xPosition;
-			textInput.bt.rect.y = yOffset;
+			textInput.bt.rect.y = yOffset - elementHeight;
 			textInput.bt.rect.w = GlobalAppState.floatWidth * panel.percentageWidth - 2 * textInput.bt.padding;
 			textInput.update(textRenderer,  event);
-			yOffset -= textInput.bt.getBoundTextHeight(textRenderer);
 			break;
 		}
 		case UIElementType::LABEL: {
 			Label& label = element.element.label;
-			GLfloat btHeight = label.bt.getBoundTextHeight(textRenderer);
-			if (elementIndex == 0) {
-				yOffset -= btHeight;
-			}
-
+			elementHeight = label.bt.getBoundTextHeight(textRenderer);
 			label.bt.rect.x = xPosition;
-			label.bt.rect.y = yOffset;
+			label.bt.rect.y = yOffset - elementHeight;
 			label.bt.rect.w = GlobalAppState.floatWidth * panel.percentageWidth - 2 * label.bt.padding;
-			label.bt.rect.h = btHeight;
-			yOffset -= btHeight;
+			label.bt.rect.h = elementHeight;
 			break;
 		}
 		}
 
-		yOffset -= spaceBetweenElements;
+		yOffset -= (elementHeight + spaceBetweenElements);
 	}
 }
 

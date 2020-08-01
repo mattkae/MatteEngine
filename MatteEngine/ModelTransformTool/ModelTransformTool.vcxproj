@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="DirectoryReader.h" />
     <ClInclude Include="dirent.h" />
+    <ClInclude Include="Include.h" />
     <ClInclude Include="TransformToolConstants.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -31,9 +31,20 @@ struct String {
 	StringPointer substring(size_t start, size_t end);
 	void insertInteger(int value);
 
+	// Checks
+	bool equals(const String& other);
+	bool endsWith(const char* str);
+
+	// Conversions
 	void fromInteger(int i);
 	void fromFloat(float f);
 	int toInteger();
 	float toFloat();
+
+	// Operator overloads
+	void operator=(const char* str);
+	void operator+(const char* str);
+	bool operator==(const String& other);
+	bool operator==(const char* other);
 };
 

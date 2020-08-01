@@ -1,21 +1,7 @@
-#include "LoadModel.h"
-#include "LoadModel.cpp"
-#include "DirectoryReader.h"
-#include "TextureInfo.h"
-#include "TextureInfo.cpp"
+#include "Include.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h> 
 #include <assimp/postprocess.h>
-
-#include "Logger.h"
-#include "Vector3f.cpp"
-#include "BinarySerializer.cpp"
-#include "Matrix4x4f.h"
-#include "Quaternion.h"
-#include "Quaternion.cpp"
-#include "AnimationController.cpp"
-#include "Matrix4x4f.cpp"
-#include "Bone.cpp"
 
 void processNode(std::string fullPath, const aiNode* node, const aiScene* scene, LoadModel& model);
 void processAnimations(aiAnimation** const animations, unsigned int numAnimations,LoadModel& model);
@@ -25,14 +11,15 @@ Vector3f assimpVec3ToVec3(aiVector3D v);
 Matrix4x4f assimpMatrixToMatrix(const aiMatrix4x4& matrix);
 
 GLuint nextTextureUniqueId = 1;
-std::vector<TextureInfo> outTextures;
-std::vector<LoadModel> outModels;
+List<TextureInfo> outTextures;
+List<LoadModel> outModels;
 
 int main() {
-    std::vector<std::string> modelFiles = readModelDirectory();
+    List<String> modelFiles = readModelDirectory();
 
     Assimp::Importer importer;
-    for (std::string modelFile : modelFiles) {
+    FOR(idx, modelFiles) {
+        String modelFile = modelFiles[idx];
         const aiScene* scene = importer.ReadFile(modelFile, aiProcess_Triangulate | aiProcess_FlipUVs);
         if (!scene) {
             Logger::logError("Failed to read file at path: " + modelFile);
@@ -73,8 +60,9 @@ int main() {
 
     // Write out all the textures
     BinarySerializer textureInfoSerializer("assets/texture-info.mattl", SerializationMode::WRITE);
-    textureInfoSerializer.writeInt32(outTextures.size());
-    for (TextureInfo& textureInfo : outTextures) {
+    textureInfoSerializer.writeInt32(outTextures.numElements);
+    for (int idx = 0; idx < outTextures.numElements; idx++) {
+        TextureInfo& textureInfo = outTextures[idx];
         textureInfo.write(textureInfoSerializer);
     }
 
@@ -114,19 +102,20 @@ void processNode(std::string fullPath,
                 };
             }
 
-            mesh.vertices.push_back(vertex);
+            mesh.vertices.add(&vertex);
         }
 
         // Read faces
         for (unsigned int faceIndex = 0; faceIndex < assimpMesh->mNumFaces; faceIndex++) {
             aiFace face = assimpMesh->mFaces[faceIndex];
             for (unsigned int indexIndex = 0; indexIndex < face.mNumIndices; indexIndex++) {
-                mesh.indices.push_back(face.mIndices[indexIndex]);
+                GLint index = face.mIndices[indexIndex];
+                mesh.indices.add(&index);
             }
         }
 
         // Fill in tangents and bitangents for each vetex
-        for (int indexIndex = 0; indexIndex < mesh.indices.size(); indexIndex+=3) {
+        for (int indexIndex = 0; indexIndex < mesh.indices.numElements; indexIndex+=3) {
             GLint firstIndex = mesh.indices[indexIndex];
             GLint secondIndex = mesh.indices[indexIndex + 1];
             GLint thirdIndex = mesh.indices[indexIndex + 2];
@@ -161,10 +150,10 @@ void processNode(std::string fullPath,
             LoadBone bone;
             bone.identifier = assimpBone->mName.C_Str();
             bone.offsetMatrix = assimpMatrixToMatrix(assimpBone->mOffsetMatrix);
-            int foundBoneIndex = model.bones.size();
+            int foundBoneIndex = model.bones.numElements;
 
             bool alreadyExists = false;
-            for (unsigned int existingIdx = 0; existingIdx < model.bones.size(); existingIdx++) {
+            for (unsigned int existingIdx = 0; existingIdx < model.bones.numElements; existingIdx++) {
                 LoadBone& existing = model.bones[existingIdx];
                 if (existing.identifier == bone.identifier) {
                     foundBoneIndex = existingIdx;
@@ -174,7 +163,7 @@ void processNode(std::string fullPath,
             }
 
             if (!alreadyExists) {
-                model.bones.push_back(bone);
+                model.bones.add(&bone);
             }
 
             for (unsigned int weightIndex = 0; weightIndex < assimpBone->mNumWeights; weightIndex++) {

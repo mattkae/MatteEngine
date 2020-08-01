@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#define FOR(idx, list) { for (int idx = 0; idx < list.numElements; idx++)
+
 template <typename T>
 struct List {
 	T* data = nullptr;

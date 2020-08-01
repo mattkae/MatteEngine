@@ -1,6 +1,7 @@
 #include "String.h"
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 #include <iostream>
 
 const size_t defaultSize = 32;
@@ -152,6 +153,37 @@ void String::erase(size_t index) {
 	length = length - 1;
 }
 
+bool String::equals(const String& other) {
+	if (length != other.length) {
+		return false;
+	}
+
+	for (size_t idx = 0; idx < length; idx++) {
+		if (value[idx] != other.value[idx]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool String::endsWith(const char* str) {
+	size_t len = strlen(str);
+	if (len > length) {
+		return false;
+	}
+
+	return memcmp((void*)value[length - len], str, len);
+}
+
+bool String::operator ==(const String& other) {
+	return equals(other);
+}
+
+bool String::operator ==(const char* other) {
+	return memcmp(value, other, length);
+}
+
 StringPointer String::substring(size_t start, size_t end) {
 	StringPointer retval;
 	if ((start > end) || (start > length)) {
@@ -196,4 +228,8 @@ int String::toInteger() {
 
 float String::toFloat() {
 	return atof(value);
+}
+
+void String::operator=(const char* str) {
+	set(str);
 }

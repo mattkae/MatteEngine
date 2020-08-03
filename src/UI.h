@@ -13,7 +13,7 @@ struct UIEventProcessor;
 
 struct UI {
 	TextRenderer mTextRenderer;
-	List<UIContext> panels;
+	List<UIContext*> panels;
 	UIEventProcessor* eventProcessor;
 
 	void init();
@@ -21,11 +21,15 @@ struct UI {
 	void render() const;
 	void free();
 
-	size_t getNextPanelIdx();
-	size_t showPanel(UIContext* context, int index);
-	size_t showGlobalSelector(Scene& scene);
-	size_t showModelEditor(Model* model);
-	size_t showTerrainEditor(Terrain* terrain);
+	void addPanel(UIContext* panel);
+	// @TODO: Add remove on the panel
+};
 
-	void hidePanel(size_t index);
+namespace UIBuilder {
+	void addStandardLabel(const char* str, UIContext& context);
+	void addFieldLabel(const char* str, UIContext& context);
+	void addTextInput(UIContext& context,
+		TextInputValue value, 
+		TextInputType inputType,
+		UIEventType eventType);
 };

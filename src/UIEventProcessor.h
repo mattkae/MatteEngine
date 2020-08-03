@@ -42,7 +42,4 @@ struct UIEventProcessor {
 	UIEvent activeEvent;
 	void addEvent(UIEvent& event);
 	void processEvent();
-	void hideModelPanel();
-
-	int rightPanelIdx = -1;
 };

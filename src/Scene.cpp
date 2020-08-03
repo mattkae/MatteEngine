@@ -10,9 +10,7 @@
 
 void Scene::initialize() {
 	eventProcessor.scene = this;
-	ui.eventProcessor = &eventProcessor;
-	ui.init();
-    ui.showGlobalSelector(*this);
+	editorUI.initialize(*this);
     isDying = false;
 	ShaderUniformMapping::initialize();
 }
@@ -45,7 +43,7 @@ void Scene::update(double dt) {
 		return;
 	}
 
-	ui.update(dt);
+	editorUI.ui.update(dt);
 
 	float dtFloat = static_cast<float>(dt);
 	if (isLeftClickDown() && isDefaultFocused()) {
@@ -162,7 +160,7 @@ void Scene::renderDirect() {
     }
 
     glDisable(GL_BLEND);
-	ui.render();
+	editorUI.ui.render();
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -199,7 +197,7 @@ void Scene::free() {
 	numEmitters = 0;
 
 	// UI
-	ui.free();
+	editorUI.free();
 
 	// Skybox
 	freeSkybox(mSkybox);

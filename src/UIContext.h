@@ -9,27 +9,26 @@
 #include "List.h"
 #include "UIElement.h"
 
-// @TODO: Implement directional contexts, and nested Panels
-enum ContextDirection {
-	VERTICAL = 0,
-	HORIZONTAL = 1
-};
-
 /**
  * Manages a selection of UI Elements inside of a single panel.
 */
 struct UIContext {
 	Panel panel;
-	bool isActive = true;
 	bool shouldOpen = false;
 	bool shouldClose = false;
 	bool isClosable = true;
 	GLfloat spaceBetweenElements = 2.f;
+
+	GLfloat startX = 0;
+	GLfloat currentX = 0;
+	GLfloat endX = 0;
+
 	Button closeButton;
 	List<UIElement> uiElements;
 
-	void init(int panelIndex);
-	void update(const TextRenderer& textRenderer, UIEvent& event);
+	bool isOpen();
+	void init();
+	void update(float dtMs, const TextRenderer& textRenderer, UIEvent& event);
 	void render(const Shader& shader, const TextRenderer& renderer) const;
 	void free();
 };

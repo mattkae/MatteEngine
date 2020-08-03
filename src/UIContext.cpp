@@ -1,7 +1,7 @@
 #include "UIContext.h"
 #include "GlobalApplicationState.h"
 
-void UIContext::init(int panelIndex) {
+void UIContext::init() {
 	if (isClosable && !closeButton.label.isInited()) {
 		closeButton.width = 16;
 		closeButton.textColor = Vector4f{ 1.f, 1.f, 1.f, 1.f };
@@ -10,26 +10,28 @@ void UIContext::init(int panelIndex) {
 		closeButton.padding = 2.f;
 		closeButton.buttonColor = 0xff3232;
 		closeButton.hoverColor = 0xff6666;
-		closeButton.data = panelIndex;
-		closeButton.eventType = UIEventType::CLOSE_PANEL;
 	}
 }
 
-void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
+bool UIContext::isOpen() {
+	return panel.panelState != PanelState_Hide;
+}
+
+void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEvent& event) {
 	// @TODO: Could add some opening and closing animations around these
-	if (shouldOpen && !isActive) {
-		isActive = true;
+	if (shouldOpen) {
 		shouldOpen = false;
-	} else if (shouldClose && isActive) {
+		panel.show();
+	} else if (shouldClose) {
+		panel.hide();
 		shouldClose = false;
-		isActive = false;
 	}
 
-	if (!isActive) {
+	if (panel.panelState == PanelState_Hide) {
 		return;
 	}
 
-	panel.update();
+	panel.update(dtMs);
 
 
 	// Y=0 is the bottom of the screen here.
@@ -83,10 +85,14 @@ void UIContext::update(const TextRenderer& textRenderer, UIEvent& event) {
 
 		yOffset -= (elementHeight + spaceBetweenElements);
 	}
+
+	if (closeButton.isClicked) {
+		shouldClose = true;
+	}
 }
 
 void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) const {
-	if (!isActive) {
+	if (panel.panelState == PanelState_Hide) {
 		return;
 	}
 

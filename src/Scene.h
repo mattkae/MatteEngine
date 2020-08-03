@@ -9,7 +9,7 @@
 #include "Skybox.h"
 #include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
-#include "UI.h"
+#include "EditorUI.h"
 #include "shaders/Light.shared.cpp"
 #include "Box.h"
 #include "DebugRender.h"
@@ -34,7 +34,7 @@ struct Scene {
     Skybox mSkybox;
     bool useDefferredRendering = false;
     DeferredGeometryBuffer mDeferredBuffer;
-	UI ui;
+	EditorUI editorUI;
 
     bool mUseShadows = false;
     BetterCamera mCamera;

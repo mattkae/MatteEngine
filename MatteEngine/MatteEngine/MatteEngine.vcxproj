@@ -28,6 +28,7 @@
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\DebugRender.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
+    <ClCompile Include="..\..\src\EditorUI.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
@@ -84,6 +85,7 @@
     <ClInclude Include="..\..\src\Constants.h" />
     <ClInclude Include="..\..\src\DebugRender.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
+    <ClInclude Include="..\..\src\EditorUI.h" />
     <ClInclude Include="..\..\src\MeshTexture.h" />
     <ClInclude Include="..\..\src\ShaderUniformMapping.h" />
     <ClInclude Include="..\..\src\String.h" />

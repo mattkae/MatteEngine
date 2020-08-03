@@ -7,40 +7,21 @@ void UIEventProcessor::addEvent(UIEvent& event) {
 	processEvent();
 }
 
-void UIEventProcessor::hideModelPanel() {
-	scene->ui.hidePanel(rightPanelIdx);
-	rightPanelIdx = -1;
-	scene->selectedModelIndex = -1;
-}
-
 void UIEventProcessor::processEvent() {
 	switch (activeEvent.type) {
 		case UIEventType::NONE:
 			return;
 		case UIEventType::CLOSE_PANEL: {
-			scene->ui.hidePanel(*static_cast<int*>(activeEvent.data));
+			scene->editorUI.ui.panels[*static_cast<int*>(activeEvent.data)]->shouldClose = true;
 			resetFocus();
 			break;
 		}
 		case UIEventType::SHOW_MODEL: {
-			int modelIdx = *static_cast<int*>(activeEvent.data);
-			if (modelIdx == scene->selectedModelIndex) {
-				break;
-			}
-
-			Model* model = &scene->models[modelIdx];
-			if (rightPanelIdx > -1) {
-				scene->ui.hidePanel(rightPanelIdx);
-				rightPanelIdx = -1;
-			}
-
-			rightPanelIdx = scene->ui.showModelEditor(model);
-			scene->selectedModelIndex = modelIdx;
-			scene->debugModel.debugBox = scene->modelBoundingBoxes[modelIdx];
+			scene->editorUI.modelUI.shouldOpen = true;
 			break;
 		}
 		case UIEventType::HIDE_MODEL: {
-			hideModelPanel();
+			scene->editorUI.modelUI.shouldClose = true;
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_X: {
@@ -125,7 +106,7 @@ void UIEventProcessor::processEvent() {
 			break;
 		}
 		case UIEventType::SHOW_TERRAIN: {
-			scene->ui.showTerrainEditor(&scene->mTerrain);
+			scene->editorUI.terrainUI.shouldOpen = true;
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_SIZE: {

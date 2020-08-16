@@ -25,6 +25,7 @@ struct TextInput {
 	BoundText bt;
 	int focusToken = -1;
 	size_t cursorPosition = 0;
+	bool isHovered = false;
 	bool isFocused = false;
 
 	TextInputType inputType = TextInputType::NONE;

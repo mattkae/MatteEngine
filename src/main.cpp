@@ -12,8 +12,6 @@
 
 using namespace std;
 
-static GLFWwindow* GlobalWindow = nullptr;
-
 void initialize(int argc, const char* argv[]);
 void cleanup();
 
@@ -32,7 +30,7 @@ int main(int argc, const char* argv[]) {
     uint16_t frameCount = 0;
     double frameTimerSeconds = 0;
     double currentTime = 0, prevTime = glfwGetTime(), deltaTime;
-    while (!glfwWindowShouldClose(GlobalWindow)) {
+    while (!glfwWindowShouldClose(GlobalAppState.window)) {
         currentTime = glfwGetTime();
         deltaTime = currentTime - prevTime;
         prevTime = currentTime;
@@ -42,7 +40,7 @@ int main(int argc, const char* argv[]) {
 		scene.update(deltaTime);
 		scene.render();
 
-        glfwSwapBuffers(GlobalWindow);
+        glfwSwapBuffers(GlobalAppState.window);
         frameCount++;
         frameTimerSeconds += deltaTime;
         if (frameTimerSeconds > 1.0) {
@@ -74,16 +72,16 @@ void initialize(int argc, const char* argv[]) {
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GlobalWindow = glfwCreateWindow(GlobalAppState.width, GlobalAppState.height,
+    GlobalAppState.window = glfwCreateWindow(GlobalAppState.width, GlobalAppState.height,
         GlobalAppState.title, nullptr, nullptr);
-    if (!GlobalWindow) {
+    if (!GlobalAppState.window) {
         cerr << "Error initializing GLFW window" << endl;
         return;
     }
 
-	initializeInputSystem(GlobalWindow);
-    glfwMakeContextCurrent(GlobalWindow);
-	glfwSetWindowSizeCallback(GlobalWindow, setApplicationDimensions);
+	initializeInputSystem(GlobalAppState.window);
+    glfwMakeContextCurrent(GlobalAppState.window);
+	glfwSetWindowSizeCallback(GlobalAppState.window, setApplicationDimensions);
     glfwSwapInterval(0);
 
     // GLEW
@@ -96,8 +94,10 @@ void initialize(int argc, const char* argv[]) {
 }
 
 void cleanup() {
-    if (GlobalWindow) {
-        glfwDestroyWindow(GlobalWindow);
+    deallocateInputSystem();
+
+    if (GlobalAppState.window) {
+        glfwDestroyWindow(GlobalAppState.window);
     }
 
     glfwTerminate();

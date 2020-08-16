@@ -2,6 +2,8 @@
 #include "Logger.h"
 #include "ShaderUniformMapping.h"
 
+const int ADVANCE_BITSHIFT_AMT = 6;
+
 bool TextRenderer::initialize(GLint size, GLchar* path)
 {
     int libInitResult = FT_Init_FreeType(&mLib);
@@ -131,7 +133,7 @@ void TextRenderer::renderText(Shader originalShader, const String& str, Vector2f
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		position.x += (renderInfo.advance >> 6) * scale;
+		position.x += (renderInfo.advance >> ADVANCE_BITSHIFT_AMT) * scale;
     }
 
 	glBindVertexArray(0);
@@ -152,9 +154,7 @@ GLfloat TextRenderer::getStringWidth(String str, GLfloat scale) const {
 	GLfloat width = 0;
 
 	for (size_t strIdx = 0; strIdx < str.length; strIdx++) {
-        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.value[strIdx]);
-		width += renderInfo.size.x;
-		width += renderInfo.bearing.x;
+        width += getCharWidth(str.value[strIdx], scale);
     }
 
 	return width;
@@ -164,10 +164,13 @@ GLfloat TextRenderer::getStringWidth(StringPointer str, GLfloat scale) const {
 	GLfloat width = 0;
 
 	for (size_t strIdx = 0; strIdx < str.length; strIdx++) {
-        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.value[strIdx]);
-		width += renderInfo.size.x;
-		width += renderInfo.bearing.x;
+		width += getCharWidth(str.value[strIdx], scale);
     }
 
 	return width;
+}
+
+GLfloat TextRenderer::getCharWidth(char c, GLfloat scale) const {
+    CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(c);
+	return (renderInfo.advance >> ADVANCE_BITSHIFT_AMT) * scale;
 }

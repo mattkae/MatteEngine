@@ -16,6 +16,7 @@ struct GlobalApplicationState {
 
   GLfloat near = 1.f;
   GLfloat far = 1000.f;
+  GLFWwindow* window = nullptr;
 };
 
 extern GlobalApplicationState GlobalAppState;

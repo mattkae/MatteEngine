@@ -6,6 +6,7 @@ const int DEFAULT_FOCUS_TOKEN = 0;
 
 struct GLFWwindow;
 void initializeInputSystem(GLFWwindow* window);
+void deallocateInputSystem();
 bool isKeyUp(int key, int focusToken);
 bool isKeyJustDown(int key, int focusToken);
 bool isKeyDown(int key, int focusToken);
@@ -21,5 +22,7 @@ int getCurrentKeyDown(int focusToken);
 int getCurrentScancode(int focusToken);
 void getWindowDimensions(int& width, int& height);
 bool isDefaultFocused();
+void setCursorToText();
+void resetCursor();
 
 #endif

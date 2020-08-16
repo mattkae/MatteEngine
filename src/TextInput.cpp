@@ -74,8 +74,33 @@ void TextInput::update(const TextRenderer& textRenderer, UIEvent& uiEvent) {
 	setInternalRepresentation(*this, false);
 	bt.rect = getRectangle(*this, textRenderer);
 
+	if (!isHovered) {
+		if (bt.rect.isMouseHovered()) {
+			isHovered = true;
+			setCursorToText();
+		}
+	} else {
+		if (!bt.rect.isMouseHovered()) {
+			isHovered = false;
+			resetCursor();
+		}
+	}
+
+	bool isClicked = bt.rect.isClicked();
+	if (isClicked) { // Move the mouse cursor pointer ot the proper position
+		Vector2f mousePosition = getCursorPosition();
+		GLfloat startX =  bt.rect.x + bt.padding;
+
+		int charIdx = 0;
+		while (mousePosition.x > startX && charIdx < representation.length) {
+			startX += textRenderer.getCharWidth(representation.value[charIdx], bt.scale);
+			charIdx++;
+		}
+		cursorPosition = charIdx;
+	}
+
 	if (!isFocused) {
-		if (bt.rect.isClicked()) {
+		if (isClicked) {
 			focusToken = grabFocus();
 			isFocused = true;
 		}

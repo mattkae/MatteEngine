@@ -20,6 +20,10 @@ struct InputState {
 	int nextFocusToken = 1;
 	int currentKeyDown = -1;
 	int currentScancode = -1;
+
+	// Cursors
+	GLFWcursor* defaultCursor = nullptr;
+	GLFWcursor* textCursor = nullptr;
 };
 
 InputState globalInput;
@@ -98,6 +102,18 @@ void initializeInputSystem(GLFWwindow* window) {
 	globalInput.window = window;
 	glfwSetKeyCallback(window, glfwKeyCallback);
     glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
+
+	globalInput.defaultCursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+	globalInput.textCursor = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+}
+
+void deallocateInputSystem() {
+	if (globalInput.defaultCursor) {
+		glfwDestroyCursor(globalInput.defaultCursor);
+	}
+	if (globalInput.textCursor) {
+		glfwDestroyCursor(globalInput.textCursor);
+	}
 }
 
 bool isKeyUp(int key, int focusToken) {
@@ -156,4 +172,12 @@ void getWindowDimensions(int& width, int& height) {
 
 bool isDefaultFocused() {
 	return checkFocusToken(DEFAULT_FOCUS_TOKEN);
+}
+
+void setCursorToText() {
+	glfwSetCursor(globalInput.window, globalInput.textCursor);
+}
+
+void resetCursor() {
+	glfwSetCursor(globalInput.window, globalInput.defaultCursor);
 }

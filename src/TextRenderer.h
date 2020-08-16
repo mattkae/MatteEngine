@@ -30,6 +30,7 @@ public:
 	inline GLint getFontSize() const { return mSize; }
 	GLfloat getStringWidth(String str, GLfloat scale) const;
 	GLfloat getStringWidth(StringPointer str, GLfloat scale) const;
+    GLfloat getCharWidth(char c, GLfloat scale) const;
 
 private:
     std::map<GLchar, CharacterRenderInfo> mCharToRenderInfoMap;

@@ -247,7 +247,7 @@ void Terrain::initialize(const GenerationParameters& params) {
 
     int halfMapSize = squareSize * (params.granularity / 2);
 	model = Matrix4x4f { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
-    model = translateMatrix(model, getVec3(-halfMapSize, -50, -halfMapSize));
+    model = translateMatrix(model, getVec3(-halfMapSize, 0, -halfMapSize));
     delete []vertices;
     delete []indicies;
 

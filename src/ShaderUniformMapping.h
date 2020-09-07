@@ -36,13 +36,7 @@ struct CameraUniformMapping {
 	void initialize(const Shader& shader, bool withEye);
 };
 
-struct ModelShaderMapping {
-	Shader shader;
-
-	CameraUniformMapping cameraUniformMapping;
-	ModelUniformMapping modelUniformMapping;
-
-	// Light Uniforms
+struct LightUniformMapping {
 	int LIGHT_AMBIENT;
 	int LIGHT_NUM_LIGHTS;
 	int LIGHT_COLOR[Constants::Rendering::MAX_NUM_LIGHTS];
@@ -57,6 +51,16 @@ struct ModelShaderMapping {
 	int LIGHT_DIR_SHADOW[Constants::Rendering::MAX_NUM_LIGHTS];
 	int LIGHT_SHADOWMATRIX[Constants::Rendering::MAX_NUM_LIGHTS];
 	int LIGHT_FAR_NEAR_PLANE;
+
+	void initialize(const Shader& shader);
+};
+
+struct ModelShaderMapping {
+	Shader shader;
+
+	CameraUniformMapping cameraUniformMapping;
+	ModelUniformMapping modelUniformMapping;
+	LightUniformMapping lightUniformMapping;
 
 	void initialize();
 };
@@ -116,6 +120,20 @@ struct ParticleShaderMapping {
 	void initialize();
 };
 
+struct WaterShaderMapping {
+	Shader shader;
+	CameraUniformMapping cameraMapping;
+	int UNIFORM_MODEL;
+	int UNIFORM_TIME_PASSED_MS;
+	int UNIFORM_PERIOD;
+	int UNIFORM_AMPLITUDE;
+
+	MaterialUniformMapping materialUniformMapping;
+	LightUniformMapping lightUniformMapping;
+
+	void initialize();
+};
+
 namespace ShaderUniformMapping {
 	extern ModelShaderMapping GlobalModelShaderMapping;
 	extern ShadowShaderMapping GlobalShadowShaderMapping;
@@ -124,6 +142,7 @@ namespace ShaderUniformMapping {
 	extern OrthographicShaderMapping GlobalOrthographicShaderMapping;
 	extern TextShaderMapping GlobalTextShaderMapping;
 	extern ParticleShaderMapping GlobalParticleShaderMapping;
+	extern WaterShaderMapping GlobalWaterShaderMapping;
 	void initialize();
 	void free(); // @TODO: Implement this
 };

@@ -1,5 +1,5 @@
 #include "Ray.h"
-Ray clickToRay(const BetterCamera& camera) {
+Ray clickToRay(const Camera& camera) {
 	Vector2f cursorPosition = getCursorPosition();
 	
 	// Most of my understanding of how I was to get the ray from the point clicked

@@ -3,7 +3,7 @@
 #include "Vector4f.h"
 #include "Vector3f.h"
 #include "Shader.h"
-#include "String.h"
+#include "MyString.h"
 
 struct TextRenderer;
 struct Label {

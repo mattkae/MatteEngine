@@ -1,6 +1,6 @@
 #pragma once
 #include "MeshTexture.h"
-#include "String.h"
+#include "MyString.h"
 #include "TextureUniformConstants.h"
 
 inline void renderTexture(GLint index, GLuint textureHandle, const GLint uniform) {

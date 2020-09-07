@@ -14,7 +14,7 @@ struct Skybox {
 };
 
 void initSkybox(Skybox& skybox, const char paths[6][128]);
-void renderSkybox(const Skybox& skybox, const BetterCamera &camera);
+void renderSkybox(const Skybox& skybox, const Camera &camera);
 void freeSkybox(Skybox& skybox);
 
 #endif

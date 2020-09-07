@@ -13,7 +13,7 @@
 #include "GlobalApplicationState.h"
 #include "Vector2f.h"
 #include "Vector3f.h"
-#include "String.h"
+#include "MyString.h"
 
 struct CharacterRenderInfo {
     GLuint textureId = 0;

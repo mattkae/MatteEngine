@@ -13,6 +13,15 @@ void Scene::initialize() {
 	editorUI.initialize(*this);
     isDying = false;
 	ShaderUniformMapping::initialize();
+
+	WaterParameters waterParameters;
+	waterParameters.width = 50;
+	waterParameters.height = 50;
+	waterParameters.verticesPerUnit = 1.f;
+	water.periodOffsetGradient = PI / 16;
+	water.period = PI;
+	water.amplitude = 0.3f;
+	water.initialize(&mCamera, &waterParameters);
 }
 
 int castRayToModel(Scene& scene) {
@@ -60,6 +69,7 @@ void Scene::update(double dt) {
 	eventProcessor.processEvent();
 
     updateCamera(mCamera, dtFloat);
+	water.update(dtFloat);
 
 	for (unsigned int modelIdx = 0; modelIdx < numModels; modelIdx++) {
 		models[modelIdx].update(dtFloat);
@@ -140,14 +150,16 @@ void Scene::renderDirect() {
 		renderNonDeferred();
 	}
 
+	water.render(lights, numLightsUsed);
+
 	useShader(ShaderUniformMapping::GlobalModelShaderMapping.shader);
     renderCamera(mCamera, ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);
 
-	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_AMBIENT, getVec3(0.3f));
-	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
+	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
+	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
 
     for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
-		lights[lidx].render(lidx);
+		lights[lidx].render(lidx, &ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping);
     }
 
     if (useDefferredRendering) {
@@ -208,9 +220,12 @@ void Scene::free() {
 	// Deferred
     mDeferredBuffer.free();
 
-	// Shaders
-	// @TODO: Free shaders
-
 	// Debug program
 	freeDebug(debugModel);
+
+	// Water
+	water.free();
+
+	// Shaders
+	ShaderUniformMapping::free();
 }

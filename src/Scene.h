@@ -15,6 +15,7 @@
 #include "DebugRender.h"
 #include "ModelLoader.h"
 #include "UIEventProcessor.h"
+#include "Water.h"
 
 struct Scene {
 	ModelLoader modelLoader;
@@ -30,6 +31,7 @@ struct Scene {
 	ParticleEmitter emitters[32];
 	size_t numEmitters = 0;
 
+	Water water;
     Terrain mTerrain;
     Skybox mSkybox;
     bool useDefferredRendering = false;
@@ -37,7 +39,7 @@ struct Scene {
 	EditorUI editorUI;
 
     bool mUseShadows = false;
-    BetterCamera mCamera;
+    Camera mCamera;
 	bool isDying = false;
 	UIEventProcessor eventProcessor;
 
@@ -47,6 +49,7 @@ struct Scene {
 	void free();
 
 	void renderShadows();
+	void renderLights();
 	void renderGBuffer();
 	void renderNonDeferred();
 	void renderDebug();

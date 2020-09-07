@@ -137,7 +137,7 @@ void debugVAOState(std::string baseMessage)
 	printf("%s\n", baseMessage.c_str());
 }
 
-void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& camera) {
+void renderParticleEmitter(const ParticleEmitter& emitter, const Camera& camera) {
     if (emitter.vao == 0) {
         return;
     }

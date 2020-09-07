@@ -168,10 +168,11 @@ void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragm
         glGetProgramiv(retVal, GL_INFO_LOG_LENGTH, &maxLength);
 
         // The maxLength includes the NULL character
-        std::vector<GLchar> infoLog(maxLength);
-        glGetProgramInfoLog(retVal, maxLength, &maxLength, &infoLog[0]);
+        GLchar* infoLog = new GLchar[maxLength];
+        glGetProgramInfoLog(retVal, maxLength, &maxLength, infoLog);
         glDeleteProgram(retVal);
-        printf("Error. Could not initialize shader with vertex=%s\n", vertexPath);
+        printf("Error. Could not initialize shader with vertex=%s, error=%s\n", vertexPath, infoLog);
+        delete []infoLog;
     }
 
     if (vertexPath)
@@ -194,6 +195,7 @@ Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
     retVal = glCreateProgram();
 
     attachShaders(retVal, vertexPath, fragmentPath, geomPath);
+    useShader(retVal);
 
     return retVal;
 }

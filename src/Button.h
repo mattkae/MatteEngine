@@ -7,7 +7,7 @@
 #include "Vector4f.h"
 #include "Vector2f.h"
 #include "Rectangle.h"
-#include "String.h"
+#include "MyString.h"
 #include "UIEventProcessor.h"
 
 struct TextRenderer;

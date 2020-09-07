@@ -46,6 +46,6 @@ struct DebugModel {
 	int focusToken = -1;
 };
 
-void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera);
+void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const Camera& camera);
 void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const ModelUniformMapping& mapping);
 void freeDebug(DebugModel& dbgModel);

@@ -7,7 +7,15 @@
 
 const Vector3f WORLD_UP{0.0, 1.0, 0.0};
 
-void updateCamera(BetterCamera& camera, float dt) {
+inline Matrix4x4f getCameraViewMatrix(const Camera& camera) { 
+	return getLookAt(camera.position, camera.position + camera.forward, camera.up);
+};
+
+inline Matrix4x4f getCameraProjection(const Camera& camera) {
+	return getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, camera.fov, GlobalAppState.aspectRatio);
+};
+
+void updateCamera(Camera& camera, float dt) {
 	if (isKeyDown(GLFW_KEY_W, DEFAULT_FOCUS_TOKEN)) {
 		camera.position = addVector(camera.position, scale(camera.forward, camera.speed * dt));
 	}
@@ -51,21 +59,14 @@ void updateCamera(BetterCamera& camera, float dt) {
 	camera.forward = normalize(forwardTemp);
 	camera.right = normalize(cross(camera.forward, WORLD_UP));
 	camera.up = normalize(cross(camera.right, camera.forward));
+
+	camera.viewMatrix = getCameraViewMatrix(camera);
+	camera.projectionMatrix = getCameraProjection(camera);
 }
 
-inline Matrix4x4f getCameraViewMatrix(const BetterCamera& camera) { 
-	return getLookAt(camera.position, camera.position + camera.forward, camera.up);
-};
-
-inline Matrix4x4f getCameraProjection(const BetterCamera& camera) {
-	return getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, camera.fov, GlobalAppState.aspectRatio);
-};
-
-void renderCamera(const BetterCamera& camera, const CameraUniformMapping& cameraMapping) {
-	Matrix4x4f view = getCameraViewMatrix(camera);
-	Matrix4x4f proj = getCameraProjection(camera);
-	setShaderMat4(cameraMapping.PROJECTION_MATRIX, proj);
-	setShaderMat4(cameraMapping.VIEW_MATRIX, view);
+void renderCamera(const Camera& camera, const CameraUniformMapping& cameraMapping) {
+	setShaderMat4(cameraMapping.PROJECTION_MATRIX, camera.projectionMatrix);
+	setShaderMat4(cameraMapping.VIEW_MATRIX, camera.viewMatrix);
 	if (cameraMapping.WITH_EYE) {
 		setShaderVec3(cameraMapping.EYE_MATRIX, camera.position);
 	}

@@ -4,7 +4,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Matrix4x4f.h"
-#include "String.h"
+#include "MyString.h"
 #include "ShaderUniformMapping.h"
 #include "Constants.h"
 #include <GL/glew.h>

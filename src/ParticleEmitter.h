@@ -48,7 +48,7 @@ public:
 
 void initializeParticleEmitter(ParticleEmitter& emitter, size_t initialParticleCount);
 void updateParticleEmitter(ParticleEmitter& emitter, float deltaTimeSec);
-void renderParticleEmitter(const ParticleEmitter& emitter, const BetterCamera& camera);
+void renderParticleEmitter(const ParticleEmitter& emitter, const Camera& camera);
 void freeParticleEmitter(ParticleEmitter& emitter);
 
 #endif

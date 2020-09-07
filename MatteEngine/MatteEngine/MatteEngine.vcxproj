@@ -31,6 +31,7 @@
     <ClCompile Include="..\..\src\EditorUI.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalApplicationState.cpp" />
+    <ClCompile Include="..\..\src\GridHelper.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
     <ClCompile Include="..\..\src\Label.cpp" />
@@ -59,7 +60,7 @@
     <ClCompile Include="..\..\src\ShaderUniformMapping.cpp" />
     <ClCompile Include="..\..\src\Skybox.cpp" />
     <ClCompile Include="..\..\src\Sphere.cpp" />
-    <ClCompile Include="..\..\src\String.cpp" />
+    <ClCompile Include="..\..\src\MyString.cpp" />
     <ClCompile Include="..\..\src\Terrain.cpp" />
     <ClCompile Include="..\..\src\TextInput.cpp" />
     <ClCompile Include="..\..\src\TextRenderer.cpp" />
@@ -73,6 +74,7 @@
     <ClCompile Include="..\..\src\Vector2f.cpp" />
     <ClCompile Include="..\..\src\Vector3f.cpp" />
     <ClCompile Include="..\..\src\Vector4f.cpp" />
+    <ClCompile Include="..\..\src\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\AnimationController.h" />
@@ -86,9 +88,10 @@
     <ClInclude Include="..\..\src\DebugRender.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
     <ClInclude Include="..\..\src\EditorUI.h" />
+    <ClInclude Include="..\..\src\GridHelper.h" />
     <ClInclude Include="..\..\src\MeshTexture.h" />
     <ClInclude Include="..\..\src\ShaderUniformMapping.h" />
-    <ClInclude Include="..\..\src\String.h" />
+    <ClInclude Include="..\..\src\MyString.h" />
     <ClInclude Include="..\..\src\FileHelper.h" />
     <ClInclude Include="..\..\src\GlobalApplicationState.h" />
     <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
@@ -140,6 +143,7 @@
     <ClInclude Include="..\..\src\Texture.h" />
     <ClInclude Include="..\..\src\Vector4f.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
+    <ClInclude Include="..\..\src\Water.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

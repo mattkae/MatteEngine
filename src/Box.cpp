@@ -53,7 +53,7 @@ void renderBoxOutline(const Box& box, const Matrix4x4f& model, const ModelUnifor
     glBindVertexArray(0);
 }
 
-GLfloat getDistanceFromCamera(const Box& box, const BetterCamera& camera, const Matrix4x4f& model) {
+GLfloat getDistanceFromCamera(const Box& box, const Camera& camera, const Matrix4x4f& model) {
 	GLfloat distanceFromLowerLeft = length(subtractVector(camera.position, mult(model, box.lowerLeft)));
 	GLfloat distanceFromUpperRight = length(subtractVector(camera.position, mult(model, box.upperRight)));
 	return std::min(distanceFromLowerLeft, distanceFromUpperRight);

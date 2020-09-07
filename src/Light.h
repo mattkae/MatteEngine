@@ -10,6 +10,7 @@
 #include <vector>
 
 struct Scene;
+struct LightUniformMapping;
 
 enum LightType { Directional = 0, PointLight, Spot, Inactive };
 
@@ -42,7 +43,7 @@ struct Light {
 
     void initialize(int lightIndex);
     void renderShadows(const Scene& scene);
-    void render(const int index) const;
+    void render(const int index, const LightUniformMapping* uniformMapping) const;
     void free();
 };
 

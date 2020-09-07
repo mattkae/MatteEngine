@@ -6,7 +6,7 @@
 #include "Matrix4x4f.h"
 #include "ShaderUniformMapping.h"
 
-struct BetterCamera {
+struct Camera {
 	Vector3f position = { 0, 0, 5 };
 	Vector3f up = { 0, 1, 0 };
 	Vector3f right = { 1, 0, 0 };
@@ -20,10 +20,13 @@ struct BetterCamera {
 	GLfloat maxPitch = 75.f;
 
 	GLfloat fov = 0.872f;
+
+	Matrix4x4f viewMatrix;
+	Matrix4x4f projectionMatrix;
 };
 
-void updateCamera(BetterCamera& camera, float dt);
-Matrix4x4f getCameraViewMatrix(const BetterCamera& camera);
-Matrix4x4f getCameraProjection(const BetterCamera& camera);
-void renderCamera(const BetterCamera& camera, const CameraUniformMapping& cameraMapping);
+void updateCamera(Camera& camera, float dt);
+Matrix4x4f getCameraViewMatrix(const Camera& camera);
+Matrix4x4f getCameraProjection(const Camera& camera);
+void renderCamera(const Camera& camera, const CameraUniformMapping& cameraMapping);
 #endif

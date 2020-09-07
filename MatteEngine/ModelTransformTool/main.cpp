@@ -8,6 +8,7 @@
 #include <assimp/postprocess.h>
 
 #include "Logger.h"
+#include "Vector2f.cpp"
 #include "Vector3f.cpp"
 #include "BinarySerializer.cpp"
 #include "Matrix4x4f.h"

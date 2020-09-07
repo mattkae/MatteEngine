@@ -10,4 +10,4 @@ struct Ray {
 	Vector3f position;
 };
 
-Ray clickToRay(const BetterCamera& camera);
+Ray clickToRay(const Camera& camera);

@@ -48,7 +48,7 @@ void renderDebugArrow(const DebugArrow& arrow, const ModelUniformMapping& mappin
 	arrow.model.render(mapping);
 }
 
-void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const BetterCamera& camera) {
+void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const Camera& camera) {
 	dbgModel.model = copyMatrix(model);
 	updateBox(dbgModel.debugBox, model);
 	updateDebugArrow(dbgModel.xArrow, dbgModel.debugBox, dbgModel.model);

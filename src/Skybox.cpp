@@ -57,7 +57,7 @@ void initSkybox(Skybox& skybox, const char paths[6][128]) {
     glBindVertexArray(0);
 }
 
-void renderSkybox(const Skybox& skybox, const BetterCamera &camera) {
+void renderSkybox(const Skybox& skybox, const Camera &camera) {
     if (skybox.vao == 0) {
         return;
 	}

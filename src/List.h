@@ -1,16 +1,18 @@
 #pragma once
 #include <cstdlib>
 #include <cstring>
+#include "Logger.h"
 
 template <typename T>
 struct List {
 	T* data = nullptr;
 	size_t capacity = 0;
 	size_t numElements = 0;
+	bool growDynamically = true;
 
 	void allocate(size_t size);
 	void add(T* element);
-	void grow(size_t newSize);
+	bool grow(size_t newSize);
 	void set(T* value, size_t index);
 	void deallocate();
 	T* getValue(int index) const;
@@ -33,9 +35,13 @@ void List<T>::allocate(size_t size) {
 }
 
 template <typename T>
-void List<T>::grow(size_t newSize) {
+bool List<T>::grow(size_t newSize) {
+	if (!growDynamically) {
+		return false;
+	}
+
 	if (newSize == 0) {
-		return;
+		return false;
 	}
 
 	T* newData = static_cast<T*>(malloc(sizeof(T) * newSize));
@@ -47,12 +53,13 @@ void List<T>::grow(size_t newSize) {
 
 	data = newData;
 	capacity = newSize;
+	return true;
 }
 
 template <typename T>
 void List<T>::set(T* value, size_t index) {
-	if (index >= capacity) {
-		grow(index * 2);
+	if (index >= capacity && !grow(index * 2)) {
+		return;
 	}
 
 	memcpy(&data[index], value, sizeof(T));
@@ -61,12 +68,16 @@ void List<T>::set(T* value, size_t index) {
 template <typename T>
 void List<T>::add(T* element) {
 	if (element == nullptr || data == nullptr) {
-		allocate(4);
+		Logger::logError("Trying to add to list that is uninitialized");
+		return;
 	}
 
 	size_t newNumElements = numElements + 1;
 	if (newNumElements > capacity) {
-		grow(2 * capacity);
+		if (!grow(2 * capacity)) {
+			Logger::logError("Trying to add to list but unable to grow the array");
+			return;
+		}
 	}
 
 	memcpy(&data[numElements], element, sizeof(T));

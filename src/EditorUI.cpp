@@ -29,8 +29,8 @@ void EditorUI::initPrimaryUI(Scene& scene) {
 	primaryUI.panel.percentageWidth = 0.2f;
 	primaryUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
 	primaryUI.panel.horizontal = PanelPositioning::PanelPositioning_LEFT;
-	primaryUI.panel.backgroundColor = Vector4f { 0.1, 0.1, 0.1, 0.5 };
-	primaryUI.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
+	primaryUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
+	primaryUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
 	primaryUI.panel.borderWidth = 2.f;
 
 	int numElements = 0;
@@ -39,9 +39,7 @@ void EditorUI::initPrimaryUI(Scene& scene) {
 		numElements += scene.numModels + 1;
 	}
 
-	if (scene.mTerrain.isInitialized) {
-		numElements += 2;
-	}
+	numElements += 2;
 
 	primaryUI.uiElements.allocate(numElements);
 	UIBuilder::addStandardLabel("Models", primaryUI);

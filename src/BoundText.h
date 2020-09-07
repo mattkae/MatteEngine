@@ -6,7 +6,7 @@
 #include "TextRenderer.h"
 #include "Vector3f.h"
 #include "Vector4f.h"
-#include "String.h"
+#include "MyString.h"
 
 struct BoundText {
 	GLfloat scale = 1.f;

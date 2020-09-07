@@ -2,7 +2,7 @@
 #include "Shader.h"
 #include "TextRenderer.h"
 #include "BoundText.h"
-#include "String.h"
+#include "MyString.h"
 #include "UIEventProcessor.h"
 #include <GL/glew.h>
 

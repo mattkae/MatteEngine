@@ -20,7 +20,7 @@ namespace Containers
 			list.allocate(1024);
 			Assert::AreEqual((size_t)1024, list.capacity);
 			Assert::AreEqual((size_t)0, list.numElements);
-			list.free();
+			list.deallocate();
 		}
 
 		TEST_METHOD(AddToListTest)
@@ -38,7 +38,7 @@ namespace Containers
 			list.add(&six);
 			Assert::AreEqual(six, *list.getValue(1));
 
-			list.free();
+			list.deallocate();
 		}
 
 		TEST_METHOD(AddToListTestStruct)
@@ -52,7 +52,7 @@ namespace Containers
 
 			TestStruct outValue = *list.getValue(0);
 			Assert::AreEqual(inValue.foo, outValue.foo);
-			list.free();
+			list.deallocate();
 		}
 
 		TEST_METHOD(GrowWorks)
@@ -66,7 +66,7 @@ namespace Containers
 			Assert::AreEqual((size_t)2048, list.capacity);
 			Assert::AreEqual((size_t)0, list.numElements);
 
-			list.free();
+			list.deallocate();
 		}
 
 		TEST_METHOD(DeallocateWorks)
@@ -76,7 +76,7 @@ namespace Containers
 			Assert::AreEqual((size_t)1024, list.capacity);
 			Assert::AreEqual((size_t)0, list.numElements);
 
-			list.free();
+			list.deallocate();
 
 			Assert::AreEqual((size_t)0, list.capacity);
 			Assert::AreEqual((size_t)0, list.numElements);

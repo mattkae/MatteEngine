@@ -28,7 +28,12 @@ textures                assets/texture-info.mattl
     ;;
 ;;
 
-//::models
+::camera
+    position    0.0 40.0 40.0
+    pitch       -30
+;;
+
+::models
     ::
         path        assets/models/Astroboy/astroBoy_walk.mattl
         transform   1 0 0 0 0 1 0 0 0 0 1 0 0 -5 -30 1

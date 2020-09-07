@@ -70,4 +70,4 @@ inline Vector4f getCenter(const Box& box) {
 
 void updateBox(Box& box, const Matrix4x4f& model);
 void renderBoxOutline(const Box& box, const Matrix4x4f& model, const ModelUniformMapping& mapping);
-GLfloat getDistanceFromCamera(const Box& box, const BetterCamera& camera, const Matrix4x4f& model);
+GLfloat getDistanceFromCamera(const Box& box, const Camera& camera, const Matrix4x4f& model);

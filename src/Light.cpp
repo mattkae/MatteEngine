@@ -212,12 +212,12 @@ void Light::renderShadows(const Scene& scene) {
     }
 }
 
-void Light::render(const int index) const {
+void Light::render(const int index, const LightUniformMapping* uniformMapping) const {
     if (!isOn) {
         return;
     }
 
-	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_COLOR[index], color);
+	setShaderVec3(uniformMapping->LIGHT_COLOR[index], color);
 
 	// Render the light
 	bool isDirectional = type == LightType::Directional;
@@ -225,14 +225,14 @@ void Light::render(const int index) const {
 
 	Vector3f shaderPosition = isDirectional ? direction * -GlobalAppState.far : position;
 	Vector3f shaderDirection = isPoint ? getVec3(0) : direction;
-	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_DIRECTION[index], shaderDirection);
-	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_POSITION[index], shaderPosition);
-	setShaderFloat(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_CONSTANT[index], isDirectional ? 1.f : constant);
-	setShaderFloat(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_LINEAR[index], isDirectional ? 0.f : linear);
-	setShaderFloat(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_QUADRATIC[index], isDirectional ? 0.f : quadratic);
-	setShaderFloat(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_COSINE_CUTOFF[index], isPoint || isDirectional ? -1.f : cosineCutOff);
-	setShaderFloat(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_DROP_OFF[index], isPoint || isDirectional ? 1.f : dropOff);
-	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_USES_SHADOWS[index], usesShadows);
+	setShaderVec3(uniformMapping->LIGHT_DIRECTION[index], shaderDirection);
+	setShaderVec3(uniformMapping->LIGHT_POSITION[index], shaderPosition);
+	setShaderFloat(uniformMapping->LIGHT_CONSTANT[index], isDirectional ? 1.f : constant);
+	setShaderFloat(uniformMapping->LIGHT_LINEAR[index], isDirectional ? 0.f : linear);
+	setShaderFloat(uniformMapping->LIGHT_QUADRATIC[index], isDirectional ? 0.f : quadratic);
+	setShaderFloat(uniformMapping->LIGHT_COSINE_CUTOFF[index], isPoint || isDirectional ? -1.f : cosineCutOff);
+	setShaderFloat(uniformMapping->LIGHT_DROP_OFF[index], isPoint || isDirectional ? 1.f : dropOff);
+	setShaderInt(uniformMapping->LIGHT_USES_SHADOWS[index], usesShadows);
 
 	// Render shadow map
 	if (usesShadows) {
@@ -245,8 +245,8 @@ void Light::render(const int index) const {
 			int shadowMapIndex = TextureUniformConstants::LIGHT_SHADOW_TEXTURE_POSITION_START + index;
 			glActiveTexture(GL_TEXTURE0 + shadowMapIndex);
 			glBindTexture(GL_TEXTURE_2D, shadowTexture);
-			setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_DIR_SHADOW[index], shadowMapIndex);
-			setShaderMat4(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_SHADOWMATRIX[index], projection * view);
+			setShaderInt(uniformMapping->LIGHT_DIR_SHADOW[index], shadowMapIndex);
+			setShaderMat4(uniformMapping->LIGHT_SHADOWMATRIX[index], projection * view);
 			break;
 		}
 		default:
@@ -263,7 +263,7 @@ void Light::render(const int index) const {
 			(far + near) / diff * 0.5f + 0.5f,
 			-(far * near) / diff
 		};
-		setShaderVec2(ShaderUniformMapping::GlobalModelShaderMapping.LIGHT_FAR_NEAR_PLANE, uFarNear);
+		setShaderVec2(uniformMapping->LIGHT_FAR_NEAR_PLANE, uFarNear);
 	}
 }
 

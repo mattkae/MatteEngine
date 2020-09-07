@@ -10,6 +10,7 @@ DeferredShaderMapping ShaderUniformMapping::GlobalDeferredShaderMapping;
 OrthographicShaderMapping ShaderUniformMapping::GlobalOrthographicShaderMapping;
 TextShaderMapping ShaderUniformMapping::GlobalTextShaderMapping;
 ParticleShaderMapping ShaderUniformMapping::GlobalParticleShaderMapping;
+WaterShaderMapping ShaderUniformMapping::GlobalWaterShaderMapping;
 
 void ShaderUniformMapping::initialize() {
 	GlobalModelShaderMapping.initialize();
@@ -19,6 +20,18 @@ void ShaderUniformMapping::initialize() {
 	GlobalOrthographicShaderMapping.initialize();
 	GlobalTextShaderMapping.initialize();
 	GlobalParticleShaderMapping.initialize();
+	GlobalWaterShaderMapping.initialize();
+}
+
+void ShaderUniformMapping::free() {
+	glDeleteShader(GlobalModelShaderMapping.shader);
+	glDeleteShader(GlobalShadowShaderMapping.shader);
+	glDeleteShader(GlobalSkyboxShaderMapping.shader);
+	glDeleteShader(GlobalDeferredShaderMapping.shader);
+	glDeleteShader(GlobalOrthographicShaderMapping.shader);
+	glDeleteShader(GlobalTextShaderMapping.shader);
+	glDeleteShader(GlobalParticleShaderMapping.shader);
+	glDeleteShader(GlobalWaterShaderMapping.shader);
 }
 
 inline int getArrayUniform(const Shader& shader, const int index, const char *attribute, const char *property = nullptr) {
@@ -32,15 +45,7 @@ inline int getArrayUniform(const Shader& shader, const int index, const char *at
     return getShaderUniform(shader, ss.str().c_str());
 }
 
-void ModelShaderMapping::initialize() {
-	const char* FORWARD_MODEL_SHADER_VERT = "src/shaders/model_forward.vert";
-	const char* FORWARD_MODEL_SHADER_FRAG = "src/shaders/model_forward.frag";
-	shader = loadShader(FORWARD_MODEL_SHADER_VERT, FORWARD_MODEL_SHADER_FRAG);
-
-	cameraUniformMapping.initialize(shader, true);
-	modelUniformMapping.initialize(shader, true);
-
-	// Light Uniforms
+void LightUniformMapping::initialize(const Shader& shader) {
 	LIGHT_AMBIENT = getShaderUniform(shader, "uAmbient");
 	LIGHT_NUM_LIGHTS = getShaderUniform(shader, "uNumLights");
 	LIGHT_FAR_NEAR_PLANE = getShaderUniform(shader, "uFarNear");
@@ -58,6 +63,16 @@ void ModelShaderMapping::initialize() {
 		LIGHT_DIR_SHADOW[index] = getArrayUniform(shader, index, "uDirShadow");
 		LIGHT_SHADOWMATRIX[index] = getArrayUniform(shader, index, "uLights", "shadowMatrix");
 	}
+}
+
+void ModelShaderMapping::initialize() {
+	const char* FORWARD_MODEL_SHADER_VERT = "src/shaders/model_forward.vert";
+	const char* FORWARD_MODEL_SHADER_FRAG = "src/shaders/model_forward.frag";
+	shader = loadShader(FORWARD_MODEL_SHADER_VERT, FORWARD_MODEL_SHADER_FRAG);
+
+	cameraUniformMapping.initialize(shader, true);
+	modelUniformMapping.initialize(shader, true);
+	lightUniformMapping.initialize(shader);
 }
 
 void ShadowShaderMapping::initialize() {
@@ -160,4 +175,18 @@ void ParticleShaderMapping::initialize() {
 	MODEL = getShaderUniform(shader, "uModel");
 	CAMERA_RIGHT = getShaderUniform(shader, "uCameraRight");
 	CAMERA_UP = getShaderUniform(shader, "uCameraUp");
+}
+
+
+void WaterShaderMapping::initialize() {
+	const char* VERTEX = "src/shaders/water.vert";
+	const char* FRAG = "src/shaders/water.frag";
+	shader = loadShader(VERTEX, FRAG);
+	cameraMapping.initialize(shader, true);
+	UNIFORM_MODEL = getShaderUniform(shader, "uModel");
+	UNIFORM_TIME_PASSED_MS = getShaderUniform(shader, "uTimePassedMs");
+	UNIFORM_PERIOD = getShaderUniform(shader, "uPeriod");
+	UNIFORM_AMPLITUDE = getShaderUniform(shader, "uAmplitude");
+	materialUniformMapping.initialize(shader);
+	lightUniformMapping.initialize(shader);
 }

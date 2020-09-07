@@ -10,7 +10,7 @@ class DeferredGeometryBuffer {
 public:
 	void generate();
     void free();
-    void renderToBuffer(const BetterCamera& camera, const Scene& scene) const;
+    void renderToBuffer(const Camera& camera, const Scene& scene) const;
     void renderToScreen(const Shader& shader) const;
 private:
     GLuint mBuffer;

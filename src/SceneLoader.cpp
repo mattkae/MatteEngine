@@ -14,6 +14,7 @@ void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringU
 void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void loadCamera(FILE* file, Camera& camera, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void ignoreObject(FILE* file, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
     while (StringUtil::processLine(file, buffer, ptr)) {
@@ -50,6 +51,8 @@ void SceneLoader::loadScene(const char* filepath, Scene& scene) {
                 loadParticleEmitters(file, scene.emitters, scene.numEmitters, buffer);
             } else if (StringUtil::startsWith(ptr, "terrain")) {
                 loadTerrain(file, scene.mTerrain, buffer);
+            } else if (StringUtil::startsWith(ptr, "camera")) {
+                loadCamera(file, scene.mCamera, buffer);
             }
         } else if (StringUtil::ifEqualWalkToValue(ptr, "useDeferredRendering")) {
             StringUtil::strToBool(ptr, scene.useDefferredRendering);
@@ -364,4 +367,22 @@ void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_B
     }
 
     terrain.initialize(gp);
+}
+
+
+void loadCamera(FILE* file, Camera& camera, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+    char* ptr;
+    while (StringUtil::processLine(file, buffer, ptr)) {
+        if (StringUtil::ifEqualWalkToValue(ptr, "position")) {
+            Vector3f cameraPosition;
+            StringUtil::strToVec3(ptr, cameraPosition);
+            camera.position = cameraPosition;
+        } else if (StringUtil::ifEqualWalkToValue(ptr, "pitch")) {
+            float pitch;
+            StringUtil::strToFloat(ptr, pitch);
+            camera.pitch = pitch;
+        } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
+            break;
+        }
+    }
 }

@@ -199,5 +199,5 @@ int String::toInteger() {
 }
 
 float String::toFloat() {
-	return atof(value);
+	return static_cast<float>(atof(value));
 }

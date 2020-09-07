@@ -112,38 +112,13 @@ void updateParticleEmitter(ParticleEmitter& emitter, float deltaTimeSec) {
     }
 }
 
-void debugVAOState(std::string baseMessage)
-{
-    baseMessage.append( " ... querying VAO state:\n" );
-    int vab, eabb, eabbs, mva, isOn( 1 ), vaabb;
-    glGetIntegerv( GL_VERTEX_ARRAY_BINDING, &vab );
-    glGetIntegerv( GL_ELEMENT_ARRAY_BUFFER_BINDING, &eabb );
-    glGetBufferParameteriv( GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &eabbs );
-
-    baseMessage.append( "  VAO: " + std::to_string( vab ) + "\n" );
-    baseMessage.append( "  IBO: " + std::to_string( eabb ) + ", size=" + std::to_string( eabbs )  + "\n" );
-
-    glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &mva );
-    for ( unsigned i = 0; i < mva; ++i )
-    {
-        glGetVertexAttribiv( i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &isOn );
-        if ( isOn )
-        {
-            glGetVertexAttribiv( i, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, &vaabb );
-            baseMessage.append( "  attrib #" + std::to_string( i ) + ": VBO=" + std::to_string( vaabb ) + "\n" );
-        }
-    }
-
-	printf("%s\n", baseMessage.c_str());
-}
-
 void renderParticleEmitter(const ParticleEmitter& emitter, const Camera& camera) {
     if (emitter.vao == 0) {
         return;
     }
 
 	useShader(ShaderUniformMapping::GlobalParticleShaderMapping.shader);
-    renderCamera(camera, ShaderUniformMapping::GlobalParticleShaderMapping.cameraMapping);
+    camera.render(ShaderUniformMapping::GlobalParticleShaderMapping.cameraMapping);
 
 	setShaderMat4(ShaderUniformMapping::GlobalParticleShaderMapping.MODEL, emitter.model);
 	setShaderVec3(ShaderUniformMapping::GlobalParticleShaderMapping.CAMERA_UP, camera.up);

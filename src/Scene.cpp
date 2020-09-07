@@ -68,7 +68,7 @@ void Scene::update(double dt) {
 
 	eventProcessor.processEvent();
 
-    updateCamera(mCamera, dtFloat);
+    mCamera.update(dtFloat);
 	water.update(dtFloat);
 
 	for (unsigned int modelIdx = 0; modelIdx < numModels; modelIdx++) {
@@ -144,7 +144,7 @@ void Scene::renderDirect() {
 	glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	renderSkybox(mSkybox, mCamera);
+	mSkybox.render(mCamera);
 
 	if (!useDefferredRendering) {
 		renderNonDeferred();
@@ -153,7 +153,7 @@ void Scene::renderDirect() {
 	water.render(lights, numLightsUsed);
 
 	useShader(ShaderUniformMapping::GlobalModelShaderMapping.shader);
-    renderCamera(mCamera, ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);
+    mCamera.render(ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);
 
 	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
 	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
@@ -190,42 +190,26 @@ void Scene::render() {
 void Scene::free() {
 	isDying = true;
 
-	// Models
 	for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
         models[modelIdx].free();
     }
 	numModels = 0;
 	
-	// Lights
 	for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
 		lights[lidx].free();
     }
 	numLightsUsed = 0;
 
-	// Particle emitters
 	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
 		freeParticleEmitter(emitters[eIdx]);
 	}
 	numEmitters = 0;
 
-	// UI
 	editorUI.free();
-
-	// Skybox
-	freeSkybox(mSkybox);
-
-	// Terrain
+	mSkybox.free();
     mTerrain.free();
-
-	// Deferred
     mDeferredBuffer.free();
-
-	// Debug program
 	freeDebug(debugModel);
-
-	// Water
 	water.free();
-
-	// Shaders
 	ShaderUniformMapping::free();
 }

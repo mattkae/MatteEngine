@@ -245,7 +245,7 @@ void Terrain::initialize(const GenerationParameters& params) {
         mMesh.material.textureList.add(TextureType::NORMAL, textures[textureIndex].textures[2]);
     }
 
-    int halfMapSize = squareSize * (params.granularity / 2);
+    float halfMapSize = squareSize * (params.granularity / 2);
 	model = Matrix4x4f { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
     model = translateMatrix(model, getVec3(-halfMapSize, 0, -halfMapSize));
     delete []vertices;

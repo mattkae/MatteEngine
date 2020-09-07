@@ -101,7 +101,7 @@ void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFF
         StringUtil::substring(facePaths[faceIndex], ptr, StringUtil::getLengthToEndOfLine(ptr));
     }
 
-    initSkybox(skybox, facePaths);
+    skybox.initialize(facePaths);
 }
 
 inline void loadLight(FILE* file, Light& light, int numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {

@@ -49,7 +49,6 @@ struct Scene {
 	void free();
 
 	void renderShadows();
-	void renderLights();
 	void renderGBuffer();
 	void renderNonDeferred();
 	void renderDebug();

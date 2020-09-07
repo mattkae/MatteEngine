@@ -6,9 +6,9 @@ const GLfloat vertices[] = {1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f};
 
 const GLuint indices[] = {0, 1, 3, 1, 2, 3};
 
-void initSkybox(Skybox& skybox, const char paths[6][128]) {
-    glGenTextures(1, &skybox.mTexture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.mTexture);
+void Skybox::initialize(const char paths[6][128]) {
+    glGenTextures(1, &mTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -36,18 +36,18 @@ void initSkybox(Skybox& skybox, const char paths[6][128]) {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     // Generate buffers
-    glGenVertexArrays(1, &skybox.vao);
-    glGenBuffers(1, &skybox.vbo);
-    glGenBuffers(1, &skybox.ebo);
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
-    glBindVertexArray(skybox.vao);
+    glBindVertexArray(vao);
 
     // Vertex data
-    glBindBuffer(GL_ARRAY_BUFFER, skybox.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
 
     // Index data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skybox.ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 
     // Position
@@ -57,30 +57,30 @@ void initSkybox(Skybox& skybox, const char paths[6][128]) {
     glBindVertexArray(0);
 }
 
-void renderSkybox(const Skybox& skybox, const Camera &camera) {
-    if (skybox.vao == 0) {
+void Skybox::render(const Camera &camera) const {
+    if (vao == 0) {
         return;
 	}
 
 	useShader(ShaderUniformMapping::GlobalSkyboxShaderMapping.shader);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.mTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
     glDisable(GL_DEPTH_TEST);
 	
-	setShaderMat3(ShaderUniformMapping::GlobalSkyboxShaderMapping.VIEW, fromMat4(getCameraViewMatrix(camera)));
-	setShaderMat4(ShaderUniformMapping::GlobalSkyboxShaderMapping.PROJECTION, getCameraProjection(camera));
+	setShaderMat3(ShaderUniformMapping::GlobalSkyboxShaderMapping.VIEW, fromMat4(camera.viewMatrix));
+	setShaderMat4(ShaderUniformMapping::GlobalSkyboxShaderMapping.PROJECTION, camera.projectionMatrix);
 
-    glBindVertexArray(skybox.vao);
+    glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     glEnable(GL_DEPTH_TEST);
 }
 
-void freeSkybox(Skybox& skybox) {
-    if (skybox.vao != 0) {
-        glDeleteVertexArrays(1, &skybox.vao);
-        glDeleteBuffers(1, &skybox.vbo);
-        glDeleteBuffers(1, &skybox.ebo);
+void Skybox::free() {
+    if (vao != 0) {
+        glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &vbo);
+        glDeleteBuffers(1, &ebo);
     }
 }

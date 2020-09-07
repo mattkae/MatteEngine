@@ -52,9 +52,9 @@ void EditorUI::initPrimaryUI(Scene& scene) {
 		Button button;
 		button.label.append(modelName);
 		button.label.append(indexStr);
-		button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
-		button.hoverColor = Vector4f { 0.9, 0.1, 0.0, 1.0 };
-		button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
+		button.buttonColor = Vector4f { 1.0f, 0.0f, 0.0f, 1.0f };
+		button.hoverColor = Vector4f { 0.9f, 0.1f, 0.0f, 1.0f };
+		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
 		button.eventType = UIEventType::SHOW_MODEL;
 		button.data = modelIdx;
 		button.padding = 2.f;
@@ -68,9 +68,9 @@ void EditorUI::initPrimaryUI(Scene& scene) {
 	UIElement element;
 	Button button;
 	button.label = "Edit Terrain";
-	button.buttonColor = Vector4f { 1.0, 0.0, 0.0, 1.0 };
-	button.hoverColor = Vector4f { 0.9, 0.1, 0.0, 1.0 };
-	button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
+	button.buttonColor = Vector4f { 1.f, 0.f, 0.f, 1.f };
+	button.hoverColor = Vector4f { 0.9f, 0.1f, 0.f, 1.f };
+	button.textColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
 	button.eventType = UIEventType::SHOW_TERRAIN;
 	button.padding = 2.f;
 	element.elementType = UIElementType::BUTTON;
@@ -86,8 +86,8 @@ void EditorUI::initModelUI(Scene& scene) {
 	modelUI.panel.percentageWidth = 0.2f;
 	modelUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
 	modelUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
-	modelUI.panel.backgroundColor = Vector4f { 0.1, 0.1, 0.1, 0.5 };
-	modelUI.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
+	modelUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
+	modelUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
 	modelUI.panel.borderWidth = 2.f;
 
 	size_t numElements = 3 * (numVec3 + 1); // Translation, scaling, rotation with labels
@@ -156,8 +156,8 @@ void EditorUI::initTerrainUI(Scene& scene)  {
 	terrainUI.panel.percentageWidth = 0.2f;
 	terrainUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
 	terrainUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
-	terrainUI.panel.backgroundColor = Vector4f { 0.1, 0.1, 0.1, 0.5 };
-	terrainUI.panel.borderColor = Vector4f { 0.5, 0.5, 0.5, 0.5 };
+	terrainUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
+	terrainUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
 	terrainUI.panel.borderWidth = 2.f;
 	terrainUI.uiElements.allocate(24);
 	UIBuilder::addStandardLabel("Terrain Editor", terrainUI);
@@ -204,9 +204,9 @@ void EditorUI::initTerrainUI(Scene& scene)  {
 		UIElement element;
 		Button button;
 		button.label = "Create";
-		button.buttonColor = Vector4f { 0.0, 0.6, 0.3, 1.0 };
-		button.hoverColor = Vector4f { 0.0, 0.9, 0.1, 1.0 };
-		button.textColor = Vector4f { 1.0, 1.0, 1.0, 1.0 };
+		button.buttonColor = Vector4f { 0.0f, 0.6f, 0.3f, 1.0f };
+		button.hoverColor = Vector4f { 0.0f, 0.9f, 0.1f, 1.0f };
+		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
 		button.eventType = UIEventType::EDIT_TERRAIN_APPLY;
 		button.padding = 2.f;
 		element.elementType = UIElementType::BUTTON;

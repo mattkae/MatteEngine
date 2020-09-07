@@ -23,10 +23,11 @@ struct Camera {
 
 	Matrix4x4f viewMatrix;
 	Matrix4x4f projectionMatrix;
+
+	void update(float dt);
+	Matrix4x4f getView();
+	Matrix4x4f getProjection();
+	void render(const CameraUniformMapping& cameraMapping) const;
 };
 
-void updateCamera(Camera& camera, float dt);
-Matrix4x4f getCameraViewMatrix(const Camera& camera);
-Matrix4x4f getCameraProjection(const Camera& camera);
-void renderCamera(const Camera& camera, const CameraUniformMapping& cameraMapping);
 #endif

@@ -27,7 +27,7 @@ T lerpValue(GLdouble currentAnimTime, LerpableValue<T>* values, unsigned int num
 	LerpableValue<T> end = values[endIdx];
 
 	GLdouble fractionOfTimeThroughFrame = (currentAnimTime - start.time) / (end.time - start.time);
-	return start.value.interpolate(end.value, fractionOfTimeThroughFrame);
+	return start.value.interpolate(end.value, (float)fractionOfTimeThroughFrame);
 }
 
 Vector3f AnimationNode::getInterpolatedPosition(GLdouble currentAnimTime) {
@@ -96,8 +96,8 @@ void AnimationController::free() {
 // Binary Serializations
 // ***************************************
 void Animation::write(BinarySerializer& serializer) {
-	serializer.writeFloat32(duration);
-	serializer.writeFloat32(ticksPerSecond);
+	serializer.writeFloat32((float)duration);
+	serializer.writeFloat32((float)ticksPerSecond);
 	serializer.writeUint32(numNodes);
 	for (unsigned int nodeIdx = 0; nodeIdx < numNodes; nodeIdx++) {
 		nodes[nodeIdx].write(serializer);

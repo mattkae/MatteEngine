@@ -11,12 +11,12 @@ Ray clickToRay(const Camera& camera) {
 	ndcPoint.w = 1.0f;
 
 	Matrix4x4f inverseProj;
-	if (!inverse(getCameraProjection(camera), inverseProj)) {
+	if (!inverse(camera.projectionMatrix, inverseProj)) {
 		return Ray();
 	}
 
 	Matrix4x4f inverseView;
-	if (!inverse(getCameraViewMatrix(camera), inverseView)) {
+	if (!inverse(camera.viewMatrix, inverseView)) {
 		return Ray();
 	}
 

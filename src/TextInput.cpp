@@ -91,7 +91,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEvent& uiEvent) {
 		Vector2f mousePosition = getCursorPosition();
 		GLfloat startX =  bt.rect.x + bt.padding;
 
-		int charIdx = 0;
+		size_t charIdx = 0;
 		while (mousePosition.x > startX && charIdx < representation.length) {
 			startX += textRenderer.getCharWidth(representation.value[charIdx], bt.scale);
 			charIdx++;
@@ -160,7 +160,7 @@ void TextInput::render(const Shader& shader, const TextRenderer& textRenderer) {
 	
 	if (isFocused) {
 		GLfloat cursorOffset = textRenderer.getStringWidth(representation.substring(0, cursorPosition), bt.scale);
-		Rectangle cursorRect = { bt.rect.x + bt.padding + cursorOffset, bt.rect.y, 2, textRenderer.getFontSize() };
+		Rectangle cursorRect = { bt.rect.x + bt.padding + cursorOffset, bt.rect.y, 2, static_cast<float>(textRenderer.getFontSize()) };
 		cursorRect.render(Vector4f { 1, 0, 0, 1 });
 	}
 }

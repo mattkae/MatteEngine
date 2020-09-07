@@ -16,10 +16,10 @@ void Water::initialize(Camera* inCamera, WaterParameters* waterIn) {
 	vertices.growDynamically = false;
 	vertices.allocate(gridResult.numVertices);
 	numIndices = gridResult.numIndices;
-	material.diffuse = Vector3f { 0, 0, 0.3 };
+	material.diffuse = Vector3f { 0.f, 0.f, 0.3f };
 	material.transparency = 0.9f;
 	material.specularComponent = 20.f;
-	material.specular = Vector3f { 0, 0, 0.1 };
+	material.specular = Vector3f { 0, 0, 0.1f };
 	material.ambient = Vector3f { 0, 0, 0 };
 	material.emissive = Vector3f { 0, 0, 0 };
 	material.specularProperty = Vector3f { 1, 0, 0 };
@@ -74,7 +74,7 @@ void Water::render(Light* lights, unsigned int numLightsUsed) const {
 	}
 
 	useShader(ShaderUniformMapping::GlobalWaterShaderMapping.shader);
-	renderCamera(*camera, ShaderUniformMapping::GlobalWaterShaderMapping.cameraMapping);
+	camera->render(ShaderUniformMapping::GlobalWaterShaderMapping.cameraMapping);
 	setShaderMat4(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_MODEL, modelMatrix);
 	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_TIME_PASSED_MS, timePassedMs);
 	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_PERIOD, period);

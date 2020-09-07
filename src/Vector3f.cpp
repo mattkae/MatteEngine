@@ -121,5 +121,7 @@ GLfloat Vector3f::operator [](int index) {
 		return y;
 	case 2:
 		return z;
+	default:
+		return 0;
 	}
 }

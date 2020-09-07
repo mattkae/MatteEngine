@@ -10,6 +10,8 @@ GLfloat Quaternion::operator [](int index) {
 		return z;
 	case 3:
 		return w;
+	default:
+		return 0;
 	}
 }
 
@@ -49,7 +51,7 @@ Quaternion Quaternion::operator-(const Quaternion& other) const {
 	};
 }
 
-const GLfloat DOT_THRESHOLD = 0.9999; 
+const GLfloat DOT_THRESHOLD = 0.9999f; 
 
 // Using a slerp here, mostly taken from here: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/.
 // As JBlow says, it's expensive as heck. I will address this if it becomes a problem.

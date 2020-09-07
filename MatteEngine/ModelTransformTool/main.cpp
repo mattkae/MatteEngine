@@ -61,7 +61,7 @@ int main() {
         LoadModel newModel;
         newModel.readLoadModel(rs);
 
-        for (int boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
+        for (size_t boneIdx = 0; boneIdx < model.bones.size(); boneIdx++) {
             auto firstBone = model.bones[boneIdx];
             auto secondBone = newModel.bones[boneIdx];
             for (int i = 0; i < 16; i++) {
@@ -127,7 +127,7 @@ void processNode(std::string fullPath,
         }
 
         // Fill in tangents and bitangents for each vetex
-        for (int indexIndex = 0; indexIndex < mesh.indices.size(); indexIndex+=3) {
+        for (size_t indexIndex = 0; indexIndex < mesh.indices.size(); indexIndex+=3) {
             GLint firstIndex = mesh.indices[indexIndex];
             GLint secondIndex = mesh.indices[indexIndex + 1];
             GLint thirdIndex = mesh.indices[indexIndex + 2];

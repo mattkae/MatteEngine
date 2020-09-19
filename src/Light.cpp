@@ -1,6 +1,6 @@
 #include "Light.h"
 #include "Camera.h"
-#include "GlobalApplicationState.h"
+#include "App.h"
 #include "ImageUtil.h"
 #include "Scene.h"
 #include "TextureUniformConstants.h"
@@ -13,10 +13,10 @@ inline Matrix4x4f getLightProjection(const Light &light) {
     switch (light.type) {
     case Directional:
 		// @TODO: Almost certian these values shouldn't be this random
-        return getOrthographicProjection(GlobalAppState.near, GlobalAppState.far, -10, 10, -10.f, 10);
+        return getOrthographicProjection(GlobalApp.near, GlobalApp.far, -10, 10, -10.f, 10);
     case Spot:
 		// @TODO: Don't default the FOV to 45 degrees
-		return getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, 0.7853982f, GlobalAppState.aspectRatio);
+		return getPerspectiveProjection(GlobalApp.near, GlobalApp.far, 0.7853982f, GlobalApp.aspectRatio);
     case PointLight:
     default:
         Logger::logError("Attempting to get a view for unknown light: " + light.type);
@@ -27,7 +27,7 @@ inline Matrix4x4f getLightProjection(const Light &light) {
 inline Matrix4x4f getLightView(const Light &light) {
     switch (light.type) {
     case Directional: {
-        auto lightPosition = light.direction * (-GlobalAppState.far / 2.0f);
+        auto lightPosition = light.direction * (-GlobalApp.far / 2.0f);
 		return getLookAt(lightPosition, lightPosition + light.direction, light.up);
     }
     case Spot:
@@ -162,7 +162,7 @@ void renderPointShadows(const Light& light, const Scene &scene) {
         }
 
         Matrix4x4f view = getLookAt(light.position, light.position + currentDirection, up);
-        Matrix4x4f proj = getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, 0.7853982f, GlobalAppState.aspectRatio);
+        Matrix4x4f proj = getPerspectiveProjection(GlobalApp.near, GlobalApp.far, 0.7853982f, GlobalApp.aspectRatio);
 		setShaderMat4(ShaderUniformMapping::GlobalShadowShaderMapping.LIGHT_PROJ_MATRIX, proj);
 		setShaderMat4(ShaderUniformMapping::GlobalShadowShaderMapping.LIGHT_VIEW_MATRIX, view);
 		scene.renderModels(ShaderUniformMapping::GlobalShadowShaderMapping.modelUniformMapping, false);
@@ -170,7 +170,7 @@ void renderPointShadows(const Light& light, const Scene &scene) {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
-    glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
+    glViewport(0, 0, GlobalApp.width, GlobalApp.height);
 }
 
 void renderDirectionalShadows(const Light& light, const Scene &scene) {
@@ -190,7 +190,7 @@ void renderDirectionalShadows(const Light& light, const Scene &scene) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
 	glDisable(GL_DEPTH_TEST);
-    glViewport(0, 0, GlobalAppState.width, GlobalAppState.height);
+    glViewport(0, 0, GlobalApp.width, GlobalApp.height);
 }
 
 void Light::renderShadows(const Scene& scene) {
@@ -223,7 +223,7 @@ void Light::render(const int index, const LightUniformMapping* uniformMapping) c
 	bool isDirectional = type == LightType::Directional;
 	bool isPoint = type == LightType::PointLight;
 
-	Vector3f shaderPosition = isDirectional ? direction * -GlobalAppState.far : position;
+	Vector3f shaderPosition = isDirectional ? direction * -GlobalApp.far : position;
 	Vector3f shaderDirection = isPoint ? getVec3(0) : direction;
 	setShaderVec3(uniformMapping->LIGHT_DIRECTION[index], shaderDirection);
 	setShaderVec3(uniformMapping->LIGHT_POSITION[index], shaderPosition);
@@ -256,8 +256,8 @@ void Light::render(const int index, const LightUniformMapping* uniformMapping) c
 	}
 
 	if (isPoint) {
-		float near = GlobalAppState.near;
-		float far = GlobalAppState.far;
+		float near = GlobalApp.near;
+		float far = GlobalApp.far;
 		float diff = far - near;
 		Vector2f uFarNear = {
 			(far + near) / diff * 0.5f + 0.5f,

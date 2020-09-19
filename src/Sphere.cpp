@@ -6,7 +6,7 @@
 #include <cmath>
 #include <vector>
 
-void initializeSphere(const Sphere& sphere, Model& model, Box& box) {
+void initializeSphere(const Sphere& sphere, Model& model, Box3D& box) {
     LoadModel loadModel;
     LoadMesh mesh;
 

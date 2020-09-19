@@ -5,7 +5,7 @@
 #include "Shader.h"
 #include <GL/glew.h>
 
-struct Box;
+struct Box3D;
 
 struct Sphere {
     int radius = 1;
@@ -13,6 +13,6 @@ struct Sphere {
     Matrix4x4f model;
 };
 
-void initializeSphere(const Sphere& sphere, Model& model, Box& box);
+void initializeSphere(const Sphere& sphere, Model& model, Box3D& box);
 
 #endif

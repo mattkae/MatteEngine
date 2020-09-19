@@ -1,5 +1,5 @@
 #include "UIContext.h"
-#include "GlobalApplicationState.h"
+#include "App.h"
 
 void UIContext::init() {
 	if (isClosable && !closeButton.label.isInited()) {
@@ -17,7 +17,7 @@ bool UIContext::isOpen() {
 	return panel.panelState != PanelState_Hide;
 }
 
-void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEvent& event) {
+void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProcessor* processor) {
 	// @TODO: Could add some opening and closing animations around these
 	if (shouldOpen) {
 		shouldOpen = false;
@@ -37,7 +37,7 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEvent& ev
 	// Y=0 is the bottom of the screen here.
 	// To get to the start of the panel, we go to the top of the screen, and move
 	// to the start of the panel (the panel's y-position plus its padding)
-	GLfloat yOffset = GlobalAppState.floatHeight - (panel.boundingRect.y + panel.padding);
+	GLfloat yOffset = GlobalApp.floatHeight - (panel.boundingRect.y + panel.padding);
 
 	// X=0 is at the left of the screen
 	GLfloat xPosition = panel.boundingRect.x + panel.padding;
@@ -46,7 +46,7 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEvent& ev
 		GLfloat elementHeight = getButtonHeight(closeButton, textRenderer);
 		closeButton.position.x = xPosition + (panel.boundingRect.w - panel.padding - 16); // Right align
 		closeButton.position.y = yOffset - elementHeight;
-		closeButton.update(textRenderer, event);
+		closeButton.update(textRenderer, processor);
 		yOffset -= (elementHeight + spaceBetweenElements);
 	}
 	
@@ -59,8 +59,8 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEvent& ev
 			Button& button = element.element.button;
 			elementHeight = getButtonHeight(button, textRenderer);
 			button.position = Vector2f { xPosition, yOffset - elementHeight};
-			button.width = GlobalAppState.floatWidth * panel.percentageWidth - 2 * button.padding;
-			button.update(textRenderer, event);
+			button.width = GlobalApp.floatWidth * panel.percentageWidth - 2 * button.padding;
+			button.update(textRenderer, processor);
 			break;
 		}
 		case UIElementType::TEXT_INPUT: {
@@ -68,8 +68,8 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEvent& ev
 			elementHeight = textInput.bt.getBoundTextHeight(textRenderer);
 			textInput.bt.rect.x = xPosition;
 			textInput.bt.rect.y = yOffset - elementHeight;
-			textInput.bt.rect.w = GlobalAppState.floatWidth * panel.percentageWidth - 2 * textInput.bt.padding;
-			textInput.update(textRenderer,  event);
+			textInput.bt.rect.w = GlobalApp.floatWidth * panel.percentageWidth - 2 * textInput.bt.padding;
+			textInput.update(textRenderer,  processor);
 			break;
 		}
 		case UIElementType::LABEL: {
@@ -77,7 +77,7 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEvent& ev
 			elementHeight = label.bt.getBoundTextHeight(textRenderer);
 			label.bt.rect.x = xPosition;
 			label.bt.rect.y = yOffset - elementHeight;
-			label.bt.rect.w = GlobalAppState.floatWidth * panel.percentageWidth - 2 * label.bt.padding;
+			label.bt.rect.w = GlobalApp.floatWidth * panel.percentageWidth - 2 * label.bt.padding;
 			label.bt.rect.h = elementHeight;
 			break;
 		}

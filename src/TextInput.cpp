@@ -45,7 +45,8 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 	}
 }
 
-inline void onStrChange(TextInput& textInput, String v, UIEvent& uiEvent) {
+inline void onStrChange(TextInput& textInput, String v, UIEventProcessor* processor) {
+	UIEvent uiEvent;
 	uiEvent.type = textInput.eventType;
 	switch (textInput.inputType) {
 	case TextInputType::STRING: {
@@ -68,9 +69,10 @@ inline void onStrChange(TextInput& textInput, String v, UIEvent& uiEvent) {
 	}
 
 	setInternalRepresentation(textInput, true);
+	processor->processEvent(uiEvent);
 }
 
-void TextInput::update(const TextRenderer& textRenderer, UIEvent& uiEvent) {
+void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* processor) {
 	setInternalRepresentation(*this, false);
 	bt.rect = getRectangle(*this, textRenderer);
 
@@ -108,7 +110,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEvent& uiEvent) {
 		if (isLeftClickDown() && !bt.rect.isClicked()) {
 			returnFocus(focusToken);
 			isFocused = false;
-			onStrChange(*this, representation, uiEvent);
+			onStrChange(*this, representation, processor);
 		}
 	}
 
@@ -118,7 +120,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEvent& uiEvent) {
 	if (key > -1 && isKeyJustDown(key, focusToken)) {
 		switch (key) {
 		case GLFW_KEY_ENTER:
-			onStrChange(*this, representation, uiEvent);
+			onStrChange(*this, representation, processor);
 			break;
 		case GLFW_KEY_LEFT:
 			cursorPosition = cursorPosition == 0 ? 0 : cursorPosition - 1;

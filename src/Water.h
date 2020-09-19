@@ -7,6 +7,7 @@
 #include "MathHelper.h"
 #include "Material.h"
 
+struct Scene;
 struct Camera;
 struct Light;
 
@@ -22,6 +23,7 @@ struct WaterParameters {
 };
 
 struct Water {
+	Scene*				scene = nullptr;
 	Camera*				camera = nullptr;
 	Matrix4x4f			modelMatrix;
 	List<WaterVertex>	vertices;
@@ -35,7 +37,7 @@ struct Water {
 	GLfloat				period = PI;
 	Material			material;
 
-	void initialize(Camera* inCamera, WaterParameters* waterIn);
+	void initialize(Scene* inScene, Camera* inCamera, WaterParameters* waterIn);
 	void update(float dt);
 	void render(Light* lights, unsigned int numLightsUsed) const;
 	void free();

@@ -2,11 +2,13 @@
 #include "ShaderUniformMapping.h"
 #include "Vector3f.h"
 #include "GridHelper.h"
+#include "Scene.h"
 #include "Camera.h"
 #include "MathHelper.h"
 #include "Light.h"
 
-void Water::initialize(Camera* inCamera, WaterParameters* waterIn) {
+void Water::initialize(Scene* inScene, Camera* inCamera, WaterParameters* waterIn) {
+	scene = inScene;
 	camera = inCamera;
 	GridParameters gridParams;
 	gridParams.width = waterIn->width;

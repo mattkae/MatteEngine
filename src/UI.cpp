@@ -1,6 +1,6 @@
 #include "UI.h"
 #include "Scene.h"
-#include "GlobalApplicationState.h"
+#include "App.h"
 #include "Model.h"
 #include "UIEventProcessor.h"
 #include "ShaderUniformMapping.h"
@@ -25,19 +25,21 @@ void UI::update(double dt) {
 			}
 		}
 
-		panel->update(static_cast<float>(dt), mTextRenderer, eventProcessor->activeEvent);
+		panel->update(static_cast<float>(dt), mTextRenderer, &eventProcessor);
 	}
 }
 
 
 void UI::render() const {
 	useShader(ShaderUniformMapping::GlobalOrthographicShaderMapping.shader);
-	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
+	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalApp.floatWidth, 0.0f, GlobalApp.floatHeight);
 	setShaderMat4(ShaderUniformMapping::GlobalOrthographicShaderMapping.PROJECTION, projection);
 
 	for (size_t idx = 0; idx < panels.numElements; idx++) {
 		panels[idx]->render(ShaderUniformMapping::GlobalOrthographicShaderMapping.shader, mTextRenderer);
 	}
+
+	textureDebugger.render();
 }
 
 void UI::free() {
@@ -97,4 +99,12 @@ void UIBuilder::addTextInput(UIContext& context,
 
 
 	context.uiElements.add(&element);
+}
+
+void TextureDebugScreen::render() const {
+	if (!show) {
+		return;
+	}
+
+	rectangle.renderTexture(texture, { 0.1f, 0.1f, 0.1f, 1.0 }, 2.f);
 }

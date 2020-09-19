@@ -1,7 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "GlobalApplicationState.h"
 #include "Vector4f.h"
 #include "Matrix4x4f.h"
 #include "ShaderUniformMapping.h"

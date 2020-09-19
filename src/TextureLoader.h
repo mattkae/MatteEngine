@@ -5,6 +5,7 @@
 
 // @TODO Figure out how to do this in a general way
 struct TextureLoader {
-	List<GeneratedTexture> textureList;
-	static GLuint loadRGBATileTexture(String path);
+	List<GLuint> textureList;
+	GLuint loadRGBATileTexture(String path);
+	GLuint createTexture(int width, int height);
 };

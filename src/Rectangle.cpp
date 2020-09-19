@@ -16,22 +16,26 @@ struct RenderableRectangle {
 		GLfloat yStart = r.y;
 		GLfloat yEnd = yStart + r.h;
 
-		GLfloat vertices[12] = {
-			xStart, yStart,
-			xStart, yEnd,
-			xEnd, yEnd,
+		GLfloat vertices[24] = {
+			// Positions		// Texture coordinates
+			xStart, yEnd,		0.f, 1.f,
+			xStart, yStart,		0.f, 0.f,
+			xEnd, yStart,		1.f, 0.f,
 
-			xEnd, yEnd,
-			xStart, yStart,
-			xEnd, yStart,
+			xStart, yEnd,		0.f, 1.f,
+			xEnd, yStart,		1.f, 0.f,
+			xEnd, yEnd,			1.f, 1.f
 		};
 
 		glBindVertexArray(mVao);
 		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-		glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), &vertices, isDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), &vertices, isDynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2, (GLvoid*) 0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, (GLvoid*) 0);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, (GLvoid*)(2 * sizeof(float)));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -45,18 +49,19 @@ void bufferRect(const Rectangle& rect) {
 	GLfloat xEnd = xStart + rect.w;
 	GLfloat yStart = rect.y;
 	GLfloat yEnd = yStart + rect.h;
-	GLfloat vertices[12] = {
-		xStart, yStart,
-		xStart, yEnd,
-		xEnd, yEnd,
+	GLfloat vertices[24] = {
+		// Positions		// Texture coordinates
+		xStart, yEnd,		0.f, 1.f,
+		xStart, yStart,		0.f, 0.f,
+		xEnd, yStart,		1.f, 0.f,
 
-		xEnd, yEnd,
-		xStart, yStart,
-		xEnd, yStart,
+		xStart, yEnd,		0.f, 1.f,
+		xEnd, yStart,		1.f, 0.f,
+		xEnd, yEnd,			1.f, 1.f
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, globalRect.mVbo);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 12 * sizeof(GLfloat), &vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 24 * sizeof(GLfloat), &vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -65,6 +70,18 @@ void Rectangle::render(const Vector4f& backgroundColor, const Vector4f& borderCo
 		globalRect.init(true);
 	}
 
+	setShaderBool(ShaderUniformMapping::GlobalOrthographicShaderMapping.USE_TEXTURE, false);
+
+	renderBorderRect(borderColor, borderWidth);
+
+	setShaderVec4(ShaderUniformMapping::GlobalOrthographicShaderMapping.COLOR, backgroundColor);
+	bufferRect(*this);
+	glBindVertexArray(globalRect.mVao);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+}
+
+void Rectangle::renderBorderRect(const Vector4f& borderColor, GLfloat borderWidth) const {
 	Rectangle borderRect;
 	borderRect.x = x - borderWidth;
 	borderRect.y = y - borderWidth;
@@ -75,8 +92,19 @@ void Rectangle::render(const Vector4f& backgroundColor, const Vector4f& borderCo
 	glBindVertexArray(globalRect.mVao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
+}
 
-	setShaderVec4(ShaderUniformMapping::GlobalOrthographicShaderMapping.COLOR, backgroundColor);
+void Rectangle::renderTexture(GLuint texture, const Vector4f& borderColor, GLfloat borderWidth) const {
+	if (globalRect.mVao == 0) {
+		globalRect.init(true);
+	}
+
+	renderBorderRect(borderColor, borderWidth);
+
+	setShaderBool(ShaderUniformMapping::GlobalOrthographicShaderMapping.USE_TEXTURE, true);
+	setShaderInt(ShaderUniformMapping::GlobalOrthographicShaderMapping.TEXTURE, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	bufferRect(*this);
 	glBindVertexArray(globalRect.mVao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

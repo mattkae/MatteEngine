@@ -3,7 +3,6 @@
 #include "Matrix4x4f.h"
 #include "Input.h"
 #include "Camera.h"
-#include "GlobalApplicationState.h"
 
 struct Ray {
 	Vector3f direction;

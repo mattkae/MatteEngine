@@ -3,7 +3,6 @@
 
 #include "Model.h"
 #include "Shader.h"
-#include "GlobalApplicationState.h"
 #include "Vector3f.h"
 #include "Matrix4x4f.h"
 #include <GL/glew.h>
@@ -31,8 +30,8 @@ struct Light {
 
     bool usesShadows = false;
 
-	GLint shadowWidth = 2 * GlobalAppState.width;
-    GLint shadowHeight = 2 * GlobalAppState.height;
+	GLint shadowWidth = 1600;
+    GLint shadowHeight = 1200;
 
 	GLuint shadowTexture = 0;
 	GLuint depthFbo = 0;

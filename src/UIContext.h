@@ -28,7 +28,7 @@ struct UIContext {
 
 	bool isOpen();
 	void init();
-	void update(float dtMs, const TextRenderer& textRenderer, UIEvent& event);
+	void update(float dtMs, const TextRenderer& textRenderer, UIEventProcessor* processor);
 	void render(const Shader& shader, const TextRenderer& renderer) const;
 	void free();
 };

@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "App.h"
 #include "Input.h"
 #include "MathHelper.h"
 #include "ShaderUniformMapping.h"
@@ -12,7 +13,7 @@ Matrix4x4f Camera::getView() {
 }
 
 Matrix4x4f Camera::getProjection() {
-	return getPerspectiveProjection(GlobalAppState.near, GlobalAppState.far, fov, GlobalAppState.aspectRatio);
+	return getPerspectiveProjection(GlobalApp.near, GlobalApp.far, fov, GlobalApp.aspectRatio);
 }
 
 void Camera::update(float dt) {

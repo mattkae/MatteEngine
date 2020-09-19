@@ -2,14 +2,15 @@
 #include "Vector3f.h"
 #include "Vector4f.h"
 #include "Matrix4x4f.h"
-#include "Camera.h"
 #include "Ray.h"
 #include "Material.h"
 #include <algorithm>
 #include "ShaderUniformMapping.h"
 #include <GL/glew.h>
 
-struct Box {
+struct Camera;
+
+struct Box3D {
 	Vector4f lowerLeft;
 	Vector4f upperRight;
 	GLuint vao = 0;
@@ -18,7 +19,7 @@ struct Box {
 	Material material;
 };
 
-inline bool isInBox(const Box& box, const Vector4f& v, const Matrix4x4f& model) {
+inline bool isInBox(const Box3D& box, const Vector4f& v, const Matrix4x4f& model) {
 	Vector4f lowerLeft = model * box.lowerLeft;
 	Vector4f upperRight = model * box.upperRight;
 
@@ -32,7 +33,7 @@ inline bool isInBox(const Box& box, const Vector4f& v, const Matrix4x4f& model) 
 
 // Most of my understanding of this algorithm comes form here:
 // https://tavianator.com/fast-branchless-raybounding-box-intersections-part-2-nans/
-inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Ray& ray) {
+inline bool isBoxInRayPath(const Box3D& box, const Matrix4x4f& model, const Ray& ray) {
 	const Vector4f& lowerLeft = model * box.lowerLeft;
 	const Vector4f& upperRight = model * box.upperRight;
 	const Vector3f& modelRayDirection = ray.direction;
@@ -56,7 +57,7 @@ inline bool isBoxInRayPath(const Box& box, const Matrix4x4f& model, const Ray& r
 	return max >= std::max(min, 0.f);
 }
 
-inline Vector4f getCenter(const Box& box) {
+inline Vector4f getCenter(const Box3D& box) {
 	float xSize = (box.upperRight.x - box.lowerLeft.x) / 2.f;
 	float ySize = (box.upperRight.y - box.lowerLeft.y) / 2.f;
 	float zSize = (box.upperRight.z - box.lowerLeft.z) / 2.f;
@@ -68,6 +69,6 @@ inline Vector4f getCenter(const Box& box) {
 	};
 }
 
-void updateBox(Box& box, const Matrix4x4f& model);
-void renderBoxOutline(const Box& box, const Matrix4x4f& model, const ModelUniformMapping& mapping);
-GLfloat getDistanceFromCamera(const Box& box, const Camera& camera, const Matrix4x4f& model);
+void updateBox(Box3D& box, const Matrix4x4f& model);
+void renderBoxOutline(const Box3D& box, const Matrix4x4f& model, const ModelUniformMapping& mapping);
+GLfloat getDistanceFromCamera(const Box3D& box, const Camera& camera, const Matrix4x4f& model);

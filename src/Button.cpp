@@ -6,14 +6,16 @@ Rectangle getRectangle(const Button& button, const TextRenderer& textRenderer) {
 	return { button.position.x, button.position.y, button.width, getButtonHeight(button, textRenderer) };
 }
 
-void Button::update(const TextRenderer& textRenderer, UIEvent& event) {
+void Button::update(const TextRenderer& textRenderer, UIEventProcessor* processor) {
 	boundingRect = getRectangle(*this, textRenderer);
 	if (boundingRect.isClicked()) {
 		if (!isClicked) {
 			focusToken = grabFocus();
 			isClicked = true;
-			event.type = eventType;
-			event.data = &data;
+			UIEvent activeEvent;
+			activeEvent.type = eventType;
+			activeEvent.data = &data;
+			processor->processEvent(activeEvent);
 		}
 	} else if (isClicked) {
 		isClicked = false;

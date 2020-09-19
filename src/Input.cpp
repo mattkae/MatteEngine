@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "GlobalApplicationState.h"
+#include "App.h"
 #include "Logger.h"
 #include <iostream>
 #include <GLFW/glfw3.h>
@@ -154,7 +154,7 @@ Vector2f getCursorPosition() {
 		point.x = static_cast<float>(x);
 		point.y = static_cast<float>(y);
 	}
-	point.y = GlobalAppState.floatHeight - point.y;
+	point.y = GlobalApp.floatHeight - point.y;
 	return point;
 }
 

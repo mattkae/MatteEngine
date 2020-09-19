@@ -3,7 +3,7 @@
 #include "TextRenderer.h"
 #include "BoundText.h"
 #include "MyString.h"
-#include "UIEventProcessor.h"
+#include "UIEventType.h"
 #include <GL/glew.h>
 
 enum class TextInputType {
@@ -17,6 +17,8 @@ union TextInputValue {
 	int iVal;
 	float fVal;
 };
+
+struct UIEventProcessor;
 
 struct TextInput {
 	Vector4f textColor = Vector4f();
@@ -34,7 +36,7 @@ struct TextInput {
 	String representation;
 	UIEventType eventType;
 
-	void update(const TextRenderer& textRenderer, UIEvent& uiEvent);
+	void update(const TextRenderer& textRenderer, UIEventProcessor* processor);
 	void render(const Shader& shader, const TextRenderer& textRenderer);
 	void free();
 };

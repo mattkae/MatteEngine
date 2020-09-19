@@ -6,14 +6,10 @@
 #include "Ray.h"
 #include "SceneLoader.h"
 #include "ShaderUniformMapping.h"
+#include "App.h"
 #include <GLFW/glfw3.h>
 
 void Scene::initialize() {
-	eventProcessor.scene = this;
-	editorUI.initialize(*this);
-    isDying = false;
-	ShaderUniformMapping::initialize();
-
 	WaterParameters waterParameters;
 	waterParameters.width = 50;
 	waterParameters.height = 50;
@@ -21,28 +17,9 @@ void Scene::initialize() {
 	water.periodOffsetGradient = PI / 16;
 	water.period = PI;
 	water.amplitude = 0.3f;
-	water.initialize(&mCamera, &waterParameters);
-}
+	water.initialize(this, &mCamera, &waterParameters);
 
-int castRayToModel(Scene& scene) {
-	Ray rayWorld = clickToRay(scene.mCamera);
-
-	GLfloat distanceFromEye = -1;
-	int retval = -1;
-
-	for (size_t mIdx = 0; mIdx < scene.numModels; mIdx++) {
-		const Box& box = scene.modelBoundingBoxes[mIdx];
-		const Model& model = scene.models[mIdx];
-
-		if (isBoxInRayPath(box, model.model, rayWorld)) {
-			GLfloat nextDistanceFromEye = getDistanceFromCamera(box, scene.mCamera, model.model);
-			if (distanceFromEye < 0 || nextDistanceFromEye < distanceFromEye) {
-				distanceFromEye = nextDistanceFromEye;
-				retval = mIdx;
-			}
-		}
-	}
-	return retval;
+	textureFrameBuffer = FrameBuffer::createFrameBufferRGBA(800, 600);
 }
 
 void Scene::update(double dt) {
@@ -52,21 +29,7 @@ void Scene::update(double dt) {
 		return;
 	}
 
-	editorUI.ui.update(dt);
-
 	float dtFloat = static_cast<float>(dt);
-	if (isLeftClickDown() && isDefaultFocused()) {
-		int modelIdx = castRayToModel(*this);
-		if (modelIdx > -1) {
-			UIEvent selectionEvent = {UIEventType::SHOW_MODEL, &modelIdx };
-			eventProcessor.addEvent(selectionEvent);
-		} else {
-			UIEvent selectionEvent = { UIEventType::HIDE_MODEL };
-			eventProcessor.addEvent(selectionEvent);
-		}
-	}
-
-	eventProcessor.processEvent();
 
     mCamera.update(dtFloat);
 	water.update(dtFloat);
@@ -83,7 +46,6 @@ void Scene::update(double dt) {
 	if (selectedModelIndex > -1) {
 		updateDebugModel(debugModel, models[selectedModelIndex].model, mCamera);
 	}
-
 }
 
 void Scene::renderShadows() {
@@ -172,7 +134,6 @@ void Scene::renderDirect() {
     }
 
     glDisable(GL_BLEND);
-	editorUI.ui.render();
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -181,15 +142,20 @@ void Scene::renderDirect() {
 	glDisable(GL_DEPTH_TEST);
 }
 
+void Scene::renderToFramebuffer(GLuint fbo) {
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	renderDirect();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void Scene::render() {
 	renderShadows();
 	renderGBuffer();
+	renderToFramebuffer(textureFrameBuffer.fbo);
 	renderDirect();
 }
 
 void Scene::free() {
-	isDying = true;
-
 	for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
         models[modelIdx].free();
     }
@@ -205,11 +171,9 @@ void Scene::free() {
 	}
 	numEmitters = 0;
 
-	editorUI.free();
 	mSkybox.free();
     mTerrain.free();
     mDeferredBuffer.free();
 	freeDebug(debugModel);
 	water.free();
-	ShaderUniformMapping::free();
 }

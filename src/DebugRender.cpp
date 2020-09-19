@@ -22,7 +22,7 @@ inline void initArrow(DebugArrow& arrow) {
 	changeArrowColor(arrow, arrow.color);*/
 }
 
-void updateDebugArrow(DebugArrow& arrow, Box& box, const Matrix4x4f& model) {
+void updateDebugArrow(DebugArrow& arrow, Box3D& box, const Matrix4x4f& model) {
 	arrow.model.model = getIdentity();
 	if (arrow.model.numMeshes == 0) {
 		initArrow(arrow);

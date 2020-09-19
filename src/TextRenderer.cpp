@@ -1,6 +1,7 @@
 #include "TextRenderer.h"
 #include "Logger.h"
 #include "ShaderUniformMapping.h"
+#include "App.h"
 
 const int ADVANCE_BITSHIFT_AMT = 6;
 
@@ -96,7 +97,7 @@ bool TextRenderer::loadChar(GLchar c)
 void TextRenderer::renderText(Shader originalShader, const String& str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalAppState.floatWidth, 0.0f, GlobalAppState.floatHeight);
+	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalApp.floatWidth, 0.0f, GlobalApp.floatHeight);
 	
 	useShader(ShaderUniformMapping::GlobalTextShaderMapping.shader);
 	setShaderFloat(ShaderUniformMapping::GlobalTextShaderMapping.SCROLL_X, scrollX);

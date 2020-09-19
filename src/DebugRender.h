@@ -12,12 +12,12 @@ struct DebugArrow {
 	Vector3f rotation;
 	Vector3f color;
 	Model model;
-	Box boundingBox;
+	Box3D boundingBox;
 
 	bool isClicked = false;
 };
 
-void updateDebugArrow(DebugArrow& arrow, Box& debugBox, const Matrix4x4f& model);
+void updateDebugArrow(DebugArrow& arrow, Box3D& debugBox, const Matrix4x4f& model);
 void renderDebugArrow(const DebugArrow& arrow, const ModelUniformMapping& mapping);
 
 enum class DebugClickState {
@@ -28,7 +28,7 @@ enum class DebugClickState {
 };
 
 struct DebugModel {
-	Box debugBox;
+	Box3D debugBox;
 	Matrix4x4f model;
 	DebugArrow xArrow = {
 		{ 0, 0, PI / 2 },

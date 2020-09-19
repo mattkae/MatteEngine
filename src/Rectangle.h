@@ -29,6 +29,9 @@ struct Rectangle {
 
 	void render(const Vector4f& backgroundColor, 
 		const Vector4f& borderColor = Vector4f{0, 0, 0, 0}, GLfloat borderWidth = 0) const;
+
+	void renderBorderRect(const Vector4f& borderColor = Vector4f{0, 0, 0, 0}, GLfloat borderWidth = 0) const;
+	void renderTexture(GLuint texture, const Vector4f& borderColor = Vector4f{0, 0, 0, 0}, GLfloat borderWidth = 0) const;
 };
 
 

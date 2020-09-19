@@ -1,7 +1,7 @@
 #pragma once
 #include "Panel.h"
 #include "Input.h"
-#include "GlobalApplicationState.h"
+#include "App.h"
 #include "Rectangle.h"
 
 inline GLfloat getPositioning(PanelPositioning positioning, GLfloat absolutePosition, GLfloat windowDimension, GLfloat panelDimension) {
@@ -37,10 +37,10 @@ void Panel::update(float dtMs) {
 		return;
 	}
 
-	GLfloat panelWidth = GlobalAppState.floatWidth * percentageWidth;
-	GLfloat panelHeight = GlobalAppState.floatHeight * percentageHeight;
-	GLfloat x = getPositioning(horizontal, absolutePositioning.x, GlobalAppState.floatWidth, panelWidth);
-	GLfloat y = getPositioning(vertical, absolutePositioning.y, GlobalAppState.floatHeight, panelHeight);
+	GLfloat panelWidth = GlobalApp.floatWidth * percentageWidth;
+	GLfloat panelHeight = GlobalApp.floatHeight * percentageHeight;
+	GLfloat x = getPositioning(horizontal, absolutePositioning.x, GlobalApp.floatWidth, panelWidth);
+	GLfloat y = getPositioning(vertical, absolutePositioning.y, GlobalApp.floatHeight, panelHeight);
 	
 	if (panelState == PanelState_Closing) {
 		switch (transitionType) {

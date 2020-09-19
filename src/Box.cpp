@@ -1,9 +1,10 @@
 #define _USE_MATH_DEFINES
 #include "Box.h"
 #include "DebugRender.h"
+#include "Camera.h"
 #include <cmath>
 
-inline void initializeRenderableBox(Box& box) {
+inline void initializeRenderableBox(Box3D& box) {
 	static const GLfloat cubeVertices[] = {
 		box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z,
 		box.upperRight.x, box.lowerLeft.y, box.upperRight.z,
@@ -38,13 +39,13 @@ inline void initializeRenderableBox(Box& box) {
 	box.material.ambient = Vector3f{1.f, 0.f, 0.f};
 }
 
-void updateBox(Box& box, const Matrix4x4f& model) {
+void updateBox(Box3D& box, const Matrix4x4f& model) {
 	if (box.vao == 0) {
 		initializeRenderableBox(box);
 	}
 }
 
-void renderBoxOutline(const Box& box, const Matrix4x4f& model, const ModelUniformMapping& mapping) {
+void renderBoxOutline(const Box3D& box, const Matrix4x4f& model, const ModelUniformMapping& mapping) {
 	setShaderMat4(mapping.MODEL, model);
 	box.material.render(mapping.materialUniformMapping);
 
@@ -53,7 +54,7 @@ void renderBoxOutline(const Box& box, const Matrix4x4f& model, const ModelUnifor
     glBindVertexArray(0);
 }
 
-GLfloat getDistanceFromCamera(const Box& box, const Camera& camera, const Matrix4x4f& model) {
+GLfloat getDistanceFromCamera(const Box3D& box, const Camera& camera, const Matrix4x4f& model) {
 	GLfloat distanceFromLowerLeft = length(subtractVector(camera.position, mult(model, box.lowerLeft)));
 	GLfloat distanceFromUpperRight = length(subtractVector(camera.position, mult(model, box.upperRight)));
 	return std::min(distanceFromLowerLeft, distanceFromUpperRight);

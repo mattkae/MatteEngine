@@ -1,46 +1,39 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "GlobalApplicationState.h"
-#include "Input.h"
-#include "Scene.h"
-#include "Sphere.h"
-#include "SceneLoader.h"
+#include "App.h"
 #include "Logger.h"
 #include <iostream>
 #include <string>
+
+Application GlobalApp;
 
 using namespace std;
 
 void initialize(int argc, const char* argv[]);
 void cleanup();
 
-void glfw_error_callback(int error, const char* message)
-{
+void glfw_error_callback(int error, const char* message) {
     cerr << "GLFW error #" << error << ": " << message << endl;
 }
 
 int main(int argc, const char* argv[]) {
     initialize(argc, argv);
 
-    Scene scene;
-	SceneLoader::loadScene("assets/scenes/big_scene.matte", scene);
-
-    glEnable(GL_DEPTH_TEST);
     uint16_t frameCount = 0;
     double frameTimerSeconds = 0;
     double currentTime = 0, prevTime = glfwGetTime(), deltaTime;
-    while (!glfwWindowShouldClose(GlobalAppState.window)) {
+    while (!glfwWindowShouldClose(GlobalApp.window)) {
         currentTime = glfwGetTime();
         deltaTime = currentTime - prevTime;
         prevTime = currentTime;
 
         glfwPollEvents();
 
-		scene.update(deltaTime);
-		scene.render();
+		GlobalApp.update(deltaTime);
+		GlobalApp.render();
 
-        glfwSwapBuffers(GlobalAppState.window);
+        glfwSwapBuffers(GlobalApp.window);
         frameCount++;
         frameTimerSeconds += deltaTime;
         if (frameTimerSeconds > 1.0) {
@@ -50,7 +43,7 @@ int main(int argc, const char* argv[]) {
 		}
     }
 
-    scene.free();
+    GlobalApp.free();
     cleanup();
     return 0;
 }
@@ -71,34 +64,28 @@ void initialize(int argc, const char* argv[]) {
         GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GlobalAppState.window = glfwCreateWindow(GlobalAppState.width, GlobalAppState.height,
-        GlobalAppState.title, nullptr, nullptr);
-    if (!GlobalAppState.window) {
+    GlobalApp.initializeWindow();
+    if (!GlobalApp.window) {
         cerr << "Error initializing GLFW window" << endl;
-        return;
+        exit(EXIT_FAILURE);
     }
 
-	initializeInputSystem(GlobalAppState.window);
-    glfwMakeContextCurrent(GlobalAppState.window);
-	glfwSetWindowSizeCallback(GlobalAppState.window, setApplicationDimensions);
+    glfwMakeContextCurrent(GlobalApp.window);
+	glfwSetWindowSizeCallback(GlobalApp.window, setApplicationDimensions);
     glfwSwapInterval(0);
 
     // GLEW
     GLenum err = glewInit();
     if (GLEW_OK != err) {
-        cerr << "Unable to initialize GLEW: " << glewGetErrorString(err)
-             << endl;
+        cerr << "Unable to initialize GLEW: " << glewGetErrorString(err) << endl;
         exit(EXIT_FAILURE);
     }
+
+    // App initialization
+    GlobalApp.initialize();
 }
 
 void cleanup() {
-    deallocateInputSystem();
-
-    if (GlobalAppState.window) {
-        glfwDestroyWindow(GlobalAppState.window);
-    }
-
+    GlobalApp.free();
     glfwTerminate();
 }

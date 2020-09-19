@@ -1,8 +1,8 @@
 #include "EditorUI.h"
 #include "Scene.h"
+#include "GlobalLoaders.h"
 
-void EditorUI::initialize(Scene& scene) {
-	ui.eventProcessor = &scene.eventProcessor;
+void EditorUI::initialize(Scene* scene) {
 	ui.init();
 
 	initPrimaryUI(scene);
@@ -12,6 +12,7 @@ void EditorUI::initialize(Scene& scene) {
 	ui.addPanel(&primaryUI);
 	ui.addPanel(&modelUI);
 	ui.addPanel(&terrainUI);
+	ui.addPanel(&textureDebuggerUI);
 }
 
 void EditorUI::free() {
@@ -22,7 +23,7 @@ void EditorUI::selectModel(const Model& model) {
 
 }
 
-void EditorUI::initPrimaryUI(Scene& scene) {
+void EditorUI::initPrimaryUI(Scene* scene) {
 	primaryUI.shouldOpen = true;
 	primaryUI.isClosable = false;
 	primaryUI.panel.percentageHeight = 0.9f;
@@ -35,17 +36,18 @@ void EditorUI::initPrimaryUI(Scene& scene) {
 
 	int numElements = 0;
 
-	if (scene.numModels && scene.models) {
-		numElements += scene.numModels + 1;
+	if (scene->numModels && scene->models) {
+		numElements += scene->numModels + 1;
 	}
 
 	numElements += 2;
+	numElements += 1;
 
 	primaryUI.uiElements.allocate(numElements);
 	UIBuilder::addStandardLabel("Models", primaryUI);
 	String modelName;
 	modelName = "Model ";
-	for (size_t modelIdx = 0; modelIdx < scene.numModels; modelIdx++) {
+	for (size_t modelIdx = 0; modelIdx < scene->numModels; modelIdx++) {
 		String indexStr;
 		indexStr.fromInteger(modelIdx + 1);
 		UIElement element;
@@ -66,22 +68,34 @@ void EditorUI::initPrimaryUI(Scene& scene) {
 
 	UIBuilder::addStandardLabel("Terrain", primaryUI);
 	UIElement element;
-	Button button;
-	button.label = "Edit Terrain";
-	button.buttonColor = Vector4f { 1.f, 0.f, 0.f, 1.f };
-	button.hoverColor = Vector4f { 0.9f, 0.1f, 0.f, 1.f };
-	button.textColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-	button.eventType = UIEventType::SHOW_TERRAIN;
-	button.padding = 2.f;
+	Button terrainButton;
+	terrainButton.label = "Edit Terrain";
+	terrainButton.buttonColor = Vector4f { 1.f, 0.f, 0.f, 1.f };
+	terrainButton.hoverColor = Vector4f { 0.9f, 0.1f, 0.f, 1.f };
+	terrainButton.textColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
+	terrainButton.eventType = UIEventType::SHOW_TERRAIN;
+	terrainButton.padding = 2.f;
 	element.elementType = UIElementType::BUTTON;
-	element.element.button = button;
+	element.element.button = terrainButton;
 	primaryUI.uiElements.add(&element);
+
+	Button textureDebugButton;
+	textureDebugButton.label = "Debug Textures";
+	textureDebugButton.buttonColor = Vector4f { 1.f, 0.f, 0.f, 1.f };
+	textureDebugButton.hoverColor = Vector4f { 0.9f, 0.1f, 0.f, 1.f };
+	textureDebugButton.textColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
+	textureDebugButton.eventType = UIEventType::SHOW_TEXTURE_DEBUGGER;
+	textureDebugButton.padding = 2.f;
+	element.elementType = UIElementType::BUTTON;
+	element.element.button = textureDebugButton;
+	primaryUI.uiElements.add(&element);
+
 	primaryUI.init();
 }
 
 const size_t numVec3 = 3;
 
-void EditorUI::initModelUI(Scene& scene) {
+void EditorUI::initModelUI(Scene* scene) {
 	modelUI.panel.percentageHeight = 0.9f;
 	modelUI.panel.percentageWidth = 0.2f;
 	modelUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
@@ -149,8 +163,8 @@ void EditorUI::initModelUI(Scene& scene) {
 	modelUI.init();
 }
 
-void EditorUI::initTerrainUI(Scene& scene)  {
-	Terrain* terrain = &scene.mTerrain;
+void EditorUI::initTerrainUI(Scene* scene)  {
+	Terrain* terrain = &scene->mTerrain;
 	terrainUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
 	terrainUI.panel.percentageHeight = 0.9f;
 	terrainUI.panel.percentageWidth = 0.2f;
@@ -214,4 +228,36 @@ void EditorUI::initTerrainUI(Scene& scene)  {
 		terrainUI.uiElements.add(&element);
 	}
 	terrainUI.init();
+}
+
+void EditorUI::initTextureDebuggerUI() {
+	// We free this every time so we get a fresh view of the added textures
+	// textureDebuggerUI.free();
+
+	textureDebuggerUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
+	textureDebuggerUI.panel.percentageHeight = 0.5f;
+	textureDebuggerUI.panel.percentageWidth = 0.2f;
+	textureDebuggerUI.panel.vertical = PanelPositioning::PanelPositioning_LEFT;
+	textureDebuggerUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
+	textureDebuggerUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
+	textureDebuggerUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
+	textureDebuggerUI.panel.borderWidth = 2.f;
+	textureDebuggerUI.uiElements.allocate(GlobalTextureLoader.textureList.numElements + 1);
+	UIBuilder::addStandardLabel("Texture Debugger", textureDebuggerUI);
+	for (size_t textureIdx = 0; textureIdx < GlobalTextureLoader.textureList.numElements; textureIdx++) {
+		UIElement element;
+		Button button;
+		button.label.fromInteger(GlobalTextureLoader.textureList[textureIdx]);
+		button.buttonColor = Vector4f { 0.0f, 0.6f, 0.3f, 1.0f };
+		button.hoverColor = Vector4f { 0.0f, 0.9f, 0.1f, 1.0f };
+		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
+		button.eventType = UIEventType::DEBUG_TEXTURE;
+		button.data = GlobalTextureLoader.textureList[textureIdx];
+		button.padding = 2.f;
+		element.elementType = UIElementType::BUTTON;
+		element.element.button = button;
+		textureDebuggerUI.uiElements.add(&element);
+	}
+
+	textureDebuggerUI.init();
 }

@@ -1,152 +1,158 @@
 #include "UIEventProcessor.h"
-#include "Scene.h"
+#include "App.h"
 
-void UIEventProcessor::addEvent(UIEvent& event) {
-	activeEvent.type = event.type;
-	activeEvent.data = event.data;
-	processEvent();
-}
-
-void UIEventProcessor::processEvent() {
+void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 	switch (activeEvent.type) {
 		case UIEventType::NONE:
 			return;
 		case UIEventType::CLOSE_PANEL: {
-			scene->editorUI.ui.panels[*static_cast<int*>(activeEvent.data)]->shouldClose = true;
+			GlobalApp.editorUI.ui.panels[*static_cast<int*>(activeEvent.data)]->shouldClose = true;
 			resetFocus();
 			break;
 		}
 		case UIEventType::SHOW_MODEL: {
-			scene->editorUI.modelUI.shouldOpen = true;
+			GlobalApp.editorUI.modelUI.shouldOpen = true;
 			break;
 		}
 		case UIEventType::HIDE_MODEL: {
-			scene->editorUI.modelUI.shouldClose = true;
+			GlobalApp.editorUI.modelUI.shouldClose = true;
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_X: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].translation.x = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].translation.x = value;
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_Y: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].translation.y = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].translation.y = value;
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_Z: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].translation.z = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].translation.z = value;
 			break;
 		}
 		case UIEventType::EDIT_SCALE_X: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].scale.x = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].scale.x = value;
 			break;
 		}
 		case UIEventType::EDIT_SCALE_Y: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].scale.y = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].scale.y = value;
 			break;
 		}
 		case UIEventType::EDIT_SCALE_Z: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].scale.z = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].scale.z = value;
 			break;
 		}
 		case UIEventType::EDIT_ROTATION_X: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].rotation.x = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].rotation.x = value;
 			break;
 		}
 		case UIEventType::EDIT_ROTATION_Y: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].rotation.y = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].rotation.y = value;
 			break;
 		}
 		case UIEventType::EDIT_ROTATION_Z: {
-			if (scene->selectedModelIndex < 0) {
+			if (GlobalApp.scene.selectedModelIndex < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			scene->models[scene->selectedModelIndex].rotation.z = value;
+			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].rotation.z = value;
 			break;
 		}
 		case UIEventType::SHOW_TERRAIN: {
-			scene->editorUI.terrainUI.shouldOpen = true;
+			GlobalApp.editorUI.terrainUI.shouldOpen = true;
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_SIZE: {
-			scene->mTerrain.mParams.size = *static_cast<int*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.size = *static_cast<int*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_GRANULARITY: {
-			scene->mTerrain.mParams.granularity = *static_cast<int*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.granularity = *static_cast<int*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_PERM: {
-			scene->mTerrain.mParams.permSize = *static_cast<int*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.permSize = *static_cast<int*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_SCALE: {
-			scene->mTerrain.mParams.scaleFactor = *static_cast<float*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.scaleFactor = *static_cast<float*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_MIN_MAX: {
-			scene->mTerrain.mParams.minMaxHeight = *static_cast<float*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.minMaxHeight = *static_cast<float*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_AMP: {
-			scene->mTerrain.mParams.ampFactor = *static_cast<float*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.ampFactor = *static_cast<float*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_FREQ: {
-			scene->mTerrain.mParams.frequencyFactor = *static_cast<float*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.frequencyFactor = *static_cast<float*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_OCT: {
-			scene->mTerrain.mParams.numOctaves = *static_cast<int*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.numOctaves = *static_cast<int*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_NUM_VERTICES: {
-			scene->mTerrain.mParams.verticesPerTexture = *static_cast<int*>(activeEvent.data);
+			GlobalApp.scene.mTerrain.mParams.verticesPerTexture = *static_cast<int*>(activeEvent.data);
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_APPLY: {
-			scene->mTerrain.initialize(scene->mTerrain.mParams);
+			GlobalApp.scene.mTerrain.initialize(GlobalApp.scene.mTerrain.mParams);
+			break;
+		}
+		case UIEventType::SHOW_TEXTURE_DEBUGGER: {
+			GlobalApp.editorUI.ui.textureDebugger.show = true;
+			GlobalApp.editorUI.ui.textureDebugger.rectangle.x = GlobalApp.width - GlobalApp.editorUI.ui.textureDebugger.rectangle.w - 8;
+			GlobalApp.editorUI.ui.textureDebugger.rectangle.y = 8;
+			GlobalApp.editorUI.initTextureDebuggerUI();
+			GlobalApp.editorUI.textureDebuggerUI.shouldOpen = true;
+			break;
+		}
+		case UIEventType::DEBUG_TEXTURE: {
+			GlobalApp.editorUI.ui.textureDebugger.texture = *static_cast<int*>(activeEvent.data);
 			break;
 		}
 	}

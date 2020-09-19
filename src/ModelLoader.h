@@ -10,7 +10,7 @@ struct LoadModel;
 struct ModelLoader {
 	struct ModelLoadResult {
 		Model model;
-		Box box;
+		Box3D box;
 	};
 
 	List<GeneratedTexture> textureList;

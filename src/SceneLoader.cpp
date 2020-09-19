@@ -11,7 +11,7 @@ const char* IGNORE_OBJECT_TOKEN = "//";
 void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
+void loadSpheres(FILE* file, Model* models, Box3D* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
 void loadCamera(FILE* file, Camera& camera, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
@@ -181,7 +181,7 @@ void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringU
     }
 }
 
-inline void loadSphere(FILE* file, Model& model, Box& box, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+inline void loadSphere(FILE* file, Model& model, Box3D& box, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
     Sphere sphere;
     while (StringUtil::processLine(file, buffer, ptr)) {
@@ -199,7 +199,7 @@ inline void loadSphere(FILE* file, Model& model, Box& box, char buffer[StringUti
     initializeSphere(sphere, model, box);
 }
 
-void loadSpheres(FILE* file, Model* models, Box* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void loadSpheres(FILE* file, Model* models, Box3D* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
     while (StringUtil::processLine(file, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {

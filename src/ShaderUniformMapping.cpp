@@ -155,6 +155,8 @@ void OrthographicShaderMapping::initialize() {
 	shader = loadShader(VERTEX, FRAG);
 	PROJECTION = getShaderUniform(shader, "uProjection");
 	COLOR = getShaderUniform(shader, "uColor");
+	TEXTURE = getShaderUniform(shader, "uTexture");
+	USE_TEXTURE = getShaderUniform(shader, "uUseTexture");
 }
 
 void TextShaderMapping::initialize() {

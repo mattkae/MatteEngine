@@ -2,7 +2,6 @@
 #include <GL/glew.h>
 #include "Shader.h"
 #include "Rectangle.h"
-#include "GlobalApplicationState.h"
 #include "Vector2f.h"
 #include "Vector4f.h"
 
@@ -27,7 +26,7 @@ enum PanelState {
 };
 
 struct Panel {
-	Rectangle boundingRect = { 0, 0, GlobalAppState.floatWidth, GlobalAppState.floatHeight };
+	Rectangle boundingRect = { 0, 0, 0, 0 };
 
 	// Display variables
 	GLfloat percentageWidth = 0.25f;

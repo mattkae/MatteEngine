@@ -30,7 +30,7 @@ struct Button {
 	int data;
 	Rectangle boundingRect;
 	
-	void update(const TextRenderer& textRenderer, UIEvent& event);
+	void update(const TextRenderer& textRenderer, UIEventProcessor* processor);
 	void render(const Shader& shader, const TextRenderer& textRenderer) const;
 	void free();
 };

@@ -2,7 +2,7 @@
 #include "Logger.h"
 #include "OpenSimplexNoise.h"
 #include "Vertex.h"
-#include "TextureLoader.h"
+#include "GlobalLoaders.h"
 
 enum class TerrainClassification {
     DIRT,
@@ -19,15 +19,15 @@ inline static float randomFloat(float min, float max) {
 void loadTerrainTexture(TerrainTexture& terrainTexture, String& path) {
     String diffusePath = path;
     diffusePath.append("diffuse.jpg");
-    terrainTexture.textures[0] = TextureLoader::loadRGBATileTexture(diffusePath);
+    terrainTexture.textures[0] = GlobalTextureLoader.loadRGBATileTexture(diffusePath);
 
     String specularPath = path;
     specularPath.append("specular.jpg");
-    terrainTexture.textures[1] = TextureLoader::loadRGBATileTexture(specularPath);
+    terrainTexture.textures[1] = GlobalTextureLoader.loadRGBATileTexture(specularPath);
 
     String normalPath = path;
     normalPath.append("normal.jpg");
-    terrainTexture.textures[2] = TextureLoader::loadRGBATileTexture(normalPath);
+    terrainTexture.textures[2] = GlobalTextureLoader.loadRGBATileTexture(normalPath);
 
     diffusePath.deallocate();
     specularPath.deallocate();

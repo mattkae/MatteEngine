@@ -5,6 +5,8 @@
 #include "Input.h"
 #include <GLFW/glfw3.h>
 
+const char* SCENE_PATH = "assets/scenes/big_scene.matte";
+
 void setApplicationDimensions(GLFWwindow* window, int width, int height) {
 	if (width == GlobalApp.width && height == GlobalApp.height) {
 		return;
@@ -26,11 +28,19 @@ void Application::initializeWindow() {
 void Application::initialize() {
 	GlobalLoaders::initialize();
 	ShaderUniformMapping::initialize();
-	SceneLoader::loadScene("assets/scenes/big_scene.matte", scene);
+	SceneLoader::loadScene(SCENE_PATH, scene);
 	editorUI.initialize(&scene);
 }
 
 void Application::update(double deltaTime) {
+	if (isKeyJustDown(GLFW_KEY_R, 0)) {
+		scene.free();
+		editorUI.free();
+		SceneLoader::loadScene(SCENE_PATH, scene);
+		editorUI.initialize(&scene);
+		return;
+	}
+
 	if (isLeftClickDown() && isDefaultFocused()) {
 		int modelIdx = castRayToModel();
 		if (modelIdx > -1) {

@@ -6,9 +6,10 @@
 #include "List.h"
 #include "MathHelper.h"
 #include "Material.h"
+#include "FrameBuffer.h"
+#include "Camera.h"
 
 struct Scene;
-struct Camera;
 struct Light;
 
 struct WaterVertex {
@@ -24,7 +25,7 @@ struct WaterParameters {
 
 struct Water {
 	Scene*				scene = nullptr;
-	Camera*				camera = nullptr;
+	Camera				camera;
 	Matrix4x4f			modelMatrix;
 	List<WaterVertex>	vertices;
 	GLuint				vao = 0;
@@ -36,9 +37,12 @@ struct Water {
 	GLfloat				periodOffsetGradient = PI / 8.f;
 	GLfloat				period = PI;
 	Material			material;
+	TextureFrameBuffer	reflectionFrameBuffer;
+	bool                isDisabled = false;
 
-	void initialize(Scene* inScene, Camera* inCamera, WaterParameters* waterIn);
+	void initialize(Scene* inScene, WaterParameters* waterIn);
 	void update(float dt);
+	void renderReflection();
 	void render(Light* lights, unsigned int numLightsUsed) const;
 	void free();
 };

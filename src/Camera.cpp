@@ -50,16 +50,18 @@ void Camera::update(float dt) {
 		}
 	}
 
-	Vector3f forwardTemp;
 	GLfloat inverseYaw = yaw - 90;
-	forwardTemp.x = cos(MathHelper::degreesToRadians(pitch)) * cos(MathHelper::degreesToRadians(inverseYaw));
-	forwardTemp.y = sin(MathHelper::degreesToRadians(pitch));
-	forwardTemp.z = cos(MathHelper::degreesToRadians(pitch)) * sin(MathHelper::degreesToRadians(inverseYaw));
+	forward.x = cos(MathHelper::degreesToRadians(pitch)) * cos(MathHelper::degreesToRadians(inverseYaw));
+	forward.y = sin(MathHelper::degreesToRadians(pitch));
+	forward.z = cos(MathHelper::degreesToRadians(pitch)) * sin(MathHelper::degreesToRadians(inverseYaw));
 
-	forward = normalize(forwardTemp);
+	forward = normalize(forward);
+	updateMatrices();
+}
+
+void Camera::updateMatrices() {
 	right = normalize(cross(forward, WORLD_UP));
 	up = normalize(cross(right, forward));
-
 	viewMatrix = getView();
 	projectionMatrix = getProjection();
 }

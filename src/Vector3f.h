@@ -15,7 +15,7 @@ struct Vector3f {
 	GLfloat z = 0;
 	GLfloat operator [](int index);
 	Vector3f interpolate(const Vector3f& other, const GLfloat factor);
-
+	Vector3f reflect(const Vector3f& other);
 };
 
 // Creation

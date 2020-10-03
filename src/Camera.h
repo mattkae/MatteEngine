@@ -24,6 +24,7 @@ struct Camera {
 	Matrix4x4f projectionMatrix;
 
 	void update(float dt);
+	void updateMatrices();
 	Matrix4x4f getView();
 	Matrix4x4f getProjection();
 	void render(const CameraUniformMapping& cameraMapping) const;

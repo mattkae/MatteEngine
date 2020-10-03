@@ -12,7 +12,6 @@
 #include "DebugRender.h"
 #include "ModelLoader.h"
 #include "Water.h"
-#include "FrameBuffer.h"
 
 struct Scene {
 	ModelLoader modelLoader;
@@ -36,7 +35,6 @@ struct Scene {
 
     bool mUseShadows = false;
     Camera mCamera;
-	TextureFrameBuffer textureFrameBuffer;
 
 	void initialize();
 	void update(double dt);
@@ -47,8 +45,7 @@ struct Scene {
 	void renderGBuffer();
 	void renderNonDeferred();
 	void renderDebug();
-	void renderDirect();
-	void renderToFramebuffer(GLuint fbo);
+	void renderDirect(const Camera* camera);
 	void renderModels(const ModelUniformMapping& mapping, bool withMaterial = true) const;
 };
 

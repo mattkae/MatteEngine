@@ -2,6 +2,11 @@
 #include <cstdlib>
 #include <cstring>
 
+#define FOREACH(list)												\
+	auto value = list[0];											\
+	for (size_t idx = 0; idx < list.numElements; idx++, value = list[idx])
+		
+
 template <typename T>
 struct List {
 	T* data = nullptr;
@@ -13,6 +18,7 @@ struct List {
 	void add(T* element);
 	bool grow(size_t newSize);
 	void set(T* value, size_t index);
+	void remove(size_t index);
 	void deallocate();
 	T* getValue(int index) const;
 	T& operator[](int idx) const; 
@@ -81,6 +87,19 @@ void List<T>::add(T* element) {
 
 	memcpy(&data[numElements], element, sizeof(T));
 	numElements = newNumElements;
+}
+
+template <typename T>
+void List<T>::remove(size_t idx) {
+	if (idx >= numElements) {
+		return;
+	}
+
+	for (; idx < numElements - 1; idx++) {
+		data[idx] = data[idx + 1];
+	}
+
+	numElements--;
 }
 
 template <typename T>

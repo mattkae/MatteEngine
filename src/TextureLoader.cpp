@@ -41,3 +41,15 @@ GLuint TextureLoader::createTexture(int width, int height) {
 
 	return texture;
 }
+
+bool TextureLoader::deleteTexture(GLuint texture) {
+	FOREACH(textureList) {
+		if (value == texture) {
+			glDeleteTextures(1, &texture);
+			textureList.remove(idx);
+		    return true;
+		}
+	}
+
+	return false;
+}

@@ -6,10 +6,11 @@
 #include "Camera.h"
 #include "MathHelper.h"
 #include "Light.h"
+#include "FrameBuffer.h"
+#include "App.h"
 
-void Water::initialize(Scene* inScene, Camera* inCamera, WaterParameters* waterIn) {
+void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 	scene = inScene;
-	camera = inCamera;
 	GridParameters gridParams;
 	gridParams.width = waterIn->width;
 	gridParams.height = waterIn->height;
@@ -64,19 +65,44 @@ void Water::initialize(Scene* inScene, Camera* inCamera, WaterParameters* waterI
 	glBindVertexArray(0);
 
 	delete[] gridResult.indices;
+
+	reflectionFrameBuffer = FrameBuffer::createFrameBufferRGBA(GlobalApp.width, GlobalApp.height);
 }
 
+// Water is only ever facing upwards
+const Vector3f REFLECTION_VECTOR = { 0, 1, 0 };
+
 void Water::update(float dt) {
+	if (!scene) {
+		return;
+	}
+	
 	timePassedMs += dt;
+
+	camera.position = { scene->mCamera.position.x, -scene->mCamera.position.y, scene->mCamera.position.z };
+	camera.forward = scene->mCamera.forward.reflect(REFLECTION_VECTOR);
+	camera.updateMatrices();
+}
+
+void Water::renderReflection() {
+	if (!scene) {
+	    return;
+	}
+
+	isDisabled = true; // Don't render this piece of water in the scene
+	glBindFramebuffer(GL_FRAMEBUFFER, reflectionFrameBuffer.fbo);
+	scene->renderDirect(&camera);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	isDisabled = false;
 }
 
 void Water::render(Light* lights, unsigned int numLightsUsed) const {
-	if (!camera) {
+	if (isDisabled || !scene) {
 		return;
 	}
-
+	
 	useShader(ShaderUniformMapping::GlobalWaterShaderMapping.shader);
-	camera->render(ShaderUniformMapping::GlobalWaterShaderMapping.cameraMapping);
+    scene->mCamera.render(ShaderUniformMapping::GlobalWaterShaderMapping.cameraMapping);
 	setShaderMat4(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_MODEL, modelMatrix);
 	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_TIME_PASSED_MS, timePassedMs);
 	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_PERIOD, period);
@@ -108,7 +134,9 @@ void Water::free() {
 	if (ebo > 0) {
 		glDeleteBuffers(1, &ebo);
 		ebo = 0;
-	}
+	}   
 
 	vertices.deallocate();
+
+	FrameBuffer::freeFrameBuffer(&reflectionFrameBuffer);
 }

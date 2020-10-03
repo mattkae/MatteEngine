@@ -17,18 +17,10 @@ void Scene::initialize() {
 	water.periodOffsetGradient = PI / 16;
 	water.period = PI;
 	water.amplitude = 0.3f;
-	water.initialize(this, &mCamera, &waterParameters);
-
-	textureFrameBuffer = FrameBuffer::createFrameBufferRGBA(800, 600);
+	water.initialize(this, &waterParameters);
 }
 
 void Scene::update(double dt) {
-	if (isKeyJustDown(GLFW_KEY_R, 0)) {
-		free();
-		SceneLoader::loadScene("assets/scenes/big_scene.matte", *this);
-		return;
-	}
-
 	float dtFloat = static_cast<float>(dt);
 
     mCamera.update(dtFloat);
@@ -96,7 +88,7 @@ void Scene::renderDebug() {
 	}
 }
 
-void Scene::renderDirect() {
+void Scene::renderDirect(const Camera* camera) {
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
@@ -106,16 +98,16 @@ void Scene::renderDirect() {
 	glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	mSkybox.render(mCamera);
+	mSkybox.render(*camera);
+
+	water.render(lights, numLightsUsed);
 
 	if (!useDefferredRendering) {
 		renderNonDeferred();
 	}
 
-	water.render(lights, numLightsUsed);
-
 	useShader(ShaderUniformMapping::GlobalModelShaderMapping.shader);
-    mCamera.render(ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);
+    camera->render(ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);
 
 	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
 	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
@@ -134,25 +126,19 @@ void Scene::renderDirect() {
     }
 
     glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
 
-    GLenum err;
+	GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printf("Error during scene pass: %i, %s\n", err, glewGetErrorString(err));
     }
-	glDisable(GL_DEPTH_TEST);
-}
-
-void Scene::renderToFramebuffer(GLuint fbo) {
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	renderDirect();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Scene::render() {
 	renderShadows();
 	renderGBuffer();
-	renderToFramebuffer(textureFrameBuffer.fbo);
-	renderDirect();
+	water.renderReflection();
+	renderDirect(&mCamera);
 }
 
 void Scene::free() {

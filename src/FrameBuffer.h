@@ -5,8 +5,10 @@
 struct TextureFrameBuffer {
 	GLuint fbo;
 	GLuint texture;
+	GLuint depthBuffer;
 };
 
 namespace FrameBuffer {
 	TextureFrameBuffer createFrameBufferRGBA(int width, int height);
+	void freeFrameBuffer(TextureFrameBuffer* buffer);
 };

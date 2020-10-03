@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "FrameBuffer.h"
 #include "App.h"
+#include "TextureUniformConstants.h"
 
 void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 	scene = inScene;
@@ -108,6 +109,10 @@ void Water::render(Light* lights, unsigned int numLightsUsed) const {
 	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_PERIOD, period);
 	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_AMPLITUDE, amplitude);
 
+	glActiveTexture(GL_TEXTURE0 + TextureUniformConstants::WATER_REFLECTION_TEXTURE_POSITION);
+	glBindTexture(GL_TEXTURE_2D, reflectionFrameBuffer.texture);
+	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_REFLECTION, TextureUniformConstants::WATER_REFLECTION_TEXTURE_POSITION);
+	
 	setShaderVec3(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
 

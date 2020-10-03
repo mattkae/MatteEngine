@@ -129,6 +129,7 @@ struct WaterShaderMapping {
 	int UNIFORM_TIME_PASSED_MS;
 	int UNIFORM_PERIOD;
 	int UNIFORM_AMPLITUDE;
+	int UNIFORM_REFLECTION;
 
 	MaterialUniformMapping materialUniformMapping;
 	LightUniformMapping lightUniformMapping;

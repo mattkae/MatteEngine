@@ -189,6 +189,7 @@ void WaterShaderMapping::initialize() {
 	UNIFORM_TIME_PASSED_MS = getShaderUniform(shader, "uTimePassedMs");
 	UNIFORM_PERIOD = getShaderUniform(shader, "uPeriod");
 	UNIFORM_AMPLITUDE = getShaderUniform(shader, "uAmplitude");
+	UNIFORM_REFLECTION = getShaderUniform(shader, "uReflection");
 	materialUniformMapping.initialize(shader);
 	lightUniformMapping.initialize(shader);
 }

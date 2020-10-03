@@ -9,6 +9,7 @@
 in vec3 vNormal;
 in vec4 vFragPos;
 in vec3 vViewDir;
+in vec4 vClipSpaceCoordinates;
 
 // Uniform variables
 uniform int uNumLights;
@@ -16,6 +17,7 @@ uniform Light uLights[MAX_LIGHTS];
 uniform Material uMaterial;
 uniform vec2 uFarNear;
 uniform sampler2DShadow uDirShadow[MAX_LIGHTS];
+uniform sampler2D uReflection;
 
 // Out color
 out vec4 Color;
@@ -43,5 +45,7 @@ void main() {
         finalColor += vec4(lightColor.x, lightColor.y, lightColor.z, 0.0);
     }
 
-    Color = finalColor;
+	vec2 textureCoordinate = (vClipSpaceCoordinates.xy / vClipSpaceCoordinates.w) / 2 + 0.5;
+	vec2 reflectionTexCoord = vec2(textureCoordinate.x, -textureCoordinate.y);
+    Color = mix(finalColor, texture(uReflection, reflectionTexCoord), 0.5);
 }

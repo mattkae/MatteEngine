@@ -14,6 +14,7 @@ uniform float uAmplitude;
 out vec3 vNormal;
 out vec4 vFragPos;
 out vec3 vViewDir;
+out vec4 vClipSpaceCoordinates;
 
 void main() {
     float angle = (uPeriod * (uTimePassedMs + phase));
@@ -22,7 +23,10 @@ void main() {
         position.z, 
         1.0);
     vFragPos = uModel * wavePosition;
-    gl_Position = uProjection * uView * vFragPos;
+
+	vClipSpaceCoordinates = uProjection * uView * vFragPos;
+    gl_Position = vClipSpaceCoordinates;
+	
 
     vNormal = normalize(vec3(-uAmplitude * uPeriod * cos(angle), 1.0, 0.0));
     vViewDir = uEye - vFragPos.xyz;

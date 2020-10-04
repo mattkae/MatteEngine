@@ -12,6 +12,7 @@
 #include "DebugRender.h"
 #include "ModelLoader.h"
 #include "Water.h"
+#include <climits>
 
 struct Scene {
 	ModelLoader modelLoader;
@@ -45,7 +46,7 @@ struct Scene {
 	void renderGBuffer();
 	void renderNonDeferred();
 	void renderDebug();
-	void renderDirect(const Camera* camera);
+	void renderDirect(const Camera* camera, Vector4f clipPlane = { 0, 1, 0, static_cast<float>(INT_MAX) });
 	void renderModels(const ModelUniformMapping& mapping, bool withMaterial = true) const;
 };
 

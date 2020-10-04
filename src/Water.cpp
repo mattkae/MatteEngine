@@ -68,6 +68,7 @@ void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 	delete[] gridResult.indices;
 
 	reflectionFrameBuffer = FrameBuffer::createFrameBufferRGBA(GlobalApp.width, GlobalApp.height);
+	refractionFrameBuffer = FrameBuffer::createFrameBufferRGBA(GlobalApp.width, GlobalApp.height);
 }
 
 // Water is only ever facing upwards
@@ -92,8 +93,13 @@ void Water::renderReflection() {
 
 	isDisabled = true; // Don't render this piece of water in the scene
 	glBindFramebuffer(GL_FRAMEBUFFER, reflectionFrameBuffer.fbo);
-	scene->renderDirect(&camera);
+	scene->renderDirect(&camera, Vector4f { 0, 1, 0, 0 });
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, refractionFrameBuffer.fbo);
+	scene->renderDirect(&scene->mCamera, Vector4f { 0, -1, 0, 0 });
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
 	isDisabled = false;
 }
 
@@ -112,6 +118,10 @@ void Water::render(Light* lights, unsigned int numLightsUsed) const {
 	glActiveTexture(GL_TEXTURE0 + TextureUniformConstants::WATER_REFLECTION_TEXTURE_POSITION);
 	glBindTexture(GL_TEXTURE_2D, reflectionFrameBuffer.texture);
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_REFLECTION, TextureUniformConstants::WATER_REFLECTION_TEXTURE_POSITION);
+
+	glActiveTexture(GL_TEXTURE0 + TextureUniformConstants::WATER_REFRACTION_TEXTURE_POSITION);
+	glBindTexture(GL_TEXTURE_2D, refractionFrameBuffer.texture);
+	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_REFRACTION, TextureUniformConstants::WATER_REFRACTION_TEXTURE_POSITION);
 	
 	setShaderVec3(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);

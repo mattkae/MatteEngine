@@ -21,13 +21,14 @@ struct Model {
     Vector3f translation;
     Vector3f scale = Vector3f{ 1.f, 1.f, 1.f };
     Quaternion rotation;
+    Matrix4x4f defaultModel;
     Matrix4x4f model;
     Matrix4x4f inverseRootNode;
 
     Matrix4x4f boneModels[MAX_BONES];
     Bone* bones = nullptr;
     unsigned int numBones = 0;
-    BoneTreeNode* rootNode;
+    BoneTreeNode* rootNode = nullptr;
 
     Mesh* meshes = nullptr;
     int numMeshes = 0;

@@ -58,6 +58,7 @@ struct LightUniformMapping {
 struct ModelShaderMapping {
 	Shader shader;
 
+	int UNIFORM_CLIP_PLANE;
 	CameraUniformMapping cameraUniformMapping;
 	ModelUniformMapping modelUniformMapping;
 	LightUniformMapping lightUniformMapping;
@@ -130,6 +131,7 @@ struct WaterShaderMapping {
 	int UNIFORM_PERIOD;
 	int UNIFORM_AMPLITUDE;
 	int UNIFORM_REFLECTION;
+	int UNIFORM_REFRACTION;
 
 	MaterialUniformMapping materialUniformMapping;
 	LightUniformMapping lightUniformMapping;

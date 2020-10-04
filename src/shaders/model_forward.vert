@@ -24,6 +24,7 @@ uniform mat4 uModel;
 uniform mat4 uBones[64];
 uniform vec3 uEye;
 uniform bool uDisableBones;
+uniform vec4 uClipPlane;
 
 void main() {
   vec4 bonePosition = vec4(position, 1.0f);
@@ -39,6 +40,7 @@ void main() {
 
   vec4 fragPos = uModel * bonePosition;
   gl_Position = uProjection * uView * fragPos;
+  gl_ClipDistance[0] = dot(fragPos, uClipPlane);
   oFragPos = fragPos;
   oTexCoords = texCoords;
   oTexWeights = texWeights;

@@ -18,6 +18,7 @@ uniform Material uMaterial;
 uniform vec2 uFarNear;
 uniform sampler2DShadow uDirShadow[MAX_LIGHTS];
 uniform sampler2D uReflection;
+uniform sampler2D uRefraction;
 
 // Out color
 out vec4 Color;
@@ -47,5 +48,9 @@ void main() {
 
 	vec2 textureCoordinate = (vClipSpaceCoordinates.xy / vClipSpaceCoordinates.w) / 2 + 0.5;
 	vec2 reflectionTexCoord = vec2(textureCoordinate.x, -textureCoordinate.y);
-    Color = mix(finalColor, texture(uReflection, reflectionTexCoord), 0.5);
+	vec2 refractionTexCoord = vec2(textureCoordinate.x, textureCoordinate.y);
+
+	vec4 reflectColor = texture(uReflection, reflectionTexCoord);
+	vec4 refractColor = mix(finalColor, texture(uRefraction, refractionTexCoord), 0.5);
+    Color = mix(reflectColor, refractColor, 0.5);
 }

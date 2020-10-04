@@ -70,6 +70,7 @@ void ModelShaderMapping::initialize() {
 	const char* FORWARD_MODEL_SHADER_FRAG = "src/shaders/model_forward.frag";
 	shader = loadShader(FORWARD_MODEL_SHADER_VERT, FORWARD_MODEL_SHADER_FRAG);
 
+	UNIFORM_CLIP_PLANE = getShaderUniform(shader, "uClipPlane");
 	cameraUniformMapping.initialize(shader, true);
 	modelUniformMapping.initialize(shader, true);
 	lightUniformMapping.initialize(shader);
@@ -190,6 +191,7 @@ void WaterShaderMapping::initialize() {
 	UNIFORM_PERIOD = getShaderUniform(shader, "uPeriod");
 	UNIFORM_AMPLITUDE = getShaderUniform(shader, "uAmplitude");
 	UNIFORM_REFLECTION = getShaderUniform(shader, "uReflection");
+	UNIFORM_REFRACTION = getShaderUniform(shader, "uRefraction");
 	materialUniformMapping.initialize(shader);
 	lightUniformMapping.initialize(shader);
 }

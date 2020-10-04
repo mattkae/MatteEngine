@@ -9,7 +9,7 @@ void Model::update(float dt) {
     Matrix4x4f translationMatrix = setTranslation(Matrix4x4f(), translation);
 	Matrix4x4f rotationMatrix = rotation.normalize().toMatrix();
 	Matrix4x4f scalingMatrix = setScale(Matrix4x4f(), scale);
-    model = scalingMatrix * rotationMatrix * translationMatrix;
+    model = scalingMatrix * rotationMatrix * translationMatrix * defaultModel;
 }
 
 void Model::render(const ModelUniformMapping& mapping, bool withMaterial) const {

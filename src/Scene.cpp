@@ -88,7 +88,7 @@ void Scene::renderDebug() {
 	}
 }
 
-void Scene::renderDirect(const Camera* camera) {
+void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
@@ -96,7 +96,8 @@ void Scene::renderDirect(const Camera* camera) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClearDepth(1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);	
+	glEnable(GL_CLIP_DISTANCE0);
 
 	mSkybox.render(*camera);
 
@@ -111,6 +112,7 @@ void Scene::renderDirect(const Camera* camera) {
 
 	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
 	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
+	setShaderVec4(ShaderUniformMapping::GlobalModelShaderMapping.UNIFORM_CLIP_PLANE, clipPlane);	 
 
     for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
 		lights[lidx].render(lidx, &ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping);

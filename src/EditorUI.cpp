@@ -237,7 +237,7 @@ void EditorUI::initTextureDebuggerUI() {
 	textureDebuggerUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
 	textureDebuggerUI.panel.percentageHeight = 0.5f;
 	textureDebuggerUI.panel.percentageWidth = 0.2f;
-	textureDebuggerUI.panel.vertical = PanelPositioning::PanelPositioning_LEFT;
+	textureDebuggerUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
 	textureDebuggerUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
 	textureDebuggerUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
 	textureDebuggerUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };

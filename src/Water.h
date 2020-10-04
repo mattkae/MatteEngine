@@ -38,6 +38,7 @@ struct Water {
 	GLfloat				period = PI;
 	Material			material;
 	TextureFrameBuffer	reflectionFrameBuffer;
+	TextureFrameBuffer  refractionFrameBuffer;
 	bool                isDisabled = false;
 
 	void initialize(Scene* inScene, WaterParameters* waterIn);

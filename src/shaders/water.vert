@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in float phase;
+layout (location = 2) in vec2 texCoords;
 
 uniform mat4 uView;
 uniform mat4 uProjection;
@@ -15,6 +16,8 @@ out vec3 vNormal;
 out vec4 vFragPos;
 out vec3 vViewDir;
 out vec4 vClipSpaceCoordinates;
+out vec2 vTexCoords;
+out float vPhase;
 
 void main() {
     float angle = (uPeriod * (uTimePassedMs + phase));
@@ -30,4 +33,6 @@ void main() {
 
     vNormal = normalize(vec3(-uAmplitude * uPeriod * cos(angle), 1.0, 0.0));
     vViewDir = uEye - vFragPos.xyz;
+	vTexCoords = texCoords;
+	vPhase = phase;
 }

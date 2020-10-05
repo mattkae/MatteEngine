@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "FrameBuffer.h"
 #include "Camera.h"
+#include "MyString.h"
 
 struct Scene;
 struct Light;
@@ -15,12 +16,14 @@ struct Light;
 struct WaterVertex {
 	Vector3f	position;
 	GLfloat		periodOffset;
+	Vector2f    texCoords;
 };
 
 struct WaterParameters {
 	GLint		width = 0;	// Width and height of the water area
 	GLint		height = 0;
 	GLfloat		verticesPerUnit = 0; // [0.0, 1.0] vertices per unit of width and height
+	String      dudvTexturePath;
 };
 
 struct Water {
@@ -39,6 +42,9 @@ struct Water {
 	Material			material;
 	TextureFrameBuffer	reflectionFrameBuffer;
 	TextureFrameBuffer  refractionFrameBuffer;
+	GLuint              dudvTexture;
+	GLfloat             dudvMoveFactor = 0;
+	GLfloat             dudvSpeed = 0.03f;
 	bool                isDisabled = false;
 
 	void initialize(Scene* inScene, WaterParameters* waterIn);

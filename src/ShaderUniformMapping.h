@@ -132,6 +132,8 @@ struct WaterShaderMapping {
 	int UNIFORM_AMPLITUDE;
 	int UNIFORM_REFLECTION;
 	int UNIFORM_REFRACTION;
+	int UNIFORM_DU_DV_MAP;
+	int UNIFORM_DU_DV_MOVE_FACTOR;
 
 	MaterialUniformMapping materialUniformMapping;
 	LightUniformMapping lightUniformMapping;

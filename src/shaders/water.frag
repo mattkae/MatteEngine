@@ -10,6 +10,8 @@ in vec3 vNormal;
 in vec4 vFragPos;
 in vec3 vViewDir;
 in vec4 vClipSpaceCoordinates;
+in vec2 vTexCoords;
+in float vPhase;
 
 // Uniform variables
 uniform int uNumLights;
@@ -19,9 +21,13 @@ uniform vec2 uFarNear;
 uniform sampler2DShadow uDirShadow[MAX_LIGHTS];
 uniform sampler2D uReflection;
 uniform sampler2D uRefraction;
+uniform sampler2D uDudvMap;
+uniform float uDudvMoveFactor;
 
 // Out color
 out vec4 Color;
+
+const float distortionPower = 0.02;
 
 void main() {
     vec4 finalColor = vec4(uMaterial.diffuse, uMaterial.opacity);
@@ -45,8 +51,12 @@ void main() {
         
         finalColor += vec4(lightColor.x, lightColor.y, lightColor.z, 0.0);
     }
+	
+	vec2 distortionTexCoords = vTexCoords + vec2(uDudvMoveFactor, 0.0);
+	vec2 distortionOffset = distortionPower * ((texture(uDudvMap, distortionTexCoords).xy) * 2.0 - 1.0);
 
-	vec2 textureCoordinate = (vClipSpaceCoordinates.xy / vClipSpaceCoordinates.w) / 2 + 0.5;
+	vec2 textureCoordinate = clamp(distortionOffset + ((vClipSpaceCoordinates.xy / vClipSpaceCoordinates.w) / 2 + 0.5), 0.001, 0.999); // Clamp to account for the distortion moving us off of the texture
+
 	vec2 reflectionTexCoord = vec2(textureCoordinate.x, -textureCoordinate.y);
 	vec2 refractionTexCoord = vec2(textureCoordinate.x, textureCoordinate.y);
 

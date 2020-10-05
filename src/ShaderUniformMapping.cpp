@@ -192,6 +192,8 @@ void WaterShaderMapping::initialize() {
 	UNIFORM_AMPLITUDE = getShaderUniform(shader, "uAmplitude");
 	UNIFORM_REFLECTION = getShaderUniform(shader, "uReflection");
 	UNIFORM_REFRACTION = getShaderUniform(shader, "uRefraction");
+	UNIFORM_DU_DV_MAP = getShaderUniform(shader, "uDudvMap");
+	UNIFORM_DU_DV_MOVE_FACTOR = getShaderUniform(shader, "uDudvMoveFactor");
 	materialUniformMapping.initialize(shader);
 	lightUniformMapping.initialize(shader);
 }

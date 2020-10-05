@@ -9,6 +9,7 @@
 #include "FrameBuffer.h"
 #include "App.h"
 #include "TextureUniformConstants.h"
+#include "GlobalLoaders.h"
 
 void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 	scene = inScene;
@@ -37,6 +38,11 @@ void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 				0.f, 
 				(float)row / waterIn->verticesPerUnit 
 			};
+
+			vertex.texCoords = Vector2f {
+				static_cast<float>(col) / static_cast<float>(gridResult.verticesWidth),
+				static_cast<float>(row) / static_cast<float>(gridResult.verticesHeight)
+			};
 			
 			vertex.periodOffset = (((row * gridResult.verticesHeight) + col) * gridParams.verticesPerUnit) * periodOffsetGradient;
 			vertices.add(&vertex);
@@ -63,12 +69,17 @@ void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 	glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(WaterVertex), (GLvoid *)offsetof(WaterVertex, periodOffset));
 
+	// Tex Coords
+	glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(WaterVertex), (GLvoid *)offsetof(WaterVertex, texCoords));
+
 	glBindVertexArray(0);
 
 	delete[] gridResult.indices;
 
 	reflectionFrameBuffer = FrameBuffer::createFrameBufferRGBA(GlobalApp.width, GlobalApp.height);
 	refractionFrameBuffer = FrameBuffer::createFrameBufferRGBA(GlobalApp.width, GlobalApp.height);
+	dudvTexture = GlobalTextureLoader.loadRGBATileTexture(waterIn->dudvTexturePath);
 }
 
 // Water is only ever facing upwards
@@ -84,6 +95,8 @@ void Water::update(float dt) {
 	camera.position = { scene->mCamera.position.x, -scene->mCamera.position.y, scene->mCamera.position.z };
 	camera.forward = scene->mCamera.forward.reflect(REFLECTION_VECTOR);
 	camera.updateMatrices();
+
+	dudvMoveFactor = fmod((timePassedMs * dudvSpeed), 1.f);
 }
 
 void Water::renderReflection() {
@@ -122,6 +135,12 @@ void Water::render(Light* lights, unsigned int numLightsUsed) const {
 	glActiveTexture(GL_TEXTURE0 + TextureUniformConstants::WATER_REFRACTION_TEXTURE_POSITION);
 	glBindTexture(GL_TEXTURE_2D, refractionFrameBuffer.texture);
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_REFRACTION, TextureUniformConstants::WATER_REFRACTION_TEXTURE_POSITION);
+
+	glActiveTexture(GL_TEXTURE0 + TextureUniformConstants::WATER_DU_DV_TEXTURE_POSITION);
+	glBindTexture(GL_TEXTURE_2D, dudvTexture);
+	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_DU_DV_MAP, TextureUniformConstants::WATER_DU_DV_TEXTURE_POSITION);
+
+	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_DU_DV_MOVE_FACTOR, dudvMoveFactor);
 	
 	setShaderVec3(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
@@ -152,6 +171,7 @@ void Water::free() {
 	}   
 
 	vertices.deallocate();
+	glDeleteTextures(1, &dudvTexture);
 
 	FrameBuffer::freeFrameBuffer(&reflectionFrameBuffer);
 }

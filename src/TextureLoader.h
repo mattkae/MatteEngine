@@ -9,4 +9,5 @@ struct TextureLoader {
 	GLuint loadRGBATileTexture(String path);
 	GLuint createTexture(int width, int height);
 	bool deleteTexture(GLuint texture);
+	GLuint loadRGBATexture(String path);
 };

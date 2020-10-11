@@ -14,12 +14,12 @@ void UIContext::init() {
 }
 
 bool UIContext::isOpen() {
-	return panel.panelState != PanelState_Hide;
+	return panel.panelState != PanelState_Hide && panel.panelState != PanelState_Closing;
 }
 
 void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProcessor* processor) {
 	// @TODO: Could add some opening and closing animations around these
-	if (shouldOpen) {
+	if (shouldOpen && !isOpen()) {
 		shouldOpen = false;
 		panel.show();
 	} else if (shouldClose) {
@@ -27,17 +27,16 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProc
 		shouldClose = false;
 	}
 
+	panel.update(dtMs);
 	if (panel.panelState == PanelState_Hide) {
 		return;
 	}
 
-	panel.update(dtMs);
-
-
 	// Y=0 is the bottom of the screen here.
 	// To get to the start of the panel, we go to the top of the screen, and move
 	// to the start of the panel (the panel's y-position plus its padding)
-	GLfloat yOffset = GlobalApp.floatHeight - (panel.boundingRect.y + panel.padding);
+	GLfloat yStart = GlobalApp.floatHeight - (panel.boundingRect.y + panel.padding);
+	GLfloat yOffset = yStart;
 
 	// X=0 is at the left of the screen
 	GLfloat xPosition = panel.boundingRect.x + panel.padding;
@@ -86,6 +85,29 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProc
 		yOffset -= (elementHeight + spaceBetweenElements);
 	}
 
+	if (textureDebugger.show) {
+		textureDebugger.rectangle = {
+			xPosition, 
+			yOffset - 150.f,
+			panel.boundingRect.w - panel.padding,
+			150.f
+		};
+		yOffset -= 150.f;
+	}
+
+	const GLfloat renderedHeight = fabs(yOffset);
+	if (renderedHeight > panel.boundingRect.h) {
+		// Add the scrollbar
+		GLfloat scrollbarHeight = 12.f;
+		Rectangle scrollbar = {
+			xPosition + panel.boundingRect.w - 2.f, // Scroll bar is 2 units wide
+			yStart,
+			2,
+			scrollbarHeight
+		};
+		scrollbar.render(Vector4f { 0, 1, 0, 1 }, Vector4f { 1, 0, 0, 1 }, 1.f);
+	}
+
 	if (closeButton.isClicked) {
 		shouldClose = true;
 	}
@@ -96,6 +118,12 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) c
 		return;
 	}
 
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(static_cast<int>(panel.boundingRect.x - panel.padding),
+		static_cast<int>(panel.boundingRect.y + panel.padding),
+		static_cast<int>(panel.boundingRect.w + 2 * panel.padding),
+		static_cast<int>(panel.boundingRect.h + 2 * panel.padding));
+
 	panel.render(shader);
 
 	if (isClosable) {
@@ -103,6 +131,14 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) c
 	}
 
 	for (size_t elementIndex = 0; elementIndex < uiElements.numElements; elementIndex++) {
+		// Bound text also calls GL_SCISSOR_TEST to clip text in the rectangle
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(static_cast<int>(panel.boundingRect.x - panel.padding),
+		static_cast<int>(panel.boundingRect.y + panel.padding),
+		static_cast<int>(panel.boundingRect.w + 2 * panel.padding),
+		static_cast<int>(panel.boundingRect.h + 2 * panel.padding));
+
+
 		UIElement& element = uiElements[elementIndex];
 		switch (element.elementType) {
 		case UIElementType::BUTTON: {
@@ -119,6 +155,12 @@ void UIContext::render(const Shader& shader, const TextRenderer& textRenderer) c
 		}
 		}
 	}
+
+	if (textureDebugger.show) {
+		textureDebugger.render();
+	}
+
+	glDisable(GL_SCISSOR_TEST);
 }
 
 void UIContext::free() {
@@ -129,4 +171,12 @@ void UIContext::free() {
 	}
 
 	uiElements.deallocate();
+}
+
+void TextureDebugView::render() const {
+	if (!show) {
+		return;
+	}
+
+	rectangle.renderTexture(texture, { 0.1f, 0.1f, 0.1f, 1.0 }, 2.f);
 }

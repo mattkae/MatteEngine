@@ -94,14 +94,17 @@ bool TextRenderer::loadChar(GLchar c)
     return true;
 }
 
+void TextRenderer::update() {
+    projectionMatrix = getOrthographicProjection(0.0f, GlobalApp.floatWidth, 0.0f, GlobalApp.floatHeight);
+}
+
 void TextRenderer::renderText(Shader originalShader, const String& str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	Matrix4x4f projection = getOrthographicProjection(0.0f, GlobalApp.floatWidth, 0.0f, GlobalApp.floatHeight);
 	
 	useShader(ShaderUniformMapping::GlobalTextShaderMapping.shader);
 	setShaderFloat(ShaderUniformMapping::GlobalTextShaderMapping.SCROLL_X, scrollX);
-	setShaderMat4(ShaderUniformMapping::GlobalTextShaderMapping.PROJECTION, projection);
+	setShaderMat4(ShaderUniformMapping::GlobalTextShaderMapping.PROJECTION, projectionMatrix);
 	setShaderVec4(ShaderUniformMapping::GlobalTextShaderMapping.COLOR, color);
 	setShaderInt(ShaderUniformMapping::GlobalTextShaderMapping.GLYPH_TEXTURE, 0);
     glActiveTexture(GL_TEXTURE0);

@@ -11,8 +11,8 @@
 
 void Scene::initialize() {
 	WaterParameters waterParameters;
-	waterParameters.width = 50;
-	waterParameters.height = 50;
+	waterParameters.width = 100;
+	waterParameters.height = 100;
 	waterParameters.verticesPerUnit = 1.f;
 	waterParameters.dudvTexturePath = "assets/water/textures/dudv.jpg";
 	water.periodOffsetGradient = PI / 16;

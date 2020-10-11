@@ -231,11 +231,15 @@ void EditorUI::initTerrainUI(Scene* scene)  {
 }
 
 void EditorUI::initTextureDebuggerUI() {
+	if (textureDebuggerUI.isOpen()) {
+		return;
+	}
+
 	// We free this every time so we get a fresh view of the added textures
-	// textureDebuggerUI.free();
+	textureDebuggerUI.free();
 
 	textureDebuggerUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
-	textureDebuggerUI.panel.percentageHeight = 0.5f;
+	textureDebuggerUI.panel.percentageHeight = 0.1f;
 	textureDebuggerUI.panel.percentageWidth = 0.2f;
 	textureDebuggerUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
 	textureDebuggerUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;

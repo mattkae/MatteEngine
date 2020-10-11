@@ -4,16 +4,16 @@
 #include "App.h"
 #include "Rectangle.h"
 
-inline GLfloat getPositioning(PanelPositioning positioning, GLfloat absolutePosition, GLfloat windowDimension, GLfloat panelDimension) {
+inline GLfloat getPositioning(PanelPositioning positioning, GLfloat absolutePosition, GLfloat windowDimension, GLfloat panelDimension, GLfloat padding) {
 	switch (positioning) {
 	case PanelPositioning::PanelPositioning_ABSOLUTE:
 		return absolutePosition;
 	case PanelPositioning::PanelPositioning_CENTER:
 		return (windowDimension - panelDimension) / 2.f;
 	case PanelPositioning::PanelPositioning_LEFT: // TOP
-		return 0;
+		return padding;
 	case PanelPositioning::PanelPositioning_RIGHT: // DOWN
-		return windowDimension - panelDimension;
+		return windowDimension - panelDimension - padding;
 	default:
 		return 0;
 	}
@@ -39,8 +39,8 @@ void Panel::update(float dtMs) {
 
 	GLfloat panelWidth = GlobalApp.floatWidth * percentageWidth;
 	GLfloat panelHeight = GlobalApp.floatHeight * percentageHeight;
-	GLfloat x = getPositioning(horizontal, absolutePositioning.x, GlobalApp.floatWidth, panelWidth);
-	GLfloat y = getPositioning(vertical, absolutePositioning.y, GlobalApp.floatHeight, panelHeight);
+	GLfloat x = getPositioning(horizontal, absolutePositioning.x, GlobalApp.floatWidth, panelWidth, padding);
+	GLfloat y = getPositioning(vertical, absolutePositioning.y, GlobalApp.floatHeight, panelHeight, padding);
 	
 	if (panelState == PanelState_Closing) {
 		switch (transitionType) {
@@ -97,7 +97,7 @@ void Panel::update(float dtMs) {
 		}
 	}
 
-	boundingRect = { x + padding, y, panelWidth, panelHeight };
+	boundingRect = { x, y, panelWidth, panelHeight };
 }
 
 void Panel::render(const Shader& shader) const {

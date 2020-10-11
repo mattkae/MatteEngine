@@ -24,6 +24,7 @@ struct CharacterRenderInfo {
 struct TextRenderer {
 public:
     bool initialize(GLint size, GLchar* path);
+    void update();
     void renderText(Shader originalShader, const String& str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
     void free();
 	inline GLint getFontSize() const { return mSize; }
@@ -37,6 +38,7 @@ private:
     FT_Library mLib;
     FT_Face mFace;
     GLint mSize;
+    Matrix4x4f projectionMatrix;
 
 	GLuint mVao;
     GLuint mVbo;

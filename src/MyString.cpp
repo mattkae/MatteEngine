@@ -23,6 +23,10 @@ String::String(const char* str) {
 }
 
 String::String(const String& str) {
+	if (str.value == NULL) {
+		// @TODO: Log error
+		return;
+	}
 	set(str.value);
 }
 

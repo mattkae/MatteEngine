@@ -9,6 +9,13 @@
 #include "List.h"
 #include "UIElement.h"
 
+struct TextureDebugView {
+	bool show = false;
+	Rectangle rectangle = { 8.f, 0.f, 240.f, 150.f };
+	GLuint texture;
+	void render() const;
+};
+
 /**
  * Manages a selection of UI Elements inside of a single panel.
 */
@@ -25,6 +32,7 @@ struct UIContext {
 
 	Button closeButton;
 	List<UIElement> uiElements;
+	TextureDebugView textureDebugger;
 
 	bool isOpen();
 	void init();

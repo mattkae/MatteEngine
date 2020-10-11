@@ -144,15 +144,13 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			break;
 		}
 		case UIEventType::SHOW_TEXTURE_DEBUGGER: {
-			GlobalApp.editorUI.ui.textureDebugger.show = true;
-			GlobalApp.editorUI.ui.textureDebugger.rectangle.x = GlobalApp.width - GlobalApp.editorUI.ui.textureDebugger.rectangle.w - 8;
-			GlobalApp.editorUI.ui.textureDebugger.rectangle.y = 8;
 			GlobalApp.editorUI.initTextureDebuggerUI();
 			GlobalApp.editorUI.textureDebuggerUI.shouldOpen = true;
 			break;
 		}
 		case UIEventType::DEBUG_TEXTURE: {
-			GlobalApp.editorUI.ui.textureDebugger.texture = *static_cast<int*>(activeEvent.data);
+			GlobalApp.editorUI.textureDebuggerUI.textureDebugger.show = true;
+			GlobalApp.editorUI.textureDebuggerUI.textureDebugger.texture = *static_cast<int*>(activeEvent.data);
 			break;
 		}
 	}

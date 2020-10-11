@@ -6,8 +6,10 @@ struct StringPointer {
 	size_t length = 0;
 };
 
+// @TODO: Add SSO
 struct String {
 	char* value = nullptr;
+	char defaultBuffer[16];
 	size_t length = 0;
 	size_t capacity = 0;
 
@@ -15,6 +17,7 @@ struct String {
 	String(const char* str);
 	String(const String& str);
 
+	char* getValue();
 	bool isInited();
 	void operator =(const char* str);
 	void set(const char* str);

@@ -57,10 +57,14 @@ void main() {
 
 	vec2 textureCoordinate = clamp(distortionOffset + ((vClipSpaceCoordinates.xy / vClipSpaceCoordinates.w) / 2 + 0.5), 0.001, 0.999); // Clamp to account for the distortion moving us off of the texture
 
+	float refractiveFactor = dot(vViewDir, vNormal);
+	// @TODO: If you rais the refractiveFactor to a power, it becomes more reflective
+
 	vec2 reflectionTexCoord = vec2(textureCoordinate.x, -textureCoordinate.y);
 	vec2 refractionTexCoord = vec2(textureCoordinate.x, textureCoordinate.y);
 
 	vec4 reflectColor = texture(uReflection, reflectionTexCoord);
-	vec4 refractColor = mix(finalColor, texture(uRefraction, refractionTexCoord), 0.5);
-    Color = mix(reflectColor, refractColor, 0.5);
+	vec4 refractColor = texture(uRefraction, refractionTexCoord);
+	Color = mix(reflectColor, refractColor, refractiveFactor);
+    Color = mix(Color, finalColor, 0.2);
 }

@@ -7,11 +7,11 @@
 struct GLFWwindow;
 
 struct Application {
-	GLsizei width = 800;
-	GLsizei height = 600;
+	GLsizei width = 1280;
+	GLsizei height = 960;
 
-	GLfloat floatWidth = 800.f;
-	GLfloat floatHeight = 600.f;
+	GLfloat floatWidth = 1280.f;
+	GLfloat floatHeight = 960.f;
 
 	GLfloat aspectRatio = floatWidth / floatHeight;
 	const char* title = "Matte";

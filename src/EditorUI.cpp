@@ -239,7 +239,7 @@ void EditorUI::initTextureDebuggerUI() {
 	textureDebuggerUI.free();
 
 	textureDebuggerUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
-	textureDebuggerUI.panel.percentageHeight = 0.1f;
+	textureDebuggerUI.panel.percentageHeight = 0.9f;
 	textureDebuggerUI.panel.percentageWidth = 0.2f;
 	textureDebuggerUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
 	textureDebuggerUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;

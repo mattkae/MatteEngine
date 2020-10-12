@@ -32,7 +32,7 @@ void main() {
 	
 
     vNormal = normalize(vec3(-uAmplitude * uPeriod * cos(angle), 1.0, 0.0));
-    vViewDir = uEye - vFragPos.xyz;
+    vViewDir = normalize(uEye - vFragPos.xyz);
 	vTexCoords = texCoords;
 	vPhase = phase;
 }

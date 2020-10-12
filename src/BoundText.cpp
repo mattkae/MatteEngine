@@ -14,9 +14,33 @@ void BoundText::render(const Shader& shader, const TextRenderer& textRenderer,
 		textWidthOffset = textWidthOffset - rect.w;
 	}
 
-	glEnable(GL_SCISSOR_TEST);
-	glScissor(static_cast<GLint>(rect.x), static_cast<GLint>(rect.y), static_cast<GLint>(rect.w), static_cast<GLint>(rect.h));
+	int prevScissor[4];
+	bool hasScissor = glIsEnabled(GL_SCISSOR_TEST);
+    glGetIntegerv(GL_SCISSOR_BOX, prevScissor);
+
+	Rectangle scissorRect;
+	if (!hasScissor){
+		glEnable(GL_SCISSOR_TEST);
+		scissorRect = rect;
+	} else {
+		Rectangle firstScissor;
+		firstScissor.x = static_cast<float>(prevScissor[0]);
+		firstScissor.y = static_cast<float>(prevScissor[1]);
+		firstScissor.w = static_cast<float>(prevScissor[2]);
+		firstScissor.h = static_cast<float>(prevScissor[3]);
+
+		if (!firstScissor.isOverlapping(&rect)) {
+			scissorRect = { 0, 0, 0, 0 };
+		} else {
+			scissorRect = firstScissor.getOverlap(&rect);
+		}
+	}
+
+	glScissor(static_cast<GLint>(scissorRect.x), static_cast<GLint>(scissorRect.y), static_cast<GLint>(scissorRect.w), static_cast<GLint>(scissorRect.h));
 	textRenderer.renderText(shader, text, textPosition, scale, textColor, textWidthOffset);
-	glDisable(GL_SCISSOR_TEST);
+
+	if (!hasScissor){
+		glDisable(GL_SCISSOR_TEST);
+	}
 }
 

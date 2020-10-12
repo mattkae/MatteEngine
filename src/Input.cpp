@@ -138,8 +138,8 @@ bool isKeyJustUp(int key, int focusToken) {
 	return checkFocusToken(focusToken) && isKeyValid(key) && (!globalInput.keyStates[key].isDown && globalInput.keyStates[key].hasChanged);
 }
 
-bool isLeftClickDown() {
-	return globalInput.clickStates[GLFW_MOUSE_BUTTON_LEFT];
+bool isLeftClickDown(int focusToken) {
+	return checkFocusToken(focusToken) && globalInput.clickStates[GLFW_MOUSE_BUTTON_LEFT];
 }
 
 bool isRightClickDown() {

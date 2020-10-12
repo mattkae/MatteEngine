@@ -11,7 +11,7 @@ bool isKeyUp(int key, int focusToken);
 bool isKeyJustDown(int key, int focusToken);
 bool isKeyDown(int key, int focusToken);
 bool isKeyJustUp(int key, int focusToken);
-bool isLeftClickDown();
+bool isLeftClickDown(int focusToken = DEFAULT_FOCUS_TOKEN);
 bool isRightClickDown();
 Vector2f getCursorPosition();
 void resetFocus();

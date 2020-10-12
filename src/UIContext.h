@@ -16,6 +16,15 @@ struct TextureDebugView {
 	void render() const;
 };
 
+struct Scrollbar {
+	bool show = false;
+	bool isClicked = false;
+	Vector2f originalClickSpot;
+	Rectangle rectangle;
+	GLfloat yOffset = 0;
+	int inputToken;
+};
+
 /**
  * Manages a selection of UI Elements inside of a single panel.
 */
@@ -25,14 +34,12 @@ struct UIContext {
 	bool shouldClose = false;
 	bool isClosable = true;
 	GLfloat spaceBetweenElements = 2.f;
-
-	GLfloat startX = 0;
-	GLfloat currentX = 0;
-	GLfloat endX = 0;
+	GLfloat scrollAmount = 0;
 
 	Button closeButton;
 	List<UIElement> uiElements;
 	TextureDebugView textureDebugger;
+	Scrollbar scrollbar;
 
 	bool isOpen();
 	void init();

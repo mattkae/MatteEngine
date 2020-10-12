@@ -15,6 +15,17 @@ struct Rectangle {
 		return p.x >= x && p.x <= (x + w)	&& p.y >= y && p.y <= (y + h);
 	}
 
+	inline Vector2f getTopRight() {
+		return { x + w, y + h };
+	}
+
+	inline Vector2f getBottomLeft() {
+		return { x, y };
+	}
+
+	bool isOverlapping(Rectangle *other);
+	Rectangle getOverlap(Rectangle* other);
+
 	inline bool isMouseHovered() {
 		return doesIntersectBox(getCursorPosition());
 	}
@@ -33,7 +44,5 @@ struct Rectangle {
 	void renderBorderRect(const Vector4f& borderColor = Vector4f{0, 0, 0, 0}, GLfloat borderWidth = 0) const;
 	void renderTexture(GLuint texture, const Vector4f& borderColor = Vector4f{0, 0, 0, 0}, GLfloat borderWidth = 0) const;
 };
-
-
 
 #endif

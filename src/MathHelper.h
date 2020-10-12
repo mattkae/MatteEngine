@@ -2,6 +2,10 @@
 
 #define PI 3.14159265358979323846f
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+#define CLAMP(x, upper, lower) (MIN(upper, MAX(x, lower)))
+
 namespace MathHelper {
 	inline float radiansToDegrees(float radians) {
 		return radians * 180.f / PI;

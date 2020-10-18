@@ -11,6 +11,7 @@ OrthographicShaderMapping ShaderUniformMapping::GlobalOrthographicShaderMapping;
 TextShaderMapping ShaderUniformMapping::GlobalTextShaderMapping;
 ParticleShaderMapping ShaderUniformMapping::GlobalParticleShaderMapping;
 WaterShaderMapping ShaderUniformMapping::GlobalWaterShaderMapping;
+DomeSkyShaderMapping ShaderUniformMapping::GlobalDomeSkyShaderMapping;
 
 void ShaderUniformMapping::initialize() {
 	GlobalModelShaderMapping.initialize();
@@ -21,6 +22,7 @@ void ShaderUniformMapping::initialize() {
 	GlobalTextShaderMapping.initialize();
 	GlobalParticleShaderMapping.initialize();
 	GlobalWaterShaderMapping.initialize();
+	GlobalDomeSkyShaderMapping.initialize();
 }
 
 void ShaderUniformMapping::free() {
@@ -138,6 +140,13 @@ void SkyboxShaderMapping::initialize() {
 	PROJECTION = getShaderUniform(shader, "uProjection");
 }
 
+void DomeSkyShaderMapping::initialize() {
+	const char* SKYBOX_SHADER_VERT = "src/shaders/dome_skybox.vert";
+	const char* SKYBOX_SHADER_FRAG = "src/shaders/dome_skybox.frag";
+	shader = loadShader(SKYBOX_SHADER_VERT, SKYBOX_SHADER_FRAG);
+	cameraMapping.initialize(shader, false);
+}
+
 void DeferredShaderMapping::initialize() {
 	const char* DEFERRED_MODEL_SHADER_VERT = "src/shaders/model_deferred.vert";
 	const char* DEFERRED_MODEL_SHADER_FRAG = "src/shaders/model_deferred.frag";
@@ -194,6 +203,7 @@ void WaterShaderMapping::initialize() {
 	UNIFORM_REFRACTION = getShaderUniform(shader, "uRefraction");
 	UNIFORM_DU_DV_MAP = getShaderUniform(shader, "uDudvMap");
 	UNIFORM_DU_DV_MOVE_FACTOR = getShaderUniform(shader, "uDudvMoveFactor");
+	UNIFORM_NORMAL_MAP = getShaderUniform(shader, "uNormalMap");
 	materialUniformMapping.initialize(shader);
 	lightUniformMapping.initialize(shader);
 }

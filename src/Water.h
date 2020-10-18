@@ -24,6 +24,7 @@ struct WaterParameters {
 	GLint		height = 0;
 	GLfloat		verticesPerUnit = 0; // [0.0, 1.0] vertices per unit of width and height
 	String      dudvTexturePath;
+	String		normalMapPath;
 };
 
 struct Water {
@@ -43,6 +44,7 @@ struct Water {
 	TextureFrameBuffer	reflectionFrameBuffer;
 	TextureFrameBuffer  refractionFrameBuffer;
 	GLuint              dudvTexture;
+	GLuint				normalMap;
 	GLfloat             dudvMoveFactor = 0;
 	GLfloat             dudvSpeed = 0.03f;
 	bool                isDisabled = false;

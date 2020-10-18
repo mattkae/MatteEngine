@@ -82,6 +82,12 @@ struct SkyboxShaderMapping {
 	void initialize();
 };
 
+struct DomeSkyShaderMapping {
+	Shader shader;
+	CameraUniformMapping cameraMapping;
+    void initialize();
+};
+
 struct DeferredShaderMapping {
 	Shader shader;
 
@@ -134,9 +140,18 @@ struct WaterShaderMapping {
 	int UNIFORM_REFRACTION;
 	int UNIFORM_DU_DV_MAP;
 	int UNIFORM_DU_DV_MOVE_FACTOR;
+	int UNIFORM_NORMAL_MAP;
 
 	MaterialUniformMapping materialUniformMapping;
 	LightUniformMapping lightUniformMapping;
+
+	void initialize();
+};
+
+struct GradientSkyMapping {
+	Shader shader;
+	int UNIFORM_TEXTURE;
+	int UNIFORM_FAR_DISTANCE;
 
 	void initialize();
 };
@@ -150,6 +165,7 @@ namespace ShaderUniformMapping {
 	extern TextShaderMapping GlobalTextShaderMapping;
 	extern ParticleShaderMapping GlobalParticleShaderMapping;
 	extern WaterShaderMapping GlobalWaterShaderMapping;
+	extern DomeSkyShaderMapping GlobalDomeSkyShaderMapping;
 	void initialize();
 	void free(); // @TODO: Implement this
 };

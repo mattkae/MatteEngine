@@ -12,6 +12,7 @@
 #include "DebugRender.h"
 #include "ModelLoader.h"
 #include "Water.h"
+#include "GradientSky.h"
 #include <climits>
 
 struct Scene {
@@ -30,6 +31,7 @@ struct Scene {
 
 	Water water;
     Terrain mTerrain;
+	GradientSky mGradientSky;
     Skybox mSkybox;
     bool useDefferredRendering = false;
     DeferredGeometryBuffer mDeferredBuffer;

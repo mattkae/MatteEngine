@@ -80,6 +80,7 @@ void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 	reflectionFrameBuffer = FrameBuffer::createFrameBufferRGBA(GlobalApp.width, GlobalApp.height);
 	refractionFrameBuffer = FrameBuffer::createFrameBufferRGBA(GlobalApp.width, GlobalApp.height);
 	dudvTexture = GlobalTextureLoader.loadRGBATileTexture(waterIn->dudvTexturePath);
+	normalMap = GlobalTextureLoader.loadRGBATileTexture(waterIn->normalMapPath);
 }
 
 // Water is only ever facing upwards
@@ -141,6 +142,10 @@ void Water::render(Light* lights, unsigned int numLightsUsed) const {
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_DU_DV_MAP, TextureUniformConstants::WATER_DU_DV_TEXTURE_POSITION);
 
 	setShaderFloat(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_DU_DV_MOVE_FACTOR, dudvMoveFactor);
+
+	glActiveTexture(GL_TEXTURE0 + TextureUniformConstants::WATER_NORMAL_TEXTURE_POSITION);
+	glBindTexture(GL_TEXTURE_2D, normalMap);
+	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.UNIFORM_NORMAL_MAP, TextureUniformConstants::WATER_NORMAL_TEXTURE_POSITION);
 	
 	setShaderVec3(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);

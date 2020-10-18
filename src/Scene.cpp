@@ -15,10 +15,13 @@ void Scene::initialize() {
 	waterParameters.height = 100;
 	waterParameters.verticesPerUnit = 1.f;
 	waterParameters.dudvTexturePath = "assets/water/textures/dudv.jpg";
+	waterParameters.normalMapPath = "assets/water/textures/normal.png";
 	water.periodOffsetGradient = PI / 16;
 	water.period = PI;
 	water.amplitude = 0.3f;
 	water.initialize(this, &waterParameters);
+
+	mGradientSky.initialize(500, 30.f, 30.f, { 0.9f, 0.9f, 0.9f, 0.8f } , { 0.1f, 0.2f, 0.8f, 1.0f }, 0.8f);
 }
 
 void Scene::update(double dt) {
@@ -100,7 +103,9 @@ void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);	
 	glEnable(GL_CLIP_DISTANCE0);
 
-	mSkybox.render(*camera);
+	mGradientSky.render(camera);
+
+	//mSkybox.render(*camera);
 
 	water.render(lights, numLightsUsed);
 

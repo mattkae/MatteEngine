@@ -33,6 +33,7 @@
     <ClCompile Include="..\..\src\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalLoaders.cpp" />
+    <ClCompile Include="..\..\src\GradientSky.cpp" />
     <ClCompile Include="..\..\src\GridHelper.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
     <ClInclude Include="..\..\src\EditorUI.h" />
     <ClInclude Include="..\..\src\FrameBuffer.h" />
+    <ClInclude Include="..\..\src\GradientSky.h" />
     <ClInclude Include="..\..\src\GridHelper.h" />
     <ClInclude Include="..\..\src\GlobalLoaders.h" />
     <ClInclude Include="..\..\src\MeshTexture.h" />

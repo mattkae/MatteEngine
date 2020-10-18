@@ -115,10 +115,10 @@ void Rectangle::renderTexture(GLuint texture, const Vector4f& borderColor, GLflo
 Rectangle Rectangle::getOverlap(Rectangle *other) {
 	Rectangle retval;
 
-	int leftX   = MAX( x, other->x );
-	int rightX  = MIN( x + w, other->x + other->w );
-	int topY	= MIN( y + h, other->y + other->h );
-	int bottomY = MAX( y, other->y );
+	GLfloat leftX   = MAX( x, other->x );
+	GLfloat rightX  = MIN( x + w, other->x + other->w );
+	GLfloat topY	= MIN( y + h, other->y + other->h );
+	GLfloat bottomY = MAX( y, other->y );
 		
 	retval.x = leftX;
 	retval.y = bottomY;

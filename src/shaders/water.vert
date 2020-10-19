@@ -25,7 +25,7 @@ const vec4 BITANGENT = vec4(0, 0, 1, 0);
 void main() {
     float angle = (uPeriod * (uTimePassedMs + phase));
     vec4 wavePosition = vec4(position.x, 
-       0,// uAmplitude * sin(angle),
+       	uAmplitude * sin(angle),
         position.z, 
         1.0);
     vFragPos = uModel * wavePosition;
@@ -36,7 +36,7 @@ void main() {
 
     vec3 normal = normalize(vec3(-uAmplitude * uPeriod * cos(angle), 1.0, 0.0));
     vViewDir = normalize(uEye - vFragPos.xyz);
-	vTexCoords = texCoords;
+	vTexCoords = 25.0 * texCoords;
 	vPhase = phase;
 
 	vec3 vertTangent_CameraSpace = normalize(uModel * TANGENT).xyz;

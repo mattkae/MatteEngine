@@ -21,13 +21,13 @@ void Water::initialize(Scene* inScene, WaterParameters* waterIn) {
 	vertices.growDynamically = false;
 	vertices.allocate(gridResult.numVertices);
 	numIndices = gridResult.numIndices;
-	material.diffuse = Vector3f { 0.f, 0.f, 0.3f };
-	material.transparency = 0.9f;
+	material.diffuse = Vector3f { 0.f, 0.2f, 0.5f };
+	material.transparency = 0.3f;
 	material.specularComponent = 20.f;
-	material.specular = Vector3f { 0, 0, 0.1f };
+	material.specular = Vector3f { 0.3f, 0.3f, 0.3f };
 	material.ambient = Vector3f { 0, 0, 0 };
 	material.emissive = Vector3f { 0, 0, 0 };
-	material.specularProperty = Vector3f { 1, 0, 0 };
+	material.specularProperty = Vector3f { 1.f, 1.f, 1.f };
 	modelMatrix = translateMatrix(modelMatrix, getVec3(-waterIn->width / 2.f, 0, -waterIn->height / 2.f));
 
 	for (int row = 0; row <= gridResult.verticesHeight; row++) {

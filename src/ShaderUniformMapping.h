@@ -85,6 +85,9 @@ struct SkyboxShaderMapping {
 struct DomeSkyShaderMapping {
 	Shader shader;
 	CameraUniformMapping cameraMapping;
+	int UNIFORM_LOW_COLOR;
+	int UNIFORM_HIGH_COLOR;
+	int UNIFORM_MIX_POSITIONS;
     void initialize();
 };
 
@@ -144,14 +147,6 @@ struct WaterShaderMapping {
 
 	MaterialUniformMapping materialUniformMapping;
 	LightUniformMapping lightUniformMapping;
-
-	void initialize();
-};
-
-struct GradientSkyMapping {
-	Shader shader;
-	int UNIFORM_TEXTURE;
-	int UNIFORM_FAR_DISTANCE;
 
 	void initialize();
 };

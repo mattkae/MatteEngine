@@ -144,6 +144,9 @@ void DomeSkyShaderMapping::initialize() {
 	const char* SKYBOX_SHADER_VERT = "src/shaders/dome_skybox.vert";
 	const char* SKYBOX_SHADER_FRAG = "src/shaders/dome_skybox.frag";
 	shader = loadShader(SKYBOX_SHADER_VERT, SKYBOX_SHADER_FRAG);
+    UNIFORM_LOW_COLOR = getShaderUniform(shader, "uLowColor");
+	UNIFORM_HIGH_COLOR  = getShaderUniform(shader, "uHighColor");
+	UNIFORM_MIX_POSITIONS = getShaderUniform(shader, "uMixYStartEnd");
 	cameraMapping.initialize(shader, false);
 }
 

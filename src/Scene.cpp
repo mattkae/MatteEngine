@@ -11,17 +11,21 @@
 
 void Scene::initialize() {
 	WaterParameters waterParameters;
-	waterParameters.width = 100;
-	waterParameters.height = 100;
+	waterParameters.width = 1000;
+	waterParameters.height = 1000;
 	waterParameters.verticesPerUnit = 1.f;
 	waterParameters.dudvTexturePath = "assets/water/textures/dudv.jpg";
 	waterParameters.normalMapPath = "assets/water/textures/normal.png";
 	water.periodOffsetGradient = PI / 16;
+	water.dudvSpeed = 0.1f;
 	water.period = PI;
-	water.amplitude = 0.3f;
+	water.amplitude = 0.f;
 	water.initialize(this, &waterParameters);
 
-	mGradientSky.initialize(500, 30.f, 30.f, { 0.9f, 0.9f, 0.9f, 0.8f } , { 0.1f, 0.2f, 0.8f, 1.0f }, 0.8f);
+	mGradientSky.startColor = { 0.9f, 0.9f, 0.9f, 1.f };
+	mGradientSky.endColor = { 0.1f, 0.2f, 0.5f, 1.0f };
+	mGradientSky.mixStartEnd = { 0.f, 200.f };
+	mGradientSky.initialize(500, 5, 5);
 }
 
 void Scene::update(double dt) {

@@ -5,21 +5,15 @@
 #include "Camera.h"
 #include <GL/glew.h>
 
-inline DomeVertex getVertex(float radius, int phi, int theta, Vector4f startColor, Vector4f endColor, float yColorChange) {
+inline DomeVertex getVertex(float radius, int phi, int theta) {
 	DomeVertex vertex;
 	vertex.position.x = radius * sinf(phi * DTOR) * cosf(theta * DTOR);
 	vertex.position.y = radius * cosf(phi * DTOR);
 	vertex.position.z = radius * sinf(phi * DTOR) * sinf(theta * DTOR);
-
-	if (vertex.position.y >= yColorChange) {
-		vertex.color = endColor;
-	} else {
-		vertex.color = startColor;
-	}
 	return vertex;
 }
 
-void GradientSky::initialize(float radius, float deltaPhi, float deltaTheta, Vector4f startColor, Vector4f endColor, float mixPercent) {
+void GradientSky::initialize(float radius, float deltaPhi, float deltaTheta) {
 	List<DomeVertex> vertices;
 	List<GLuint> indices;
 	vertices.growDynamically = false;
@@ -30,24 +24,22 @@ void GradientSky::initialize(float radius, float deltaPhi, float deltaTheta, Vec
 	vertices.allocate(numVertices);
 	indices.allocate(numIndices);
 
-	float yColorChange = radius * cosf((90.f * mixPercent) * DTOR);
-
 	GLuint index = 0;
 	for (int phi = 0; phi <= 90 - deltaPhi; phi += (int)deltaPhi) {
 		for (int theta = 0; theta <= 360 - deltaTheta; theta += (int)deltaTheta) {
-			DomeVertex vertex = getVertex(radius, phi, theta, startColor, endColor, yColorChange);
+			DomeVertex vertex = getVertex(radius, phi, theta);
 			vertices.add(&vertex);
 		    GLuint topLeftIdx = index++;
 
-			vertex = getVertex(radius, phi, theta + deltaTheta, startColor, endColor, yColorChange);
+			vertex = getVertex(radius, phi, theta + deltaTheta);
 			vertices.add(&vertex);
 		    GLuint bottomLeftIdx = index++;
 
-			vertex = getVertex(radius, phi + deltaPhi, theta + deltaTheta, startColor, endColor, yColorChange);
+			vertex = getVertex(radius, phi + deltaPhi, theta + deltaTheta);
 			vertices.add(&vertex);
 			GLuint bottomRightIdx = index++;
 
-			vertex = getVertex(radius, phi + deltaPhi, theta, startColor, endColor, yColorChange);
+			vertex = getVertex(radius, phi + deltaPhi, theta);
 			vertices.add(&vertex);
 		    GLuint topRightIdx = index++;
 
@@ -76,10 +68,6 @@ void GradientSky::initialize(float radius, float deltaPhi, float deltaTheta, Vec
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DomeVertex), (GLvoid *)0);
 
-    // Color
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(DomeVertex), (GLvoid *)offsetof(DomeVertex, color));;
-
     glBindVertexArray(0);
 
 	vertices.deallocate();
@@ -87,11 +75,14 @@ void GradientSky::initialize(float radius, float deltaPhi, float deltaTheta, Vec
 }
 
 void GradientSky::render(const Camera* camera) {
-	useShader(ShaderUniformMapping::GlobalDomeSkyShaderMapping.shader);
     if (vao == 0) {
 		return;
 	}
 
+	useShader(ShaderUniformMapping::GlobalDomeSkyShaderMapping.shader);
+	setShaderVec4(ShaderUniformMapping::GlobalDomeSkyShaderMapping.UNIFORM_LOW_COLOR, startColor);
+	setShaderVec4(ShaderUniformMapping::GlobalDomeSkyShaderMapping.UNIFORM_HIGH_COLOR, endColor);
+    setShaderVec2(ShaderUniformMapping::GlobalDomeSkyShaderMapping.UNIFORM_MIX_POSITIONS, mixStartEnd);
 	camera->render(ShaderUniformMapping::GlobalDomeSkyShaderMapping.cameraMapping);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);

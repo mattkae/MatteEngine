@@ -11,7 +11,11 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			break;
 		}
 		case UIEventType::SHOW_MODEL: {
-			GlobalApp.editorUI.modelUI.shouldOpen = true;
+			int modelIdx = *static_cast<int*>(activeEvent.data);
+			if (modelIdx >= 0 && modelIdx < GlobalApp.scene.numModels) {
+				Model* model = &GlobalApp.scene.models[modelIdx];
+				GlobalApp.editorUI.openModelUI(model);
+			}
 			break;
 		}
 		case UIEventType::HIDE_MODEL: {

@@ -16,10 +16,9 @@ struct EditorUI {
 	void initialize(Scene* scene);
 
 	void initPrimaryUI(Scene* scene);
-	void initModelUI(Scene* scene);
+	void openModelUI(Model* model);
 	void initTerrainUI(Scene* scene);
 	void initTextureDebuggerUI();
-	void selectModel(const Model& model);
 
 	void free();
 };

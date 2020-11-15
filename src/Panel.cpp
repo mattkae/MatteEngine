@@ -21,11 +21,12 @@ inline GLfloat getPositioning(PanelPositioning positioning, GLfloat absolutePosi
 
 void Panel::show() {
 	panelState = PanelState::PanelState_Opening;
-	currentPercentOpen = 1.f - currentPercentOpen;
+	currentTransitionTimeMs = 0.f;
 }
 
 void Panel::hide() {
 	panelState = PanelState::PanelState_Closing;
+	currentTransitionTimeMs = 0.f;
 }
 
 /**
@@ -43,57 +44,43 @@ void Panel::update(float dtMs) {
 	GLfloat y = getPositioning(vertical, absolutePositioning.y, GlobalApp.floatHeight, panelHeight, padding);
 	
 	if (panelState == PanelState_Closing) {
+		currentTransitionTimeMs += dtMs;
+		currentPercentOpen = currentTransitionTimeMs / openingTimeMs;
+
 		switch (transitionType) {
 		case PanelTransitionType::PanelTransitionType_None:
-			panelState = PanelState::PanelState_Hide;
+			currentPercentOpen = 0.f;
 			break;
-		case PanelTransitionType::PanelTransitionType_SlideHorizontalPositive: {
-			currentPercentOpen = (currentPercentOpen + dtMs) / openingTimeMs;
+		case PanelTransitionType::PanelTransitionType_SlideHorizontalPositive:
 			x -= panelWidth * currentPercentOpen;
-
-			if (currentPercentOpen <= 0.f) {
-				panelState = PanelState::PanelState_Hide;
-				currentPercentOpen = 0.f;
-			}
 			break;
-		}
-		case PanelTransitionType::PanelTransitionType_SlideHorizontalNegative: {
-			currentPercentOpen = (currentPercentOpen + dtMs) / openingTimeMs;
+		case PanelTransitionType::PanelTransitionType_SlideHorizontalNegative:
 			x += panelWidth * currentPercentOpen;
-
-			if (currentPercentOpen <= 0.f) {
-				panelState = PanelState::PanelState_Hide;
-				currentPercentOpen = 0.f;
-			}
 			break;
 		}
+
+		if (currentPercentOpen <= 0.f) {
+			panelState = PanelState::PanelState_Hide;
+			currentPercentOpen = 0.f;
 		}
 	} else if (panelState == PanelState_Opening) {
+		currentTransitionTimeMs += dtMs;
+		currentPercentOpen = currentTransitionTimeMs / openingTimeMs;
 		switch (transitionType) {
 		case PanelTransitionType::PanelTransitionType_None:
-			panelState = PanelState::PanelState_Open;
+			currentPercentOpen = 1.f;
 			break;
-		case PanelTransitionType::PanelTransitionType_SlideHorizontalPositive: {
-			currentPercentOpen = (currentPercentOpen + dtMs) / openingTimeMs;
+		case PanelTransitionType::PanelTransitionType_SlideHorizontalPositive:
 			x += panelWidth * currentPercentOpen;
-
-			if (currentPercentOpen >= 1.f) {
-				panelState = PanelState::PanelState_Open;
-				currentPercentOpen = 0.f;
-			}
 			break;
-		}
-		case PanelTransitionType::PanelTransitionType_SlideHorizontalNegative: {
-			currentPercentOpen = (currentPercentOpen + dtMs) / openingTimeMs;
+		case PanelTransitionType::PanelTransitionType_SlideHorizontalNegative:
 			x += panelWidth;
 			x -= panelWidth * currentPercentOpen;
-
-			if (currentPercentOpen >= 1.f) {
-				panelState = PanelState::PanelState_Open;
-				currentPercentOpen = 0.f;
-			}
-			break;
 		}
+
+		if (currentPercentOpen >= 1.f) {
+			panelState = PanelState::PanelState_Open;
+			currentPercentOpen = 1.f;
 		}
 	}
 

@@ -6,8 +6,8 @@
 // @TODO Figure out how to do this in a general way
 struct TextureLoader {
 	List<GLuint> textureList;
-	GLuint loadRGBATileTexture(String path);
+	GLuint loadRGBATileTexture(String& path);
 	GLuint createTexture(int width, int height);
 	bool deleteTexture(GLuint texture);
-	GLuint loadRGBATexture(String path);
+	GLuint loadRGBATexture(String& path);
 };

@@ -6,7 +6,6 @@ void EditorUI::initialize(Scene* scene) {
 	ui.init();
 
 	initPrimaryUI(scene);
-	initModelUI(scene);
 	initTerrainUI(scene);
 
 	ui.addPanel(&primaryUI);
@@ -17,10 +16,6 @@ void EditorUI::initialize(Scene* scene) {
 
 void EditorUI::free() {
 	ui.free();
-}
-
-void EditorUI::selectModel(const Model& model) {
-
 }
 
 void EditorUI::initPrimaryUI(Scene* scene) {
@@ -92,7 +87,7 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 
 const size_t numVec3 = 3;
 
-void EditorUI::initModelUI(Scene* scene) {
+void EditorUI::openModelUI(Model* model) {
 	modelUI.panel.percentageHeight = 0.9f;
 	modelUI.panel.percentageWidth = 0.2f;
 	modelUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
@@ -114,7 +109,7 @@ void EditorUI::initModelUI(Scene* scene) {
 			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
 			textInput.inputType = TextInputType::FLOAT;
 			textInput.textColor = Vector4f { 1, 1, 1, 1 };
-			//textInput.value.fVal = model->translation[tIdx];
+			textInput.value.fVal = model->translation[tIdx];
 			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_TRANSLATION_X + tIdx);
 			element.elementType = UIElementType::TEXT_INPUT;
 			element.element.textInput = textInput;
@@ -132,7 +127,7 @@ void EditorUI::initModelUI(Scene* scene) {
 			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
 			textInput.inputType = TextInputType::FLOAT;
 			textInput.textColor = Vector4f { 1, 1, 1, 1 };
-			//textInput.value.fVal = model->scale[tIdx];
+			textInput.value.fVal = model->scale[tIdx];
 			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_SCALE_X + tIdx);
 			element.elementType = UIElementType::TEXT_INPUT;
 			element.element.textInput = textInput;
@@ -150,7 +145,7 @@ void EditorUI::initModelUI(Scene* scene) {
 			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
 			textInput.inputType = TextInputType::FLOAT;
 			textInput.textColor = Vector4f { 1, 1, 1, 1 };
-			//textInput.value.fVal = model->rotation[tIdx];
+			textInput.value.fVal = model->rotation[tIdx];
 			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_ROTATION_X + tIdx);
 			element.elementType = UIElementType::TEXT_INPUT;
 			element.element.textInput = textInput;
@@ -158,6 +153,8 @@ void EditorUI::initModelUI(Scene* scene) {
 		}
 	}
 	modelUI.init();
+	modelUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
+	modelUI.shouldOpen = true;
 }
 
 void EditorUI::initTerrainUI(Scene* scene)  {

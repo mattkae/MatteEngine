@@ -17,7 +17,7 @@ void Button::update(const TextRenderer& textRenderer, UIEventProcessor* processo
 			activeEvent.data = &data;
 			processor->processEvent(activeEvent);
 		}
-	} else if (isClicked) {
+	} else if (isClicked && !boundingRect.isClicked(focusToken)) {
 		isClicked = false;
 		returnFocus(focusToken);
 	}

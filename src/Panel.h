@@ -42,8 +42,9 @@ struct Panel {
 
 	// Opening closing variables
 	PanelState panelState = PanelState::PanelState_Hide;
-	GLfloat currentPercentOpen = 1.f;
+	GLfloat currentPercentOpen = 0.f;
 	GLfloat openingTimeMs = 1.f;
+	GLfloat currentTransitionTimeMs = 0.f;
 
 	void show();
 	void hide();

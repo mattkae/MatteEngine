@@ -30,8 +30,8 @@ struct Rectangle {
 		return doesIntersectBox(getCursorPosition());
 	}
 
-	inline bool isClicked() {
-		return isLeftClickDown() && isMouseHovered();
+	inline bool isClicked(int token = 0) {
+		return isLeftClickDown(token) && isMouseHovered();
 	}
 
 	inline bool isClickedOutside() {

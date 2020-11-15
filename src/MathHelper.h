@@ -27,8 +27,6 @@ namespace MathHelper {
         v |= v >> 16;
         v++; // next power of 2
 
-        int x = v >> 1; // previous power of 2
-
-        return (v - n) > (n - x) ? x : v;
+        return v;
     }
 }

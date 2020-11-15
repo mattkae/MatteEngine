@@ -374,12 +374,11 @@ const char* String::getValueConst() const {
 void String::set(const char* str) {
 	int inLen = strlen(str);
 
-	if (inLen < SSO_SIZE) {
+	if (inLen <= SSO_SIZE) {
 		isSSO = true;
 		memcpy(defaultBuffer, str, inLen);
 		defaultBuffer[inLen] = '\0';
 	} else {
-		isSSO = false;
 		if (capacity >= inLen) {
 			memcpy(dynamicBuffer, str, inLen);
 		} else {
@@ -388,6 +387,7 @@ void String::set(const char* str) {
 			dynamicBuffer = new char[capacity];
 			memcpy(dynamicBuffer, str, inLen);
 		}
+		isSSO = false;
 		dynamicBuffer[inLen] = '\0';
 	}
 

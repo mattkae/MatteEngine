@@ -2,7 +2,7 @@
 #include "Logger.h"
 #include <SOIL.h>
 
-GLuint TextureLoader::loadRGBATileTexture(String path) {
+GLuint TextureLoader::loadRGBATileTexture(String& path) {
 	GLuint texture;
 	int width, height;
 	glGenTextures(1, &texture);
@@ -28,7 +28,7 @@ GLuint TextureLoader::loadRGBATileTexture(String path) {
 	return texture;
 }
 
-GLuint TextureLoader::loadRGBATexture(String path) {
+GLuint TextureLoader::loadRGBATexture(String& path) {
 	GLuint texture;
 	int width, height;
 	glGenTextures(1, &texture);

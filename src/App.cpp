@@ -46,9 +46,6 @@ void Application::update(double deltaTime) {
 		if (modelIdx > -1) {
 			UIEvent selectionEvent = {UIEventType::SHOW_MODEL, &modelIdx };
 			editorUI.ui.eventProcessor.processEvent(selectionEvent);
-		} else {
-			UIEvent selectionEvent = { UIEventType::HIDE_MODEL };
-			editorUI.ui.eventProcessor.processEvent(selectionEvent);
 		}
 	}
 

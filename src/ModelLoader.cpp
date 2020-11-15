@@ -103,5 +103,5 @@ ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermedi
 }
 
 void ModelLoader::free() {
-	// @TODO: Remove all textures 
+	textureList.deallocate();
 }

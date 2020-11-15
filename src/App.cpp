@@ -83,11 +83,13 @@ void Application::render() {
 }
 
 void Application::free() {
+	printf("Freed app");
 	deallocateInputSystem();
 	scene.free();
 	editorUI.free();
 	GlobalLoaders::free();
 	ShaderUniformMapping::free();
+	freeGlobalShaderRegistry();
 
 	if (window) {
         glfwDestroyWindow(window);

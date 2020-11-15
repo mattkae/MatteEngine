@@ -21,6 +21,8 @@ void Scene::initialize() {
 	water.period = PI;
 	water.amplitude = 0.f;
 	water.initialize(this, &waterParameters);
+	waterParameters.dudvTexturePath.free();
+	waterParameters.normalMapPath.free();
 
 	mGradientSky.startColor = { 0.9f, 0.9f, 0.9f, 1.f };
 	mGradientSky.endColor = { 0.1f, 0.2f, 0.5f, 1.0f };
@@ -174,4 +176,5 @@ void Scene::free() {
     mDeferredBuffer.free();
 	freeDebug(debugModel);
 	water.free();
+	modelLoader.free();
 }

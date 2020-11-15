@@ -1,7 +1,6 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "Texture.h"
 #include "Shader.h"
 #include "Vector3f.h"
 #include "List.h"

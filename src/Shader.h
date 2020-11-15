@@ -75,4 +75,6 @@ inline void setShaderBVec4(GLint location, bool first, bool second, bool third, 
 inline void setShaderBool(GLint location, bool value) {
 	glUniform1i(location, value);
 }
+
+void freeGlobalShaderRegistry();
 #endif

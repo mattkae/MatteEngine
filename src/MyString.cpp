@@ -374,7 +374,6 @@ const char* String::getValueConst() const {
 void String::set(const char* str) {
 	int inLen = strlen(str);
 
-
 	if (inLen < SSO_SIZE) {
 		isSSO = true;
 		memcpy(defaultBuffer, str, inLen);

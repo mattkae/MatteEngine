@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <thread>
+#include "List.h"
+#include "MyString.h"
 
 const std::string INCLUDE_STRING = "#include ";
 
@@ -26,11 +28,18 @@ enum ShaderDependencyType {
 };
 
 struct ShaderDependency {
-    ShaderDependencyType dependencyType;
-    std::string path;
+    Shader shader;
+
+    String vertexPath;
+    String fragPath;
+    String geomPath;
 };
 
-std::map<Shader, std::vector<ShaderDependency>> GlobalShaderRegistry;
+List<ShaderDependency> GlobalShaderRegistry;
+
+void freeGlobalShaderRegistry() {
+    GlobalShaderRegistry.deallocate();
+}
 
 void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& isDying)
 {
@@ -106,7 +115,7 @@ std::string readGlslFile(const GLchar* path)
 
             shaderCode += line + "\n";
         }
-
+        shaderFile.close();
     } catch (std::exception e) {
         std::cerr << "Error: Shader not successfuly read from file: " << path << std::endl;
         return "";
@@ -137,25 +146,28 @@ GLuint loadIndividualShader(GLenum shaderType, const GLchar* path)
     return shader;
 }
 
-void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath)
-{
-    std::vector<ShaderDependency> dependencies;
+void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath) {
+    if (GlobalShaderRegistry.capacity == 0) {
+        GlobalShaderRegistry.allocate(2);
+    }
+
+    ShaderDependency dependency;
 
     GLuint vertex = 0, fragment = 0, geometry = 0;
     if (vertexPath) {
-        dependencies.push_back({ ShaderDependencyType::VERTEX, std::string(vertexPath) });
+        dependency.vertexPath = vertexPath;
         vertex = loadIndividualShader(GL_VERTEX_SHADER, vertexPath);
         glAttachShader(retVal, vertex);
     }
 
     if (fragmentPath) {
-        dependencies.push_back({ ShaderDependencyType::FRAGMENT, std::string(fragmentPath) });
+        dependency.fragPath = fragmentPath;
         fragment = loadIndividualShader(GL_FRAGMENT_SHADER, fragmentPath);
         glAttachShader(retVal, fragment);
     }
 
     if (geomPath) {
-        dependencies.push_back({ ShaderDependencyType::GEOMETRY, std::string(geomPath) });
+        dependency.geomPath = geomPath;
         geometry = loadIndividualShader(GL_GEOMETRY_SHADER, geomPath);
         glAttachShader(retVal, geometry);
     }
@@ -182,11 +194,7 @@ void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragm
     if (geomPath)
         glDeleteShader(geometry);
 
-    if (GlobalShaderRegistry.find(retVal) != GlobalShaderRegistry.end()) {
-        GlobalShaderRegistry[retVal] = dependencies;
-    } else {
-        GlobalShaderRegistry.insert(std::make_pair(retVal, dependencies));
-    }
+    dependency.shader = retVal;
 }
 
 Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath)
@@ -219,27 +227,16 @@ Shader reloadShader(Shader shader)
         glDetachShader(shader, shaders[shaderIdx]);
     }
 
-    if (GlobalShaderRegistry.find(shader) != GlobalShaderRegistry.end()) {
-        const GLchar* vertexPath = nullptr;
-        const GLchar* fragmentPath = nullptr;
-        const GLchar* geometryPath = nullptr;
-
-        for (const auto& dependency : GlobalShaderRegistry[shader]) {
-            switch (dependency.dependencyType) {
-            case ShaderDependencyType::DEPENDENCY:
-            case ShaderDependencyType::GEOMETRY:
-                geometryPath = dependency.path.c_str();
-                break;
-            case ShaderDependencyType::VERTEX:
-                vertexPath = dependency.path.c_str();
-                break;
-            case ShaderDependencyType::FRAGMENT:
-                fragmentPath = dependency.path.c_str();
-                break;
-            }
+    ShaderDependency* dependency = nullptr;
+    FOREACH(GlobalShaderRegistry) {
+        if (value.shader == shader) {
+            dependency = &value;
+            break;
         }
+    }
 
-        attachShaders(shader, vertexPath, fragmentPath, geometryPath);
+    if (dependency) {
+        attachShaders(shader, dependency->vertexPath.getValue(), dependency->fragPath.getValue(), dependency->geomPath.getValue());
     } else {
         Logger::logWarning("Unable to reload shader, because it does not exist in the registry");
     }

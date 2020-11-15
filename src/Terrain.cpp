@@ -18,22 +18,31 @@ inline static float randomFloat(float min, float max) {
 
 void loadTerrainTexture(TerrainTexture& terrainTexture, String& path) {
     StringBuilder sb;
-    String str;
-    sb.format("%sdiffuse.jpg", path);
-    str = sb.toString();
-    terrainTexture.textures[0] = GlobalTextureLoader.loadRGBATileTexture(str);
+    {
+        String str;
+        sb.format("%sdiffuse.jpg", path.getValue());
+        str = sb.toString();
+        terrainTexture.textures[0] = GlobalTextureLoader.loadRGBATileTexture(str);
+        str.free();
+    }
 
     sb.clear();
-    sb.format("%sspecular.jpg", path);
-    str = sb.toString();
-    terrainTexture.textures[1] = GlobalTextureLoader.loadRGBATileTexture(str);
+    {
+        sb.format("%sspecular.jpg", path.getValue());
+        String str = sb.toString();
+        terrainTexture.textures[1] = GlobalTextureLoader.loadRGBATileTexture(str);
+        str.free();
+    }
 
-    sb.format("%snormal.jpg", path);
-    str = sb.toString();
-    terrainTexture.textures[2] = GlobalTextureLoader.loadRGBATileTexture(str);
+    sb.clear();
+    {
+        sb.format("%snormal.jpg", path.getValue());
+        String str = sb.toString();
+        terrainTexture.textures[2] = GlobalTextureLoader.loadRGBATileTexture(str);
+        str.free();
+    }
 
     sb.free();
-    str.free();
 }
 
 const char* pathToTextures = "./assets/terrain/textures/";

@@ -199,8 +199,8 @@ void TextRenderer::renderBuilder(Shader originalShader, const StringBuilder& sb,
 void TextRenderer::free() {
     FT_Done_Face(mFace);
     FT_Done_FreeType(mLib);
-
-	// @TODO Free all da data
+    mCharToRenderInfoMap.clear();
+	delete mVertices;
 }
 
 GLfloat TextRenderer::getStringWidth(String str, GLfloat scale) const {

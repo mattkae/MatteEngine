@@ -49,6 +49,7 @@ void UI::free() {
 	}
 
 	panels.deallocate();
+	mTextRenderer.free();
 }
 
 void UI::addPanel(UIContext* panel) {

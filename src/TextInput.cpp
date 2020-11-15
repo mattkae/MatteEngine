@@ -21,16 +21,18 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 		break;
 	case TextInputType::INT:
 		if (textInput.lastValue.iVal != textInput.value.iVal) {
+			textInput.representation.clear();
 			textInput.lastValue.iVal = textInput.value.iVal;
-			textInput.representation.fromInteger(textInput.value.iVal);
+			textInput.representation.addInt(textInput.value.iVal);
 		} else {
 			return;
 		}
 		break;
-	case TextInputType::FLOAT: 
+	case TextInputType::FLOAT:
 		if (textInput.lastValue.fVal != textInput.value.fVal) {
+			textInput.representation.clear();
 			textInput.lastValue.fVal = textInput.value.fVal;
-			textInput.representation.fromFloat(textInput.value.fVal);
+			textInput.representation.addFloat(textInput.value.fVal);
 		} else {
 			return;
 		}
@@ -45,21 +47,22 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 	}
 }
 
-inline void onStrChange(TextInput& textInput, String v, UIEventProcessor* processor) {
+inline void onStrChange(TextInput& textInput, UIEventProcessor* processor) {
+	String outVal = textInput.representation.toString();
 	UIEvent uiEvent;
 	uiEvent.type = textInput.eventType;
 	switch (textInput.inputType) {
 	case TextInputType::STRING: {
-		uiEvent.data = &textInput.representation;
+		uiEvent.data = outVal.getValue();
 		break;
 	}
 	case TextInputType::INT: {
-		textInput.value.iVal = v.toInteger();
+		textInput.value.iVal = outVal.toInteger();
 		uiEvent.data = &textInput.value.iVal;
 		break;
 	}
 	case TextInputType::FLOAT: {
-		textInput.value.fVal = v.toFloat();
+		textInput.value.fVal = outVal.toFloat();
 		uiEvent.data = &textInput.value.fVal;
 		break;
 	}
@@ -70,6 +73,7 @@ inline void onStrChange(TextInput& textInput, String v, UIEventProcessor* proces
 
 	setInternalRepresentation(textInput, true);
 	processor->processEvent(uiEvent);
+	outVal.free();
 }
 
 void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* processor) {
@@ -81,11 +85,9 @@ void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* proce
 			isHovered = true;
 			setCursorToText();
 		}
-	} else {
-		if (!bt.rect.isMouseHovered()) {
-			isHovered = false;
-			resetCursor();
-		}
+	} else if (!bt.rect.isMouseHovered()) {
+		isHovered = false;
+		resetCursor();
 	}
 
 	bool isClicked = bt.rect.isClicked();
@@ -95,7 +97,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* proce
 
 		size_t charIdx = 0;
 		while (mousePosition.x > startX && charIdx < representation.length) {
-			startX += textRenderer.getCharWidth(representation.value[charIdx], bt.scale);
+			startX += textRenderer.getCharWidth(representation.getCharAtIdx(charIdx), bt.scale);
 			charIdx++;
 		}
 		cursorPosition = charIdx;
@@ -106,12 +108,10 @@ void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* proce
 			focusToken = grabFocus();
 			isFocused = true;
 		}
-	} else if (isFocused) {
-		if (isLeftClickDown() && !bt.rect.isClicked()) {
-			returnFocus(focusToken);
-			isFocused = false;
-			onStrChange(*this, representation, processor);
-		}
+	} else if (isLeftClickDown(focusToken) && !isHovered) {
+		returnFocus(focusToken);
+		isFocused = false;
+		onStrChange(*this, processor);
 	}
 
 	int key = getCurrentKeyDown(focusToken);
@@ -120,7 +120,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* proce
 	if (key > -1 && isKeyJustDown(key, focusToken)) {
 		switch (key) {
 		case GLFW_KEY_ENTER:
-			onStrChange(*this, representation, processor);
+			onStrChange(*this, processor);
 			break;
 		case GLFW_KEY_LEFT:
 			cursorPosition = cursorPosition == 0 ? 0 : cursorPosition - 1;
@@ -131,7 +131,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* proce
 		}
 		case GLFW_KEY_BACKSPACE:
 			if (representation.length > 0 && cursorPosition != 0) {
-				representation.erase(cursorPosition - 1);
+				representation.removeAt(cursorPosition - 1, 1);
 				cursorPosition--;
 			}
 			break;
@@ -161,12 +161,16 @@ void TextInput::render(const Shader& shader, const TextRenderer& textRenderer) {
 	bt.render(shader, textRenderer, representation, isFocused ? focusedBackgroundColor : backgroundColor, textColor, cursorPosition);
 	
 	if (isFocused) {
-		GLfloat cursorOffset = textRenderer.getStringWidth(representation.substring(0, cursorPosition), bt.scale);
+		GLfloat cursorOffset = 0;
+		for (int idx = 0; idx < cursorPosition; idx++) {
+			cursorOffset += textRenderer.getCharWidth(representation.getCharAtIdx(idx), bt.scale);
+		}
+
 		Rectangle cursorRect = { bt.rect.x + bt.padding + cursorOffset, bt.rect.y, 2, static_cast<float>(textRenderer.getFontSize()) };
 		cursorRect.render(Vector4f { 1, 0, 0, 1 });
 	}
 }
 
 void TextInput::free() {
-	representation.deallocate();
+	representation.free();
 }

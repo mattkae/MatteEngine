@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdlib>
 #include <cstring>
+#include <cstdio>
 
 #define FOREACH(list)												\
 	auto value = list[0];											\
@@ -19,14 +20,19 @@ struct List {
 	bool grow(size_t newSize);
 	void set(T* value, size_t index);
 	void remove(size_t index);
+	void clear();
 	void deallocate();
+	bool isEmpty() {
+		return data == nullptr || numElements == 0;
+	}
 	T* getValue(int index) const;
 	T& operator[](int idx) const; 
 };
 
 template <typename T>
 void List<T>::allocate(size_t size) {
-	if (size == 0) {
+	if (size == 0 || size == capacity) {
+		numElements = 0;
 		return;
 	}
 
@@ -110,6 +116,11 @@ void List<T>::deallocate() {
 	}
 
 	capacity = 0;
+	numElements = 0;
+}
+
+template <typename T>
+void List<T>::clear() {
 	numElements = 0;
 }
 

@@ -53,7 +53,6 @@
     <ClCompile Include="..\..\src\Quaternion.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
     <ClCompile Include="..\..\src\Ray.cpp" />
-    <ClCompile Include="..\..\src\ReadonlyString.cpp" />
     <ClCompile Include="..\..\src\Rectangle.cpp" />
     <ClCompile Include="..\..\src\Scene.cpp" />
     <ClCompile Include="..\..\src\SceneLoader.cpp" />
@@ -118,7 +117,6 @@
     <ClInclude Include="..\..\src\Plane.h" />
     <ClInclude Include="..\..\src\Quad.h" />
     <ClInclude Include="..\..\src\Quaternion.h" />
-    <ClInclude Include="..\..\src\ReadonlyString.h" />
     <ClInclude Include="..\..\src\Rectangle.h" />
     <ClInclude Include="..\..\src\SceneLoader.h" />
     <ClInclude Include="..\..\src\ModelLoader.h" />

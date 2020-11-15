@@ -7,7 +7,7 @@ GLuint TextureLoader::loadRGBATileTexture(String path) {
 	int width, height;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	const char* cStrPath = path.value;
+	const char* cStrPath = path.getValue();
     unsigned char* image = SOIL_load_image(cStrPath, &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == NULL) {
 		Logger::logError("Unable to load image from path: ");
@@ -33,7 +33,7 @@ GLuint TextureLoader::loadRGBATexture(String path) {
 	int width, height;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	const char* cStrPath = path.value;
+	const char* cStrPath = path.getValue();
     unsigned char* image = SOIL_load_image(cStrPath, &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == NULL) {
 		Logger::logError("Unable to load image from path: ");

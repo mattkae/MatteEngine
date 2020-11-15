@@ -13,5 +13,5 @@ void Label::render(const Shader& shader, const TextRenderer& textRenderer) {
 }
 
 void Label::free() {
-	text.deallocate();
+	text.free();
 }

@@ -30,5 +30,5 @@ void Button::render(const Shader& shader, const TextRenderer& textRenderer) cons
 }
 
 void Button::free() {
-	label.deallocate();
+	label.free();
 }

@@ -18,7 +18,7 @@
     <ClCompile Include="..\..\test\ListTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\ReadonlyStringTest.cpp">
+    <ClCompile Include="..\..\test\StringBuilderTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

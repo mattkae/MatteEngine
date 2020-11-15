@@ -15,6 +15,8 @@ struct BoundText {
 
 	void render(const Shader& shader, const TextRenderer& textRenderer, 
 		String& text, const Vector4f& backgroundColor, const Vector4f& textColor, GLint position = 0);
+	void render(const Shader& shader, const TextRenderer& textRenderer, 
+		StringBuilder& sb, const Vector4f& backgroundColor, const Vector4f& textColor, GLint position = 0);
 	
 	inline GLfloat getBoundTextHeight(const TextRenderer& textRenderer) const {
 		return (textRenderer.getFontSize() + 2 * padding) * scale;

@@ -17,55 +17,46 @@ inline static float randomFloat(float min, float max) {
 }
 
 void loadTerrainTexture(TerrainTexture& terrainTexture, String& path) {
-    String diffusePath = path;
-    diffusePath.append("diffuse.jpg");
-    terrainTexture.textures[0] = GlobalTextureLoader.loadRGBATileTexture(diffusePath);
+    StringBuilder sb;
+    String str;
+    sb.format("%sdiffuse.jpg", path);
+    str = sb.toString();
+    terrainTexture.textures[0] = GlobalTextureLoader.loadRGBATileTexture(str);
 
-    String specularPath = path;
-    specularPath.append("specular.jpg");
-    terrainTexture.textures[1] = GlobalTextureLoader.loadRGBATileTexture(specularPath);
+    sb.clear();
+    sb.format("%sspecular.jpg", path);
+    str = sb.toString();
+    terrainTexture.textures[1] = GlobalTextureLoader.loadRGBATileTexture(str);
 
-    String normalPath = path;
-    normalPath.append("normal.jpg");
-    terrainTexture.textures[2] = GlobalTextureLoader.loadRGBATileTexture(normalPath);
+    sb.format("%snormal.jpg", path);
+    str = sb.toString();
+    terrainTexture.textures[2] = GlobalTextureLoader.loadRGBATileTexture(str);
 
-    diffusePath.deallocate();
-    specularPath.deallocate();
-    normalPath.deallocate();
+    sb.free();
+    str.free();
 }
 
 const char* pathToTextures = "./assets/terrain/textures/";
 void Terrain::loadTextures(const GenerationParameters& params) {
-    // @TODO: Assuming all directory names exist for now
-    {
-        String grassPath = pathToTextures;
-        grassPath.append("grass/");
-        loadTerrainTexture(textures[0], grassPath);
-        grassPath.deallocate();
-    }
+    StringBuilder sb;
+    String str;
+    sb.format("%sgrass/", pathToTextures);
+    str = sb.toString();
+    loadTerrainTexture(textures[0], str);
+    sb.clear();
 
-    {
-        String dirtPath = pathToTextures;
-        dirtPath.append("sand/");
-        loadTerrainTexture(textures[1], dirtPath);
-        dirtPath.deallocate();
-    }
+    sb.format("%ssand/", pathToTextures);
+    str = sb.toString();
+    loadTerrainTexture(textures[1], str);
+    sb.clear();
 
-    {
-        String snowPath = pathToTextures;
-        snowPath.append("snow/");
-        loadTerrainTexture(textures[2], snowPath);
-        snowPath.deallocate();
-    }
+    sb.format("%ssnow/", pathToTextures);
+    str = sb.toString();
+    loadTerrainTexture(textures[2], str);
+    sb.clear();
 
-    {
-        // @TODO Investigate using Sampler2DArray or some other thing (maybe one giant
-        // terrain texture and a way to index into it
-      /*  String sandPath = pathToTextures;
-        sandPath.append("sand/");
-        loadTerrainTexture(textures[3], sandPath);
-        sandPath.deallocate(); */
-    }
+    // @TODO Investigate using Sampler2DArray or some other thing (maybe one giant
+    // terrain texture and a way to index into it
 }
 
 static inline GLfloat calculateTextureCoordinate(int coord, float portionOfTexturePerVertex, int verticesPerTexture, bool dir) {

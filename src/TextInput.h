@@ -33,7 +33,7 @@ struct TextInput {
 	TextInputType inputType = TextInputType::NONE;
 	TextInputValue value;
 	TextInputValue lastValue;
-	String representation;
+	StringBuilder representation;
 	UIEventType eventType;
 
 	void update(const TextRenderer& textRenderer, UIEventProcessor* processor);

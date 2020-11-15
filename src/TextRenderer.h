@@ -26,10 +26,11 @@ public:
     bool initialize(GLint size, GLchar* path);
     void update();
     void renderText(Shader originalShader, const String& str, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
+    void renderBuilder(Shader originalShader, const StringBuilder& sb, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX = 0) const;
     void free();
 	inline GLint getFontSize() const { return mSize; }
 	GLfloat getStringWidth(String str, GLfloat scale) const;
-	GLfloat getStringWidth(StringPointer str, GLfloat scale) const;
+	GLfloat getStringWidth(StringView str, GLfloat scale) const;
     GLfloat getCharWidth(char c, GLfloat scale) const;
 
 private:

@@ -7,7 +7,8 @@ const float CLOSEBUTTON_WIDTH = 16;
 const float TEXTURE_DEBUGGER_HEIGHT = 150.f;
 
 void UIContext::init() {
-	if (isClosable && !closeButton.label.isInited()) {
+	closeButton.label.free();
+	if (isClosable) {
 		closeButton.width = CLOSEBUTTON_WIDTH;
 		closeButton.textColor = Vector4f{ 1.f, 1.f, 1.f, 1.f };
 		closeButton.buttonColor = Vector4f{ 1.f, 1.f, 1.f, 1.f };

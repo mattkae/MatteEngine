@@ -45,15 +45,12 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 
 	primaryUI.uiElements.allocate(numElements);
 	UIBuilder::addStandardLabel("Models", primaryUI);
-	String modelName;
-	modelName = "Model ";
 	for (size_t modelIdx = 0; modelIdx < scene->numModels; modelIdx++) {
-		String indexStr;
-		indexStr.fromInteger(modelIdx + 1);
+		StringBuilder sb;
+		sb.format("%s %d", "Model", modelIdx + 1);
 		UIElement element;
 		Button button;
-		button.label.append(modelName);
-		button.label.append(indexStr);
+		button.label = sb.toString();
 		button.buttonColor = Vector4f { 1.0f, 0.0f, 0.0f, 1.0f };
 		button.hoverColor = Vector4f { 0.9f, 0.1f, 0.0f, 1.0f };
 		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -63,7 +60,7 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 		element.elementType = UIElementType::BUTTON;
 		element.element.button = button;
 		primaryUI.uiElements.add(&element);
-		indexStr.deallocate();
+		sb.free();
 	}
 
 	UIBuilder::addStandardLabel("Terrain", primaryUI);
@@ -249,9 +246,11 @@ void EditorUI::initTextureDebuggerUI() {
 	textureDebuggerUI.uiElements.allocate(GlobalTextureLoader.textureList.numElements + 1);
 	UIBuilder::addStandardLabel("Texture Debugger", textureDebuggerUI);
 	for (size_t textureIdx = 0; textureIdx < GlobalTextureLoader.textureList.numElements; textureIdx++) {
+		StringBuilder sb;
 		UIElement element;
 		Button button;
-		button.label.fromInteger(GlobalTextureLoader.textureList[textureIdx]);
+		sb.addInt(GlobalTextureLoader.textureList[textureIdx]);
+		button.label = sb.toString();
 		button.buttonColor = Vector4f { 0.0f, 0.6f, 0.3f, 1.0f };
 		button.hoverColor = Vector4f { 0.0f, 0.9f, 0.1f, 1.0f };
 		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -261,6 +260,7 @@ void EditorUI::initTextureDebuggerUI() {
 		element.elementType = UIElementType::BUTTON;
 		element.element.button = button;
 		textureDebuggerUI.uiElements.add(&element);
+		sb.free();
 	}
 
 	textureDebuggerUI.init();

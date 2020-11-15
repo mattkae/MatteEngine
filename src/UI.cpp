@@ -91,9 +91,6 @@ void UIBuilder::addTextInput(UIContext& context,
 	textInput.textColor = Vector4f { 1, 1, 1, 1 };
 	textInput.value = value;
 	textInput.eventType = eventType;
-	if (inputType == TextInputType::STRING) {
-		textInput.representation.allocate(32);
-	}
 	element.elementType = UIElementType::TEXT_INPUT;
 	element.element.textInput = textInput;
 

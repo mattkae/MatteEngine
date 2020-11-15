@@ -162,12 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\test\ListTest.cpp" />
-    <ClCompile Include="..\..\test\ReadonlyStringTest.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MatteEngine\MatteEngine.vcxproj">
-      <Project>{f436b927-268d-48bb-a003-d3dde8d48729}</Project>
-    </ProjectReference>
+    <ClCompile Include="..\..\test\StringBuilderTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

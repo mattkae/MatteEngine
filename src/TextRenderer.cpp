@@ -110,8 +110,57 @@ void TextRenderer::renderText(Shader originalShader, const String& str, Vector2f
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(mVao);
 
-    for (size_t strIdx = 0; strIdx < str.length; strIdx++) {
-        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.value[strIdx]);
+    for (int strIdx = 0; strIdx < str.length; strIdx++) {
+        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.getValueConst()[strIdx]);
+
+        GLfloat xStart = position.x + renderInfo.bearing.x * scale;
+        GLfloat yStart = position.y - (renderInfo.size.y - renderInfo.bearing.y) * scale;
+        GLfloat xEnd = xStart + renderInfo.size.x * scale;
+        GLfloat yEnd = yStart + renderInfo.size.y * scale;
+
+		mVertices[0] = xStart;
+		mVertices[1] = yEnd;
+		mVertices[4] = xStart;
+		mVertices[5] = yStart;
+		mVertices[8] = xEnd;
+		mVertices[9] = yStart;
+		mVertices[12] = xStart;
+		mVertices[13] = yEnd;
+		mVertices[16] = xEnd;
+		mVertices[17] = yStart;
+		mVertices[20] = xEnd;
+		mVertices[21] = yEnd;
+
+		glBindTexture(GL_TEXTURE_2D, renderInfo.textureId);
+        glBindBuffer(GL_ARRAY_BUFFER, mVbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 24, mVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		position.x += (renderInfo.advance >> ADVANCE_BITSHIFT_AMT) * scale;
+    }
+
+	glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_BLEND);
+
+	useShader(originalShader);
+}
+
+void TextRenderer::renderBuilder(Shader originalShader, const StringBuilder& sb, Vector2f position, GLfloat scale, const Vector4f& color, GLfloat scrollX) const {
+     glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	useShader(ShaderUniformMapping::GlobalTextShaderMapping.shader);
+	setShaderFloat(ShaderUniformMapping::GlobalTextShaderMapping.SCROLL_X, scrollX);
+	setShaderMat4(ShaderUniformMapping::GlobalTextShaderMapping.PROJECTION, projectionMatrix);
+	setShaderVec4(ShaderUniformMapping::GlobalTextShaderMapping.COLOR, color);
+	setShaderInt(ShaderUniformMapping::GlobalTextShaderMapping.GLYPH_TEXTURE, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(mVao);
+
+    for (int strIdx = 0; strIdx < sb.length; strIdx++) {
+        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(sb.getCharAtIdx(strIdx));
 
         GLfloat xStart = position.x + renderInfo.bearing.x * scale;
         GLfloat yStart = position.y - (renderInfo.size.y - renderInfo.bearing.y) * scale;
@@ -158,13 +207,13 @@ GLfloat TextRenderer::getStringWidth(String str, GLfloat scale) const {
 	GLfloat width = 0;
 
 	for (size_t strIdx = 0; strIdx < str.length; strIdx++) {
-        width += getCharWidth(str.value[strIdx], scale);
+        width += getCharWidth(str.getValue()[strIdx], scale);
     }
 
 	return width;
 }
 
-GLfloat TextRenderer::getStringWidth(StringPointer str, GLfloat scale) const {
+GLfloat TextRenderer::getStringWidth(StringView str, GLfloat scale) const {
 	GLfloat width = 0;
 
 	for (size_t strIdx = 0; strIdx < str.length; strIdx++) {

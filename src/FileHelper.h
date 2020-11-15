@@ -1,5 +1,4 @@
 #pragma once
-#include "ReadonlyString.h"
 #include <fstream>
 
 namespace FileHelper {
@@ -11,11 +10,5 @@ namespace FileHelper {
 			fopen_s(&file, filepath, mode);
 		#endif
 		return file;
-	}
-
-	inline void readNext(FILE* file, ReadonlyString& buffer) {
-		size_t bytesRead = fread(buffer.data, 1, buffer.bufferSize, file);
-		buffer.length = bytesRead;
-		buffer.ptr = buffer.data;
 	}
 }

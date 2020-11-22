@@ -29,7 +29,7 @@ bool TextRenderer::initialize(GLint size, GLchar* path)
 
 	// @TODO: Load only the characters specified by the program
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    for (GLubyte c = 0; c < 128; c++) {
+    for (GLubyte c = 0; c < MAX_SUPPORTED_CHARS; c++) {
         this->loadChar(c);   
 	}
 
@@ -89,8 +89,7 @@ bool TextRenderer::loadChar(GLchar c)
         static_cast<GLuint>(glyph->advance.x)
     };
 
-    mCharToRenderInfoMap.insert(std::pair<GLchar, CharacterRenderInfo>(c, renderInfo));
-
+    mCharRenderInfo[c] = renderInfo;
     return true;
 }
 
@@ -111,7 +110,7 @@ void TextRenderer::renderText(Shader originalShader, const String& str, Vector2f
     glBindVertexArray(mVao);
 
     for (int strIdx = 0; strIdx < str.length; strIdx++) {
-        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(str.getValueConst()[strIdx]);
+        CharacterRenderInfo renderInfo = mCharRenderInfo[str.getValueConst()[strIdx]];
 
         GLfloat xStart = position.x + renderInfo.bearing.x * scale;
         GLfloat yStart = position.y - (renderInfo.size.y - renderInfo.bearing.y) * scale;
@@ -160,7 +159,7 @@ void TextRenderer::renderBuilder(Shader originalShader, const StringBuilder& sb,
     glBindVertexArray(mVao);
 
     for (int strIdx = 0; strIdx < sb.length; strIdx++) {
-        CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(sb.getCharAtIdx(strIdx));
+        CharacterRenderInfo renderInfo = mCharRenderInfo[sb.getCharAtIdx(strIdx)];
 
         GLfloat xStart = position.x + renderInfo.bearing.x * scale;
         GLfloat yStart = position.y - (renderInfo.size.y - renderInfo.bearing.y) * scale;
@@ -199,7 +198,6 @@ void TextRenderer::renderBuilder(Shader originalShader, const StringBuilder& sb,
 void TextRenderer::free() {
     FT_Done_Face(mFace);
     FT_Done_FreeType(mLib);
-    mCharToRenderInfoMap.clear();
 	delete mVertices;
 }
 
@@ -224,6 +222,6 @@ GLfloat TextRenderer::getStringWidth(StringView str, GLfloat scale) const {
 }
 
 GLfloat TextRenderer::getCharWidth(char c, GLfloat scale) const {
-    CharacterRenderInfo renderInfo = mCharToRenderInfoMap.at(c);
+    CharacterRenderInfo renderInfo = mCharRenderInfo[c];
 	return (renderInfo.advance >> ADVANCE_BITSHIFT_AMT) * scale;
 }

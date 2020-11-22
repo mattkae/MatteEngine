@@ -6,7 +6,7 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 		case UIEventType::NONE:
 			return;
 		case UIEventType::CLOSE_PANEL: {
-			GlobalApp.editorUI.ui.panels[*static_cast<int*>(activeEvent.data)]->shouldClose = true;
+			GlobalApp.editor.editorUI.ui.panels[*static_cast<int*>(activeEvent.data)]->shouldClose = true;
 			resetFocus();
 			break;
 		}
@@ -14,12 +14,12 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			int modelIdx = *static_cast<int*>(activeEvent.data);
 			if (modelIdx >= 0 && modelIdx < GlobalApp.scene.numModels) {
 				Model* model = &GlobalApp.scene.models[modelIdx];
-				GlobalApp.editorUI.openModelUI(model);
+				GlobalApp.editor.editorUI.openModelUI(model);
 			}
 			break;
 		}
 		case UIEventType::HIDE_MODEL: {
-			GlobalApp.editorUI.modelUI.shouldClose = true;
+			GlobalApp.editor.editorUI.modelUI.shouldClose = true;
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_X: {
@@ -104,7 +104,7 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			break;
 		}
 		case UIEventType::SHOW_TERRAIN: {
-			GlobalApp.editorUI.terrainUI.shouldOpen = true;
+			GlobalApp.editor.editorUI.terrainUI.shouldOpen = true;
 			break;
 		}
 		case UIEventType::EDIT_TERRAIN_SIZE: {
@@ -148,13 +148,21 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			break;
 		}
 		case UIEventType::SHOW_TEXTURE_DEBUGGER: {
-			GlobalApp.editorUI.initTextureDebuggerUI();
-			GlobalApp.editorUI.textureDebuggerUI.shouldOpen = true;
+			GlobalApp.editor.editorUI.initTextureDebuggerUI();
+			GlobalApp.editor.editorUI.textureDebuggerUI.shouldOpen = true;
 			break;
 		}
 		case UIEventType::DEBUG_TEXTURE: {
-			GlobalApp.editorUI.textureDebuggerUI.textureDebugger.show = true;
-			GlobalApp.editorUI.textureDebuggerUI.textureDebugger.texture = *static_cast<int*>(activeEvent.data);
+			GlobalApp.editor.editorUI.textureDebuggerUI.textureDebugger.show = true;
+			GlobalApp.editor.editorUI.textureDebuggerUI.textureDebugger.texture = *static_cast<int*>(activeEvent.data);
+			break;
+		}
+		case UIEventType::SHOW_LIGHT_EDITOR: {
+			int lightIdx = *static_cast<int*>(activeEvent.data);
+			if (lightIdx >= 0 && lightIdx < GlobalApp.scene.numLightsUsed) {
+				Light* light = &GlobalApp.scene.lights[lightIdx];
+				GlobalApp.editor.editorUI.openLightUI(light);
+			}
 			break;
 		}
 	}

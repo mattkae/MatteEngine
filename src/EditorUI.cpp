@@ -10,6 +10,7 @@ void EditorUI::initialize(Scene* scene) {
 
 	ui.addPanel(&primaryUI);
 	ui.addPanel(&modelUI);
+	ui.addPanel(&lightUI);
 	ui.addPanel(&terrainUI);
 	ui.addPanel(&textureDebuggerUI);
 }
@@ -82,12 +83,32 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 	element.element.button = textureDebugButton;
 	primaryUI.uiElements.add(&element);
 
+	UIBuilder::addStandardLabel("Lights", primaryUI);
+	for (size_t lightIdx = 0; lightIdx < scene->numLightsUsed; lightIdx++) {
+		StringBuilder sb;
+		sb.format("%s %d", "Light", lightIdx + 1);
+		UIElement element;
+		Button button;
+		button.label = sb.toString();
+		button.buttonColor = Vector4f { 1.0f, 0.0f, 0.0f, 1.0f };
+		button.hoverColor = Vector4f { 0.9f, 0.1f, 0.0f, 1.0f };
+		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
+		button.eventType = UIEventType::SHOW_LIGHT_EDITOR;
+		button.data = lightIdx;
+		button.padding = 2.f;
+		element.elementType = UIElementType::BUTTON;
+		element.element.button = button;
+		primaryUI.uiElements.add(&element);
+		sb.free();
+	}
+
 	primaryUI.init();
 }
 
 const size_t numVec3 = 3;
 
 void EditorUI::openModelUI(Model* model) {
+	modelUI.free();
 	modelUI.panel.percentageHeight = 0.9f;
 	modelUI.panel.percentageWidth = 0.2f;
 	modelUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
@@ -155,6 +176,21 @@ void EditorUI::openModelUI(Model* model) {
 	modelUI.init();
 	modelUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
 	modelUI.shouldOpen = true;
+}
+
+void EditorUI::openLightUI(Light* light) {
+	lightUI.free();
+
+	lightUI.panel.percentageHeight = 0.9f;
+	lightUI.panel.percentageWidth = 0.2f;
+	lightUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
+	lightUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
+
+
+
+	lightUI.init();
+	lightUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
+	lightUI.shouldOpen = true;
 }
 
 void EditorUI::initTerrainUI(Scene* scene)  {

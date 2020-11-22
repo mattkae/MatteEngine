@@ -1,6 +1,6 @@
 #ifndef APP_H
 #define APP_H
-#include "EditorUI.h"
+#include "Editor.h"
 #include "Scene.h"
 #include <GL/glew.h>
 
@@ -20,7 +20,7 @@ struct Application {
 	GLfloat far = 1000.f;
 	GLFWwindow* window = nullptr;
 
-	EditorUI editorUI;
+	Editor editor;
 	Scene scene;
 
 	void initializeWindow();

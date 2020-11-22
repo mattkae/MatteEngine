@@ -8,7 +8,6 @@
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <GL/glew.h>
-#include <map>
 #include "Shader.h"
 #include "Vector2f.h"
 #include "Vector3f.h"
@@ -20,6 +19,8 @@ struct CharacterRenderInfo {
     Vector2f bearing;
     GLuint advance = 0;
 };
+
+const int MAX_SUPPORTED_CHARS = 128;
 
 struct TextRenderer {
 public:
@@ -34,7 +35,7 @@ public:
     GLfloat getCharWidth(char c, GLfloat scale) const;
 
 private:
-    std::map<GLchar, CharacterRenderInfo> mCharToRenderInfoMap;
+    CharacterRenderInfo mCharRenderInfo[MAX_SUPPORTED_CHARS];
     bool loadChar(GLchar c);
     FT_Library mLib;
     FT_Face mFace;

@@ -1,0 +1,13 @@
+#include "GradientSky.h"
+#include "GlobalLoaders.h"
+#include "App.h"
+#include "MathHelper.h"
+
+void GradientSky::initialize() {
+    int height = static_cast<int>(PI * GlobalApp.floatHeight);
+	gradientTexture = GlobalTextureLoader.createTexture(GlobalApp.width, height);
+}
+
+void GradientSky::render() const {
+
+}

@@ -1,0 +1,30 @@
+#include "Editor.h"
+#include "Input.h"
+
+void Editor::initialize() {
+
+}
+
+void Editor::free() {
+
+}
+
+void Editor::update(float dtMs) {
+	if (!isEnabled) {
+		return;
+	}
+}
+
+void Editor::render() const {
+	if (!isEnabled) {
+		return;
+	}
+}
+
+void Editor::disable() {
+	isEnabled = false;
+}
+
+void Editor::enable() {
+	isEnabled = true;
+}

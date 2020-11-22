@@ -29,6 +29,7 @@
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\DebugRender.cpp" />
     <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
+    <ClCompile Include="..\..\src\Editor.cpp" />
     <ClCompile Include="..\..\src\EditorUI.cpp" />
     <ClCompile Include="..\..\src\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="..\..\src\Constants.h" />
     <ClInclude Include="..\..\src\DebugRender.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
+    <ClInclude Include="..\..\src\Editor.h" />
     <ClInclude Include="..\..\src\EditorUI.h" />
     <ClInclude Include="..\..\src\FrameBuffer.h" />
     <ClInclude Include="..\..\src\GradientSky.h" />

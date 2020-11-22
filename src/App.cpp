@@ -29,28 +29,33 @@ void Application::initialize() {
 	GlobalLoaders::initialize();
 	ShaderUniformMapping::initialize();
 	SceneLoader::loadScene(SCENE_PATH, scene);
-	editorUI.initialize(&scene);
+	editor.initialize(&scene);
 }
 
 void Application::update(double deltaTime) {
 	if (isKeyJustDown(GLFW_KEY_R, 0)) {
 		scene.free();
-		editorUI.free();
+		editor.free();
 		SceneLoader::loadScene(SCENE_PATH, scene);
-		editorUI.initialize(&scene);
+		editor.initialize(&scene);
 		return;
+	}
+
+	if (isKeyJustDown(GLFW_KEY_E, 0)) {
+		editor.toggle();
 	}
 
 	if (isLeftClickDown() && isDefaultFocused()) {
 		int modelIdx = castRayToModel();
 		if (modelIdx > -1) {
 			UIEvent selectionEvent = {UIEventType::SHOW_MODEL, &modelIdx };
-			editorUI.ui.eventProcessor.processEvent(selectionEvent);
+			// @TODO: Clicking models in the editor
+			//editorUI.ui.eventProcessor.processEvent(selectionEvent);
 		}
 	}
 
 	scene.update(deltaTime);
-	editorUI.ui.update(deltaTime);
+	editor.update(deltaTime);
 }
 
 int Application::castRayToModel() {
@@ -76,14 +81,14 @@ int Application::castRayToModel() {
 
 void Application::render() {
 	scene.render();
-	editorUI.ui.render();
+	editor.render();
 }
 
 void Application::free() {
 	printf("Freed app");
 	deallocateInputSystem();
 	scene.free();
-	editorUI.free();
+	editor.free();
 	GlobalLoaders::free();
 	ShaderUniformMapping::free();
 	freeGlobalShaderRegistry();

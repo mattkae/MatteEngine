@@ -1,0 +1,13 @@
+#pragma once
+#include "Vector4f.h"
+#include <GL/glew.h>
+
+struct GradientSky {
+    Vector4f gradient[2];
+	GLint gradientTexture;
+	
+	void initialize();
+	
+	void render() const;
+	
+};

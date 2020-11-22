@@ -37,7 +37,7 @@ GLuint loadTexture(std::string path) {
 	const char* cStrPath = path.c_str();
     unsigned char* image = SOIL_load_image(cStrPath, &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == NULL) {
-		Logger::logError("Unable to load image from path: " + path);
+		Logger::error("Unable to load image from path: %s", path.c_str());
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

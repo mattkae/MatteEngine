@@ -63,7 +63,7 @@ void DeferredGeometryBuffer::generate()
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this->mDepth);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        Logger::logError("GBuffer framebuffer is not okay.");
+        Logger::error("GBuffer framebuffer is not okay.");
     }
 
     while ((err = glGetError()) != GL_NO_ERROR) {

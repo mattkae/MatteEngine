@@ -73,11 +73,6 @@ Vector4f cross(const Vector4f& first, const Vector4f& second) {
 	};
 }
 
-void logVector4f(const Vector4f& v, std::string variableName) {
-	Logger::logInfo(variableName + " = (" + std::to_string(v.x) + ", " + std::to_string(v.y) + ", " + std::to_string(v.z) + ", " + std::to_string(v.w) + ")");
-}
-
-
 Vector4f getVec4(GLfloat value) {
 	return { value, value, value, value };
 }

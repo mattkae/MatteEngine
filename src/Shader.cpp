@@ -238,7 +238,7 @@ Shader reloadShader(Shader shader)
     if (dependency) {
         attachShaders(shader, dependency->vertexPath.getValue(), dependency->fragPath.getValue(), dependency->geomPath.getValue());
     } else {
-        Logger::logWarning("Unable to reload shader, because it does not exist in the registry");
+        Logger::warning("Unable to reload shader, because it does not exist in the registry");
     }
 
     return shader;

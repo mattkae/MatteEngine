@@ -37,7 +37,7 @@ void BinarySerializer::close() const {
 */
 void BinarySerializer::writeInt32(int value) const {
 	if (mMode != SerializationMode::WRITE) {
-		Logger::logError("Cannot write binary, wrong mode");
+		Logger::error("Cannot write binary, wrong mode");
 		return;
 	}
 
@@ -46,7 +46,7 @@ void BinarySerializer::writeInt32(int value) const {
 
 void BinarySerializer::writeUint32(unsigned int value) const {
 	if (mMode != SerializationMode::WRITE) {
-		Logger::logError("Cannot write binary, wrong mode");
+		Logger::error("Cannot write binary, wrong mode");
 		return;
 	}
 
@@ -55,7 +55,7 @@ void BinarySerializer::writeUint32(unsigned int value) const {
 
 void BinarySerializer::writeByte(char value) const {
 	if (mMode != SerializationMode::WRITE) {
-		Logger::logError("Cannot write binary, wrong mode");
+		Logger::error("Cannot write binary, wrong mode");
 		return;
 	}
 
@@ -64,7 +64,7 @@ void BinarySerializer::writeByte(char value) const {
 
 void BinarySerializer::writeInt64(long value) const {
 	if (mMode != SerializationMode::WRITE) {
-		Logger::logError("Cannot write binary, wrong mode");
+		Logger::error("Cannot write binary, wrong mode");
 		return;
 	}
 
@@ -73,7 +73,7 @@ void BinarySerializer::writeInt64(long value) const {
 
 void BinarySerializer::writeFloat32(float value) const {
 	if (mMode != SerializationMode::WRITE) {
-		Logger::logError("Cannot write binary, wrong mode");
+		Logger::error("Cannot write binary, wrong mode");
 		return;
 	}
 
@@ -82,7 +82,7 @@ void BinarySerializer::writeFloat32(float value) const {
 
 void BinarySerializer::writeFloat64(double value) const {
 	if (mMode != SerializationMode::WRITE) {
-		Logger::logError("Cannot write binary, wrong mode");
+		Logger::error("Cannot write binary, wrong mode");
 		return;
 	}
 
@@ -91,7 +91,7 @@ void BinarySerializer::writeFloat64(double value) const {
 
 void BinarySerializer::writeString(std::string value) const {
 	if (mMode != SerializationMode::WRITE) {
-		Logger::logError("Cannot write binary, wrong mode");
+		Logger::error("Cannot write binary, wrong mode");
 		return;
 	}
 

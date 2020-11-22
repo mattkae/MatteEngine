@@ -1,4 +1,5 @@
 #include "ShaderUniformMapping.h"
+#include <sstream>
 
 const char* DEFFERRED_MODEL_SHADER_VERT = "src/shaders/model_defferred.vert";
 const char* DEFFERRED_MODEL_SHADER_FRAG = "src/shaders/model_defferred.frag";

@@ -19,7 +19,7 @@ inline Matrix4x4f getLightProjection(const Light &light) {
 		return getPerspectiveProjection(GlobalApp.near, GlobalApp.far, 0.7853982f, GlobalApp.aspectRatio);
     case PointLight:
     default:
-        Logger::logError("Attempting to get a view for unknown light: " + light.type);
+        Logger::error("Attempting to get a view for unknown light: %d", light.type);
         return Matrix4x4f();
     }
 }
@@ -34,7 +34,7 @@ inline Matrix4x4f getLightView(const Light &light) {
 		return getLookAt(light.position, light.position + light.direction, light.up);
     case PointLight:
     default:
-        Logger::logError("Attempting to get a view for unknown light: " + light.type);
+        Logger::error("Attempting to get a view for unknown light: %d", light.type);
         return Matrix4x4f();
     }
 }
@@ -250,7 +250,7 @@ void Light::render(const int index, const LightUniformMapping* uniformMapping) c
 			break;
 		}
 		default:
-			Logger::logError("Unknown light type: " + type);
+			Logger::error("Unknown light type: %d", type);
 			break;
 		}
 	}

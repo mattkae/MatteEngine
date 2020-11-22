@@ -48,9 +48,6 @@ Vector4f toCartesian(const Vector4f& v);
 Vector4f normalize(const Vector4f& v);
 Vector4f cross(const Vector4f& first, const Vector4f& second);
 
-// Debug
-void logVector4f(const Vector4f& v, std::string variableName);
-
 // Operator overloads
 Vector4f operator*(const Vector4f& vec, GLfloat value);
 Vector4f operator+(const Vector4f& v1, const Vector4f& v2);

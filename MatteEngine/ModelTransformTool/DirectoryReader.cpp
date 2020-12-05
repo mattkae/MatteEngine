@@ -1,7 +1,6 @@
 #include "DirectoryReader.h"
 #include "TransformToolConstants.h"
 #include "Logger.h"
-#include "Logger.cpp"
 #ifdef WIN32
 #include "dirent.h"
 #else
@@ -9,56 +8,70 @@
 #endif // WIN32
 #include <iostream>
 
-inline bool endsWith(std::string const & value, std::string const & ending) {
-    if (ending.size() > value.size()) return false;
-    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+int endsWith(const char *str, const char *suffix) {
+  size_t str_len = strlen(str);
+  size_t suffix_len = strlen(suffix);
+
+  return (str_len >= suffix_len) &&
+         (!memcmp(str + str_len - suffix_len, suffix, suffix_len));
 }
 
-
-std::vector<std::string> readModelDirectory() {
-    std::vector<std::string> retval;
+List<String> readModelDirectory() {
+    List<String> retval;
+    StringBuilder sb;
 
 	struct dirent *entry;
     DIR *dp;
 
-    dp = opendir(TransformToolConstants::MODEL_DIRECTORY.c_str());
+    dp = opendir(TransformToolConstants::MODEL_DIRECTORY);
      if (dp == NULL) {
-        Logger::logError("Path does not exist or could not be read: "  + TransformToolConstants::MODEL_DIRECTORY);
+        logger_error("Path does not exist or could not be read: %s", TransformToolConstants::MODEL_DIRECTORY);
         return retval;
     }
     
     while ((entry = readdir(dp))) {
-        std::string directoryName = entry->d_name;
+        char* directoryName = entry->d_name;
 
-        if (directoryName == "." || directoryName == "..") {
+        if (strcmp(directoryName, ".") == 0 || strcmp(directoryName, "..") == 0) {
             continue;
         }
 
-        std::string modelDirectory = TransformToolConstants::MODEL_DIRECTORY + '/' + directoryName;
-        Logger::logInfo("Reading model directory: " + modelDirectory);
+        sb.clear();
+        sb.format("%s/%s", TransformToolConstants::MODEL_DIRECTORY, directoryName);
+        String dirName = sb.toString();
+        logger_info("Reading model directory: %s", dirName.getValue());
 
-        DIR* modelDp = opendir(modelDirectory.c_str());
+        DIR* modelDp = opendir(dirName.getValue());
         if (modelDp == NULL) {
-            Logger::logError("Path does not exist or could not be read: " + modelDirectory);
+            logger_error("Path does not exist or could not be read: %s", dirName.getValue());
             continue;
         }
 
         struct dirent* modelDirectoryEntry;
+        StringBuilder modelSb;
         while ((modelDirectoryEntry = readdir(modelDp))) {
-            std::string filename = modelDirectoryEntry->d_name;
+            char* filename = modelDirectoryEntry->d_name;
 
-            if (filename == "." || filename == "..") {
+            if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0) {
                 continue;
             }
 
-            std::string fileInModelDirectory = modelDirectory + '/' + filename;
+            modelSb.clear();
+            modelSb.format("%s/%s", dirName.getValue(), filename);
+            String fileInModelDirectory = modelSb.toString();
 
-            if (endsWith(fileInModelDirectory, ".obj") || endsWith(fileInModelDirectory, ".dae")) {
-                Logger::logInfo("Found model file in model directory: " + fileInModelDirectory);
-                retval.push_back(fileInModelDirectory);
+            if (endsWith(fileInModelDirectory.getValue(), ".obj") == 1 || endsWith(fileInModelDirectory.getValue(), ".dae") == 1) {
+                logger_info("Found model file in model directory: %s", fileInModelDirectory.getValue());
+                retval.add(fileInModelDirectory);
+            } else {
+                fileInModelDirectory.free();
             }
         }
+
+        dirName.free();
     }
+
+    sb.free();
 
     closedir(dp);
     return retval;

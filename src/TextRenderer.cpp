@@ -9,7 +9,7 @@ bool TextRenderer::initialize(GLint size, GLchar* path)
 {
     int libInitResult = FT_Init_FreeType(&mLib);
     if (libInitResult > 0) {
-        Logger::error("Failed to initialize FreeType Library. Error code: %d", libInitResult);
+        logger_error("Failed to initialize FreeType Library. Error code: %d", libInitResult);
         return false;
 	}
 
@@ -17,13 +17,13 @@ bool TextRenderer::initialize(GLint size, GLchar* path)
 
 	int faceInitResult = FT_New_Face(mLib, path, 0, &mFace);
     if (faceInitResult > 0) {
-        Logger::error("Failed to initialize Face for FreeType Library. Error code: %d", faceInitResult);
+        logger_error("Failed to initialize Face for FreeType Library. Error code: %d", faceInitResult);
         return false;
 	}
 
 	int setSizeResult = FT_Set_Pixel_Sizes(mFace, 0, mSize);
     if (setSizeResult > 0) {
-        Logger::error("Failed to set size for FreeType Library. Error code: %d", setSizeResult);
+        logger_error("Failed to set size for FreeType Library. Error code: %d", setSizeResult);
         return false;
 	}
 
@@ -66,7 +66,7 @@ bool TextRenderer::loadChar(GLchar c)
 {
     int charLoadResult = FT_Load_Char(mFace, c, FT_LOAD_RENDER);
     if (charLoadResult) {
-        Logger::error("Failed to load character from FreeType library. Error code: %d", charLoadResult);
+        logger_error("Failed to load character from FreeType library. Error code: %d", charLoadResult);
         return false;
 	}
 

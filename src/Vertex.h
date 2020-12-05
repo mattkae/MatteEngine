@@ -19,7 +19,7 @@ struct Vertex {
         bitangent = vertex.bitangent;
         texCoords = vertex.texCoords;
 
-        size_t max = static_cast<size_t>(fmin(vertex.boneInfoList.size(), 4));
+        size_t max = static_cast<size_t>(fmin(vertex.boneInfoList.numElements, 4));
         for (size_t index = 0; index < max; index++) {
             boneWeights[index] = vertex.boneInfoList[index].weight;
             boneIndices[index] = (GLint)vertex.boneInfoList[index].boneIndex;

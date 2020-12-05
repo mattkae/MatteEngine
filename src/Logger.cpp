@@ -25,7 +25,7 @@ namespace Logger {
         return gLogLevel;
     }
 
-    void printHeader(const char* levelStr) {
+    void printHeader(const char* levelStr, const char* fileName, int lineNumber) {
         time_t t = time(0);
         tm now;
 #ifdef WIN32
@@ -34,13 +34,13 @@ namespace Logger {
         now = *localtime(&t);
 #endif
 
-        printf("[%d-%d-%d %d:%d:%d] %s: ", (now.tm_year + 1900), (now.tm_mon + 1), now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, levelStr);
+        printf("%s:%d [%d-%d-%d %d:%d:%d] %s: ", fileName, lineNumber, (now.tm_year + 1900), (now.tm_mon + 1), now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, levelStr);
         if (gFilePointer != NULL) {
             fprintf(gFilePointer, "[%d-%d-%d %d:%d:%d] %s: ", (now.tm_year + 1900), (now.tm_mon + 1), now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, levelStr);
         }
     }
 
-    void logInternal(LogLevel level, const char* format, va_list args) {
+    void logInternal(const char* file, int lineNumber,LogLevel level, const char* format, va_list args) {
         if (level < gLogLevel) {
             return;
         }
@@ -64,7 +64,7 @@ namespace Logger {
             break;
         }
 
-        printHeader(levelStr);
+        printHeader(levelStr, file, lineNumber);
 
         vprintf(format, args);
         printf("\n");
@@ -75,38 +75,38 @@ namespace Logger {
         }
     }
 
-    void log(LogLevel level, const char* format, ...) {
+    void doLog(const char* file, int lineNumber,LogLevel level, const char* format, ...) {
         va_list args;
         va_start(args, format);
-        logInternal(level, format, args);
+        logInternal(file, lineNumber, level, format, args);
         va_end(args);
     }
 
-    void debug(const char* format, ...) {
+    void doDebug(const char* file, int lineNumber,const char* format, ...) {
         va_list args;
         va_start(args, format);
-        logInternal(LogLevel_Debug, format, args);
+        logInternal(file, lineNumber, LogLevel_Debug, format, args);
         va_end(args);
     }
 
-    void info(const char* format, ...) {
+    void doInfo(const char* file, int lineNumber,const char* format, ...) {
         va_list args;
         va_start(args, format);
-        logInternal(LogLevel_Info, format, args);
+        logInternal(file, lineNumber, LogLevel_Info, format, args);
         va_end(args);
     }
 
-    void warning(const char* format, ...) {
+    void doWarning(const char* file, int lineNumber,const char* format, ...) {
         va_list args;
         va_start(args, format);
-        logInternal(LogLevel_Warn, format, args);
+        logInternal(file, lineNumber, LogLevel_Warn, format, args);
         va_end(args);
     }
 
-    void error(const char* format, ...) {
+    void doError(const char* file, int lineNumber,const char* format, ...) {
         va_list args;
         va_start(args, format);
-        logInternal(LogLevel_Error, format, args);
+        logInternal(file, lineNumber, LogLevel_Error, format, args);
         va_end(args);
     }
 

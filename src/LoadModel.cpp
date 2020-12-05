@@ -1,27 +1,26 @@
 #include "LoadModel.h"
 #include "BinarySerializer.h"
-#include <algorithm>
 
 void LoadModel::writeLoadModel(BinarySerializer& serializer) {
 	calculateBoundingBox();
 	serializer.writeVec4(lowerLeftBoundingBoxCorner);
 	serializer.writeVec4(upperRightBoundingBoxCorner);
 
-	serializer.writeInt32(meshes.size());
-	for (LoadMesh& mesh: meshes) {
-		mesh.write(serializer);
+	serializer.writeInt32(meshes.numElements);
+	FOREACH(meshes) {
+		value->write(serializer);
 	}
 
-	serializer.writeUint32((unsigned int)bones.size());
-	for (LoadBone& bone : bones) {
-		bone.write(serializer);
+	serializer.writeUint32((unsigned int)bones.numElements);
+	FOREACH(bones) {
+		value->write(serializer);
 	}
 
 	rootNode.write(serializer);
 
-	serializer.writeUint32((unsigned int)animations.size());
-	for (Animation& animation : animations) {
-		animation.write(serializer);
+	serializer.writeUint32((unsigned int)animations.numElements);
+	FOREACH(animations) {
+		value->write(serializer);
 	}
 	serializer.writeMat4x4(inverseRootNode);
 }
@@ -31,95 +30,110 @@ void LoadModel::readLoadModel(BinarySerializer& serializer) {
 	upperRightBoundingBoxCorner = serializer.readVec4();
 
 	int numMeshes = serializer.readInt32();
-	meshes.resize(numMeshes);
-	for (LoadMesh& mesh: meshes) {
-		mesh.read(serializer);
+	meshes.allocate(numMeshes);
+	meshes.growDynamically = false;
+	for (int idx = 0; idx < numMeshes; idx++) {
+		LoadMesh newMesh;
+		newMesh.read(serializer);
+		meshes.add(&newMesh);
 	}
 
 	unsigned int numBones = serializer.readUint32();
-	bones.resize(numBones);
-	for (LoadBone& bone: bones) {
-		bone.read(serializer);
+	bones.allocate(numBones);
+	bones.growDynamically = true;
+	for (int idx = 0; idx < numBones; idx++) {
+		LoadBone newBone;
+		newBone.read(serializer);
+		bones.add(newBone);
 	}
 
 	rootNode.read(serializer);
 
 	unsigned int numAnimations = serializer.readUint32();
-	animations.resize(numAnimations);
-	for (Animation& animation: animations) {
+	animations.allocate(numAnimations);
+	animations.growDynamically = false;
+	for (int idx = 0; idx < numAnimations; idx++) {
+		Animation animation;
 		animation.read(serializer);
+		animations.add(animation);
 	}
 	inverseRootNode = serializer.readMat4x4();
 }
 
 void LoadModel::calculateBoundingBox() {
 	bool hasBoxBeenSet = false;
-	for (const LoadMesh& mesh: meshes) {
-		for (auto& vertex : mesh.vertices) {
+	FOREACH(meshes) {
+		List<LoadVertex> vertices = value->vertices;
+		FOREACH (vertices) {
 			if (!hasBoxBeenSet) {
-				lowerLeftBoundingBoxCorner.x = vertex.position.x;
-				lowerLeftBoundingBoxCorner.y = vertex.position.y;
-				lowerLeftBoundingBoxCorner.z = vertex.position.z;
-				upperRightBoundingBoxCorner.x = vertex.position.x;
-				upperRightBoundingBoxCorner.y = vertex.position.y;
-				upperRightBoundingBoxCorner.z = vertex.position.z;
+				lowerLeftBoundingBoxCorner.x = value->position.x;
+				lowerLeftBoundingBoxCorner.y = value->position.y;
+				lowerLeftBoundingBoxCorner.z = value->position.z;
+				upperRightBoundingBoxCorner.x = value->position.x;
+				upperRightBoundingBoxCorner.y = value->position.y;
+				upperRightBoundingBoxCorner.z = value->position.z;
 				hasBoxBeenSet = true;
 			}
 			
-			if (vertex.position.x < lowerLeftBoundingBoxCorner.x) {
-				lowerLeftBoundingBoxCorner.x = vertex.position.x;
+			if (value->position.x < lowerLeftBoundingBoxCorner.x) {
+				lowerLeftBoundingBoxCorner.x = value->position.x;
 			}
-			if (vertex.position.y < lowerLeftBoundingBoxCorner.y) {
-				lowerLeftBoundingBoxCorner.y = vertex.position.y;
+			if (value->position.y < lowerLeftBoundingBoxCorner.y) {
+				lowerLeftBoundingBoxCorner.y = value->position.y;
 			}
-			if (vertex.position.z < lowerLeftBoundingBoxCorner.z) {
-				lowerLeftBoundingBoxCorner.z = vertex.position.z;
+			if (value->position.z < lowerLeftBoundingBoxCorner.z) {
+				lowerLeftBoundingBoxCorner.z = value->position.z;
 			}
 
-			if (vertex.position.x > upperRightBoundingBoxCorner.x) {
-				upperRightBoundingBoxCorner.x = vertex.position.x;
+			if (value->position.x > upperRightBoundingBoxCorner.x) {
+				upperRightBoundingBoxCorner.x = value->position.x;
 			}
-			if (vertex.position.y > upperRightBoundingBoxCorner.y) {
-				upperRightBoundingBoxCorner.y = vertex.position.y;
+			if (value->position.y > upperRightBoundingBoxCorner.y) {
+				upperRightBoundingBoxCorner.y = value->position.y;
 			}
-			if (vertex.position.z > upperRightBoundingBoxCorner.z) {
-				upperRightBoundingBoxCorner.z = vertex.position.z;
+			if (value->position.z > upperRightBoundingBoxCorner.z) {
+				upperRightBoundingBoxCorner.z = value->position.z;
 			}
 		}
 	}
 }
 
 void LoadMesh::write(BinarySerializer& serializer) {
-	serializer.writeInt32(vertices.size());
-	for (LoadVertex& vertex: vertices) {
-		vertex.write(serializer);
+	serializer.writeInt32(vertices.numElements);
+	FOREACH(vertices) {
+		value->write(serializer);
 	}
 
-	serializer.writeInt32(indices.size());
-	for (GLint index: indices) {
-		serializer.writeInt32(index);
+	serializer.writeInt32(indices.numElements);
+	FOREACH(indices) {
+		serializer.writeInt32(*value);
 	}
 
 	material.write(serializer);
 }
 
 void LoadMesh::read(BinarySerializer& serializer) {
-	vertices.resize(serializer.readInt32());
-	for (LoadVertex& vertex: vertices) {
+	vertices.allocate(serializer.readInt32());
+	vertices.growDynamically = false;
+	for (int idx = 0; idx < vertices.capacity; idx++) {
+		LoadVertex vertex;
 		vertex.read(serializer);
+		vertices.add(&vertex);
 	}
 
 	int indicesSize = serializer.readInt32();
-	indices.resize(indicesSize);
+	indices.allocate(indicesSize);
+	indices.growDynamically = false;
 	for (int indexIdx = 0; indexIdx < indicesSize; indexIdx++) {
-		indices[indexIdx] = serializer.readInt32();
+		int index = serializer.readInt32();
+		indices.add(&index);
 	}
 
 	material.read(serializer);
 }
 
-bool compareLoadVertexBoneData(LoadVertexBoneData first, LoadVertexBoneData second) {
-	return first.weight > second.weight;
+int compareLoadVertexBoneData(LoadVertexBoneData* first, LoadVertexBoneData* second) {
+	return first->weight - second->weight;
 }
 
 void LoadVertex::write(BinarySerializer& serializer) {
@@ -128,13 +142,13 @@ void LoadVertex::write(BinarySerializer& serializer) {
 	serializer.writeVec3(tangent);
 	serializer.writeVec3(bitangent);
 	serializer.writeVec2(texCoords);
-	serializer.writeUint32(boneInfoList.size());
+	serializer.writeUint32(boneInfoList.numElements);
 
-	std::sort(boneInfoList.begin(), boneInfoList.end(), compareLoadVertexBoneData);
+	boneInfoList.binarySort(compareLoadVertexBoneData);
 
-	for (LoadVertexBoneData& boneData : boneInfoList) {
-		serializer.writeUint32(boneData.boneIndex);
-		serializer.writeFloat32(boneData.weight);
+	FOREACH(boneInfoList) {
+		serializer.writeUint32(value->boneIndex);
+		serializer.writeFloat32(value->weight);
 	}
 }
 
@@ -145,10 +159,14 @@ void LoadVertex::read(BinarySerializer& serializer) {
 	bitangent = serializer.readVec3();
 	texCoords = serializer.readVec2();
 
-	boneInfoList.resize(serializer.readUint32());
-	for (LoadVertexBoneData& boneData : boneInfoList) {
+	unsigned int numBones = serializer.readUint32();
+	boneInfoList.allocate(numBones);
+	boneInfoList.growDynamically = false;
+	for (int idx = 0; idx < numBones; idx++) {
+		LoadVertexBoneData boneData;
 		boneData.boneIndex = serializer.readUint32();
 		boneData.weight = serializer.readFloat32();
+		boneInfoList.add(&boneData);
 	}
 }
 
@@ -185,17 +203,20 @@ void LoadBone::read(BinarySerializer& serializer) {
 void LoadBoneNode::write(BinarySerializer& serializer) {
 	serializer.writeUint32(boneIndex);
 	serializer.writeMat4x4(nodeTransform);
-	serializer.writeUint32(children.size());
-	for (LoadBoneNode& child: children) {
-		child.write(serializer);
+	serializer.writeUint32(children.numElements);
+	FOREACH(children) {
+		value->write(serializer);
 	}
 }
 
 void LoadBoneNode::read(BinarySerializer& serializer) {
 	boneIndex = serializer.readUint32();
 	nodeTransform = serializer.readMat4x4();
-	children.resize(serializer.readUint32());
-	for (LoadBoneNode& child: children) {
+	unsigned int numChildren = serializer.readUint32();
+	children.allocate(numChildren);
+	for (unsigned int idx = 0; idx < numChildren; idx++) {
+		LoadBoneNode child;
 		child.read(serializer);
+		children.add(&child);
 	}
 }

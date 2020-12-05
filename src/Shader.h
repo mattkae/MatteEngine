@@ -19,7 +19,7 @@ void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& 
 inline GLint getShaderUniform(const Shader& shader, const GLchar *name) {
     GLint uid = glGetUniformLocation(shader, name);
 	if (uid < 0) {
-		Logger::error("Failed to find uniform for: %s", name);
+		logger_error("Failed to find uniform for: %s", name);
 	}
 	return uid;
 }

@@ -14,7 +14,7 @@ unsigned int getLerpableValueIdxByTime(GLdouble time, LerpableValue<T>* values, 
 		}
 	}
 
-	Logger::error("AnimationController::getLerpableValueByTime, Should never get here");
+	logger_error("AnimationController::getLerpableValueByTime, Should never get here");
 	return 0;
 }
 

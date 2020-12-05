@@ -54,15 +54,15 @@ void Mesh::enableVertexData(Vertex* vertices, unsigned int numVertices, GLint* i
 }
 
 void Mesh::initialize(LoadMesh& loadMesh, List<GeneratedTexture>* list) {
-    Vertex* vertices = new Vertex[loadMesh.vertices.size()];
-    for (size_t index = 0; index < loadMesh.vertices.size(); index++) {
+    Vertex* vertices = new Vertex[loadMesh.vertices.numElements];
+    for (size_t index = 0; index < loadMesh.vertices.numElements; index++) {
         Vertex* v = &vertices[index];
         v->initialize(loadMesh.vertices[index]);
     }
 
-    enableVertexData(vertices, loadMesh.vertices.size(), &loadMesh.indices[0], loadMesh.indices.size());
+    enableVertexData(vertices, loadMesh.vertices.numElements, &loadMesh.indices[0], loadMesh.indices.numElements);
 
-    numIndices = loadMesh.indices.size();
+    numIndices = loadMesh.indices.numElements;
     material.initialize(loadMesh.material, list);
 
     delete []vertices;

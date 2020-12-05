@@ -229,8 +229,8 @@ Shader reloadShader(Shader shader)
 
     ShaderDependency* dependency = nullptr;
     FOREACH(GlobalShaderRegistry) {
-        if (value.shader == shader) {
-            dependency = &value;
+        if (value->shader == shader) {
+            dependency = value;
             break;
         }
     }
@@ -238,7 +238,7 @@ Shader reloadShader(Shader shader)
     if (dependency) {
         attachShaders(shader, dependency->vertexPath.getValue(), dependency->fragPath.getValue(), dependency->geomPath.getValue());
     } else {
-        Logger::warning("Unable to reload shader, because it does not exist in the registry");
+        logger_warning("Unable to reload shader, because it does not exist in the registry");
     }
 
     return shader;

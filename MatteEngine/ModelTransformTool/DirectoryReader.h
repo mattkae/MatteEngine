@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
-#include <string>
+#include "List.h"
+#include "MyString.h"
 
-std::vector<std::string> readModelDirectory();
+List<String> readModelDirectory();

@@ -27,6 +27,8 @@ struct String {
 	int toInteger();
 	float toFloat();
 	int indexOf(char c);
+	inline bool equals(const String& other) { return strcmp(getValueConst(), other.getValueConst()) == 0; };
+	inline bool equalsCstr(const char* str) { return strcmp(getValueConst(), str) == 0; };
 	StringView substring(int start, int end);
 };
 

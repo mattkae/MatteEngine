@@ -1,11 +1,11 @@
 #pragma once
 #include <cstdlib>
 #include <cstring>
-#include <cstdio>
+#include "Logger.h"
 
 #define FOREACH(list)												\
-	auto value = list[0];											\
-	for (size_t idx = 0; idx < list.numElements; idx++, value = list[idx])
+	for (size_t idx = 0; idx < list.numElements; idx++) \
+		if (auto value = list.getValue(idx)) \
 		
 
 template <typename T>
@@ -17,6 +17,8 @@ struct List {
 
 	void allocate(size_t size);
 	void add(T* element);
+	void add(T& element);
+	void add(T&& element);
 	bool grow(size_t newSize);
 	void set(T* value, size_t index);
 	void remove(size_t index);
@@ -26,7 +28,8 @@ struct List {
 		return data == nullptr || numElements == 0;
 	}
 	T* getValue(int index) const;
-	T& operator[](int idx) const; 
+	T& operator[](int idx) const;
+	void binarySort(int (*f)(T *first, T* second));
 };
 
 template <typename T>
@@ -78,15 +81,19 @@ void List<T>::set(T* value, size_t index) {
 
 template <typename T>
 void List<T>::add(T* element) {
-	if (element == nullptr || data == nullptr) {
-		printf("Trying to add to list that is uninitialized");
+	if (data == nullptr) {
+		allocate(2);
+	}
+
+	if (element == nullptr) {
+		logger_error("Element not defined");
 		return;
 	}
 
 	size_t newNumElements = numElements + 1;
 	if (newNumElements > capacity) {
 		if (!grow(2 * capacity)) {
-			printf("Trying to add to list but unable to grow the array");
+			logger_error("Trying to add to list but unable to grow the array");
 			return;
 		}
 	}
@@ -96,8 +103,45 @@ void List<T>::add(T* element) {
 }
 
 template <typename T>
+void List<T>::add(T& element) {
+	if (data == nullptr) {
+		allocate(2);
+	}
+
+	size_t newNumElements = numElements + 1;
+	if (newNumElements > capacity) {
+		if (!grow(2 * capacity)) {
+			logger_error("Trying to add to list but unable to grow the array");
+			return;
+		}
+	}
+
+	memcpy(&data[numElements], &element, sizeof(T));
+	numElements = newNumElements;
+}
+
+template <typename T>
+void List<T>::add(T&& element) {
+	if (data == nullptr) {
+		allocate(2);
+	}
+
+	size_t newNumElements = numElements + 1;
+	if (newNumElements > capacity) {
+		if (!grow(2 * capacity)) {
+			logger_error("Trying to add to list but unable to grow the array");
+			return;
+		}
+	}
+
+	memcpy(&data[numElements], &element, sizeof(T));
+	numElements = newNumElements;
+}
+
+template <typename T>
 void List<T>::remove(size_t idx) {
 	if (idx >= numElements) {
+		logger_error("Index is outside of the list: %d >= %d", idx, numElements);
 		return;
 	}
 
@@ -132,4 +176,27 @@ T* List<T>::getValue(int idx) const {
 template <typename T>
 T& List<T>::operator[](int idx) const {
 	return data[idx];
+}
+
+template <typename T>
+void List<T>::binarySort(int (*f)(T *first, T* second)) {
+	if (data == nullptr) {
+		return;
+	}
+
+	for (size_t idx = 0; idx < numElements - 1; idx++) {
+		int minIdx = idx;
+		T firstValue = data[idx];
+
+		for (int innerIdx = idx + 1; innerIdx < numElements; innerIdx++) {\
+			T secondValue = data[innerIdx];
+			if (f(&firstValue, &secondValue) > 0) {
+				minIdx= innerIdx;
+			}
+		}
+
+		T temp = data[minIdx];
+		memmove_s(&data[minIdx], sizeof(T), &data[idx], sizeof(T));
+		memmove_s(&data[idx], sizeof(T), &temp, sizeof(T));
+	}
 }

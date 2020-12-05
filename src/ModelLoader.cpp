@@ -9,7 +9,7 @@
 #include "Bone.h"
 #include <SOIL.h>
 
-GLuint loadTexture(std::string path);
+GLuint loadTexture(String path);
 
 void ModelLoader::loadTextureList(const char* path) {
 	textureList.allocate(16);
@@ -29,15 +29,16 @@ void ModelLoader::loadTextureList(const char* path) {
 	serializer.close();
 }
 
-GLuint loadTexture(std::string path) {
+GLuint loadTexture(String path) {
 	GLuint texture;
 	int width, height;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	const char* cStrPath = path.c_str();
+	const char* cStrPath = path.getValue();
     unsigned char* image = SOIL_load_image(cStrPath, &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == NULL) {
-		Logger::error("Unable to load image from path: %s", path.c_str());
+		logger_error("Unable to load image from path: %s", path.getValueConst());
+		return 0;
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -62,8 +63,8 @@ ModelLoader::ModelLoadResult ModelLoader::loadSerializedModel(const char* path) 
 void copyBoneTreeNode(BoneTreeNode* node, const LoadBoneNode& nodeToCopy) {
 	node->boneIndex = nodeToCopy.boneIndex;
 	node->nodeTransform = nodeToCopy.nodeTransform;
-	node->numChildren = nodeToCopy.children.size();
-	node->children = new BoneTreeNode[nodeToCopy.children.size()];
+	node->numChildren = nodeToCopy.children.numElements;
+	node->children = new BoneTreeNode[nodeToCopy.children.numElements];
 	for (unsigned int nodeIdx = 0; nodeIdx < node->numChildren; nodeIdx++) {
 		copyBoneTreeNode(&node->children[nodeIdx], nodeToCopy.children[nodeIdx]);
 	}
@@ -72,15 +73,15 @@ void copyBoneTreeNode(BoneTreeNode* node, const LoadBoneNode& nodeToCopy) {
 ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermediateModel) {
 	ModelLoader::ModelLoadResult retval;
 	retval.model.inverseRootNode = intermediateModel.inverseRootNode;
-	retval.model.numMeshes = intermediateModel.meshes.size();
+	retval.model.numMeshes = intermediateModel.meshes.numElements;
 	retval.model.meshes = new Mesh[retval.model.numMeshes];
-	retval.model.numBones = intermediateModel.bones.size();
+	retval.model.numBones = intermediateModel.bones.numElements;
 	retval.model.bones = new Bone[retval.model.numBones];
 	for (unsigned int boneIdx = 0; boneIdx < retval.model.numBones; boneIdx++) {
 		retval.model.bones[boneIdx].offsetMatrix = intermediateModel.bones[boneIdx].offsetMatrix;
 	}
 
-	if (intermediateModel.rootNode.children.size() > 0) {
+	if (intermediateModel.rootNode.children.numElements > 0) {
 		retval.model.rootNode = new BoneTreeNode();
 		copyBoneTreeNode(retval.model.rootNode, intermediateModel.rootNode);
 	}
@@ -91,7 +92,7 @@ ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermedi
 
 	retval.box.lowerLeft = intermediateModel.lowerLeftBoundingBoxCorner;
 	retval.box.upperRight = intermediateModel.upperRightBoundingBoxCorner;
-	retval.model.animationController.numAnimations = intermediateModel.animations.size();
+	retval.model.animationController.numAnimations = intermediateModel.animations.numElements;
 	retval.model.animationController.animationList  = new Animation[retval.model.animationController.numAnimations];
 	for (unsigned int animationIdx = 0; animationIdx < retval.model.animationController.numAnimations; animationIdx++) {
 		retval.model.animationController.animationList[animationIdx] = intermediateModel.animations[animationIdx];

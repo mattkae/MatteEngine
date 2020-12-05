@@ -1,11 +1,11 @@
 #pragma once
-#include <string>
+#include "MyString.h"
 #include <GL/glew.h>
 
 class BinarySerializer;
 
 struct TextureInfo {
-    std::string fullpath;
+    String fullpath;
     GLuint uniqueId = 0;
 
     void write(BinarySerializer& serializer);

@@ -106,10 +106,10 @@ void Terrain::initialize(const GenerationParameters& params) {
         free();
     }
 
-    Logger::info("Loading textures for terrain...");
+    logger_info("Loading textures for terrain...");
     loadTextures(params);
 
-    Logger::info("Generating terrain...");
+    logger_info("Generating terrain...");
 
     float squareSize = ((float)params.size / (float)params.granularity) / 2.f;
     int* perm = getSimplexArray(params.permSize);
@@ -230,7 +230,7 @@ void Terrain::initialize(const GenerationParameters& params) {
         thirdVertex.bitangent = bitangent;
     }
 
-    Logger::info("Finished generating terrain!");
+    logger_info("Finished generating terrain!");
 
     // Set up the material
     LoadMaterial material;

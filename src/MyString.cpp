@@ -86,7 +86,7 @@ String StringBuilder::toString() {
 		retval.dynamicBuffer = new char[strSize + 1];
 		memcpy(retval.dynamicBuffer, defaultBuffer.buffer, sizeof(char) * StringBuffer::BUFFER_SIZE);
 		FOREACH(dynamicBuffer) {
-			memcpy(&retval.dynamicBuffer[(idx + 1) * StringBuffer::BUFFER_SIZE], value.buffer, sizeof(char) * StringBuffer::BUFFER_SIZE);
+			memcpy(&retval.dynamicBuffer[(idx + 1) * StringBuffer::BUFFER_SIZE], value->buffer, sizeof(char) * StringBuffer::BUFFER_SIZE);
 		}
 		retval.isSSO = false;
 	} else {
@@ -298,11 +298,12 @@ void StringBuilder::format(const char* str, ...) {
 
 void StringBuilder::clear() {
 	bufferPointer = 0;
+	length = 0;
 	defaultBuffer.reset();
 
 	if (!dynamicBuffer.isEmpty()) {
 		FOREACH(dynamicBuffer) {
-			value.reset();
+			value->reset();
 		}
 	}
 

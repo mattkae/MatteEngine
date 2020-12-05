@@ -20,12 +20,12 @@ void Skybox::initialize(const char paths[6][128]) {
         GLint w, h;
         unsigned char *image = SOIL_load_image(paths[fidx], &w, &h, 0, SOIL_LOAD_RGBA);
         if (!image) {
-            Logger::error("Unable to load image for skybox from path %d", paths[fidx]);
+            logger_error("Unable to load image for skybox from path %d", paths[fidx]);
 			return;
         }
 
         if (w != h) {
-            Logger::error("Width and height are unequal in skybox: %d", paths[fidx]);
+            logger_error("Width and height are unequal in skybox: %d", paths[fidx]);
             return;
         }
 

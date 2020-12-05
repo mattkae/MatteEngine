@@ -10,7 +10,7 @@ GLuint TextureLoader::loadRGBATileTexture(String& path) {
 	const char* cStrPath = path.getValue();
     unsigned char* image = SOIL_load_image(cStrPath, &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == NULL) {
-		Logger::error("Unable to load image from path: %s", cStrPath);
+		logger_error("Unable to load image from path: %s", cStrPath);
 		return 0;
 	}
 
@@ -36,7 +36,7 @@ GLuint TextureLoader::loadRGBATexture(String& path) {
 	const char* cStrPath = path.getValue();
     unsigned char* image = SOIL_load_image(cStrPath, &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == NULL) {
-		Logger::error("Unable to load image from path: %s", cStrPath);
+		logger_error("Unable to load image from path: %s", cStrPath);
 		return 0;
 	}
 
@@ -69,7 +69,7 @@ GLuint TextureLoader::createTexture(int width, int height) {
 
 bool TextureLoader::deleteTexture(GLuint texture) {
 	FOREACH(textureList) {
-		if (value == texture) {
+		if (*value == texture) {
 			glDeleteTextures(1, &texture);
 			textureList.remove(idx);
 		    return true;

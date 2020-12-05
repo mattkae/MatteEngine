@@ -10,7 +10,7 @@ void initialize(int argc, const char* argv[]);
 void cleanup();
 
 void glfw_error_callback(int error, const char* message) {
-    Logger::error("GLFW error #%d, %s", error, message);
+   logger_error("GLFW error #%d, %s", error, message);
 }
 
 int main(int argc, const char* argv[]) {
@@ -33,7 +33,7 @@ int main(int argc, const char* argv[]) {
         frameCount++;
         frameTimerSeconds += deltaTime;
         if (frameTimerSeconds > 1.0) {
-            Logger::info("%d frames per second",frameCount);
+            logger_info("%d frames per second",frameCount);
             frameCount = 0;
             frameTimerSeconds = 0;
 		}
@@ -53,7 +53,7 @@ void initialize(int argc, const char* argv[]) {
 
     // GLFW
     if (!glfwInit()) {
-        Logger::error("Failed to initialize glfw");
+       logger_error("Failed to initialize glfw");
         exit(EXIT_FAILURE);
     }
 
@@ -68,7 +68,7 @@ void initialize(int argc, const char* argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     GlobalApp.initializeWindow();
     if (!GlobalApp.window) {
-        Logger::error("Failed to initialize glfw window");
+       logger_error("Failed to initialize glfw window");
         exit(EXIT_FAILURE);
     }
 
@@ -79,7 +79,7 @@ void initialize(int argc, const char* argv[]) {
     // GLEW
     GLenum err = glewInit();
     if (GLEW_OK != err) {
-        Logger::error("Unable to initialize glew: %s", glewGetErrorString(err));
+       logger_error("Unable to initialize glew: %s", glewGetErrorString(err));
         exit(EXIT_FAILURE);
     }
 

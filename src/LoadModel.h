@@ -4,8 +4,9 @@
 #include "Vector4f.h"
 #include "Matrix4x4f.h"
 #include "AnimationController.h"
+#include "List.h"
+#include "MyString.h"
 #include <GL/glew.h>
-#include <vector>
 
 class BinarySerializer;
 
@@ -38,15 +39,15 @@ struct LoadVertex {
     Vector3f tangent;
     Vector3f bitangent;
     Vector2f texCoords;
-    std::vector<LoadVertexBoneData> boneInfoList;
+    List<LoadVertexBoneData> boneInfoList;
 
     void write(BinarySerializer& serializer);
     void read(BinarySerializer& serializer);
 };
 
 struct LoadMesh {
-    std::vector<LoadVertex> vertices;
-    std::vector<GLint> indices;
+    List<LoadVertex> vertices;
+    List<GLint> indices;
     LoadMaterial material;
 
     void write(BinarySerializer& serializer);
@@ -55,14 +56,14 @@ struct LoadMesh {
 
 struct LoadBone {
     Matrix4x4f offsetMatrix;
-    std::string identifier;
+    String identifier;
     void write(BinarySerializer& serializer);
     void read(BinarySerializer& serializer);
 };
 
 struct LoadBoneNode {
     int boneIndex = -1;
-    std::vector<LoadBoneNode> children;
+    List<LoadBoneNode> children;
     Matrix4x4f nodeTransform;
 
     void write(BinarySerializer& serializer);
@@ -70,15 +71,15 @@ struct LoadBoneNode {
 };
 
 struct LoadModel {
-    std::string modelPath;
+    char* modelPath;
     Vector4f lowerLeftBoundingBoxCorner;
     Vector4f upperRightBoundingBoxCorner;
     Matrix4x4f inverseRootNode;
 
     LoadBoneNode rootNode;
-    std::vector<LoadBone> bones;
-    std::vector<LoadMesh> meshes;
-    std::vector<Animation> animations;
+    List<LoadBone> bones;
+    List<LoadMesh> meshes;
+    List<Animation> animations;
 
     void writeLoadModel(BinarySerializer& serializer);
     void readLoadModel(BinarySerializer& serializer);

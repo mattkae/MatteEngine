@@ -7,119 +7,119 @@
 #include "Box.h"
 
 inline void changeArrowColor(DebugArrow& arrow, Vector3f color) {
-	arrow.color = color;
+	color = color;
 	for (int meshIdx = 0; meshIdx < arrow.model.numMeshes; meshIdx++) {
-		arrow.model.meshes[meshIdx].material.emissive = arrow.color;
-		arrow.model.meshes[meshIdx].material.ambient = arrow.color;
-		arrow.model.meshes[meshIdx].material.diffuse = arrow.color;
+		arrow.model.meshes[meshIdx].material.emissive = color;
+		arrow.model.meshes[meshIdx].material.ambient = color;
+		arrow.model.meshes[meshIdx].material.diffuse = color;
 	}
 }
 
 inline void initArrow(DebugArrow& arrow) {
-	/*ModelLoader::ModelLoadResult retval = ModelLoader::loadSerializedModel((char*)"assets/models/Arrow/simple_arrow.mattl");
-	arrow.model = retval.model;
-	arrow.boundingBox = retval.box;
-	changeArrowColor(arrow, arrow.color);*/
+	/*ModelLoader::ModelLoadResult retval = ModelLoader::loadSerializedModel((char*)"assets/models/Arrow/simple_mattl");
+	model = retval.model;
+	boundingBox = retval.box;
+	changeArrowColor(arrow, color);*/
 }
 
-void updateDebugArrow(DebugArrow& arrow, Box3D& box, const Matrix4x4f& model) {
-	arrow.model.model = getIdentity();
-	if (arrow.model.numMeshes == 0) {
-		initArrow(arrow);
+void DebugArrow::update(Box3D& box, const Matrix4x4f& inModel) {
+	model.model = getIdentity();
+	if (model.numMeshes == 0) {
+		initArrow(*this);
 	}
 
 	// Rotate and scale per its direction
-	Vector4f upperRight = arrow.boundingBox.upperRight;
-	Vector4f lowerLeft = arrow.boundingBox.lowerLeft;
+	Vector4f upperRight = boundingBox.upperRight;
+	Vector4f lowerLeft = boundingBox.lowerLeft;
 	Vector3f translation = scale(Vector3f{0, 1, 0}, abs(upperRight.y - lowerLeft.y) / 2.f);
 
-	arrow.model.model = translateMatrix(arrow.model.model, translation);
-	arrow.model.model = rotate(arrow.model.model, arrow.rotation.x, arrow.rotation.y, arrow.rotation.z);
-	arrow.model.model = mult(arrow.model.model, model);
+	model.model = translateMatrix(model.model, translation);
+	model.model = rotate(model.model, rotation.x, rotation.y, rotation.z);
+	model.model = mult(model.model, inModel);
 
 	// Center inside of the bounding box
-	Vector4f boxUpperRight = mult(model, box.upperRight);
-	Vector4f boxLowerLeft = mult(model, box.lowerLeft);
+	Vector4f boxUpperRight = mult(inModel, box.upperRight);
+	Vector4f boxLowerLeft = mult(inModel, box.lowerLeft);
 	Vector3f centerOfBox = Vector3f{ 0, fabsf(boxUpperRight.y - boxLowerLeft.y) / 2.f, 0 };
-	arrow.model.model = translateMatrix(arrow.model.model, centerOfBox);
+	model.model = translateMatrix(model.model, centerOfBox);
 }
 
-void renderDebugArrow(const DebugArrow& arrow, const ModelUniformMapping& mapping) {
-	arrow.model.render(mapping);
+void DebugArrow::render(const ModelUniformMapping& mapping) const {
+	model.render(mapping);
 }
 
-void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const Camera& camera) {
-	dbgModel.model = copyMatrix(model);
-	updateBox(dbgModel.debugBox, model);
-	updateDebugArrow(dbgModel.xArrow, dbgModel.debugBox, dbgModel.model);
-	updateDebugArrow(dbgModel.yArrow, dbgModel.debugBox, dbgModel.model);
-	updateDebugArrow(dbgModel.zArrow, dbgModel.debugBox, dbgModel.model);
+void DebugModel::update(Matrix4x4f& model, const Camera& camera) {
+	model = copyMatrix(model);
+	updateBox(debugBox, model);
+	xArrow.update(debugBox, model);
+	yArrow.update(debugBox, model);
+	zArrow.update(debugBox, model);
 
-	if (dbgModel.clickState == DebugClickState::NONE) {
+	if (clickState == DebugClickState::NONE) {
 		if (isLeftClickDown()) {
 			Ray rayWorld = clickToRay(camera);
-			if (isBoxInRayPath(dbgModel.debugBox, model, rayWorld)) {
+			if (isBoxInRayPath(debugBox, model, rayWorld)) {
 				GLfloat distanceFromCamera = -1;
 
-				if (isBoxInRayPath(dbgModel.xArrow.boundingBox, dbgModel.xArrow.model.model, rayWorld)) {
-					dbgModel.clickState = DebugClickState::X_AXIS;
-					distanceFromCamera = getDistanceFromCamera(dbgModel.xArrow.boundingBox, camera, dbgModel.xArrow.model.model);
+				if (isBoxInRayPath(xArrow.boundingBox, xArrow.model.model, rayWorld)) {
+					clickState = DebugClickState::X_AXIS;
+					distanceFromCamera = getDistanceFromCamera(xArrow.boundingBox, camera, xArrow.model.model);
 				}
 				
-				if (isBoxInRayPath(dbgModel.yArrow.boundingBox, dbgModel.yArrow.model.model, rayWorld)) {
-					GLfloat nextDistanceFromCamera = getDistanceFromCamera(dbgModel.yArrow.boundingBox, camera, dbgModel.yArrow.model.model);
+				if (isBoxInRayPath(yArrow.boundingBox, yArrow.model.model, rayWorld)) {
+					GLfloat nextDistanceFromCamera = getDistanceFromCamera(yArrow.boundingBox, camera, yArrow.model.model);
 					if (distanceFromCamera < 0 || nextDistanceFromCamera < distanceFromCamera) {
-						dbgModel.clickState = DebugClickState::Y_AXIS;
+						clickState = DebugClickState::Y_AXIS;
 						distanceFromCamera = nextDistanceFromCamera;
 					}
 				}
 				
-				if (isBoxInRayPath(dbgModel.zArrow.boundingBox, dbgModel.zArrow.model.model, rayWorld)) {
-					GLfloat nextDistanceFromCamera = getDistanceFromCamera(dbgModel.zArrow.boundingBox, camera, dbgModel.zArrow.model.model);
+				if (isBoxInRayPath(zArrow.boundingBox, zArrow.model.model, rayWorld)) {
+					GLfloat nextDistanceFromCamera = getDistanceFromCamera(zArrow.boundingBox, camera, zArrow.model.model);
 					if (distanceFromCamera < 0 || nextDistanceFromCamera < distanceFromCamera) {
-						dbgModel.clickState = DebugClickState::Z_AXIS;
+						clickState = DebugClickState::Z_AXIS;
 					}
 				}
 
-				switch (dbgModel.clickState) {
+				switch (clickState) {
 				case DebugClickState::X_AXIS:
-					changeArrowColor(dbgModel.xArrow, Vector3f{1, 1, 0});
+					changeArrowColor(xArrow, Vector3f{1, 1, 0});
 					break;
 				case DebugClickState::Y_AXIS:
-					changeArrowColor(dbgModel.yArrow, Vector3f{1, 1, 0});
+					changeArrowColor(yArrow, Vector3f{1, 1, 0});
 					break;
 				case DebugClickState::Z_AXIS:
-					changeArrowColor(dbgModel.zArrow, Vector3f{1, 1, 0});
+					changeArrowColor(zArrow, Vector3f{1, 1, 0});
 					break;
 				}
 
-				if (dbgModel.clickState != DebugClickState::NONE) {
-					dbgModel.focusToken = grabFocus();
+				if (clickState != DebugClickState::NONE) {
+					focusToken = grabFocus();
 				}
 			}
 		}
-	} else if (!isLeftClickDown() && dbgModel.clickState != DebugClickState::NONE) {
-		switch (dbgModel.clickState) {
+	} else if (!isLeftClickDown() && clickState != DebugClickState::NONE) {
+		switch (clickState) {
 		case DebugClickState::X_AXIS:
-			changeArrowColor(dbgModel.xArrow, Vector3f{1, 0, 0});
+			changeArrowColor(xArrow, Vector3f{1, 0, 0});
 			break;
 		case DebugClickState::Y_AXIS:
-			changeArrowColor(dbgModel.yArrow, Vector3f{0, 1, 0});
+			changeArrowColor(yArrow, Vector3f{0, 1, 0});
 			break;
 		case DebugClickState::Z_AXIS:
-			changeArrowColor(dbgModel.zArrow, Vector3f{0, 0, 1});
+			changeArrowColor(zArrow, Vector3f{0, 0, 1});
 			break;
 		}
 
-		dbgModel.clickState = DebugClickState::NONE;
-		returnFocus(dbgModel.focusToken);
+		clickState = DebugClickState::NONE;
+		returnFocus(focusToken);
 	} else {
 		Ray rayToWorld = clickToRay(camera);
 		Plane plane;
-		plane.center =  fromVec4(mult(model, getCenter(dbgModel.debugBox)));
+		plane.center =  fromVec4(mult(model, getCenter(debugBox)));
 		Vector3f intersectPoint;
 
-		switch (dbgModel.clickState) {
+		switch (clickState) {
 		case DebugClickState::X_AXIS:
 			plane.normal = Vector3f{0, 0, 1};
 			if (tryGetRayPointOfIntersection(plane, rayToWorld, intersectPoint)) {
@@ -142,19 +142,19 @@ void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const Camera& cam
 	}
 }
 
-void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const ModelUniformMapping& mapping) {
-	renderDebugArrow(dbgModel.xArrow, mapping);
-	renderDebugArrow(dbgModel.yArrow, mapping);
-	renderDebugArrow(dbgModel.zArrow, mapping);
-	renderBoxOutline(dbgModel.debugBox, model, mapping);
+void DebugModel::render( const Matrix4x4f& model, const ModelUniformMapping& mapping) const {
+	xArrow.render(mapping);
+	yArrow.render(mapping);
+	zArrow.render(mapping);
+	renderBoxOutline(debugBox, model, mapping);
 }
 
-void freeDebug(DebugModel& dbgModel) {
-	dbgModel.xArrow.model.free();
-	dbgModel.yArrow.model.free();
-	dbgModel.zArrow.model.free();
+void DebugModel::free() {
+	xArrow.model.free();
+	yArrow.model.free();
+	zArrow.model.free();
 	
-	if (dbgModel.debugBox.vao) glDeleteVertexArrays(1, &dbgModel.debugBox.vao);
-	if (dbgModel.debugBox.vbo) glDeleteBuffers(1, &dbgModel.debugBox.vbo);
-    if (dbgModel.debugBox.ebo) glDeleteBuffers(1, &dbgModel.debugBox.ebo);
+	if (debugBox.vao) glDeleteVertexArrays(1, &debugBox.vao);
+	if (debugBox.vbo) glDeleteBuffers(1, &debugBox.vbo);
+    if (debugBox.ebo) glDeleteBuffers(1, &debugBox.ebo);
 }

@@ -2,27 +2,18 @@ useDeferredRendering    false
 
 textures                assets/texture-info.mattl
 
-::skybox
-    front   assets/skybox/cloudy/bluecloud_ft.jpg
-    back    assets/skybox/cloudy/bluecloud_bk.jpg
-    up      assets/skybox/cloudy/bluecloud_up.jpg
-    down    assets/skybox/cloudy/bluecloud_dn.jpg
-    right   assets/skybox/cloudy/bluecloud_rt.jpg
-    left    assets/skybox/cloudy/bluecloud_lf.jpg
-;;
-
 ::lights
     ::
-        type            0
-        color           1.0 1.0 1.0
+        type            2
+        color           1 1 1
         direction       0 -1 0
-        position        0 10 0
+        position        0 30 0
         up              0 0 1
-        usesShadows     false
+        usesShadows     true
         isOn            true
         constant        1
-        linear          0
-        quadratic       0
+        linear          0.3
+        quadratic       0.2
         cosineCutOff    0.5
         dropOff         24
     ;;
@@ -39,8 +30,8 @@ textures                assets/texture-info.mattl
         transform   1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
     ;;
 	::
-		path		assets/models/Mario/Super Mario 64 - Mario.mattl
-		transform	0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 -40 0 1
+		path		assets/models/Floor/floor.mattl
+		transform	5 0 0 0 0 5 0 0 0 0 5 0 0 -10 0 1
 	;;
 ;;
 

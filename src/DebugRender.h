@@ -15,10 +15,10 @@ struct DebugArrow {
 	Box3D boundingBox;
 
 	bool isClicked = false;
+	void update(Box3D& debugBox, const Matrix4x4f& model);
+	void render(const ModelUniformMapping& mapping) const;
 };
 
-void updateDebugArrow(DebugArrow& arrow, Box3D& debugBox, const Matrix4x4f& model);
-void renderDebugArrow(const DebugArrow& arrow, const ModelUniformMapping& mapping);
 
 enum class DebugClickState {
 	NONE,
@@ -44,8 +44,8 @@ struct DebugModel {
 	};
 	DebugClickState clickState = DebugClickState::NONE;
 	int focusToken = -1;
-};
 
-void updateDebugModel(DebugModel& dbgModel, Matrix4x4f& model, const Camera& camera);
-void renderDebugModel(const DebugModel& dbgModel, const Matrix4x4f& model, const ModelUniformMapping& mapping);
-void freeDebug(DebugModel& dbgModel);
+	void update(Matrix4x4f& model, const Camera& camera);
+	void render(const Matrix4x4f& model, const ModelUniformMapping& mapping) const;
+	void free();
+};

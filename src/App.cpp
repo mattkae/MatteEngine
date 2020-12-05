@@ -45,38 +45,8 @@ void Application::update(double deltaTime) {
 		editor.toggle();
 	}
 
-	if (isLeftClickDown() && isDefaultFocused()) {
-		int modelIdx = castRayToModel();
-		if (modelIdx > -1) {
-			UIEvent selectionEvent = {UIEventType::SHOW_MODEL, &modelIdx };
-			// @TODO: Clicking models in the editor
-			//editorUI.ui.eventProcessor.processEvent(selectionEvent);
-		}
-	}
-
 	scene.update(deltaTime);
 	editor.update(deltaTime);
-}
-
-int Application::castRayToModel() {
-	Ray rayWorld = clickToRay(scene.mCamera);
-
-	GLfloat distanceFromEye = -1;
-	int retval = -1;
-
-	for (size_t mIdx = 0; mIdx < scene.numModels; mIdx++) {
-		const Box3D& box = scene.modelBoundingBoxes[mIdx];
-		const Model& model = scene.models[mIdx];
-
-		if (isBoxInRayPath(box, model.model, rayWorld)) {
-			GLfloat nextDistanceFromEye = getDistanceFromCamera(box, scene.mCamera, model.model);
-			if (distanceFromEye < 0 || nextDistanceFromEye < distanceFromEye) {
-				distanceFromEye = nextDistanceFromEye;
-				retval = mIdx;
-			}
-		}
-	}
-	return retval;
 }
 
 void Application::render() {

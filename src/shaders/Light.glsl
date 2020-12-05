@@ -92,15 +92,15 @@ float getOmniVisibility(const in Light light, vec4 fragPos, vec2 uFarNear) {
 
 float getDirVisibility(const in int lightIndex, vec4 fragPosInLightSpace, sampler2DShadow uDirShadow[MAX_LIGHTS]) {
     float retval = 0;
-    int N = 4;
+    int N = 8;
     int twoN = N * 2;
 
     vec3 lightPosition = (vec3(fragPosInLightSpace.x, 
         fragPosInLightSpace.y, 
         fragPosInLightSpace.z) / fragPosInLightSpace.w) * 0.5 + 0.5;
 
-    if (true) {
-        return texture(uDirShadow[lightIndex], lightPosition);
+    if (false) {
+       return texture(uDirShadow[lightIndex], lightPosition);
     }
 
     vec3 transformedVec = vec3(lightPosition);

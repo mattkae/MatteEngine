@@ -30,13 +30,14 @@ struct Light {
 
     bool usesShadows = false;
 
-	GLint shadowWidth = 1600;
-    GLint shadowHeight = 1200;
+	GLint shadowWidth = 1280;
+    GLint shadowHeight = 960;
 
 	GLuint shadowTexture = 0;
 	GLuint depthFbo = 0;
 	bool isOn = true;
 
+    Matrix4x4f lightSpaceMatrix;
 	Matrix4x4f projection;
 	Matrix4x4f view;
 

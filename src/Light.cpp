@@ -5,9 +5,7 @@
 #include "Scene.h"
 #include "TextureUniformConstants.h"
 #include "ShaderUniformMapping.h"
-#include <iostream>
-#include <sstream>
-#include <string>
+#include "GlobalLoaders.h"
 
 inline Matrix4x4f getLightProjection(const Light &light) {
     switch (light.type) {
@@ -86,11 +84,13 @@ void createShadowTextureForDirectionalLight(Light& light) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light.shadowTexture, 0);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cerr << "Shadow framebuffer is not okay for light." << std::endl;
+        logger_error("Shadow framebuffer is not okay for light.");
     }
 
     glDrawBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    GlobalTextureLoader.registerDepthTexture(light.shadowTexture);
 }
 
 void Light::initialize(int lightIndex) {
@@ -110,6 +110,7 @@ void Light::initialize(int lightIndex) {
 	if (usesShadows) {
 		view = getLightView(*this);
 		projection = getLightProjection(*this);
+        lightSpaceMatrix = view * projection;
 	}
 }
 
@@ -126,7 +127,7 @@ void renderPointShadows(const Light& light, const Scene &scene) {
 
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE) {
-            std::cerr << "Shadow FBO is broken with code " << status << std::endl;
+            logger_error("Shadow FBO is broken with code, status=%d", status);
         }
 
         Vector3f currentDirection;
@@ -157,7 +158,7 @@ void renderPointShadows(const Light& light, const Scene &scene) {
             up = getVec3(0, -1, 0);
             break;
         default:
-            std::cerr << "Invalid direction for cube map." << std::endl;
+            logger_error("Invalid direction for cube map");
             break;
         }
 
@@ -207,7 +208,7 @@ void Light::renderShadows(const Scene& scene) {
         renderDirectionalShadows(*this, scene);
         break;
     default:
-        std::cerr << "Rendering shadows for invalid light type " << type << "." << std::endl;
+        logger_error("Rendering shadows for invalid light type=%d", type);
         break;
     }
 }
@@ -246,7 +247,7 @@ void Light::render(const int index, const LightUniformMapping* uniformMapping) c
 			glActiveTexture(GL_TEXTURE0 + shadowMapIndex);
 			glBindTexture(GL_TEXTURE_2D, shadowTexture);
 			setShaderInt(uniformMapping->LIGHT_DIR_SHADOW[index], shadowMapIndex);
-			setShaderMat4(uniformMapping->LIGHT_SHADOWMATRIX[index], projection * view);
+			setShaderMat4(uniformMapping->LIGHT_SHADOWMATRIX[index], lightSpaceMatrix);
 			break;
 		}
 		default:

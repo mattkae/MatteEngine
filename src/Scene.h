@@ -36,7 +36,7 @@ struct Scene {
     bool useDefferredRendering = false;
     DeferredGeometryBuffer mDeferredBuffer;
 
-    bool mUseShadows = false;
+    bool mUseShadows = true;
     Camera mCamera;
 
 	void initialize();
@@ -47,7 +47,6 @@ struct Scene {
 	void renderShadows();
 	void renderGBuffer();
 	void renderNonDeferred();
-	void renderDebug();
 	void renderDirect(const Camera* camera, Vector4f clipPlane = { 0, 1, 0, static_cast<float>(INT_MAX) });
 	void renderModels(const ModelUniformMapping& mapping, bool withMaterial = true) const;
 };

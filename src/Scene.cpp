@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 
 void Scene::initialize() {
+	/*
 	WaterParameters waterParameters;
 	waterParameters.width = 1000;
 	waterParameters.height = 1000;
@@ -23,6 +24,7 @@ void Scene::initialize() {
 	water.initialize(this, &waterParameters);
 	waterParameters.dudvTexturePath.free();
 	waterParameters.normalMapPath.free();
+	*/
 
 	mGradientSky.startColor = { 0.9f, 0.9f, 0.9f, 1.f };
 	mGradientSky.endColor = { 0.1f, 0.2f, 0.5f, 1.0f };
@@ -43,11 +45,6 @@ void Scene::update(double dt) {
 	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
 		updateParticleEmitter(emitters[eIdx], dtFloat);
 	}
-
-
-	if (selectedModelIndex > -1) {
-		updateDebugModel(debugModel, models[selectedModelIndex].model, mCamera);
-	}
 }
 
 void Scene::renderShadows() {
@@ -56,9 +53,9 @@ void Scene::renderShadows() {
 
 	useShader(ShaderUniformMapping::GlobalShadowShaderMapping.shader);
 
-    for (auto light : lights) {
-		light.renderShadows(*this);
-    }
+	for (int lightIdx = 0; lightIdx < numLightsUsed; lightIdx++) {
+		lights[lightIdx].renderShadows(*this);
+	}
 
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
@@ -90,12 +87,6 @@ void Scene::renderModels(const ModelUniformMapping& mapping, bool withMaterial) 
     for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
 		models[modelIdx].render(mapping, withMaterial);
     }
-}
-
-void Scene::renderDebug() {
-	if (selectedModelIndex > -1) {
-		renderDebugModel(debugModel, models[selectedModelIndex].model, ShaderUniformMapping::GlobalModelShaderMapping.modelUniformMapping);
-	}
 }
 
 void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
@@ -135,7 +126,6 @@ void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
         //mDeferredBuffer.renderToScreen(mSceneShader);
     } else {
         renderModels(ShaderUniformMapping::GlobalModelShaderMapping.modelUniformMapping);
-		renderDebug();
 		renderNonDeferred();
     }
 
@@ -174,7 +164,6 @@ void Scene::free() {
 	mSkybox.free();
     mTerrain.free();
     mDeferredBuffer.free();
-	freeDebug(debugModel);
 	water.free();
 	modelLoader.free();
 }

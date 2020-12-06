@@ -161,8 +161,10 @@ inline void loadModel(FILE* file, Scene& scene, size_t& numModels, char buffer[S
             ModelLoader::ModelLoadResult retval = scene.modelLoader.loadSerializedModel(ptr);
             scene.models[numModels] = retval.model;
             scene.modelBoundingBoxes[numModels] = retval.box;
-        } else if (StringUtil::ifEqualWalkToValue(ptr, "transform")) {
-            StringUtil::strToMyMat4(ptr, scene.models[numModels].defaultModel);
+        } else if (StringUtil::ifEqualWalkToValue(ptr, "translation")) {
+            StringUtil::strToVec3(ptr, scene.models[numModels].translation);
+        } else if (StringUtil::ifEqualWalkToValue(ptr, "scale")) {
+            StringUtil::strToVec3(ptr, scene.models[numModels].scale);
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }

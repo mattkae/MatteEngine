@@ -38,6 +38,7 @@ void Editor::update(double dtMs) {
 		return;
 	}
 
+	/*
 	if (isLeftClickDown() && isDefaultFocused()) {
 		int prevSelection = mSelectedModelIdx;
 		mSelectedModelIdx  = castRayToModel();
@@ -46,9 +47,10 @@ void Editor::update(double dtMs) {
 			editorUI.ui.eventProcessor.processEvent(selectionEvent);
 		} else if (prevSelection >= 0 && mSelectedModelIdx < 0) {
 			UIEvent selectionEvent = { UIEventType::HIDE_MODEL };
-			editorUI.ui.eventProcessor.processEvent(selectionEvent);
+			//editorUI.ui.eventProcessor.processEvent(selectionEvent);
 		}
 	}
+	*/
 
 	editorUI.ui.update(dtMs);
 

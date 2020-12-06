@@ -15,6 +15,7 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			if (modelIdx >= 0 && modelIdx < GlobalApp.scene.numModels) {
 				Model* model = &GlobalApp.scene.models[modelIdx];
 				GlobalApp.editor.editorUI.openModelUI(model);
+				GlobalApp.editor.mSelectedModelIdx = modelIdx;
 			}
 			break;
 		}
@@ -23,84 +24,84 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_X: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].translation.x = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].translation.x = value;
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_Y: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].translation.y = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].translation.y = value;
 			break;
 		}
 		case UIEventType::EDIT_TRANSLATION_Z: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].translation.z = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].translation.z = value;
 			break;
 		}
 		case UIEventType::EDIT_SCALE_X: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].scale.x = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].scale.x = value;
 			break;
 		}
 		case UIEventType::EDIT_SCALE_Y: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].scale.y = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].scale.y = value;
 			break;
 		}
 		case UIEventType::EDIT_SCALE_Z: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].scale.z = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].scale.z = value;
 			break;
 		}
 		case UIEventType::EDIT_ROTATION_X: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].rotation.x = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].rotation.x = value;
 			break;
 		}
 		case UIEventType::EDIT_ROTATION_Y: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].rotation.y = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].rotation.y = value;
 			break;
 		}
 		case UIEventType::EDIT_ROTATION_Z: {
-			if (GlobalApp.scene.selectedModelIndex < 0) {
+			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
 
 			float value = *static_cast<float*>(activeEvent.data);
-			GlobalApp.scene.models[GlobalApp.scene.selectedModelIndex].rotation.z = value;
+			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].rotation.z = value;
 			break;
 		}
 		case UIEventType::SHOW_TERRAIN: {

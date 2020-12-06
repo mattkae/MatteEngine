@@ -1,7 +1,33 @@
 #pragma once
 #include "Scene.h"
-#include <string>
+#include "ModelLoader.h"
 
-namespace SceneLoader {
-	void loadScene(const char* filepath, Scene& scene);
-}
+struct SceneLoader {
+	ModelLoader mModelLoader;
+	FILE* mFile;
+	Scene* mScene;
+	char buffer[512];
+
+	void loadScene(const char* filepath);
+
+	void loadLight();
+	void loadLights();
+
+	void loadEntity();
+	void loadEntityList();
+
+	void loadSphere();
+	void loadSpheres();
+
+	void loadParticleEmitter();
+	void loadParticleEmitters();
+	void loadTerrain();
+	void loadCamera();
+
+	// Helper methods
+	void loadRandomizableFloat(RandomizableFloat& v);
+	void loadRandomizableVec3(RandomizableVec3& v);
+	void loadFloatFunc(FunctionFloat& v);
+	void loadVec4Func(FunctionVec4& v);
+	void loadVec3Func(FunctionVec3& v);
+};

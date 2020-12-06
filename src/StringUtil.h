@@ -107,6 +107,28 @@ namespace StringUtil {
 		}
 	}
 
+	inline void strToQuaternion(char* ptr, Quaternion& q) {
+		size_t index = 0;
+		char value[32];
+		while (index < 3 && ptr[0] != '\0' && ptr[0] != '\n') {
+			size_t toSpace = getLengthToSpace(ptr);
+			substring(value, ptr, toSpace);
+			ptr += toSpace + 1;
+			switch (index) {
+			case 0:
+				q.x = std::stof(value);
+				break;
+			case 1:
+				q.y = std::stof(value);
+				break;
+			case 2:
+				q.z = std::stof(value);
+				break;
+			}
+			index++;
+		}
+	}
+
 	inline void strToVec2(char* ptr, Vector2f& v) {
 		size_t index = 0;
 		char value[32];

@@ -18,7 +18,7 @@ int Editor::castRayToModel() {
 	GLfloat distanceFromEye = -1;
 	int retval = -1;
 
-	for (size_t mIdx = 0; mIdx < mScene->numModels; mIdx++) {
+	/*for (size_t mIdx = 0; mIdx < mScene->numModels; mIdx++) {
 		const Box3D& box = mScene->modelBoundingBoxes[mIdx];
 		const Model& model = mScene->models[mIdx];
 
@@ -29,7 +29,7 @@ int Editor::castRayToModel() {
 				retval = mIdx;
 			}
 		}
-	}
+	}*/
 	return retval;
 }
 

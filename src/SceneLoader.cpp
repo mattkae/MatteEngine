@@ -3,110 +3,67 @@
 #include "StringUtil.h"
 #include "FileHelper.h"
 #include "ShaderUniformMapping.h"
+#include "Logger.h"
 
 const char* START_OBJECT_TOKEN = "::";
 const char* END_OBJECT_TOKEN = ";;";
 const char* IGNORE_OBJECT_TOKEN = "//";
 
-void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadSpheres(FILE* file, Model* models, Box3D* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void loadCamera(FILE* file, Camera& camera, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]);
-void ignoreObject(FILE* file, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void ignoreObject(FILE* mFile, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }
     }
 }
 
-void SceneLoader::loadScene(const char* filepath, Scene& scene) {
-    FILE* file = FileHelper::openFile(filepath);
+void SceneLoader::loadScene(const char* filepath) {
+    mFile = FileHelper::openFile(filepath);
+    mScene->initialize();
 
-    char buffer[StringUtil::DEFAULT_BUFFER_SIZE];
-    if (file == NULL) {
+    if (mFile == NULL) {
         // @TODO: Error out
+        logger_error("Unable to open mFile: %s", filepath);
         return;
     }
 
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         const char* token = nullptr;
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
             ptr += strlen(START_OBJECT_TOKEN);
             token = START_OBJECT_TOKEN;
-            if (StringUtil::startsWith(ptr, "skybox")) {
-                loadSkybox(file, scene.mSkybox, buffer);
-            } else if (StringUtil::startsWith(ptr, "lights")) {
-                loadLights(file, scene.lights, scene.numLightsUsed, buffer);
-            } else if (StringUtil::startsWith(ptr, "models")) {
-                loadModels(file, scene, scene.numModels, buffer);
+            if (StringUtil::startsWith(ptr, "lights")) {
+                loadLights();
+            } else if (StringUtil::startsWith(ptr, "entities")) {
+                loadEntityList();
             } else if (StringUtil::startsWith(ptr, "spheres")) {
-                loadSpheres(file, scene.models, scene.modelBoundingBoxes, scene.numModels, buffer);
+                loadSpheres();
             } else if (StringUtil::startsWith(ptr, "particleEmitters")) {
-                loadParticleEmitters(file, scene.emitters, scene.numEmitters, buffer);
+                loadParticleEmitters();
             } else if (StringUtil::startsWith(ptr, "terrain")) {
-                loadTerrain(file, scene.mTerrain, buffer);
+                loadTerrain();
             } else if (StringUtil::startsWith(ptr, "camera")) {
-                loadCamera(file, scene.mCamera, buffer);
+                loadCamera();
             }
         } else if (StringUtil::ifEqualWalkToValue(ptr, "useDeferredRendering")) {
-            StringUtil::strToBool(ptr, scene.useDefferredRendering);
+            StringUtil::strToBool(ptr, mScene->useDefferredRendering);
         } else if (StringUtil::startsWith(ptr, IGNORE_OBJECT_TOKEN)) {
-            ignoreObject(file, buffer);
+            ignoreObject(mFile, buffer);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "textures")) {
-            scene.modelLoader.loadTextureList(ptr);
+            mModelLoader.loadTextureList(ptr);
         }
     }
 
-    scene.initialize();
-    fclose(file);
+    fclose(mFile);
 }
 
-void loadSkybox(FILE* file, Skybox& skybox, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
-    char facePaths[6][128];
-    char* ptr = &buffer[0];
-    while (StringUtil::processLine(file, buffer, ptr)) {
-        size_t faceStrLen = 0;
-        size_t faceIndex = 0;
+void SceneLoader::loadLight() {
+    Light light;
 
-        if (StringUtil::startsWith(ptr, "front")) {
-            faceStrLen = strlen("front");
-            faceIndex = 0;
-        } else if (StringUtil::startsWith(ptr, "back")) {
-            faceStrLen = strlen("back");
-            faceIndex = 1;
-        } else if (StringUtil::startsWith(ptr, "up")) {
-            faceStrLen = strlen("up");
-            faceIndex = 2;
-        } else if (StringUtil::startsWith(ptr, "down")) {
-            faceStrLen = strlen("down");
-            faceIndex = 3;
-        } else if (StringUtil::startsWith(ptr, "right")) {
-            faceStrLen = strlen("right");
-            faceIndex = 4;
-        } else if (StringUtil::startsWith(ptr, "left")) {
-            faceStrLen = strlen("left");
-            faceIndex = 5;
-        } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
-            break;
-        }
-
-        ptr += faceStrLen;
-        StringUtil::trimLeft(ptr);
-        StringUtil::substring(facePaths[faceIndex], ptr, StringUtil::getLengthToEndOfLine(ptr));
-    }
-
-    skybox.initialize(facePaths);
-}
-
-inline void loadLight(FILE* file, Light& light, int numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "type")) {
             int value;
             StringUtil::strToInt(ptr, value);
@@ -138,55 +95,72 @@ inline void loadLight(FILE* file, Light& light, int numLights, char buffer[Strin
         }
     }
 
-    light.initialize(numLights);
+    light.initialize(mScene->numLightsUsed);
+    mScene->lights[mScene->numLightsUsed] = light;
+    mScene->numLightsUsed++;
 }
 
-void loadLights(FILE* file, Light* lights, size_t& numLights, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
-    numLights = 0;
+void SceneLoader::loadLights() {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadLight(file, lights[numLights], numLights, buffer);
-            numLights++;
+            loadLight();
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }
     }
 }
 
-inline void loadModel(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
-    char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
-        if (StringUtil::ifEqualWalkToValue(ptr, "path")) {
-            ModelLoader::ModelLoadResult retval = scene.modelLoader.loadSerializedModel(ptr);
-            scene.models[numModels] = retval.model;
-            scene.modelBoundingBoxes[numModels] = retval.box;
-        } else if (StringUtil::ifEqualWalkToValue(ptr, "translation")) {
-            StringUtil::strToVec3(ptr, scene.models[numModels].translation);
-        } else if (StringUtil::ifEqualWalkToValue(ptr, "scale")) {
-            StringUtil::strToVec3(ptr, scene.models[numModels].scale);
-        } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
-            break;
-        }
-    }
-}
+void SceneLoader::loadEntity() {
+    u8 eId = mScene->systemEngine.registerEntity();
 
-void loadModels(FILE* file, Scene& scene, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadModel(file, scene, numModels, buffer);
-            numModels++;
+            ptr += strlen(START_OBJECT_TOKEN);
+            if (StringUtil::ifEqualWalkToValue(ptr, "renderable")) {
+                RenderableEntity re;
+
+                while (StringUtil::processLine(mFile, buffer, ptr)) {
+                    if (StringUtil::ifEqualWalkToValue(ptr, "path")) {
+                        ModelLoader::ModelLoadResult retval = mModelLoader.loadSerializedModel(ptr);
+                        re.mModel = retval.model;
+                        //mScene->models[numModels] = retval.model;
+                        //mScene->modelBoundingBoxes[numModels] = retval.box;
+                    } else if (StringUtil::ifEqualWalkToValue(ptr, "translation")) {
+                        StringUtil::strToVec3(ptr, re.mModel.translation);
+                    } else if (StringUtil::ifEqualWalkToValue(ptr, "scale")) {
+                        StringUtil::strToVec3(ptr, re.mModel.scale);
+                    } else if (StringUtil::ifEqualWalkToValue(ptr, "rotation")) {
+                        StringUtil::strToQuaternion(ptr, re.mModel.rotation);
+                    } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
+                        break;
+                    }
+                }
+
+                re.mEntityId = eId;
+                re.mShouldRender = true;
+                mScene->systemEngine.mRenderSystem.mEntities.add(re);
+            }
+        }
+    }
+}
+
+void SceneLoader::loadEntityList() {
+    char* ptr;
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
+        if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
+            loadEntity();
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }
     }
 }
 
-inline void loadSphere(FILE* file, Model& model, Box3D& box, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadSphere() {
     char* ptr;
     Sphere sphere;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "radius")) {
             StringUtil::strToInt(ptr, sphere.radius);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "radius")) {
@@ -198,25 +172,23 @@ inline void loadSphere(FILE* file, Model& model, Box3D& box, char buffer[StringU
         }
     }
 
-    initializeSphere(sphere, model, box);
+    //initializeSphere();
 }
 
-void loadSpheres(FILE* file, Model* models, Box3D* boxes, size_t& numModels, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadSpheres() {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadSphere(file, models[numModels], boxes[numModels], buffer);
-            numModels++;
+            loadSphere();
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }
     }
 }
 
-void loadRandomizableFloat(FILE* file, RandomizableFloat& v, char buffer[StringUtil::DEFAULT_BUFFER_SIZE])
-{
+void SceneLoader::loadRandomizableFloat(RandomizableFloat& v) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "baseValue")) {
             StringUtil::strToFloat(ptr, v.baseValue);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "randomOffset")) {
@@ -227,9 +199,9 @@ void loadRandomizableFloat(FILE* file, RandomizableFloat& v, char buffer[StringU
     }
 }
 
-void loadRandomizableVec3(FILE* file, RandomizableVec3& v, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadRandomizableVec3(RandomizableVec3& v) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "baseValue")) {
             StringUtil::strToVec3(ptr, v.baseValue);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "randomOffset")) {
@@ -240,9 +212,9 @@ void loadRandomizableVec3(FILE* file, RandomizableVec3& v, char buffer[StringUti
     }
 }
 
-void loadFloatFunc(FILE* file, FunctionFloat& v, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadFloatFunc(FunctionFloat& v) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "initial")) {
             StringUtil::strToFloat(ptr, v.initial);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "linear")) {
@@ -259,9 +231,9 @@ void loadFloatFunc(FILE* file, FunctionFloat& v, char buffer[StringUtil::DEFAULT
     }
 }
 
-void loadVec4Func(FILE* file, FunctionVec4& v, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadVec4Func(FunctionVec4& v) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "initial")) {
             StringUtil::strToVec4(ptr, v.initial);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "linear")) {
@@ -278,9 +250,9 @@ void loadVec4Func(FILE* file, FunctionVec4& v, char buffer[StringUtil::DEFAULT_B
     }
 }
 
-void loadVec3Func(FILE* file, FunctionVec3& v, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadVec3Func(FunctionVec3& v) {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "initial")) {
             StringUtil::strToVec3(ptr, v.initial);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "linear")) {
@@ -297,22 +269,23 @@ void loadVec3Func(FILE* file, FunctionVec3& v, char buffer[StringUtil::DEFAULT_B
     }
 }
 
-inline void loadParticleEmitter(FILE* file, ParticleEmitter& emitter, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadParticleEmitter() {
     char* ptr;
     int initialParticleCount = 0;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    ParticleEmitter emitter;
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
             ptr += strlen(START_OBJECT_TOKEN);
             if (StringUtil::ifEqualWalkToValue(ptr, "spawnFrequencySeconds")) {
-                loadRandomizableFloat(file, emitter.spawnFrequencySeconds, buffer);
+                loadRandomizableFloat(emitter.spawnFrequencySeconds);
             } else if (StringUtil::ifEqualWalkToValue(ptr, "colorFunction")) {
-                loadVec4Func(file, emitter.colorFunction, buffer);
+                loadVec4Func(emitter.colorFunction);
             } else if (StringUtil::ifEqualWalkToValue(ptr, "movementFunction")) {
-                loadVec3Func(file, emitter.movementFunction, buffer);
+                loadVec3Func(emitter.movementFunction);
             } else if (StringUtil::ifEqualWalkToValue(ptr, "particlePosition")) {
-                loadRandomizableVec3(file, emitter.particlePosition, buffer);
+                loadRandomizableVec3(emitter.particlePosition);
             } else if (StringUtil::ifEqualWalkToValue(ptr, "particleTimeToLiveSeconds")) {
-                loadRandomizableFloat(file, emitter.particleTimeToLiveSeconds, buffer);
+                loadRandomizableFloat(emitter.particleTimeToLiveSeconds);
             }
         } else if (StringUtil::ifEqualWalkToValue(ptr, "model")) {
             StringUtil::strToMat4(ptr, emitter.model);
@@ -330,23 +303,23 @@ inline void loadParticleEmitter(FILE* file, ParticleEmitter& emitter, char buffe
     initializeParticleEmitter(emitter, initialParticleCount);
 }
 
-void loadParticleEmitters(FILE* file, ParticleEmitter* emitters, size_t& numEmitters, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
-    numEmitters = 0;
+void SceneLoader::loadParticleEmitters() {
+    mScene->numEmitters = 0;
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadParticleEmitter(file, emitters[numEmitters], buffer);
-            numEmitters++;
+            loadParticleEmitter();
+            mScene->numEmitters++;
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }
     }
 }
 
-void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadTerrain() {
     GenerationParameters gp;
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "size")) {
             StringUtil::strToInt(ptr, gp.size);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "granularity")) {
@@ -368,21 +341,21 @@ void loadTerrain(FILE* file, Terrain& terrain, char buffer[StringUtil::DEFAULT_B
         }
     }
 
-    terrain.initialize(gp);
+    mScene->mTerrain.initialize(gp);
 }
 
 
-void loadCamera(FILE* file, Camera& camera, char buffer[StringUtil::DEFAULT_BUFFER_SIZE]) {
+void SceneLoader::loadCamera() {
     char* ptr;
-    while (StringUtil::processLine(file, buffer, ptr)) {
+    while (StringUtil::processLine(mFile, buffer, ptr)) {
         if (StringUtil::ifEqualWalkToValue(ptr, "position")) {
             Vector3f cameraPosition;
             StringUtil::strToVec3(ptr, cameraPosition);
-            camera.position = cameraPosition;
+            mScene->mCamera.position = cameraPosition;
         } else if (StringUtil::ifEqualWalkToValue(ptr, "pitch")) {
             float pitch;
             StringUtil::strToFloat(ptr, pitch);
-            camera.pitch = pitch;
+            mScene->mCamera.pitch = pitch;
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
             break;
         }

@@ -28,7 +28,13 @@ void Application::initializeWindow() {
 void Application::initialize() {
 	GlobalLoaders::initialize();
 	ShaderUniformMapping::initialize();
-	SceneLoader::loadScene(SCENE_PATH, scene);
+	loadScene();
+}
+
+void Application::loadScene() {
+	SceneLoader sceneLoader;
+	sceneLoader.mScene = &scene;
+	sceneLoader.loadScene(SCENE_PATH);
 	editor.initialize(&scene);
 }
 
@@ -36,8 +42,7 @@ void Application::update(double deltaTime) {
 	if (isKeyJustDown(GLFW_KEY_R, 0)) {
 		scene.free();
 		editor.free();
-		SceneLoader::loadScene(SCENE_PATH, scene);
-		editor.initialize(&scene);
+		loadScene();
 		return;
 	}
 

@@ -10,7 +10,7 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			resetFocus();
 			break;
 		}
-		case UIEventType::SHOW_MODEL: {
+		/*case UIEventType::SHOW_MODEL: {
 			int modelIdx = *static_cast<int*>(activeEvent.data);
 			if (modelIdx >= 0 && modelIdx < GlobalApp.scene.numModels) {
 				Model* model = &GlobalApp.scene.models[modelIdx];
@@ -18,12 +18,12 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 				GlobalApp.editor.mSelectedModelIdx = modelIdx;
 			}
 			break;
-		}
+		}*/
 		case UIEventType::HIDE_MODEL: {
 			GlobalApp.editor.editorUI.modelUI.shouldClose = true;
 			break;
 		}
-		case UIEventType::EDIT_TRANSLATION_X: {
+		/*case UIEventType::EDIT_TRANSLATION_X: {
 			if (GlobalApp.editor.mSelectedModelIdx < 0) {
 				break;
 			}
@@ -103,7 +103,7 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			float value = *static_cast<float*>(activeEvent.data);
 			GlobalApp.scene.models[GlobalApp.editor.mSelectedModelIdx].rotation.z = value;
 			break;
-		}
+		}*/
 		case UIEventType::SHOW_TERRAIN: {
 			GlobalApp.editor.editorUI.terrainUI.shouldOpen = true;
 			break;

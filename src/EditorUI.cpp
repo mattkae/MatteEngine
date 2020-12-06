@@ -32,16 +32,16 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 
 	int numElements = 0;
 
-	if (scene->numModels && scene->models) {
-		numElements += scene->numModels + 1;
-	}
+	//if (scene->numModels && scene->models) {
+	//	numElements += scene->numModels + 1;
+	//}
 
 	numElements += 2;
 	numElements += 1;
 
 	primaryUI.uiElements.allocate(numElements);
 	UIBuilder::addStandardLabel("Models", primaryUI);
-	for (size_t modelIdx = 0; modelIdx < scene->numModels; modelIdx++) {
+	for (size_t modelIdx = 0; modelIdx < 0; modelIdx++) {
 		StringBuilder sb;
 		sb.format("%s %d", "Model", modelIdx + 1);
 		UIElement element;

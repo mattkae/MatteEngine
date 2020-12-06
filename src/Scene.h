@@ -13,15 +13,10 @@
 #include "ModelLoader.h"
 #include "Water.h"
 #include "GradientSky.h"
-#include <climits>
+#include "SystemEngine.h"
 
 struct Scene {
-	ModelLoader modelLoader;
-
-	Model models[32];
-	Box3D modelBoundingBoxes[32];
-	size_t numModels = 0;
-	DebugModel debugModel;
+	SystemEngine systemEngine;
 
     Light lights[MAX_LIGHTS];
 	size_t numLightsUsed = 0;
@@ -31,7 +26,6 @@ struct Scene {
 	Water water;
     Terrain mTerrain;
 	GradientSky mGradientSky;
-    Skybox mSkybox;
     bool useDefferredRendering = false;
     DeferredGeometryBuffer mDeferredBuffer;
 

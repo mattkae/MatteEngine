@@ -64,6 +64,8 @@
     <ClCompile Include="..\..\src\Skybox.cpp" />
     <ClCompile Include="..\..\src\Sphere.cpp" />
     <ClCompile Include="..\..\src\MyString.cpp" />
+    <ClCompile Include="..\..\src\SystemEngine.cpp" />
+    <ClCompile Include="..\..\src\System\RenderableSystem.cpp" />
     <ClCompile Include="..\..\src\Terrain.cpp" />
     <ClCompile Include="..\..\src\TextInput.cpp" />
     <ClCompile Include="..\..\src\TextRenderer.cpp" />
@@ -122,11 +124,14 @@
     <ClInclude Include="..\..\src\SceneLoader.h" />
     <ClInclude Include="..\..\src\ModelLoader.h" />
     <ClInclude Include="..\..\src\StringUtil.h" />
+    <ClInclude Include="..\..\src\SystemEngine.h" />
+    <ClInclude Include="..\..\src\System\RenderableSystem.h" />
     <ClInclude Include="..\..\src\TextInput.h" />
     <ClInclude Include="..\..\src\TextureInfo.h" />
     <ClInclude Include="..\..\src\GeneratedTexture.h" />
     <ClInclude Include="..\..\src\TextureLoader.h" />
     <ClInclude Include="..\..\src\TextureUniformConstants.h" />
+    <ClInclude Include="..\..\src\Types.h" />
     <ClInclude Include="..\..\src\UI.h" />
     <ClInclude Include="..\..\src\UIContext.h" />
     <ClInclude Include="..\..\src\UIElement.h" />

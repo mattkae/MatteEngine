@@ -30,6 +30,8 @@ void Scene::initialize() {
 	mGradientSky.endColor = { 0.1f, 0.2f, 0.5f, 1.0f };
 	mGradientSky.mixStartEnd = { 0.f, 200.f };
 	mGradientSky.initialize(500, 5, 5);
+
+	systemEngine.initialize();
 }
 
 void Scene::update(double dt) {
@@ -38,9 +40,7 @@ void Scene::update(double dt) {
     mCamera.update(dtFloat);
 	water.update(dtFloat);
 
-	for (unsigned int modelIdx = 0; modelIdx < numModels; modelIdx++) {
-		models[modelIdx].update(dtFloat);
-	}
+	systemEngine.update(dtFloat);
 
 	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
 		updateParticleEmitter(emitters[eIdx], dtFloat);
@@ -83,10 +83,7 @@ void Scene::renderNonDeferred() {
 
 void Scene::renderModels(const ModelUniformMapping& mapping, bool withMaterial) const {
     mTerrain.render(mapping, withMaterial);
-
-    for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
-		models[modelIdx].render(mapping, withMaterial);
-    }
+	systemEngine.mRenderSystem.render(mapping, withMaterial);
 }
 
 void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
@@ -146,10 +143,7 @@ void Scene::render() {
 }
 
 void Scene::free() {
-	for (size_t modelIdx = 0; modelIdx < numModels; modelIdx++) {
-        models[modelIdx].free();
-    }
-	numModels = 0;
+	systemEngine.free();
 	
 	for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
 		lights[lidx].free();
@@ -161,9 +155,7 @@ void Scene::free() {
 	}
 	numEmitters = 0;
 
-	mSkybox.free();
     mTerrain.free();
     mDeferredBuffer.free();
 	water.free();
-	modelLoader.free();
 }

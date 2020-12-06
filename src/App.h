@@ -28,6 +28,7 @@ struct Application {
 	void update(double dt);
 	void render();
 	void free();
+	void loadScene();
 	int castRayToModel();
 };
 

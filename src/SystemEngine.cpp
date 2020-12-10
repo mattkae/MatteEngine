@@ -1,11 +1,13 @@
 #include "SystemEngine.h"
 #include "Logger.h"
+#include "App.h"
 
 u8 SystemEngine::registerEntity() {
-	if (mMaxEntity >= MAX_ENTITIES) {
-		for (u8 idx = 0; idx < mMaxEntity; idx++) {
-			if (!mEntities[idx]) {
-				mEntities[idx] = true;
+	if (mEntityPtr >= MAX_ENTITIES) {
+		for (u8 idx = 0; idx < mEntityPtr; idx++) {
+			if (!mEntities[idx].mIsActive) {
+				mEntities[idx].mIsActive = true;
+				mEntities[idx].mId = idx;
 				return idx;
 			}
 		}
@@ -14,33 +16,40 @@ u8 SystemEngine::registerEntity() {
 		return 0;
 	}
 
-	u8 retval = mEntityPtr;
-	mEntities[retval] = true;
+	Entity newEntity;
+	newEntity.mId = mEntityPtr;
+	newEntity.mIsActive = true;
+	mEntities.add(newEntity);
 	mEntityPtr++;
-	mMaxEntity++;
-	return retval;
+	return newEntity.mId;
 }
 
 bool SystemEngine::unregisterEntity(u8 ptr) {
-	mEntities[ptr] = false;
+	// @TODO: Important! We need to remove the entity from the child systems
+	// later on in life. I don't want to think about this right now, but it will
+	// be very important in the future.
+
+	mEntities[ptr].mIsActive = false;
 	return true;
 }
 
 void SystemEngine::initialize() {
 	mRenderSystem.initialize();
+	mMouseInteractionSystem.initialize(this, &GlobalApp.scene.mCamera);
 }
 
 void SystemEngine::update(float dtMs) {
-	for (u8 idx = 0; idx < mMaxEntity; idx++) {
-		if (!mEntities[idx]) {
-			return;
-		}
-
-	}
-
+	mLightSystem.update(dtMs);
 	mRenderSystem.update(dtMs);
+	mMouseInteractionSystem.update(dtMs);
+}
+
+void SystemEngine::render() const {
+
 }
 
 void SystemEngine::free() {
 	mRenderSystem.free();
+	mMouseInteractionSystem.free();
+	mLightSystem.free();
 }

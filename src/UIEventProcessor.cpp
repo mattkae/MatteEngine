@@ -159,11 +159,16 @@ void UIEventProcessor::processEvent(UIEvent& activeEvent) {
 			break;
 		}
 		case UIEventType::SHOW_LIGHT_EDITOR: {
-			int lightIdx = *static_cast<int*>(activeEvent.data);
-			if (lightIdx >= 0 && lightIdx < GlobalApp.scene.numLightsUsed) {
-				Light* light = &GlobalApp.scene.lights[lightIdx];
-				GlobalApp.editor.editorUI.openLightUI(light);
-			}
+			// @TODO: Show the light editor
+			break;
+		}
+		case UIEventType::EDIT_LIGHT_COLOR_X: {
+			break;
+		}
+		case UIEventType::EDIT_LIGHT_COLOR_Y: {
+			break;
+		}
+		case UIEventType::EDIT_LIGHT_COLOR_Z: {
 			break;
 		}
 	}

@@ -47,35 +47,7 @@ void Scene::update(double dt) {
 	}
 }
 
-void Scene::renderShadows() {
-	if (!mUseShadows)
-        return;
-
-	useShader(ShaderUniformMapping::GlobalShadowShaderMapping.shader);
-
-	for (int lightIdx = 0; lightIdx < numLightsUsed; lightIdx++) {
-		lights[lightIdx].renderShadows(*this);
-	}
-
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
-        printf("Error during shadow pass: %d\n", err);
-    }
-}
-
-void Scene::renderGBuffer() {
-	if (!useDefferredRendering) {
-        return;
-    }
-
-    mDeferredBuffer.renderToBuffer(mCamera, *this);
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
-        printf("Error during gBuffer pass: %d\n", err);
-    }
-}
-
-void Scene::renderNonDeferred() {
+void Scene::renderParticles() {
 	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
 		renderParticleEmitter(emitters[eIdx], mCamera);
 	}
@@ -99,32 +71,19 @@ void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
 
 	mGradientSky.render(camera);
 
-	//mSkybox.render(*camera);
+	// water.render(lights, numLightsUsed);
 
-	water.render(lights, numLightsUsed);
-
-	if (!useDefferredRendering) {
-		renderNonDeferred();
-	}
+	renderParticles();
 
 	useShader(ShaderUniformMapping::GlobalModelShaderMapping.shader);
     camera->render(ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);
 
 	setShaderVec3(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_AMBIENT, getVec3(0.3f));
-	setShaderInt(ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
 	setShaderVec4(ShaderUniformMapping::GlobalModelShaderMapping.UNIFORM_CLIP_PLANE, clipPlane);	 
 
-    for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
-		lights[lidx].render(lidx, &ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping);
-    }
-
-    if (useDefferredRendering) {
-		// @TODO: Deferred rendering work
-        //mDeferredBuffer.renderToScreen(mSceneShader);
-    } else {
-        renderModels(ShaderUniformMapping::GlobalModelShaderMapping.modelUniformMapping);
-		renderNonDeferred();
-    }
+	systemEngine.mLightSystem.render(&ShaderUniformMapping::GlobalModelShaderMapping.lightUniformMapping);
+    renderModels(ShaderUniformMapping::GlobalModelShaderMapping.modelUniformMapping);
+	renderParticles();
 
     glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -136,19 +95,16 @@ void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
 }
 
 void Scene::render() {
-	renderShadows();
-	renderGBuffer();
+	if (mUseShadows) {
+		systemEngine.mLightSystem.renderShadows(this);
+	}
+
 	water.renderReflection();
 	renderDirect(&mCamera);
 }
 
 void Scene::free() {
 	systemEngine.free();
-	
-	for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
-		lights[lidx].free();
-    }
-	numLightsUsed = 0;
 
 	for (size_t eIdx = 0; eIdx < numEmitters; eIdx++) {
 		freeParticleEmitter(emitters[eIdx]);
@@ -156,6 +112,5 @@ void Scene::free() {
 	numEmitters = 0;
 
     mTerrain.free();
-    mDeferredBuffer.free();
 	water.free();
 }

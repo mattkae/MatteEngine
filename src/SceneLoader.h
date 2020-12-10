@@ -10,8 +10,7 @@ struct SceneLoader {
 
 	void loadScene(const char* filepath);
 
-	void loadLight();
-	void loadLights();
+	Light loadLight();
 
 	void loadEntity();
 	void loadEntityList();

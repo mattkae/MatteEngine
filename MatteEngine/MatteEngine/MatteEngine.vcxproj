@@ -28,7 +28,6 @@
     <ClCompile Include="..\..\src\Button.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\DebugRender.cpp" />
-    <ClCompile Include="..\..\src\DeferredGeometryBuffer.cpp" />
     <ClCompile Include="..\..\src\Editor.cpp" />
     <ClCompile Include="..\..\src\EditorUI.cpp" />
     <ClCompile Include="..\..\src\FrameBuffer.cpp" />
@@ -65,6 +64,8 @@
     <ClCompile Include="..\..\src\Sphere.cpp" />
     <ClCompile Include="..\..\src\MyString.cpp" />
     <ClCompile Include="..\..\src\SystemEngine.cpp" />
+    <ClCompile Include="..\..\src\System\LightSystem.cpp" />
+    <ClCompile Include="..\..\src\System\MouseInteractable.cpp" />
     <ClCompile Include="..\..\src\System\RenderableSystem.cpp" />
     <ClCompile Include="..\..\src\Terrain.cpp" />
     <ClCompile Include="..\..\src\TextInput.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
     <ClInclude Include="..\..\src\Editor.h" />
     <ClInclude Include="..\..\src\EditorUI.h" />
+    <ClInclude Include="..\..\src\FixedArray.h" />
     <ClInclude Include="..\..\src\FrameBuffer.h" />
     <ClInclude Include="..\..\src\GradientSky.h" />
     <ClInclude Include="..\..\src\GridHelper.h" />
@@ -102,7 +104,6 @@
     <ClInclude Include="..\..\src\ShaderUniformMapping.h" />
     <ClInclude Include="..\..\src\MyString.h" />
     <ClInclude Include="..\..\src\FileHelper.h" />
-    <ClInclude Include="..\..\src\DeferredGeometryBuffer.h" />
     <ClInclude Include="..\..\src\Functional.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\Input.h" />
@@ -125,6 +126,9 @@
     <ClInclude Include="..\..\src\ModelLoader.h" />
     <ClInclude Include="..\..\src\StringUtil.h" />
     <ClInclude Include="..\..\src\SystemEngine.h" />
+    <ClInclude Include="..\..\src\System\EntitySystemConstants.h" />
+    <ClInclude Include="..\..\src\System\LightSystem.h" />
+    <ClInclude Include="..\..\src\System\MouseInteractable.h" />
     <ClInclude Include="..\..\src\System\RenderableSystem.h" />
     <ClInclude Include="..\..\src\TextInput.h" />
     <ClInclude Include="..\..\src\TextureInfo.h" />

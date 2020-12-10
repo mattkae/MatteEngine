@@ -20,7 +20,6 @@ struct Editor {
 
 	EditorUI editorUI;
 	Scene* mScene;
-	List<Light> mLights;
 	DebugModel mDebugModel;
 	int mSelectedModelIdx = -1;
 

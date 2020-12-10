@@ -1,23 +1,4 @@
-useDeferredRendering    false
-
 textures                assets/texture-info.mattl
-
-::lights
-    ::
-        type            2
-        color           1 1 1
-        direction       0 -1 0
-        position        0 30 0
-        up              0 0 1
-        usesShadows     true
-        isOn            true
-        constant        1
-        linear          0.3
-        quadratic       0.2
-        cosineCutOff    0.5
-        dropOff         24
-    ;;
-;;
 
 ::camera
     position    0.0 40.0 40.0
@@ -32,6 +13,9 @@ textures                assets/texture-info.mattl
 			scale 		1 1 1
 			rotation	0 0 0
 		;;
+		::mouse_interactable
+			isSelectable true
+		;;
 	;;
 	::
 		::renderable
@@ -39,6 +23,22 @@ textures                assets/texture-info.mattl
 			translation 0 -10 0
 			scale 		5 5 5
 			rotation 	0 0 0
+		;;
+	;;
+	::
+		::lightable
+			type            2
+        	color           1 1 1
+        	direction       0 -1 0
+			position        0 30 0
+			up              0 0 1
+			usesShadows     true
+			isOn            true
+			constant        1
+			linear          0.3
+			quadratic       0.2
+			cosineCutOff    0.5
+			dropOff         24
 		;;
 	;;
 ;;

@@ -52,7 +52,7 @@ GLuint loadTexture(String path) {
 	return texture;
 }
 
-ModelLoader::ModelLoadResult ModelLoader::loadSerializedModel(const char* path) {
+ModelLoadResult ModelLoader::loadSerializedModel(const char* path) {
 	BinarySerializer serializer(path, SerializationMode::READ);
 	LoadModel intermediateModel;
 	intermediateModel.readLoadModel(serializer);
@@ -70,8 +70,8 @@ void copyBoneTreeNode(BoneTreeNode* node, const LoadBoneNode& nodeToCopy) {
 	}
 }
 
-ModelLoader::ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermediateModel) {
-	ModelLoader::ModelLoadResult retval;
+ModelLoadResult ModelLoader::loadFromLoadModel(LoadModel& intermediateModel) {
+	ModelLoadResult retval;
 	retval.model.inverseRootNode = intermediateModel.inverseRootNode;
 	retval.model.numMeshes = intermediateModel.meshes.numElements;
 	retval.model.meshes = new Mesh[retval.model.numMeshes];

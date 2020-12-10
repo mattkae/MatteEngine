@@ -84,23 +84,6 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 	primaryUI.uiElements.add(&element);
 
 	UIBuilder::addStandardLabel("Lights", primaryUI);
-	for (size_t lightIdx = 0; lightIdx < scene->numLightsUsed; lightIdx++) {
-		StringBuilder sb;
-		sb.format("%s %d", "Light", lightIdx + 1);
-		UIElement element;
-		Button button;
-		button.label = sb.toString();
-		button.buttonColor = Vector4f { 1.0f, 0.0f, 0.0f, 1.0f };
-		button.hoverColor = Vector4f { 0.9f, 0.1f, 0.0f, 1.0f };
-		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
-		button.eventType = UIEventType::SHOW_LIGHT_EDITOR;
-		button.data = lightIdx;
-		button.padding = 2.f;
-		element.elementType = UIElementType::BUTTON;
-		element.element.button = button;
-		primaryUI.uiElements.add(&element);
-		sb.free();
-	}
 
 	primaryUI.init();
 }
@@ -185,7 +168,16 @@ void EditorUI::openLightUI(Light* light) {
 	lightUI.panel.percentageWidth = 0.2f;
 	lightUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
 	lightUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
+	lightUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
+	lightUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
+	lightUI.panel.borderWidth = 2.f;
 
+	UIBuilder::addStandardLabel("Color", lightUI);
+	for (int tIdx = 0; tIdx < numVec3; tIdx++) {
+		TextInputValue value;
+		value.fVal = light->color[tIdx];
+		UIBuilder::addTextInput(lightUI, value, TextInputType::FLOAT, static_cast<UIEventType>((int)UIEventType::EDIT_LIGHT_COLOR_X + tIdx));
+	}
 
 
 	lightUI.init();

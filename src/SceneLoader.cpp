@@ -34,9 +34,7 @@ void SceneLoader::loadScene(const char* filepath) {
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
             ptr += strlen(START_OBJECT_TOKEN);
             token = START_OBJECT_TOKEN;
-            if (StringUtil::startsWith(ptr, "lights")) {
-                loadLights();
-            } else if (StringUtil::startsWith(ptr, "entities")) {
+            if (StringUtil::startsWith(ptr, "entities")) {
                 loadEntityList();
             } else if (StringUtil::startsWith(ptr, "spheres")) {
                 loadSpheres();
@@ -47,8 +45,6 @@ void SceneLoader::loadScene(const char* filepath) {
             } else if (StringUtil::startsWith(ptr, "camera")) {
                 loadCamera();
             }
-        } else if (StringUtil::ifEqualWalkToValue(ptr, "useDeferredRendering")) {
-            StringUtil::strToBool(ptr, mScene->useDefferredRendering);
         } else if (StringUtil::startsWith(ptr, IGNORE_OBJECT_TOKEN)) {
             ignoreObject(mFile, buffer);
         } else if (StringUtil::ifEqualWalkToValue(ptr, "textures")) {
@@ -59,7 +55,7 @@ void SceneLoader::loadScene(const char* filepath) {
     fclose(mFile);
 }
 
-void SceneLoader::loadLight() {
+Light SceneLoader::loadLight() {
     Light light;
 
     char* ptr;
@@ -95,27 +91,17 @@ void SceneLoader::loadLight() {
         }
     }
 
-    light.initialize(mScene->numLightsUsed);
-    mScene->lights[mScene->numLightsUsed] = light;
-    mScene->numLightsUsed++;
-}
-
-void SceneLoader::loadLights() {
-    char* ptr;
-    while (StringUtil::processLine(mFile, buffer, ptr)) {
-        if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
-            loadLight();
-        } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
-            break;
-        }
-    }
+    light.initialize(mScene->systemEngine.mLightSystem.mEntites.mNumElements);
+    return light;
 }
 
 void SceneLoader::loadEntity() {
     u8 eId = mScene->systemEngine.registerEntity();
+    Box3D foundBoundingBox;
 
     char* ptr;
     while (StringUtil::processLine(mFile, buffer, ptr)) {
+
         if (StringUtil::startsWith(ptr, START_OBJECT_TOKEN)) {
             ptr += strlen(START_OBJECT_TOKEN);
             if (StringUtil::ifEqualWalkToValue(ptr, "renderable")) {
@@ -123,10 +109,9 @@ void SceneLoader::loadEntity() {
 
                 while (StringUtil::processLine(mFile, buffer, ptr)) {
                     if (StringUtil::ifEqualWalkToValue(ptr, "path")) {
-                        ModelLoader::ModelLoadResult retval = mModelLoader.loadSerializedModel(ptr);
+                        ModelLoadResult retval = mModelLoader.loadSerializedModel(ptr);
                         re.mModel = retval.model;
-                        //mScene->models[numModels] = retval.model;
-                        //mScene->modelBoundingBoxes[numModels] = retval.box;
+                        foundBoundingBox = retval.box;
                     } else if (StringUtil::ifEqualWalkToValue(ptr, "translation")) {
                         StringUtil::strToVec3(ptr, re.mModel.translation);
                     } else if (StringUtil::ifEqualWalkToValue(ptr, "scale")) {
@@ -134,13 +119,31 @@ void SceneLoader::loadEntity() {
                     } else if (StringUtil::ifEqualWalkToValue(ptr, "rotation")) {
                         StringUtil::strToQuaternion(ptr, re.mModel.rotation);
                     } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
+                        re.mEntityId = eId;
+                        re.mShouldRender = true;
+                        mScene->systemEngine.mRenderSystem.mEntities.add(re);
                         break;
                     }
                 }
+            } else if (StringUtil::ifEqualWalkToValue(ptr, "mouse_interactable")) {
+                MouseInteractableEntity mie;
+                mie.mId = eId;
+                mie.mBox = foundBoundingBox;
 
-                re.mEntityId = eId;
-                re.mShouldRender = true;
-                mScene->systemEngine.mRenderSystem.mEntities.add(re);
+                while (StringUtil::processLine(mFile, buffer, ptr)) {
+                    if (StringUtil::ifEqualWalkToValue(ptr, "isSelectable")) {
+                        StringUtil::strToBool(ptr, mie.mIsSelectable);
+                    } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
+                        mScene->systemEngine.mMouseInteractionSystem.mEntities.add(mie);
+                        break;
+                    }
+                }
+            } else if (StringUtil::ifEqualWalkToValue(ptr, "lightable")) {
+                LightEntity le;
+                le.mId = eId;
+                le.mIsActive = true;
+                le.mLight = loadLight();
+                mScene->systemEngine.mLightSystem.mEntites.add(le);
             }
         }
     }

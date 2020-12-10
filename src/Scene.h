@@ -5,7 +5,6 @@
 #include "Model.h"
 #include "ParticleEmitter.h"
 #include "Skybox.h"
-#include "DeferredGeometryBuffer.h"
 #include "Terrain.h"
 #include "shaders/Light.shared.cpp"
 #include "Box.h"
@@ -18,16 +17,12 @@
 struct Scene {
 	SystemEngine systemEngine;
 
-    Light lights[MAX_LIGHTS];
-	size_t numLightsUsed = 0;
 	ParticleEmitter emitters[32];
 	size_t numEmitters = 0;
 
 	Water water;
     Terrain mTerrain;
 	GradientSky mGradientSky;
-    bool useDefferredRendering = false;
-    DeferredGeometryBuffer mDeferredBuffer;
 
     bool mUseShadows = true;
     Camera mCamera;
@@ -37,9 +32,7 @@ struct Scene {
 	void render();
 	void free();
 
-	void renderShadows();
-	void renderGBuffer();
-	void renderNonDeferred();
+	void renderParticles();
 	void renderDirect(const Camera* camera, Vector4f clipPlane = { 0, 1, 0, static_cast<float>(INT_MAX) });
 	void renderModels(const ModelUniformMapping& mapping, bool withMaterial = true) const;
 };

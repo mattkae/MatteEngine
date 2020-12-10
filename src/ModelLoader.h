@@ -6,13 +6,12 @@
 #include <vector>
 
 struct LoadModel;
+struct ModelLoadResult {
+	Model model;
+	Box3D box;
+};
 
 struct ModelLoader {
-	struct ModelLoadResult {
-		Model model;
-		Box3D box;
-	};
-
 	List<GeneratedTexture> textureList;
 	void loadTextureList(const char* path);
 	ModelLoadResult loadSerializedModel(const char* path);

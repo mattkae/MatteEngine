@@ -24,7 +24,7 @@ bool UIContext::isOpen() {
 }
 
 
-void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProcessor* processor) {
+void UIContext::update(float dtMs, const TextRenderer& textRenderer) {
 	// @TODO: Could add some opening and closing animations around these
 	if (shouldOpen && !isOpen()) {
 		shouldOpen = false;
@@ -56,7 +56,7 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProc
 		GLfloat elementHeight = getButtonHeight(closeButton, textRenderer);
 		closeButton.position.x = xPosition + (xRenderSpace - CLOSEBUTTON_WIDTH); // Right align
 		closeButton.position.y = currYPosition - elementHeight;
-		closeButton.update(textRenderer, processor);
+		closeButton.update(textRenderer);
 		currYPosition -= (elementHeight + spaceBetweenElements);
 	}
 	
@@ -70,7 +70,7 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProc
 			elementHeight = getButtonHeight(button, textRenderer);
 			button.position = Vector2f { xPosition, currYPosition - elementHeight};
 			button.width = xRenderSpace - 2 * button.padding;
-			button.update(textRenderer, processor);
+			button.update(textRenderer);
 			break;
 		}
 		case UIElementType::TEXT_INPUT: {
@@ -79,7 +79,7 @@ void UIContext::update(float dtMs, const TextRenderer& textRenderer, UIEventProc
 			textInput.bt.rect.x = xPosition;
 			textInput.bt.rect.y = currYPosition - elementHeight;
 			textInput.bt.rect.w = xRenderSpace - 2 * textInput.bt.padding;
-			textInput.update(textRenderer,  processor);
+			textInput.update(textRenderer);
 			break;
 		}
 		case UIElementType::LABEL: {

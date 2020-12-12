@@ -7,7 +7,6 @@ const char* DEFFERRED_MODEL_SHADER_FRAG = "src/shaders/model_defferred.frag";
 ModelShaderMapping ShaderUniformMapping::GlobalModelShaderMapping;
 ShadowShaderMapping ShaderUniformMapping::GlobalShadowShaderMapping;
 SkyboxShaderMapping ShaderUniformMapping::GlobalSkyboxShaderMapping;
-DeferredShaderMapping ShaderUniformMapping::GlobalDeferredShaderMapping;
 OrthographicShaderMapping ShaderUniformMapping::GlobalOrthographicShaderMapping;
 TextShaderMapping ShaderUniformMapping::GlobalTextShaderMapping;
 ParticleShaderMapping ShaderUniformMapping::GlobalParticleShaderMapping;
@@ -18,7 +17,6 @@ void ShaderUniformMapping::initialize() {
 	GlobalModelShaderMapping.initialize();
 	GlobalShadowShaderMapping.initialize();
 	GlobalSkyboxShaderMapping.initialize();
-	GlobalDeferredShaderMapping.initialize();
 	GlobalOrthographicShaderMapping.initialize();
 	GlobalTextShaderMapping.initialize();
 	GlobalParticleShaderMapping.initialize();
@@ -30,7 +28,6 @@ void ShaderUniformMapping::free() {
 	glDeleteShader(GlobalModelShaderMapping.shader);
 	glDeleteShader(GlobalShadowShaderMapping.shader);
 	glDeleteShader(GlobalSkyboxShaderMapping.shader);
-	glDeleteShader(GlobalDeferredShaderMapping.shader);
 	glDeleteShader(GlobalOrthographicShaderMapping.shader);
 	glDeleteShader(GlobalTextShaderMapping.shader);
 	glDeleteShader(GlobalParticleShaderMapping.shader);
@@ -149,18 +146,6 @@ void DomeSkyShaderMapping::initialize() {
 	UNIFORM_HIGH_COLOR  = getShaderUniform(shader, "uHighColor");
 	UNIFORM_MIX_POSITIONS = getShaderUniform(shader, "uMixYStartEnd");
 	cameraMapping.initialize(shader, false);
-}
-
-void DeferredShaderMapping::initialize() {
-	const char* DEFERRED_MODEL_SHADER_VERT = "src/shaders/model_deferred.vert";
-	const char* DEFERRED_MODEL_SHADER_FRAG = "src/shaders/model_deferred.frag";
-	// @TODO: This won't work for now
-	/*shader = loadShader(DEFERRED_MODEL_SHADER_VERT, DEFERRED_MODEL_SHADER_FRAG);
-
-	CAMERA_MATRIX = getShaderUniform(shader, "uVp");
-	EYE_MATRIX = getShaderUniform(shader, "uEye");
-
-	modelUniformMapping.initialize(shader, true);*/
 }
 
 void OrthographicShaderMapping::initialize() {

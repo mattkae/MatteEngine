@@ -24,6 +24,7 @@ struct InputState {
 	// Cursors
 	GLFWcursor* defaultCursor = nullptr;
 	GLFWcursor* textCursor = nullptr;
+	GLFWcursor* pointerCursor = nullptr;
 };
 
 InputState globalInput;
@@ -105,6 +106,7 @@ void initializeInputSystem(GLFWwindow* window) {
 
 	globalInput.defaultCursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 	globalInput.textCursor = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+	globalInput.pointerCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 }
 
 void deallocateInputSystem() {
@@ -113,6 +115,9 @@ void deallocateInputSystem() {
 	}
 	if (globalInput.textCursor) {
 		glfwDestroyCursor(globalInput.textCursor);
+	}
+	if (globalInput.pointerCursor) {
+		glfwDestroyCursor(globalInput.pointerCursor);
 	}
 }
 
@@ -176,6 +181,10 @@ bool isDefaultFocused() {
 
 void setCursorToText() {
 	glfwSetCursor(globalInput.window, globalInput.textCursor);
+}
+
+void setCursorToPointer() {
+	glfwSetCursor(globalInput.window, globalInput.pointerCursor);
 }
 
 void resetCursor() {

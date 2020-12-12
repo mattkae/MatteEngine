@@ -91,16 +91,6 @@ struct DomeSkyShaderMapping {
     void initialize();
 };
 
-struct DeferredShaderMapping {
-	Shader shader;
-
-	int CAMERA_MATRIX;
-	int EYE_MATRIX;
-
-	ModelUniformMapping modelUniformMapping;
-	void initialize();
-};
-
 struct OrthographicShaderMapping {
 	Shader shader;
 
@@ -155,7 +145,6 @@ namespace ShaderUniformMapping {
 	extern ModelShaderMapping GlobalModelShaderMapping;
 	extern ShadowShaderMapping GlobalShadowShaderMapping;
 	extern SkyboxShaderMapping GlobalSkyboxShaderMapping;
-	extern DeferredShaderMapping GlobalDeferredShaderMapping;
 	extern OrthographicShaderMapping GlobalOrthographicShaderMapping;
 	extern TextShaderMapping GlobalTextShaderMapping;
 	extern ParticleShaderMapping GlobalParticleShaderMapping;

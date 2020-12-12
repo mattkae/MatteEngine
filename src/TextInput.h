@@ -3,7 +3,6 @@
 #include "TextRenderer.h"
 #include "BoundText.h"
 #include "MyString.h"
-#include "UIEventType.h"
 #include <GL/glew.h>
 
 enum class TextInputType {
@@ -34,9 +33,10 @@ struct TextInput {
 	TextInputValue value;
 	TextInputValue lastValue;
 	StringBuilder representation;
-	UIEventType eventType;
 
-	void update(const TextRenderer& textRenderer, UIEventProcessor* processor);
+	void (*mOnChange)(void* valuePtr) = nullptr;
+
+	void update(const TextRenderer& textRenderer);
 	void render(const Shader& shader, const TextRenderer& textRenderer);
 	void free();
 };

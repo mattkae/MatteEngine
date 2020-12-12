@@ -9,12 +9,10 @@
 
 struct Model;
 struct Terrain;
-struct UIEventProcessor;
 
 struct UI {
 	TextRenderer mTextRenderer;
 	List<UIContext*> panels;
-	UIEventProcessor eventProcessor;
 
 	void init();
 	void update(double dt);
@@ -26,10 +24,8 @@ struct UI {
 };
 
 namespace UIBuilder {
-	void addStandardLabel(const char* str, UIContext& context);
-	void addFieldLabel(const char* str, UIContext& context);
-	void addTextInput(UIContext& context,
-		TextInputValue value, 
-		TextInputType inputType,
-		UIEventType eventType);
+	void createStandardLabel(UIContext* context, const char* str);
+	void createFieldLabel(UIContext* context, const char* str);
+	void createTextInput(UIContext* context, TextInputValue value, TextInputType inputType, void (*onChange)(void*));
+	void createStandardButton(UIContext* context, void (*onClick)(int), int data = -1);
 };

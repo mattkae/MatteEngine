@@ -1,22 +1,26 @@
 #include "EditorUI.h"
 #include "Scene.h"
 #include "GlobalLoaders.h"
+#include "App.h"
 
 void EditorUI::initialize(Scene* scene) {
 	ui.init();
+	mScene = scene;
 
 	initPrimaryUI(scene);
 	initTerrainUI(scene);
 
 	ui.addPanel(&primaryUI);
-	ui.addPanel(&modelUI);
-	ui.addPanel(&lightUI);
 	ui.addPanel(&terrainUI);
 	ui.addPanel(&textureDebuggerUI);
 }
 
 void EditorUI::free() {
 	ui.free();
+}
+
+void onTerrainClick(int index) {
+	GlobalApp.editor.editorUI.terrainUI.shouldOpen = true;
 }
 
 void EditorUI::initPrimaryUI(Scene* scene) {
@@ -30,49 +34,21 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 	primaryUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
 	primaryUI.panel.borderWidth = 2.f;
 
-	int numElements = 0;
-
-	//if (scene->numModels && scene->models) {
-	//	numElements += scene->numModels + 1;
-	//}
-
-	numElements += 2;
-	numElements += 1;
-
-	primaryUI.uiElements.allocate(numElements);
-	UIBuilder::addStandardLabel("Models", primaryUI);
-	for (size_t modelIdx = 0; modelIdx < 0; modelIdx++) {
-		StringBuilder sb;
-		sb.format("%s %d", "Model", modelIdx + 1);
-		UIElement element;
-		Button button;
-		button.label = sb.toString();
-		button.buttonColor = Vector4f { 1.0f, 0.0f, 0.0f, 1.0f };
-		button.hoverColor = Vector4f { 0.9f, 0.1f, 0.0f, 1.0f };
-		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
-		button.eventType = UIEventType::SHOW_MODEL;
-		button.data = modelIdx;
-		button.padding = 2.f;
-		element.elementType = UIElementType::BUTTON;
-		element.element.button = button;
-		primaryUI.uiElements.add(&element);
-		sb.free();
-	}
-
-	UIBuilder::addStandardLabel("Terrain", primaryUI);
+	UIBuilder::createStandardLabel(&primaryUI, "Terrain");
 	UIElement element;
 	Button terrainButton;
 	terrainButton.label = "Edit Terrain";
 	terrainButton.buttonColor = Vector4f { 1.f, 0.f, 0.f, 1.f };
-	terrainButton.hoverColor = Vector4f { 0.9f, 0.1f, 0.f, 1.f };
+	terrainButton.clickColor = Vector4f { 0.f, 1.f, 0.f, 1.f };
+	terrainButton.hoverColor = Vector4f { 0.1f, 0.9f, 0.f, 1.f };
 	terrainButton.textColor = Vector4f { 1.f, 1.f, 1.f, 1.f };
-	terrainButton.eventType = UIEventType::SHOW_TERRAIN;
+	terrainButton.mOnClick = onTerrainClick;
 	terrainButton.padding = 2.f;
 	element.elementType = UIElementType::BUTTON;
-	element.element.button = terrainButton;
+    element.element.button = terrainButton;
 	primaryUI.uiElements.add(&element);
 
-	Button textureDebugButton;
+	/*Button textureDebugButton;
 	textureDebugButton.label = "Debug Textures";
 	textureDebugButton.buttonColor = Vector4f { 1.f, 0.f, 0.f, 1.f };
 	textureDebugButton.hoverColor = Vector4f { 0.9f, 0.1f, 0.f, 1.f };
@@ -81,108 +57,51 @@ void EditorUI::initPrimaryUI(Scene* scene) {
 	textureDebugButton.padding = 2.f;
 	element.elementType = UIElementType::BUTTON;
 	element.element.button = textureDebugButton;
-	primaryUI.uiElements.add(&element);
-
-	UIBuilder::addStandardLabel("Lights", primaryUI);
+	primaryUI.uiElements.add(&element);*/
 
 	primaryUI.init();
 }
 
 const size_t numVec3 = 3;
 
-void EditorUI::openModelUI(Model* model) {
-	modelUI.free();
-	modelUI.panel.percentageHeight = 0.9f;
-	modelUI.panel.percentageWidth = 0.2f;
-	modelUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
-	modelUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
-	modelUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
-	modelUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
-	modelUI.panel.borderWidth = 2.f;
-
-	size_t numElements = 3 * (numVec3 + 1); // Translation, scaling, rotation with labels
-	modelUI.uiElements.allocate(numElements);
-
-	{
-		UIBuilder::addStandardLabel("Translation", modelUI);
-		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
-			UIElement element;
-			TextInput textInput;
-			textInput.bt.padding = 2.f;
-			textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
-			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
-			textInput.inputType = TextInputType::FLOAT;
-			textInput.textColor = Vector4f { 1, 1, 1, 1 };
-			textInput.value.fVal = model->translation[tIdx];
-			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_TRANSLATION_X + tIdx);
-			element.elementType = UIElementType::TEXT_INPUT;
-			element.element.textInput = textInput;
-			modelUI.uiElements.add(&element);
-		}
-	}
-
-	{
-		UIBuilder::addStandardLabel("Scaling", modelUI);
-		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
-			UIElement element;
-			TextInput textInput;
-			textInput.bt.padding = 2.f;
-			textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
-			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
-			textInput.inputType = TextInputType::FLOAT;
-			textInput.textColor = Vector4f { 1, 1, 1, 1 };
-			textInput.value.fVal = model->scale[tIdx];
-			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_SCALE_X + tIdx);
-			element.elementType = UIElementType::TEXT_INPUT;
-			element.element.textInput = textInput;
-			modelUI.uiElements.add(&element);
-		}
-	}
-
-	{
-		UIBuilder::addStandardLabel("Rotation", modelUI);
-		for (unsigned int tIdx = 0; tIdx < numVec3; tIdx++) {
-			UIElement element;
-			TextInput textInput;
-			textInput.bt.padding = 2.f;
-			textInput.backgroundColor = Vector4f { 0.3f, 0.3f, 0.3f, 1 };
-			textInput.focusedBackgroundColor = Vector4f { 0.5f, 0.5f, 0.5f, 1 };
-			textInput.inputType = TextInputType::FLOAT;
-			textInput.textColor = Vector4f { 1, 1, 1, 1 };
-			textInput.value.fVal = model->rotation[tIdx];
-			textInput.eventType = static_cast<UIEventType>((int)UIEventType::EDIT_ROTATION_X + tIdx);
-			element.elementType = UIElementType::TEXT_INPUT;
-			element.element.textInput = textInput;
-			modelUI.uiElements.add(&element);
-		}
-	}
-	modelUI.init();
-	modelUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
-	modelUI.shouldOpen = true;
+void onTerrainSizeChange(void* sizePtr) {
+	GlobalApp.scene.mTerrain.mParams.size = *static_cast<int*>(sizePtr);
 }
 
-void EditorUI::openLightUI(Light* light) {
-	lightUI.free();
+void onGranularityChanged(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.granularity = *static_cast<int*>(ptr);
+}
 
-	lightUI.panel.percentageHeight = 0.9f;
-	lightUI.panel.percentageWidth = 0.2f;
-	lightUI.panel.vertical = PanelPositioning::PanelPositioning_CENTER;
-	lightUI.panel.horizontal = PanelPositioning::PanelPositioning_RIGHT;
-	lightUI.panel.backgroundColor = Vector4f { 0.1f, 0.1f, 0.1f, 0.5f };
-	lightUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
-	lightUI.panel.borderWidth = 2.f;
+void onTerrainPermChange(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.permSize = *static_cast<int*>(ptr);
+}
 
-	UIBuilder::addStandardLabel("Color", lightUI);
-	for (int tIdx = 0; tIdx < numVec3; tIdx++) {
-		TextInputValue value;
-		value.fVal = light->color[tIdx];
-		UIBuilder::addTextInput(lightUI, value, TextInputType::FLOAT, static_cast<UIEventType>((int)UIEventType::EDIT_LIGHT_COLOR_X + tIdx));
-	}
+void onTerrainScaleChange(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.scaleFactor = *static_cast<float*>(ptr);
+}
 
+void onTerrainMinMaxChange(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.minMaxHeight = *static_cast<float*>(ptr);
+}
 
-	lightUI.init();
-	lightUI.panel.transitionType = PanelTransitionType_SlideHorizontalNegative;
-	lightUI.shouldOpen = true;
+void onTerrainFreqChange(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.frequencyFactor = *static_cast<float*>(ptr);
+}
+
+void onTerrainAmpChange(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.ampFactor = *static_cast<float*>(ptr);
+}
+
+void onTerrainOctaveChange(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.numOctaves = *static_cast<int*>(ptr);
+}
+
+void onTerrainNumVerticesChange(void* ptr) {
+	GlobalApp.scene.mTerrain.mParams.verticesPerTexture = *static_cast<int*>(ptr);
+}
+
+void onTerrainCreate(int data) {
+
 }
 
 void EditorUI::initTerrainUI(Scene* scene)  {
@@ -196,60 +115,53 @@ void EditorUI::initTerrainUI(Scene* scene)  {
 	terrainUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
 	terrainUI.panel.borderWidth = 2.f;
 	terrainUI.uiElements.allocate(24);
-	UIBuilder::addStandardLabel("Terrain Editor", terrainUI);
+	UIBuilder::createStandardLabel(&terrainUI, "Terrain Editor");
 	
 	TextInputValue value;
 
-	UIBuilder::addFieldLabel("Size", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Size");
 	value.iVal = terrain->mParams.size;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_SIZE);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::INT, onTerrainSizeChange);
 
-	UIBuilder::addFieldLabel("Granularity", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Granularity");
 	value.iVal = terrain->mParams.granularity;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_GRANULARITY);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::INT, onGranularityChanged);
 
-	UIBuilder::addFieldLabel("Perm Size", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Perm Size");
 	value.iVal = terrain->mParams.permSize;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_PERM);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::INT, onTerrainPermChange);
 
-	UIBuilder::addFieldLabel("Scale Factor", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Scale Factor");
 	value.fVal = terrain->mParams.scaleFactor;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_SCALE);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::FLOAT, onTerrainScaleChange);
 
-	UIBuilder::addFieldLabel("Min/Max height", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Min/Max height");
 	value.fVal = terrain->mParams.minMaxHeight;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_MIN_MAX);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::FLOAT, onTerrainMinMaxChange);
 
-	UIBuilder::addFieldLabel("Amplitude", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Amplitude");
 	value.fVal = terrain->mParams.ampFactor;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_AMP);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::FLOAT, onTerrainAmpChange);
 
-	UIBuilder::addFieldLabel("Frequency", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Frequency");
 	value.fVal = terrain->mParams.frequencyFactor;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::FLOAT, UIEventType::EDIT_TERRAIN_FREQ);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::FLOAT, onTerrainFreqChange);
 
-	UIBuilder::addFieldLabel("Octaves", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Octaves");
 	value.iVal = terrain->mParams.numOctaves;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_OCT);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::INT, onTerrainOctaveChange);
 
-	UIBuilder::addFieldLabel("Vertices per Texture", terrainUI);
+	UIBuilder::createFieldLabel(&terrainUI, "Vertices per Texture");
 	value.iVal = terrain->mParams.verticesPerTexture;
-	UIBuilder::addTextInput(terrainUI, value, TextInputType::INT, UIEventType::EDIT_TERRAIN_NUM_VERTICES);
+	UIBuilder::createTextInput(&terrainUI, value, TextInputType::INT, onTerrainNumVerticesChange);
 
-	{
-		UIElement element;
-		Button button;
-		button.label = "Create";
-		button.buttonColor = Vector4f { 0.0f, 0.6f, 0.3f, 1.0f };
-		button.hoverColor = Vector4f { 0.0f, 0.9f, 0.1f, 1.0f };
-		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
-		button.eventType = UIEventType::EDIT_TERRAIN_APPLY;
-		button.padding = 2.f;
-		element.elementType = UIElementType::BUTTON;
-		element.element.button = button;
-		terrainUI.uiElements.add(&element);
-	}
+	UIBuilder::createStandardButton(&terrainUI, onTerrainCreate);
+
 	terrainUI.init();
+}
+
+void onDebugTexture(int textureIndex) {
+
 }
 
 void EditorUI::initTextureDebuggerUI() {
@@ -269,7 +181,7 @@ void EditorUI::initTextureDebuggerUI() {
 	textureDebuggerUI.panel.borderColor = Vector4f { 0.5f, 0.5f, 0.5f, 0.5f };
 	textureDebuggerUI.panel.borderWidth = 2.f;
 	textureDebuggerUI.uiElements.allocate(GlobalTextureLoader.textureList.numElements + 1);
-	UIBuilder::addStandardLabel("Texture Debugger", textureDebuggerUI);
+	UIBuilder::createStandardLabel(&textureDebuggerUI, "Texture Debugger");
 	for (size_t textureIdx = 0; textureIdx < GlobalTextureLoader.textureList.numElements; textureIdx++) {
 		StringBuilder sb;
 		UIElement element;
@@ -279,9 +191,9 @@ void EditorUI::initTextureDebuggerUI() {
 		button.buttonColor = Vector4f { 0.0f, 0.6f, 0.3f, 1.0f };
 		button.hoverColor = Vector4f { 0.0f, 0.9f, 0.1f, 1.0f };
 		button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
-		button.eventType = UIEventType::DEBUG_TEXTURE;
 		button.data = GlobalTextureLoader.textureList[textureIdx];
 		button.padding = 2.f;
+		button.mOnClick = onDebugTexture;
 		element.elementType = UIElementType::BUTTON;
 		element.element.button = button;
 		textureDebuggerUI.uiElements.add(&element);

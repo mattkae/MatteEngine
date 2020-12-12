@@ -8,7 +8,6 @@
 #include "Vector2f.h"
 #include "Rectangle.h"
 #include "MyString.h"
-#include "UIEventProcessor.h"
 
 struct TextRenderer;
 struct SceneUIController;
@@ -22,15 +21,17 @@ struct Button {
 	Vector4f hoverColor;
 	Vector4f textColor;
 	Vector4f borderColor;
+	Vector4f clickColor;
 	GLfloat width = 128.f;
 	int focusToken = -1;
+	bool isHovered = false;
 	bool isClicked = false;
-
-	UIEventType eventType;
-	int data;
 	Rectangle boundingRect;
+
+	int data = -1;
+	void (*mOnClick)(int data) = nullptr;
 	
-	void update(const TextRenderer& textRenderer, UIEventProcessor* processor);
+	void update(const TextRenderer& textRenderer);
 	void render(const Shader& shader, const TextRenderer& textRenderer) const;
 	void free();
 };

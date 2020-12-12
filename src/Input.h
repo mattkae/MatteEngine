@@ -23,6 +23,7 @@ int getCurrentScancode(int focusToken);
 void getWindowDimensions(int& width, int& height);
 bool isDefaultFocused();
 void setCursorToText();
+void setCursorToPointer();
 void resetCursor();
 
 #endif

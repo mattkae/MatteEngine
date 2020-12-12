@@ -60,7 +60,6 @@ void Application::render() {
 }
 
 void Application::free() {
-	printf("Freed app");
 	deallocateInputSystem();
 	scene.free();
 	editor.free();

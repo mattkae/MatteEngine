@@ -2,7 +2,6 @@
 #include "Scene.h"
 #include "App.h"
 #include "Model.h"
-#include "UIEventProcessor.h"
 #include "ShaderUniformMapping.h"
 
 void UI::init() {
@@ -27,7 +26,7 @@ void UI::update(double dt) {
 			}
 		}
 
-		panel->update(static_cast<float>(dt), mTextRenderer, &eventProcessor);
+		panel->update(static_cast<float>(dt), mTextRenderer);
 	}
 }
 
@@ -56,17 +55,17 @@ void UI::addPanel(UIContext* panel) {
 	panels.add(&panel);
 }
 
-void UIBuilder::addStandardLabel(const char* str, UIContext& context) {
+void UIBuilder::createStandardLabel(UIContext* context, const char* str) {
 	UIElement labelElement;
 	Label label;
 	label.build(2.f, { 1.f, 1.f, 1.f, 1.f }, { 0.f, 0.f, 0.f , 1.f });
 	label.text = str;
 	labelElement.elementType = UIElementType::LABEL;
 	labelElement.element.label = label;
-	context.uiElements.add(&labelElement);
+	context->uiElements.add(&labelElement);
 }
 
-void UIBuilder::addFieldLabel(const char* str, UIContext& context) {
+void UIBuilder::createFieldLabel(UIContext* context, const char* str) {
 	UIElement labelElement;
 	Label label;
 	label.build(2.f, { 0.1f, 0.1f, 0.1f, 1.f }, { 1.f, 1.f, 1.f , 1.f }, 0.75f);
@@ -74,13 +73,13 @@ void UIBuilder::addFieldLabel(const char* str, UIContext& context) {
 	label.bt.scale = 0.75f;
 	labelElement.elementType = UIElementType::LABEL;
 	labelElement.element.label = label;
-	context.uiElements.add(&labelElement);
+	context->uiElements.add(&labelElement);
 }
 
-void UIBuilder::addTextInput(UIContext& context, 
+void UIBuilder::createTextInput(UIContext* context, 
 	TextInputValue value, 
 	TextInputType inputType,
-	UIEventType eventType) 
+	void (*onChange)(void*)) 
 {
 	UIElement element;
 	UIElement labelElement;
@@ -91,10 +90,26 @@ void UIBuilder::addTextInput(UIContext& context,
 	textInput.inputType = inputType;
 	textInput.textColor = Vector4f { 1, 1, 1, 1 };
 	textInput.value = value;
-	textInput.eventType = eventType;
+	textInput.mOnChange = onChange;
 	element.elementType = UIElementType::TEXT_INPUT;
 	element.element.textInput = textInput;
 
 
-	context.uiElements.add(&element);
+	context->uiElements.add(&element);
+}
+
+void UIBuilder::createStandardButton(UIContext* context, void (*onClick)(int), int data) {
+	UIElement element;
+	Button button;
+	button.label = "Create";
+	button.buttonColor = Vector4f { 0.0f, 0.6f, 0.3f, 1.0f };
+	button.hoverColor = Vector4f { 0.0f, 0.6f, 0.1f, 1.0f };
+	button.clickColor = Vector4f { 0.0f, 0.9f, 0.1f, 1.0f };
+	button.textColor = Vector4f { 1.0f, 1.0f, 1.0f, 1.0f };
+	button.padding = 2.f;
+	button.data = data;
+	button.mOnClick = onClick;
+	element.elementType = UIElementType::BUTTON;
+	element.element.button = button;
+	context->uiElements.add(&element);
 }

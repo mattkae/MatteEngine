@@ -2,7 +2,6 @@
 #include "Input.h"
 #include "TextRenderer.h"
 #include "Logger.h"
-#include "UIEventProcessor.h"
 #include <GLFW/glfw3.h>
 
 Rectangle getRectangle(const TextInput& input, const TextRenderer& textRenderer) {
@@ -47,23 +46,22 @@ inline void setInternalRepresentation(TextInput& textInput, bool force) {
 	}
 }
 
-inline void onStrChange(TextInput& textInput, UIEventProcessor* processor) {
+inline void onStrChange(TextInput& textInput) {
 	String outVal = textInput.representation.toString();
-	UIEvent uiEvent;
-	uiEvent.type = textInput.eventType;
+    void* dataPtr = nullptr;
 	switch (textInput.inputType) {
 	case TextInputType::STRING: {
-		uiEvent.data = outVal.getValue();
+		dataPtr = outVal.getValue();
 		break;
 	}
 	case TextInputType::INT: {
 		textInput.value.iVal = outVal.toInteger();
-		uiEvent.data = &textInput.value.iVal;
+	    dataPtr = &textInput.value.iVal;
 		break;
 	}
 	case TextInputType::FLOAT: {
 		textInput.value.fVal = outVal.toFloat();
-		uiEvent.data = &textInput.value.fVal;
+	    dataPtr = &textInput.value.fVal;
 		break;
 	}
 	default:
@@ -72,11 +70,13 @@ inline void onStrChange(TextInput& textInput, UIEventProcessor* processor) {
 	}
 
 	setInternalRepresentation(textInput, true);
-	processor->processEvent(uiEvent);
+	if (textInput.mOnChange != nullptr) {
+		textInput.mOnChange(dataPtr);
+	}
 	outVal.free();
 }
 
-void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* processor) {
+void TextInput::update(const TextRenderer& textRenderer) {
 	setInternalRepresentation(*this, false);
 	bt.rect = getRectangle(*this, textRenderer);
 
@@ -111,7 +111,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* proce
 	} else if (isLeftClickDown(focusToken) && !isHovered) {
 		returnFocus(focusToken);
 		isFocused = false;
-		onStrChange(*this, processor);
+		onStrChange(*this);
 	}
 
 	int key = getCurrentKeyDown(focusToken);
@@ -120,7 +120,7 @@ void TextInput::update(const TextRenderer& textRenderer, UIEventProcessor* proce
 	if (key > -1 && isKeyJustDown(key, focusToken)) {
 		switch (key) {
 		case GLFW_KEY_ENTER:
-			onStrChange(*this, processor);
+			onStrChange(*this);
 			break;
 		case GLFW_KEY_LEFT:
 			cursorPosition = cursorPosition == 0 ? 0 : cursorPosition - 1;

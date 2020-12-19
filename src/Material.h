@@ -21,6 +21,7 @@ struct Material {
     Vector3f specularProperty = { 1.f, 1.f, 1.f };
     float specularComponent = 20.f;
     float transparency = 1.0;
+    float shininess = 24.f;
 
 	MeshTexture textureList;
 

@@ -151,7 +151,7 @@ void Water::render(Light* lights, unsigned int numLightsUsed) const {
 	setShaderInt(ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping.LIGHT_NUM_LIGHTS, numLightsUsed);
 
     for (size_t lidx = 0; lidx < numLightsUsed; lidx++) {
-		lights[lidx].render(lidx, &ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping);
+		lights[lidx].render(&ShaderUniformMapping::GlobalWaterShaderMapping.lightUniformMapping);
     }
 
 	material.render(ShaderUniformMapping::GlobalWaterShaderMapping.materialUniformMapping);

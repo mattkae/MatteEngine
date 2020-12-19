@@ -30,9 +30,9 @@ vec3 getSpecular(const in Material material,
     vec3 specular) 
 {
     vec3 reflection = reflect(-lightDir, normal);
-    float cosAlpha = clamp(dot(viewDir, reflection), 0, 1);
-    vec3 specularFactor = specular * material.specularProperty * pow(cosAlpha, 5);
-    return color * specularFactor;
+    float spec = pow(max(dot(viewDir, reflection), 0.0), material.shininess);
+	vec3 specularFactor = specular * spec;
+    return color * spec;
 }
 
 vec3 getColorFromLight(const in Light light,
@@ -45,20 +45,19 @@ vec3 getColorFromLight(const in Light light,
 {
     // Calculate the direction, and early out at certain points
     vec3 direction = -light.direction;
-    float delta = 0;
     float angleBetween = 1.0;
+	vec3 posToFrag = light.position - fragPos.xyz;
+    float delta = length(posToFrag);
+    posToFrag = normalize(posToFrag);
     if (light.direction == vec3(0)) {
-        vec3 posToFrag = light.position - fragPos.xyz;
-        delta = length(posToFrag);
-        posToFrag = normalize(posToFrag);
         direction = posToFrag;
+	}
 
-        // Check if frag is within spot. Point and Direction have cutoff = 0.0 (so never less)
-        angleBetween = min(dot(posToFrag, direction), 1.0);
-        if (angleBetween < light.cosineCutOff) {
-            return vec3(0.f);
-        }
-    }
+	// Check if frag is within spot. Point and Direction have cutoff = 0.0 (so never less)
+	angleBetween = min(dot(posToFrag, direction), 1.0);
+	if (angleBetween < light.cosineCutOff) {
+	   return vec3(0.f);
+	}
     
     float normalDotDir = max(0, dot(normal, direction));
     if (normalDotDir == 0) {

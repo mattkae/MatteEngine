@@ -17,8 +17,9 @@
 #include <thread>
 #include "List.h"
 #include "MyString.h"
+#include "Logger.h"
 
-const std::string INCLUDE_STRING = "#include ";
+const char* INCLUDE_STRING = "#include ";
 
 enum ShaderDependencyType {
     VERTEX,
@@ -41,63 +42,7 @@ void freeGlobalShaderRegistry() {
     GlobalShaderRegistry.deallocate();
 }
 
-void watchForDirectorychanges(std::vector<Shader>& shadersToReload, const bool& isDying)
-{
-#ifdef __WIN32
-    BYTE info[1024 * 8];
-    OVERLAPPED overlapped = { 0 };
-
-    HANDLE handle = CreateFileW(L"src/shaders",
-        FILE_LIST_DIRECTORY | GENERIC_READ,
-        FILE_SHARE_READ | FILE_SHARE_WRITE,
-        NULL,
-        OPEN_EXISTING,
-        FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-        NULL);
-    overlapped.hEvent = CreateEvent(nullptr, true, false, nullptr);
-    while (!isDying) {
-        BOOL rdc = ReadDirectoryChangesW(handle, info, std::size(info), TRUE,
-            FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_LAST_ACCESS | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_SECURITY,
-            NULL, &overlapped, NULL);
-
-        DWORD dwBytesReturned = 0;
-        if (GetOverlappedResult(handle, &overlapped, &dwBytesReturned, FALSE)) {
-            if (dwBytesReturned == 0) {
-                continue;
-            }
-
-            FILE_NOTIFY_INFORMATION* fni = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&info[0]);
-
-            if (fni->Action == 0) {
-                continue;
-            }
-
-            if (fni->Action != FILE_ACTION_MODIFIED) {
-                continue;
-            }
-
-            std::wstring wideFileName = std::wstring { fni->FileName, fni->FileName + fni->FileNameLength / sizeof(wchar_t) };
-            std::string filename = "src/shaders/" + std::string(wideFileName.begin(), wideFileName.end());
-
-            for (std::pair<Shader, std::vector<ShaderDependency>> pair : GlobalShaderRegistry) {
-                Shader shader = pair.first;
-                for (const ShaderDependency& dependency : pair.second) {
-                    if (dependency.path.compare(filename) == 0) {
-                        shadersToReload.push_back(shader);
-                        dwBytesReturned = 0;
-                        break;
-                    }
-                }
-            }
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-#endif
-}
-
-std::string readGlslFile(const GLchar* path)
-{
+std::string readGlslFile(const GLchar* path) {
     std::string shaderCode = "";
     std::ifstream shaderFile;
 
@@ -109,23 +54,22 @@ std::string readGlslFile(const GLchar* path)
         while (std::getline(shaderFile, line)) {
             std::stringstream shaderStream(line);
 
-            if (line.length() > INCLUDE_STRING.length() && line.substr(0, INCLUDE_STRING.length()) == INCLUDE_STRING) {
-                line = readGlslFile((getEnclosingFolder(path) + "/" + line.substr(INCLUDE_STRING.length())).c_str());
+            if (line.length() > strlen(INCLUDE_STRING) && line.substr(0, strlen(INCLUDE_STRING)) == INCLUDE_STRING) {
+                line = readGlslFile((getEnclosingFolder(path) + "/" + line.substr(strlen(INCLUDE_STRING))).c_str());
             }
 
             shaderCode += line + "\n";
         }
         shaderFile.close();
     } catch (std::exception e) {
-        std::cerr << "Error: Shader not successfuly read from file: " << path << std::endl;
+        logger_error("Error: Shader not successfuly read from file: %s", path);
         return "";
     }
 
     return shaderCode;
 }
 
-GLuint loadIndividualShader(GLenum shaderType, const GLchar* path)
-{
+GLuint loadIndividualShader(GLenum shaderType, const GLchar* path) {
     const std::string glShaderCode = readGlslFile(path);
     const char* glShaderCodeCStr = glShaderCode.c_str();
     GLuint shader;
@@ -138,8 +82,7 @@ GLuint loadIndividualShader(GLenum shaderType, const GLchar* path)
     if (!success) {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, 0, infoLog);
-        std::cerr << "Error: Vertex shader failed to compile - " << infoLog
-                  << std::endl;
+        logger_error("Vertex shader failed to comipile : %s", infoLog);
         return 0;
     }
 
@@ -147,10 +90,6 @@ GLuint loadIndividualShader(GLenum shaderType, const GLchar* path)
 }
 
 void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath) {
-    if (GlobalShaderRegistry.capacity == 0) {
-        GlobalShaderRegistry.allocate(2);
-    }
-
     ShaderDependency dependency;
 
     GLuint vertex = 0, fragment = 0, geometry = 0;
@@ -195,10 +134,10 @@ void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragm
         glDeleteShader(geometry);
 
     dependency.shader = retVal;
+    GlobalShaderRegistry.add(dependency);
 }
 
-Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath)
-{
+Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath) {
     Shader retVal;
     retVal = glCreateProgram();
 
@@ -208,8 +147,7 @@ Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
     return retVal;
 }
 
-Shader reloadShader(Shader shader)
-{
+Shader reloadShader(Shader shader) {
     GLsizei count;
     GLuint shaders[3];
     glGetAttachedShaders(shader, 3, &count, shaders);

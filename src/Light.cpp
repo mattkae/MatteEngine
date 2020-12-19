@@ -10,8 +10,8 @@
 inline Matrix4x4f getLightProjection(const Light &light) {
     switch (light.type) {
     case Directional:
-		// @TODO: Almost certian these values shouldn't be this random
-        return getOrthographicProjection(GlobalApp.near, GlobalApp.far, -10, 10, -10.f, 10);
+        // @TODO: Not entirely sure if this works properly
+        //return getOrthographicProjection(GlobalApp.near, GlobalApp.far, -1000.f, 1000.f, -1000.f, 1000.f);
     case Spot:
 		// @TODO: Don't default the FOV to 45 degrees
 		return getPerspectiveProjection(GlobalApp.near, GlobalApp.far, 0.7853982f, GlobalApp.aspectRatio);
@@ -213,7 +213,7 @@ void Light::renderShadows(const Scene& scene) {
     }
 }
 
-void Light::render(const int index, const LightUniformMapping* uniformMapping) const {
+void Light::render(const LightUniformMapping* uniformMapping) const {
     if (!isOn) {
         return;
     }

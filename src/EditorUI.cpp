@@ -101,7 +101,7 @@ void onTerrainNumVerticesChange(void* ptr) {
 }
 
 void onTerrainCreate(int data) {
-
+	GlobalApp.scene.mTerrain.initialize(GlobalApp.scene.mTerrain.mParams);
 }
 
 void EditorUI::initTerrainUI(Scene* scene)  {

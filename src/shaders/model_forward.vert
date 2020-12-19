@@ -45,7 +45,7 @@ void main() {
   oTexCoords = texCoords;
   oTexWeights = texWeights;
   oNormal = outNormal;
-  vertexViewDir = uEye - fragPos.xyz;
+  vertexViewDir = normalize(uEye - fragPos.xyz);
   vertexDebugColor = tangent;
 
   vec3 vertTangent_CameraSpace = normalize((uModel * vec4(tangent, 0.0)).xyz);

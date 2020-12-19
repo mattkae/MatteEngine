@@ -80,6 +80,10 @@ void Mesh::initialize(Vertex* vertices,
     material.initialize(loadMat, nullptr);
 }
 
+void Mesh::initializeFromVertices(List<Vertex>* vertices, List<GLint>* indices) {
+    enableVertexData(vertices->data, vertices->numElements, indices->data, indices->numElements);
+}
+
 void Mesh::free() {
     if (vao) glDeleteVertexArrays(1, &vao);
 	if (vbo) glDeleteBuffers(1, &vbo);

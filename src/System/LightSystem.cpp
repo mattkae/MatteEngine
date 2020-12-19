@@ -12,7 +12,7 @@ void LightSystem::update(float dtMs) {
 void LightSystem::render(const LightUniformMapping* mapping) const {
 	setShaderInt(mapping->LIGHT_NUM_LIGHTS, mEntites.mNumElements);
 	FOREACH_FIXED_CONST(mEntites) {
-		value->mLight.render(idx, mapping);
+		value->mLight.render(mapping);
 	}
 }
 

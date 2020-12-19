@@ -103,6 +103,7 @@ void MaterialUniformMapping::initialize(const Shader& shader) {
 	MATERIAL_SPECULAR_PROPERTY = getShaderUniform(shader, "uMaterial.specularProperty");
 	MATERIAL_OPACITY = getShaderUniform(shader, "uMaterial.opacity");
 	MATERIAL_USE_TEXTURE = getShaderUniform(shader, "uMaterial.useTexture");
+	MATERIAL_SHININESS = getShaderUniform(shader, "uMaterial.shininess");
 
 	DIFFUSE_LIST[0] = getShaderUniform(shader, "uDiffuseList[0]");
 	DIFFUSE_LIST[1] = getShaderUniform(shader, "uDiffuseList[1]");

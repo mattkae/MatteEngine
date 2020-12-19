@@ -11,7 +11,12 @@
 struct Scene;
 struct LightUniformMapping;
 
-enum LightType { Directional = 0, PointLight, Spot, Inactive };
+enum LightType {
+    None        = 0,
+    Directional = 1, 
+    PointLight  = 2, 
+    Spot        = 3
+};
 
 struct Light {
 	GLint index = 0;
@@ -43,7 +48,7 @@ struct Light {
 
     void initialize(int lightIndex);
     void renderShadows(const Scene& scene);
-    void render(const int index, const LightUniformMapping* uniformMapping) const;
+    void render(const LightUniformMapping* uniformMapping) const;
     void free();
 };
 

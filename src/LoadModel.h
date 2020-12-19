@@ -19,6 +19,7 @@ struct LoadMaterial {
     Vector3f specularProperty = { 1.f, 1.f, 1.f };
     GLfloat specularComponent = 20.f;
     GLfloat transparency = 1.0;
+    GLfloat shininess = 24.f;
 
     int diffuseUniqueTextureId = -1;
     int specularUniqueTextureId = -1;
@@ -71,7 +72,7 @@ struct LoadBoneNode {
 };
 
 struct LoadModel {
-    char* modelPath;
+    char modelPath[128];
     Vector4f lowerLeftBoundingBoxCorner;
     Vector4f upperRightBoundingBoxCorner;
     Matrix4x4f inverseRootNode;

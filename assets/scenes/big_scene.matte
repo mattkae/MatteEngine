@@ -1,43 +1,48 @@
 textures                assets/texture-info.mattl
 
 ::camera
-    position    0.0 40.0 40.0
+    position    0.0 40.0 80.0
     pitch       -30
 ;;
 
 ::entities
 	::
 		::renderable
-			path        assets/models/Astroboy/astroBoy_walk.mattl
-			translation 0 0 0
-			scale 		1 1 1
-			rotation	0 0 0
+			path		assets/models/Specular_Test/test.mattl
+			translation 20 0 0
+			scale 		10 10 10
+			rotation 	0 0 0
 		;;
-		::mouse_interactable
-			isSelectable true
+	;;
+	::
+		::renderable
+			path		assets/models/Diffuse_Test/test.mattl
+			translation -20 0 0
+			scale 		10 10 10
+			rotation 	0 0 0
 		;;
 	;;
 	::
 		::renderable
 			path		assets/models/Floor/floor.mattl
-			translation 0 -10 0
-			scale 		5 5 5
-			rotation 	0 0 0
+			translation 0 -20 0
+			scale		20 20 20
+			rotation	0 0 0
 		;;
 	;;
 	::
 		::lightable
-			type            2
-        	color           1 1 1
+			type            1
+        	color           1.0 1.0 1.0
         	direction       0 -1 0
-			position        0 30 0
+			position        0 100 0
 			up              0 0 1
 			usesShadows     true
 			isOn            true
-			constant        1
-			linear          0.3
-			quadratic       0.2
-			cosineCutOff    0.5
+			constant        1.0
+			linear          0.009
+			quadratic       0.0032
+			cosineCutOff    0.09
 			dropOff         24
 		;;
 	;;

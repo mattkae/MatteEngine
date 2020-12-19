@@ -14,7 +14,7 @@ bool ToolModelLoader::loadModel(char* path) {
 
 
     LoadModel model;
-    model.modelPath = path;
+    strncpy_s(model.modelPath, path, strlen(path));
     inverse(assimpMatrixToMatrix(scene->mRootNode->mTransformation), model.inverseRootNode);
     processNode(path, scene->mRootNode, scene, model);
     postProcessBones(model, scene);
@@ -78,6 +78,11 @@ void ToolModelLoader::processNode(char* fullPath, const aiNode* node, const aiSc
 
         // Fill in tangents and bitangents for each vetex
         for (size_t indexIndex = 0; indexIndex < mesh.indices.numElements; indexIndex+=3) {
+            if (mesh.indices.numElements >= indexIndex + 2) {
+                continue;
+            }
+
+
             GLint firstIndex = mesh.indices[indexIndex];
             GLint secondIndex = mesh.indices[indexIndex + 1];
             GLint thirdIndex = mesh.indices[indexIndex + 2];
@@ -159,6 +164,10 @@ void ToolModelLoader::processNode(char* fullPath, const aiNode* node, const aiSc
             float tranparency;
             aiGetMaterialFloat(material, AI_MATKEY_OPACITY, &tranparency);
             mesh.material.transparency = tranparency;
+
+            float shininess;
+            aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess);
+            mesh.material.transparency = shininess;
 
             // Read in textures
             StringBuilder texturePathBuilder;

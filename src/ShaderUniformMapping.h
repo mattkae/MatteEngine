@@ -10,6 +10,7 @@ struct MaterialUniformMapping {
 	int MATERIAL_SPECULAR_PROPERTY;
 	int MATERIAL_OPACITY;
 	int MATERIAL_USE_TEXTURE;
+	int MATERIAL_SHININESS;
 	int DIFFUSE_LIST[Constants::Rendering::MAX_TEXTURES_PER_MESH];
 	int SPECULAR_LIST[Constants::Rendering::MAX_TEXTURES_PER_MESH];
 	int AMBIENT_LIST[Constants::Rendering::MAX_TEXTURES_PER_MESH];

@@ -176,6 +176,7 @@ void LoadMaterial::write(BinarySerializer& serializer) {
 	serializer.writeVec3(diffuse);
 	serializer.writeVec3(specular);
 	serializer.writeFloat32(transparency);
+	serializer.writeFloat32(shininess);
 	serializer.writeInt32(diffuseUniqueTextureId);
 	serializer.writeInt32(specularUniqueTextureId);
 	serializer.writeInt32(ambientUniqueTextureId);
@@ -187,6 +188,7 @@ void LoadMaterial::read(BinarySerializer& serializer) {
 	diffuse = serializer.readVec3();
 	specular = serializer.readVec3();
 	transparency = serializer.readFloat32();
+	shininess = serializer.readFloat32();
 	diffuseUniqueTextureId = serializer.readInt32();
 	specularUniqueTextureId = serializer.readInt32();
 	ambientUniqueTextureId = serializer.readInt32();

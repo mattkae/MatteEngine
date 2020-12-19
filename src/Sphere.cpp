@@ -1,14 +1,14 @@
 #include "Sphere.h"
 #include "MathHelper.h"
-#include "LoadModel.h"
 #include "Mesh.h"
+#include "Vertex.h"
 #include "Box.h"
+#include "List.h"
 #include <cmath>
-#include <vector>
 
 void initializeSphere(const Sphere& sphere, Model& model, Box3D& box) {
-    LoadModel loadModel;
-    LoadMesh mesh;
+    List<Vertex> vertices;
+    List<GLint> indices;
 
     // Generate vertices and indices
     GLint index = 0;
@@ -29,39 +29,34 @@ void initializeSphere(const Sphere& sphere, Model& model, Box3D& box) {
             // Top Left Point
             auto topLeftPoint = getVec3(sphere.radius * sinPhi * cosTheta, sphere.radius * sinPhi * sinTheta, sphere.radius * cosPhi);
             auto topLeftIdx = index++;
-            mesh.vertices.add({topLeftPoint, normalize(topLeftPoint)});
+            vertices.add({topLeftPoint, normalize(topLeftPoint)});
 
             // Bottom Left Point
             auto bottomLeftPoint = getVec3(sphere.radius * nextSinPhi * cosTheta, sphere.radius * nextSinPhi * sinTheta, sphere.radius * nextCosPhi);
             auto bottomLeftIdx = index++;
-            mesh.vertices.add({bottomLeftPoint, normalize(bottomLeftPoint)});
+            vertices.add({bottomLeftPoint, normalize(bottomLeftPoint)});
 
             // Bottom Right Point
             auto bottomRightPoint = getVec3(sphere.radius * nextSinPhi * nextCosTheta, sphere.radius * nextSinPhi * nextSinTheta, sphere.radius * nextCosPhi);
             auto bottomRightIdx = index++;
-            mesh.vertices.add({bottomRightPoint, normalize(bottomRightPoint)});
+            vertices.add({bottomRightPoint, normalize(bottomRightPoint)});
 
             // Top Right Point
             auto topRightPoint = getVec3(sphere.radius * sinPhi * nextCosTheta,sphere.radius * sinPhi * nextSinTheta, sphere.radius * cosPhi);
             auto topRightIdx = index++;
-            mesh.vertices.add({topRightPoint, normalize(topRightPoint)});
+            vertices.add({topRightPoint, normalize(topRightPoint)});
 
-            mesh.indices.add(topLeftIdx);
-            mesh.indices.add(bottomLeftIdx);
-            mesh.indices.add(bottomRightIdx);
-            mesh.indices.add(bottomRightIdx);
-            mesh.indices.add(topLeftIdx);
-            mesh.indices.add(topRightIdx);
+            indices.add(topLeftIdx);
+            indices.add(bottomLeftIdx);
+            indices.add(bottomRightIdx);
+            indices.add(bottomRightIdx);
+            indices.add(topLeftIdx);
+            indices.add(topRightIdx);
         }
     }
 
-	loadModel.meshes.add(mesh);
-    loadModel.calculateBoundingBox();
-
 	model.model = sphere.model;
     model.meshes = new Mesh[1];
-    model.meshes[0].initialize(mesh, nullptr);
-
-    box.lowerLeft = loadModel.lowerLeftBoundingBoxCorner;
-    box.upperRight = loadModel.upperRightBoundingBoxCorner;
+    model.numMeshes = 1;
+    model.meshes[0].initializeFromVertices(&vertices, &indices);
 }

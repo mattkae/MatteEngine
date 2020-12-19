@@ -13,6 +13,7 @@ void Material::initialize(LoadMaterial& material, List<GeneratedTexture>* list) 
 	specularProperty = material.specularProperty;
 	specularComponent = material.specularComponent;
 	transparency = material.transparency;
+	shininess = material.shininess;
 
 	if (list != nullptr) {
 		for (size_t textureIndex = 0; textureIndex < list->numElements; textureIndex++) {
@@ -35,7 +36,7 @@ void Material::render(const MaterialUniformMapping& mapping) const {
 	setShaderVec3(mapping.MATERIAL_EMISSIVE, emissive);
 	setShaderVec3(mapping.MATERIAL_DIFFUSE_PROPERTY, diffuseProperty);
 	setShaderVec3(mapping.MATERIAL_SPECULAR_PROPERTY, specularProperty);
-	//setShaderFloat(shader, "uMaterial.shininess", specularComponent);
+	setShaderFloat(mapping.MATERIAL_SHININESS, shininess);
 	setShaderFloat(mapping.MATERIAL_OPACITY, transparency);
 	setShaderBVec4(mapping.MATERIAL_USE_TEXTURE, textureList.useTexture[0], textureList.useTexture[1], textureList.useTexture[2], textureList.useTexture[3]);
 	textureList.render(mapping);

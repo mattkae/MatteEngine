@@ -35,7 +35,8 @@ void main() {
     vec3 diffuse = uMaterial.useTexture[0] ? vec3(0, 0, 0) : uMaterial.diffuse;
     vec3 specular = uMaterial.useTexture[1] ? vec3(0, 0, 0) : uMaterial.specular;
     vec3 emissive = uMaterial.emissive;
-    vec3 ambient = uMaterial.useTexture[2] ? vec3(0, 0, 0) : uAmbient;
+    vec3 ambient = uAmbient;
+	ambient = ambient + (uMaterial.useTexture[2] ? vec3(0, 0, 0) : uMaterial.ambient);
 
     // @TODO Only using a single texture for now, this stuff got weird
     for (int textureIndex = 0; textureIndex < MAX_TEXTURES; textureIndex++) {

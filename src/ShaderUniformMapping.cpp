@@ -110,6 +110,7 @@ void ModelUniformMapping::initialize(const Shader& shader, bool withMaterial) {
 void MaterialUniformMapping::initialize(const Shader& shader) {
 	MATERIAL_DIFFUSE = getShaderUniform(shader, "uMaterial.diffuse");
 	MATERIAL_SPECULAR = getShaderUniform(shader, "uMaterial.specular");
+	MATERIAL_AMBIENT = getShaderUniform(shader, "uMaterial.ambient");
 	MATERIAL_EMISSIVE = getShaderUniform(shader, "uMaterial.emissive");
 	MATERIAL_DIFFUSE_PROPERTY = getShaderUniform(shader, "uMaterial.diffuseProperty");
 	MATERIAL_SPECULAR_PROPERTY = getShaderUniform(shader, "uMaterial.specularProperty");

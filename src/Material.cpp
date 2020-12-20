@@ -34,6 +34,7 @@ void Material::render(const MaterialUniformMapping& mapping) const {
 	setShaderVec3(mapping.MATERIAL_DIFFUSE, diffuse);
 	setShaderVec3(mapping.MATERIAL_SPECULAR, specular);
 	setShaderVec3(mapping.MATERIAL_EMISSIVE, emissive);
+	setShaderVec3(mapping.MATERIAL_AMBIENT, ambient);
 	setShaderVec3(mapping.MATERIAL_DIFFUSE_PROPERTY, diffuseProperty);
 	setShaderVec3(mapping.MATERIAL_SPECULAR_PROPERTY, specularProperty);
 	setShaderFloat(mapping.MATERIAL_SHININESS, shininess);

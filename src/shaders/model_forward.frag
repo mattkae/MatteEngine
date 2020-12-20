@@ -73,7 +73,7 @@ void main() {
             uMaterial, normal, vertexViewDir, diffuse, specular, oFragPos);
     }
 
-    Color = vec4(clamp(finalColor, vec3(0.0), vec3(1.0)), uMaterial.opacity);
+    Color = vec4(finalColor, uMaterial.opacity);
     
     // @Info @NoCheckin: Uncomment this if you want to output the vertexDebugColor
     // Color = vec4(vertexDebugColor, uMaterial.opacity);

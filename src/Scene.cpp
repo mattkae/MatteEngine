@@ -7,6 +7,7 @@
 #include "SceneLoader.h"
 #include "ShaderUniformMapping.h"
 #include "App.h"
+#include "Quad.h"
 #include <GLFW/glfw3.h>
 
 void Scene::initialize() {
@@ -32,6 +33,9 @@ void Scene::initialize() {
 	mGradientSky.initialize(500, 5, 5);
 
 	systemEngine.initialize();
+
+	postProcessBuffer = createFloatingPointFrameBuffer(GlobalApp.width, GlobalApp.height);
+	postProcessQuad.generate();
 }
 
 void Scene::update(double dt) {
@@ -62,8 +66,9 @@ void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
-    glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// @TODO: Turn back on transparent objects, but they never really even worked anyway
+    //glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);	
@@ -100,7 +105,25 @@ void Scene::render() {
 	}
 
 	water.renderReflection();
+
+	bool postProcess = true;
+
+	// Render out entire scene to the Framebuffer first
+	if (postProcess) {
+		glBindFramebuffer(GL_FRAMEBUFFER, postProcessBuffer.fbo);
+	}
 	renderDirect(&mCamera);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Render the framebuffer texture to the scene
+	if (postProcess) {
+		useShader(ShaderUniformMapping::GlobalPostProcessorShaderMapping.shader);
+		setShaderInt(ShaderUniformMapping::GlobalPostProcessorShaderMapping.UNIFORM_SCENE_BUFFER, 0);
+		setShaderFloat(ShaderUniformMapping::GlobalPostProcessorShaderMapping.UNIFORM_EXPOSURE, 0.1f);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, postProcessBuffer.texture);
+		postProcessQuad.render();
+	}
 }
 
 void Scene::free() {
@@ -113,4 +136,5 @@ void Scene::free() {
 
     mTerrain.free();
 	water.free();
+	FrameBuffer::freeFrameBuffer(&postProcessBuffer);
 }

@@ -5,6 +5,7 @@ const char* DEFFERRED_MODEL_SHADER_VERT = "src/shaders/model_defferred.vert";
 const char* DEFFERRED_MODEL_SHADER_FRAG = "src/shaders/model_defferred.frag";
 
 ModelShaderMapping ShaderUniformMapping::GlobalModelShaderMapping;
+PostProcessorShaderMapping ShaderUniformMapping::GlobalPostProcessorShaderMapping;
 ShadowShaderMapping ShaderUniformMapping::GlobalShadowShaderMapping;
 SkyboxShaderMapping ShaderUniformMapping::GlobalSkyboxShaderMapping;
 OrthographicShaderMapping ShaderUniformMapping::GlobalOrthographicShaderMapping;
@@ -15,6 +16,7 @@ DomeSkyShaderMapping ShaderUniformMapping::GlobalDomeSkyShaderMapping;
 
 void ShaderUniformMapping::initialize() {
 	GlobalModelShaderMapping.initialize();
+	GlobalPostProcessorShaderMapping.initialize();
 	GlobalShadowShaderMapping.initialize();
 	GlobalSkyboxShaderMapping.initialize();
 	GlobalOrthographicShaderMapping.initialize();
@@ -26,6 +28,7 @@ void ShaderUniformMapping::initialize() {
 
 void ShaderUniformMapping::free() {
 	glDeleteShader(GlobalModelShaderMapping.shader);
+	glDeleteShader(GlobalPostProcessorShaderMapping.shader);
 	glDeleteShader(GlobalShadowShaderMapping.shader);
 	glDeleteShader(GlobalSkyboxShaderMapping.shader);
 	glDeleteShader(GlobalOrthographicShaderMapping.shader);
@@ -74,6 +77,15 @@ void ModelShaderMapping::initialize() {
 	cameraUniformMapping.initialize(shader, true);
 	modelUniformMapping.initialize(shader, true);
 	lightUniformMapping.initialize(shader);
+}
+
+void PostProcessorShaderMapping::initialize() {
+	const char* POSTPROCESS_VERT = "src/shaders/model_postprocess.vert";
+	const char* POSTPROCESS_FRAG = "src/shaders/model_postprocess.frag";
+	shader = loadShader(POSTPROCESS_VERT, POSTPROCESS_FRAG);
+
+	UNIFORM_SCENE_BUFFER = getShaderUniform(shader, "uSceneTexture");
+	UNIFORM_EXPOSURE = getShaderUniform(shader, "uExposure");
 }
 
 void ShadowShaderMapping::initialize() {

@@ -142,8 +142,17 @@ struct WaterShaderMapping {
 	void initialize();
 };
 
+struct PostProcessorShaderMapping {
+	Shader shader;
+	int UNIFORM_SCENE_BUFFER;
+	int UNIFORM_EXPOSURE;
+
+	void initialize();
+};
+
 namespace ShaderUniformMapping {
 	extern ModelShaderMapping GlobalModelShaderMapping;
+	extern PostProcessorShaderMapping GlobalPostProcessorShaderMapping;
 	extern ShadowShaderMapping GlobalShadowShaderMapping;
 	extern SkyboxShaderMapping GlobalSkyboxShaderMapping;
 	extern OrthographicShaderMapping GlobalOrthographicShaderMapping;

@@ -12,3 +12,5 @@ namespace FrameBuffer {
 	TextureFrameBuffer createFrameBufferRGBA(int width, int height);
 	void freeFrameBuffer(TextureFrameBuffer* buffer);
 };
+
+TextureFrameBuffer createFloatingPointFrameBuffer(int width, int height);

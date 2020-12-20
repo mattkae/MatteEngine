@@ -13,6 +13,8 @@
 #include "Water.h"
 #include "GradientSky.h"
 #include "SystemEngine.h"
+#include "FrameBuffer.h"
+#include "Quad.h"
 
 struct Scene {
 	SystemEngine systemEngine;
@@ -26,6 +28,8 @@ struct Scene {
 
     bool mUseShadows = true;
     Camera mCamera;
+	TextureFrameBuffer postProcessBuffer;
+	Quad postProcessQuad;
 
 	void initialize();
 	void update(double dt);

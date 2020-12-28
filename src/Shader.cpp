@@ -82,7 +82,7 @@ GLuint loadIndividualShader(GLenum shaderType, const GLchar* path) {
     if (!success) {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, 0, infoLog);
-        logger_error("Vertex shader failed to comipile : %s", infoLog);
+        logger_error("Vertex shader failed to comipile, path: %s, reason: %s", path, infoLog);
         return 0;
     }
 

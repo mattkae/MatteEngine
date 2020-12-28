@@ -31,6 +31,14 @@ textures                assets/texture-info.mattl
 		;;
 	;;
 	::
+		::renderable
+			path		assets/models/Astroboy/astroBoy_walk.mattl
+			translation 0 0 0
+			scale 		1 1 1
+			rotation 	0 0 0
+		;;
+	;;
+	::
 		::lightable
 			type            1
         	color           1.0 1.0 1.0

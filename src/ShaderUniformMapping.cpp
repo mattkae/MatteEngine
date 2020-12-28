@@ -163,8 +163,8 @@ void DomeSkyShaderMapping::initialize() {
 }
 
 void OrthographicShaderMapping::initialize() {
-	const char* VERTEX = "src/shaders/orthographic.vert";
-	const char* FRAG = "src/shaders/orthographic.frag";
+	const char* VERTEX = "src/shaders/Orthographic.vert";
+	const char* FRAG = "src/shaders/Orthographic.frag";
 	shader = loadShader(VERTEX, FRAG);
 	PROJECTION = getShaderUniform(shader, "uProjection");
 	COLOR = getShaderUniform(shader, "uColor");
@@ -173,8 +173,8 @@ void OrthographicShaderMapping::initialize() {
 }
 
 void TextShaderMapping::initialize() {
-	const char* VERTEX = "src/shaders/text.vert";
-	const char* FRAG = "src/shaders/text.frag";
+	const char* VERTEX = "src/shaders/Text.vert";
+	const char* FRAG = "src/shaders/Text.frag";
 	shader = loadShader(VERTEX, FRAG);
 	PROJECTION = getShaderUniform(shader, "uProjection");
 	SCROLL_X = getShaderUniform(shader, "uScrollX");
@@ -183,8 +183,8 @@ void TextShaderMapping::initialize() {
 }
 
 void ParticleShaderMapping::initialize() {
-	const char* VERTEX = "src/shaders/text.vert";
-	const char* FRAG = "src/shaders/text.frag";
+	const char* VERTEX = "src/shaders/Text.vert";
+	const char* FRAG = "src/shaders/Text.frag";
 	shader = loadShader(VERTEX, FRAG);
 	cameraMapping.initialize(shader, false);
 	MODEL = getShaderUniform(shader, "uModel");

@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include <chrono>
 #include <cstdarg>
+#include <cstdio>
 
 namespace Logger {
     LogLevel gLogLevel = LogLevel_Debug;
@@ -70,8 +71,8 @@ namespace Logger {
         printf("\n");
 
         if (gFilePointer != NULL) {
-            vfprintf(gFilePointer, format, args);
-            fprintf(gFilePointer, "\n");
+		  //vfprintf(gFilePointer, format, args);
+		  //fprintf(gFilePointer, "\n");
         }
     }
 

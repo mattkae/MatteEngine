@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include <GL/glew.h>
 
-inline DomeVertex getVertex(float radius, int phi, int theta) {
+inline DomeVertex getVertex(float radius, float phi, float theta) {
 	DomeVertex vertex;
 	vertex.position.x = radius * sinf(phi * DTOR) * cosf(theta * DTOR);
 	vertex.position.y = radius * cosf(phi * DTOR);
@@ -25,8 +25,8 @@ void GradientSky::initialize(float radius, float deltaPhi, float deltaTheta) {
 	indices.allocate(numIndices);
 
 	GLuint index = 0;
-	for (int phi = 0; phi <= 90 - deltaPhi; phi += (int)deltaPhi) {
-		for (int theta = 0; theta <= 360 - deltaTheta; theta += (int)deltaTheta) {
+	for (float phi = 0.f; phi <= 90.f - deltaPhi; phi += deltaPhi) {
+		for (float theta = 0.f; theta <= 360.f - deltaTheta; theta += deltaTheta) {
 			DomeVertex vertex = getVertex(radius, phi, theta);
 			vertices.add(&vertex);
 		    GLuint topLeftIdx = index++;

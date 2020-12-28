@@ -1,6 +1,6 @@
 #include "DirectoryReader.h"
 #include "TransformToolConstants.h"
-#include "Logger.h"
+#include "../src/Logger.h"
 #ifdef WIN32
 #include "dirent.h"
 #else

@@ -1,0 +1,8 @@
+cmake_minimum_required (VERSION 3.0)
+project(ModelTransformTool)
+add_executable(ModelTransformTool dirent.h AssimpHelper.h ToolModelLoader.cpp ToolModelLoader.h DirectoryReader.cpp TransformToolConstants.h main.cpp DirectoryReader.h)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(freetype REQUIRED)
+find_package(assimp REQUIRED)
+target_link_libraries(ModelTransformTool PRIVATE assimp::assimp SOIL glfw GLEW::GLEW freetype)

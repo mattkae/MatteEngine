@@ -37,7 +37,7 @@ GLuint loadTexture(String path) {
 	const char* cStrPath = path.getValue();
     unsigned char* image = SOIL_load_image(cStrPath, &width, &height, 0, SOIL_LOAD_RGBA);
 	if (image == NULL) {
-		logger_error("Unable to load image from path: %s", path.getValueConst());
+	  logger_error("Unable to load image from path: %s, reason: %s", path.getValueConst(), SOIL_last_result());
 		return 0;
 	}
 

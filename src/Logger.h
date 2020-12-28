@@ -28,14 +28,14 @@ namespace Logger {
 
 #if WIN32
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-#elif
+#else
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#define logger_log(level, format, ...) Logger::doLog(__FILENAME__, __LINE__, level, format, __VA_ARGS__)
-#define logger_debug(format, ...) Logger::doDebug(__FILENAME__, __LINE__, format, __VA_ARGS__)
-#define logger_info(format, ...) Logger::doInfo(__FILENAME__, __LINE__, format, __VA_ARGS__)
-#define logger_warning(format, ...) Logger::doWarning(__FILENAME__, __LINE__, format, __VA_ARGS__)
-#define logger_error(format, ...) Logger::doError(__FILENAME__, __LINE__, format, __VA_ARGS__)
+#define logger_log(level, format, ...) Logger::doLog(__FILENAME__, __LINE__, level, format, ## __VA_ARGS__)
+#define logger_debug(format, ...) Logger::doDebug(__FILENAME__, __LINE__, format, ## __VA_ARGS__)
+#define logger_info(format, ...) Logger::doInfo(__FILENAME__, __LINE__, format, ## __VA_ARGS__)
+#define logger_warning(format, ...) Logger::doWarning(__FILENAME__, __LINE__, format, ## __VA_ARGS__)
+#define logger_error(format, ...) Logger::doError(__FILENAME__, __LINE__, format, ## __VA_ARGS__)
 
 #endif

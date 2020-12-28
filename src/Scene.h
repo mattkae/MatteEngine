@@ -15,6 +15,7 @@
 #include "SystemEngine.h"
 #include "FrameBuffer.h"
 #include "Quad.h"
+#include <climits>
 
 struct Scene {
 	SystemEngine systemEngine;

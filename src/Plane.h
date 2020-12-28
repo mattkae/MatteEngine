@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3f.h"
 #include "Ray.h"
+#include "float.h"
 
 struct Plane {
 	Vector3f center;

@@ -4,9 +4,6 @@
 #include "Camera.h"
 #include "Shader.h"
 #include <GL/glew.h>
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::json;
 
 struct Skybox {
     GLuint mTexture;

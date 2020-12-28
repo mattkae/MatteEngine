@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include <cstdarg>
+#include <cmath>
 
 int StringBuffer::add(const char* str) {
 	int spaceNeeded = strlen(str);
@@ -126,7 +127,7 @@ const int DEFAULT_NUMBER_BUFFER_SIZE = 32;
 
 void StringBuilder::addInt(int value) {
 	char buffer[DEFAULT_NUMBER_BUFFER_SIZE];
-	_itoa_s(value, buffer, 10);
+	sprintf(buffer, "%d", value);
 	addStr(buffer);
 }
 
@@ -141,7 +142,7 @@ inline int n_tu(int number, int count) {
 
 void StringBuilder::addFloat(float value) {
 	char buffer[DEFAULT_NUMBER_BUFFER_SIZE];
-	sprintf_s(buffer, "%f", value);
+	sprintf(buffer, "%f", value);
 	addStr(buffer);
 }
 

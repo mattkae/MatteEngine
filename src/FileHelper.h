@@ -4,10 +4,10 @@
 namespace FileHelper {
 	inline FILE* openFile(const char* filepath, const char* mode = "r") {
 		FILE* file;
-		#ifdef __APPLE__
-			file = fopen(filepath, mode);
+		#ifdef WIN32
+		fopen_s(&file, filepath, mode);
 		#else
-			fopen_s(&file, filepath, mode);
+		file = fopen(filepath, mode);
 		#endif
 		return file;
 	}

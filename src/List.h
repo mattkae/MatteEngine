@@ -196,7 +196,7 @@ void List<T>::binarySort(int (*f)(T *first, T* second)) {
 		}
 
 		T temp = data[minIdx];
-		memmove_s(&data[minIdx], sizeof(T), &data[idx], sizeof(T));
-		memmove_s(&data[idx], sizeof(T), &temp, sizeof(T));
+		memmove(&data[minIdx], &data[idx], sizeof(T));
+		memmove(&data[idx], &temp, sizeof(T));
 	}
 }

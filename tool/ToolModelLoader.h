@@ -1,7 +1,7 @@
 #pragma once
-#include "List.h"
-#include "LoadModel.h"
-#include "TextureInfo.h"
+#include "../src/List.h"
+#include "../src/LoadModel.h"
+#include "../src/TextureInfo.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h> 
 #include <assimp/postprocess.h>

@@ -12,3 +12,5 @@ Release/
 x64/
 *.log
 *~
+*/build/*
+vcpkg/

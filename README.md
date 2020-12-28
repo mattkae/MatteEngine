@@ -3,6 +3,8 @@ I've been working on this project for a while now in order to investigate how di
 
 - Freetype (for reading in .ttf files)
 - SOIL (for imaging reading)
+- Assimp (for initial file reading)
+- GLFW3
 
 All third party libraries are installed via vcpkg on the build machine.
 

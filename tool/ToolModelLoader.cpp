@@ -1,7 +1,7 @@
 #include "ToolModelLoader.h"
 #include "AssimpHelper.h"
-#include "Logger.h"
-#include "BinarySerializer.h"
+#include "../src/Logger.h"
+#include "../src/BinarySerializer.h"
 
 const int BUFFER_SIZE = 256;
 
@@ -14,7 +14,7 @@ bool ToolModelLoader::loadModel(char* path) {
 
 
     LoadModel model;
-    strncpy_s(model.modelPath, path, strlen(path));
+    strncpy(model.modelPath, path, strlen(path));
     inverse(assimpMatrixToMatrix(scene->mRootNode->mTransformation), model.inverseRootNode);
     processNode(path, scene->mRootNode, scene, model);
     postProcessBones(model, scene);
@@ -184,7 +184,7 @@ void ToolModelLoader::processNode(char* fullPath, const aiNode* node, const aiSc
                     }
 
                     char prePathBuffer[BUFFER_SIZE];
-                    strncpy_s(prePathBuffer, fullPath, lastIndexOfSlash);
+                    strncpy(prePathBuffer, fullPath, lastIndexOfSlash);
                     prePathBuffer[lastIndexOfSlash] = '\0';
                     texturePathBuilder.clear();
                     texturePathBuilder.format("%s/%s", prePathBuffer, filePath.C_Str());
@@ -339,9 +339,9 @@ void ToolModelLoader::writeModels() {
         }
 
         char pathBuffer[BUFFER_SIZE];
-        strncpy_s(pathBuffer, value->modelPath, lastIndexOfDot);
+        strncpy(pathBuffer, value->modelPath, lastIndexOfDot);
         pathBuffer[lastIndexOfDot] = '\0';
-        strcat_s(pathBuffer, ".mattl");
+        strcat(pathBuffer, ".mattl");
         logger_info("Writing model to path: %s...", pathBuffer);
         BinarySerializer modelSerializer(pathBuffer, SerializationMode::WRITE);
         value->writeLoadModel(modelSerializer);

@@ -1,6 +1,6 @@
 #pragma once
-#include "Vector3f.h"
-#include "Matrix4x4f.h"
+#include "../src/Vector3f.h"
+#include "../src/Matrix4x4f.h"
 #include <assimp/Importer.hpp>
 
 Vector3f assimpColor4ToVec3(aiColor4D inColor) {

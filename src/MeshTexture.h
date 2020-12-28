@@ -14,10 +14,10 @@ enum class TextureType {
 };
 
 struct MeshTexture {
-	GLint diffuse[Constants::Rendering::MAX_TEXTURES_PER_MESH] = { 0, 0, 0 };
-	GLint specular[Constants::Rendering::MAX_TEXTURES_PER_MESH] = { 0, 0, 0 };
-	GLint ambient[Constants::Rendering::MAX_TEXTURES_PER_MESH] = { 0, 0, 0 };
-	GLint normal[Constants::Rendering::MAX_TEXTURES_PER_MESH] = { 0, 0, 0 };
+	GLint diffuse = 0;
+	GLint specular = 0;
+	GLint ambient = 0;
+	GLint normal = 0;
 	bool useTexture[4]  = { false, false, false, false };
 
 	void add(TextureType type, GLuint texture);

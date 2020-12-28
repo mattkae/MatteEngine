@@ -1,6 +1,5 @@
 #version 410
 #include Light.shared.cpp
-#define MAX_TEXTURES 3
 
 #include Material.glsl
 #include Light.glsl
@@ -11,7 +10,6 @@ out vec4 Color;
 // Input from vertex shader
 in vec4 oFragPos;
 in vec3 oNormal;
-in vec3 oTexWeights;
 in vec2 oTexCoords;
 in vec3 vertexViewDir;
 in mat3 vertexTBN;
@@ -19,10 +17,10 @@ in vec3 vertexDebugColor;
 
 // Uniform variables
 uniform Material uMaterial;
-uniform sampler2D uDiffuseList[MAX_TEXTURES];
-uniform sampler2D uSpecularList[MAX_TEXTURES];
-uniform sampler2D uAmbientList[MAX_TEXTURES];
-uniform sampler2D uNormalMapList[MAX_TEXTURES];
+uniform sampler2D uDiffuse;
+uniform sampler2D uSpecular;
+uniform sampler2D uAmbientMap;
+uniform sampler2D uNormalMap;
 
 uniform int uNumLights;
 uniform vec3 uAmbient;
@@ -38,23 +36,20 @@ void main() {
     vec3 ambient = uAmbient;
 	ambient = ambient + (uMaterial.useTexture[2] ? vec3(0, 0, 0) : uMaterial.ambient);
 
-    // @TODO Only using a single texture for now, this stuff got weird
-    for (int textureIndex = 0; textureIndex < MAX_TEXTURES; textureIndex++) {
-        if (uMaterial.useTexture[0]) {
-            diffuse += oTexWeights[textureIndex] * texture(uDiffuseList[textureIndex], oTexCoords).rgb;
-        }
-        if (uMaterial.useTexture[1]) {
-            specular += oTexWeights[textureIndex] * texture(uSpecularList[textureIndex], oTexCoords).rgb;
-        }
-        if (uMaterial.useTexture[2]) {
-            ambient += oTexWeights[textureIndex] * texture(uAmbientList[textureIndex], oTexCoords).rgb;
-        }
-        if (uMaterial.useTexture[3] && oTexWeights[textureIndex] > 0.75) {
-            normal = texture(uNormalMapList[textureIndex], vec2(oTexCoords.x, oTexCoords.y)).rgb;
-            normal = normal * 2.0 - 1.0;
-            normal = normalize(vertexTBN * normal);
-        }
+    if (uMaterial.useTexture[0]) {
+	   diffuse = texture(uDiffuse, oTexCoords).rgb;
     }
+	if (uMaterial.useTexture[1]) {
+	   specular = texture(uSpecular, oTexCoords).rgb;
+	}
+	if (uMaterial.useTexture[2]) {
+	   ambient = texture(uAmbientMap, oTexCoords).rgb;
+	}
+	if (uMaterial.useTexture[3]) {
+	   normal = texture(uNormalMap, vec2(oTexCoords.x, oTexCoords.y)).rgb;
+	   normal = normal * 2.0 - 1.0;
+	   normal = normalize(vertexTBN * normal); 
+	}
 
     vec3 finalColor = ambient * diffuse + emissive;
     for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {

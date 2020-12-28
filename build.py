@@ -14,6 +14,9 @@ def runCmake(projectName, directory, vcpkgDir):
         
         for filename in files:
             if filename.endswith('.h') or filename.endswith('.cpp'):
+                if filename.startswith('#') or filename.startswith('.#'):
+                    continue
+                
                 if root == '.':
                     fileList.append(filename)
                 elif root.startswith('./'):

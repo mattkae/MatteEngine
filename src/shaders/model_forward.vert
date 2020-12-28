@@ -5,14 +5,12 @@ layout (location = 1) in vec3 normal;
 layout (location = 2) in vec3 tangent;
 layout (location = 3) in vec3 bitangent;
 layout (location = 4) in vec2 texCoords;
-layout (location = 5) in vec3 texWeights;
-layout (location = 6) in vec4 boneWeights;
-layout (location = 7) in ivec4 boneIndices;
+layout (location = 5) in vec4 boneWeights;
+layout (location = 6) in ivec4 boneIndices;
 
 out vec4 oFragPos;
 out vec3 oNormal;
 out vec2 oTexCoords;
-out vec3 oTexWeights;
 out vec3 vertexViewDir;
 out mat3 vertexTBN;
 out vec3 vertexDebugColor;
@@ -43,7 +41,6 @@ void main() {
   gl_ClipDistance[0] = dot(fragPos, uClipPlane);
   oFragPos = fragPos;
   oTexCoords = texCoords;
-  oTexWeights = texWeights;
   oNormal = outNormal;
   vertexViewDir = normalize(uEye - fragPos.xyz);
   vertexDebugColor = tangent;

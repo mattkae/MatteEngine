@@ -18,43 +18,26 @@ void MeshTexture::add(TextureType type, GLuint texture) {
 		break;
 	case TextureType::DIFFUSE:
 		useTexture[0] = true;
-		textureMapping = diffuse;
+		diffuse = texture;
 		break;
 	case TextureType::AMBIENT:
 		useTexture[2] = true;
-		textureMapping = ambient;
+		ambient = texture;
 		break;
 	case TextureType::SPECULAR:
 		useTexture[1] = true;
-		textureMapping = specular;
+		specular = texture;
 		break;
 	case TextureType::NORMAL:
 		useTexture[3] = true;
-		textureMapping = normal;
+		normal = texture;
 		break;
-	}
-
-	if (textureMapping != nullptr) {
-		for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-			if (textureMapping[textureIndex] == 0) {
-				textureMapping[textureIndex] = texture;
-				break;
-			}
-		}
 	}
 }
 
 void MeshTexture::render(const MaterialUniformMapping& mapping) const {
-	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::DIFFUSE_TEXTURE_POSTIION + textureIndex, diffuse[textureIndex], mapping.DIFFUSE_LIST[textureIndex]);
-	}
-	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::SPECULAR_TEXTURE_POSTIION + textureIndex, specular[textureIndex], mapping.SPECULAR_LIST[textureIndex]);
-	}
-	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::AMBIENT_TEXTURE_POSITION + textureIndex, ambient[textureIndex], mapping.AMBIENT_LIST[textureIndex]);
-	}
-	for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
-		renderTexture(TextureUniformConstants::NORMAL_TEXTURE_POSITION + textureIndex, normal[textureIndex], mapping.NORMAL_LIST[textureIndex]);
-	}
+    renderTexture(TextureUniformConstants::DIFFUSE_TEXTURE_POSITION, diffuse, mapping.DIFFUSE);
+	renderTexture(TextureUniformConstants::SPECULAR_TEXTURE_POSITION, specular, mapping.SPECULAR);
+	renderTexture(TextureUniformConstants::NORMAL_TEXTURE_POSITION, normal, mapping.NORMAL);
+	renderTexture(TextureUniformConstants::AMBIENT_TEXTURE_POSITION, ambient, mapping.AMBIENT);
 }

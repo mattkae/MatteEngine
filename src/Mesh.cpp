@@ -38,17 +38,13 @@ void Mesh::enableVertexData(Vertex* vertices, unsigned int numVertices, GLint* i
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, texCoords));
 
-    // Texture weights
-    glEnableVertexAttribArray(5);
-    glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, textureWeights));
-
     // Bone weights
-    glEnableVertexAttribArray(6);
-    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneWeights));
 
     // Bone indices
-    glEnableVertexAttribArray(7);
-    glVertexAttribIPointer(7, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
+    glEnableVertexAttribArray(6);
+    glVertexAttribIPointer(6, 4, GL_INT, sizeof(Vertex), (GLvoid *)offsetof(Vertex, boneIndices));
 
     glBindVertexArray(0);
 }

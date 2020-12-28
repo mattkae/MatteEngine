@@ -118,21 +118,10 @@ void MaterialUniformMapping::initialize(const Shader& shader) {
 	MATERIAL_USE_TEXTURE = getShaderUniform(shader, "uMaterial.useTexture");
 	MATERIAL_SHININESS = getShaderUniform(shader, "uMaterial.shininess");
 
-	DIFFUSE_LIST[0] = getShaderUniform(shader, "uDiffuseList[0]");
-	DIFFUSE_LIST[1] = getShaderUniform(shader, "uDiffuseList[1]");
-	DIFFUSE_LIST[2] = getShaderUniform(shader, "uDiffuseList[2]");
-
-	SPECULAR_LIST[0] = getShaderUniform(shader, "uSpecularList[0]");
-	SPECULAR_LIST[1] = getShaderUniform(shader, "uSpecularList[1]");
-	SPECULAR_LIST[2] = getShaderUniform(shader, "uSpecularList[2]");
-
-	AMBIENT_LIST[0] = getShaderUniform(shader, "uAmbientList[0]");
-	AMBIENT_LIST[1] = getShaderUniform(shader, "uAmbientList[1]");
-	AMBIENT_LIST[2] = getShaderUniform(shader, "uAmbientList[2]");
-
-	NORMAL_LIST[0] = getShaderUniform(shader, "uNormalMapList[0]");
-	NORMAL_LIST[1] = getShaderUniform(shader, "uNormalMapList[1]");
-	NORMAL_LIST[2] = getShaderUniform(shader, "uNormalMapList[2]");
+	DIFFUSE = getShaderUniform(shader, "uDiffuse");
+	SPECULAR = getShaderUniform(shader, "uSpecular");
+	AMBIENT = getShaderUniform(shader, "uAmbientMap");
+	NORMAL = getShaderUniform(shader, "uNormalMap");
 }
 
 void CameraUniformMapping::initialize(const Shader& shader, bool withEye) {

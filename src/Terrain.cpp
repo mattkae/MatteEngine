@@ -116,7 +116,7 @@ void Terrain::initialize(const GenerationParameters& params) {
     int permIndexCap = (params.permSize / 2) - 1;
 
     unsigned int numVertices = params.granularity * params.granularity;
-    unsigned int numIndices = numVertices * 6;
+    unsigned int numIndices = numVertices * 1.5;
     GLint* indicies = new GLint[numIndices];
     unsigned int indicesIdx = 0;
 
@@ -136,6 +136,7 @@ void Terrain::initialize(const GenerationParameters& params) {
             vertex.position = getVec3(squareSize * xCoord, height, squareSize * yCoord);
             vertex.texCoords = vertexCoordinates;
 
+			/*
             TerrainClassification classification = classifyTerrain(height, params.minMaxHeight);
             switch (classification) {
             case TerrainClassification::DIRT:
@@ -163,8 +164,8 @@ void Terrain::initialize(const GenerationParameters& params) {
                 vertex.textureWeights[1] = 0;
                 vertex.textureWeights[2] = 1;
                 break;
-
             }
+			*/
 
             vertices[vertexIdx++] = vertex;
             if (yCoord != params.granularity - 1 && xCoord != params.granularity - 1) {
@@ -239,7 +240,7 @@ void Terrain::initialize(const GenerationParameters& params) {
     material.specular = Vector3f { 0, 0.0, 0 };
     mMesh.initialize(vertices, numVertices, indicies, numIndices, material);
 
-    for (int textureIndex = 0; textureIndex < Constants::Rendering::MAX_TEXTURES_PER_MESH; textureIndex++) {
+    for (int textureIndex = 0; textureIndex < 4; textureIndex++) {
         mMesh.material.textureList.add(TextureType::DIFFUSE, textures[textureIndex].textures[0]);
         mMesh.material.textureList.add(TextureType::SPECULAR, textures[textureIndex].textures[1]);
         mMesh.material.textureList.add(TextureType::NORMAL, textures[textureIndex].textures[2]);

@@ -8,7 +8,6 @@ struct Vertex {
     Vector3f tangent;
     Vector3f bitangent;
     Vector2f texCoords;
-    GLfloat textureWeights[Constants::Rendering::MAX_TEXTURES_PER_MESH] = { 1, 0, 0 };
     GLfloat boneWeights[4] = { 0, 0, 0, 0 };
     GLint boneIndices[4] = { 0, 0, 0, 0 };
 

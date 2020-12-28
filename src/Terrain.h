@@ -30,7 +30,7 @@ struct Terrain {
     Mesh mMesh;
     GenerationParameters mParams;
     bool isInitialized = false;
-    TerrainTexture textures[Constants::Rendering::MAX_TEXTURES_PER_MESH] = {0, 0, 0}; // Grass, dirt, snow, sand
+    TerrainTexture textures[4] = {0, 0, 0, 0}; // Grass, dirt, snow, sand
 
     void initialize(const GenerationParameters& params);
     void loadTextures(const GenerationParameters& params);

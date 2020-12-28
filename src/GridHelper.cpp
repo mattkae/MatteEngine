@@ -8,7 +8,7 @@ GridResult GridHelper::allocateGridIndices(GridParameters* params) {
 	retval.verticesWidth = static_cast<int>(ceil(params->width * params->verticesPerUnit));
 	retval.verticesHeight = static_cast<int>(ceil(params->height * params->verticesPerUnit));
 	retval.numVertices = (retval.verticesWidth + 1) * (retval.verticesHeight + 1);
-	retval.numIndices = 6 * retval.numVertices;
+	retval.numIndices = retval.numVertices * 1.5;
 	retval.indices = new GLuint[retval.numIndices];
 	int indicesIdx = 0;
 

@@ -30,7 +30,7 @@ void Scene::initialize() {
 	mGradientSky.startColor = { 0.9f, 0.9f, 0.9f, 1.f };
 	mGradientSky.endColor = { 0.1f, 0.2f, 0.5f, 1.0f };
 	mGradientSky.mixStartEnd = { 0.f, 200.f };
-	mGradientSky.initialize(500, 5, 5);
+	mGradientSky.initialize(750.f, 5.f, 5.f);
 
 	systemEngine.initialize();
 

@@ -20,35 +20,31 @@ void GradientSky::initialize(float radius, float deltaPhi, float deltaTheta) {
 	indices.growDynamically = false;
 
 	int numVertices = static_cast<int>((360.f / deltaTheta) * (90.f / deltaPhi) * 4.f);
-	numIndices = numVertices * 6;
+	numIndices = numVertices * 1.5;
 	vertices.allocate(numVertices);
 	indices.allocate(numIndices);
 
 	GLuint index = 0;
 	for (float phi = 0.f; phi <= 90.f - deltaPhi; phi += deltaPhi) {
 		for (float theta = 0.f; theta <= 360.f - deltaTheta; theta += deltaTheta) {
-			DomeVertex vertex = getVertex(radius, phi, theta);
-			vertices.add(&vertex);
+			vertices.add(getVertex(radius, phi, theta));
 		    GLuint topLeftIdx = index++;
 
-			vertex = getVertex(radius, phi, theta + deltaTheta);
-			vertices.add(&vertex);
+			vertices.add(getVertex(radius, phi, theta + deltaTheta));
 		    GLuint bottomLeftIdx = index++;
 
-			vertex = getVertex(radius, phi + deltaPhi, theta + deltaTheta);
-			vertices.add(&vertex);
+			vertices.add(getVertex(radius, phi + deltaPhi, theta + deltaTheta));
 			GLuint bottomRightIdx = index++;
 
-			vertex = getVertex(radius, phi + deltaPhi, theta);
-			vertices.add(&vertex);
+			vertices.add(getVertex(radius, phi + deltaPhi, theta));
 		    GLuint topRightIdx = index++;
 
-		    indices.add(&topLeftIdx);
-            indices.add(&bottomLeftIdx);
-            indices.add(&bottomRightIdx);
-            indices.add(&bottomRightIdx);
-            indices.add(&topLeftIdx);
-            indices.add(&topRightIdx);
+		    indices.add(topLeftIdx);
+            indices.add(bottomLeftIdx);
+            indices.add(bottomRightIdx);
+            indices.add(bottomRightIdx);
+            indices.add(topLeftIdx);
+            indices.add(topRightIdx);
 		}
 	}
 

@@ -35,7 +35,6 @@ def runCmake(projectName, directory, vcpkgDir):
         else:
             outContent.append(line)
 
-    print(outContent)
     cmakeFile.close()
     cmakeFile = open('./CMakeLists.txt', 'w')
     cmakeFile.write('\n'.join(outContent))
@@ -47,7 +46,7 @@ def runCmake(projectName, directory, vcpkgDir):
 
     os.chdir('./build')
 
-    os.system('cmake  "-DCMAKE_TOOLCHAIN_FILE={}" ../'.format(vcpkgDir))
+    os.system('cmake  "-DCMAKE_TOOLCHAIN_FILE={}" -DCMAKE_BUILD_TYPE=Debug ../'.format(vcpkgDir))
     os.system('make')
     os.chdir(originalDir)
 

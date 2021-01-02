@@ -3,13 +3,21 @@
 #include "OpenSimplexNoise.h"
 #include "Vertex.h"
 #include "GlobalLoaders.h"
+#include "System/LightSystem.h"
+#include "List.h"
 
 enum class TerrainClassification {
-    DIRT,
-    DIRT_GRASS,
-    GRASS,
-    SNOW_GRASS,
-    SNOW
+    DIRT = 0,
+    GRASS = 1,
+    SNOW = 2
+};
+
+struct TerrainVertex {
+	Vector3f position;
+	Vector3f normal;
+	Vector3f texCoords;
+	Vector3f tangent;
+	Vector3f bitangent;
 };
 
 inline static float randomFloat(float min, float max) {
@@ -22,7 +30,7 @@ void loadTerrainTexture(TerrainTexture& terrainTexture, String& path) {
         String str;
         sb.format("%sdiffuse.jpg", path.getValue());
         str = sb.toString();
-        terrainTexture.textures[0] = GlobalTextureLoader.loadRGBATileTexture(str);
+        terrainTexture.diffuse = GlobalTextureLoader.loadRGBATileTexture(str);
         str.free();
     }
 
@@ -30,7 +38,7 @@ void loadTerrainTexture(TerrainTexture& terrainTexture, String& path) {
     {
         sb.format("%sspecular.jpg", path.getValue());
         String str = sb.toString();
-        terrainTexture.textures[1] = GlobalTextureLoader.loadRGBATileTexture(str);
+        terrainTexture.specular = GlobalTextureLoader.loadRGBATileTexture(str);
         str.free();
     }
 
@@ -38,7 +46,7 @@ void loadTerrainTexture(TerrainTexture& terrainTexture, String& path) {
     {
         sb.format("%snormal.jpg", path.getValue());
         String str = sb.toString();
-        terrainTexture.textures[2] = GlobalTextureLoader.loadRGBATileTexture(str);
+        terrainTexture.normal = GlobalTextureLoader.loadRGBATileTexture(str);
         str.free();
     }
 
@@ -51,21 +59,18 @@ void Terrain::loadTextures(const GenerationParameters& params) {
     String str;
     sb.format("%sgrass/", pathToTextures);
     str = sb.toString();
-    loadTerrainTexture(textures[0], str);
+    loadTerrainTexture(textureList[0], str);
     sb.clear();
 
     sb.format("%ssand/", pathToTextures);
     str = sb.toString();
-    loadTerrainTexture(textures[1], str);
+    loadTerrainTexture(textureList[1], str);
     sb.clear();
 
     sb.format("%ssnow/", pathToTextures);
     str = sb.toString();
-    loadTerrainTexture(textures[2], str);
+    loadTerrainTexture(textureList[2], str);
     sb.clear();
-
-    // @TODO Investigate using Sampler2DArray or some other thing (maybe one giant
-    // terrain texture and a way to index into it
 }
 
 static inline GLfloat calculateTextureCoordinate(int coord, float portionOfTexturePerVertex, int verticesPerTexture, bool dir) {
@@ -80,21 +85,13 @@ TerrainClassification classifyTerrain(float height, float maxHeight) {
     if (height < 0) {
         height = -height;
         if (height > maxHeight * (2.f / 3.f)) {
-            // Upper two-thirds gets dirt
             return TerrainClassification::DIRT;
-        } else if (height > maxHeight / 3.f) {
-            // Middle two thirds gets mix
-            return TerrainClassification::DIRT_GRASS;
         } else {
             return TerrainClassification::GRASS;
         }
     } else {
         if (height > maxHeight * (2.f / 3.f)) {
-            // Upper two-thirds gets rock
             return TerrainClassification::SNOW;
-        } else if (height > maxHeight / 3.f) {
-            // Middle two thirds gets mix
-            return TerrainClassification::SNOW_GRASS;
         } else {
             return TerrainClassification::GRASS;
         }
@@ -116,68 +113,28 @@ void Terrain::initialize(const GenerationParameters& params) {
     int permIndexCap = (params.permSize / 2) - 1;
 
     unsigned int numVertices = params.granularity * params.granularity;
-    unsigned int numIndices = numVertices * 1.5;
-    GLint* indicies = new GLint[numIndices];
-    unsigned int indicesIdx = 0;
+    
 
-    Vertex* vertices = new Vertex[numVertices];
-    unsigned int vertexIdx = 0;
+	List<TerrainVertex> vertices;
+	vertices.growDynamically = false;
+	vertices.allocate(numVertices);
 
     const float portionOfTexturePerVertex = 1.f / (float)params.verticesPerTexture;
     Vector2f vertexCoordinates = { 0.f, 0.f };
 
+	// Add all of the vertices
     for (int yCoord = 0; yCoord < params.granularity; yCoord++) {
         for (int xCoord = 0; xCoord < params.granularity; xCoord++) {
-            float height = calculateSimplexValue(
-                Vector2f { static_cast<GLfloat>(xCoord), static_cast<GLfloat>(yCoord) } + squareSize, params.minMaxHeight,
-                params.scaleFactor, params.ampFactor, params.frequencyFactor,
-                params.numOctaves, perm, permIndexCap);
-            Vertex vertex;
-            vertex.position = getVec3(squareSize * xCoord, height, squareSize * yCoord);
-            vertex.texCoords = vertexCoordinates;
-
-			/*
-            TerrainClassification classification = classifyTerrain(height, params.minMaxHeight);
-            switch (classification) {
-            case TerrainClassification::DIRT:
-                vertex.textureWeights[0] = 0;
-                vertex.textureWeights[1] = 1;
-                vertex.textureWeights[2] = 0;
-                break;
-            case TerrainClassification::DIRT_GRASS:
-                vertex.textureWeights[0] = 0.5;
-                vertex.textureWeights[1] = 0.5;
-                vertex.textureWeights[2] = 0;
-                break;
-            case TerrainClassification::GRASS:
-                vertex.textureWeights[0] = 1;
-                vertex.textureWeights[1] = 0;
-                vertex.textureWeights[2] = 0;
-                break;
-            case TerrainClassification::SNOW_GRASS:
-                vertex.textureWeights[0] = 0;
-                vertex.textureWeights[1] = 0.5;
-                vertex.textureWeights[2] = 0.5;
-                break;
-            case TerrainClassification::SNOW:
-                vertex.textureWeights[0] = 0;
-                vertex.textureWeights[1] = 0;
-                vertex.textureWeights[2] = 1;
-                break;
-            }
-			*/
-
-            vertices[vertexIdx++] = vertex;
-            if (yCoord != params.granularity - 1 && xCoord != params.granularity - 1) {
-                GLuint idx = yCoord * params.granularity + xCoord;
-                indicies[indicesIdx++] = idx;
-                indicies[indicesIdx++] = idx + 1;
-                indicies[indicesIdx++] = idx + params.granularity;
-                indicies[indicesIdx++] = idx + params.granularity;
-                indicies[indicesIdx++] = idx + params.granularity + 1;
-                indicies[indicesIdx++] = idx + 1;
-            }
-
+			float height = calculateSimplexValue(
+				Vector2f { static_cast<GLfloat>(xCoord), static_cast<GLfloat>(yCoord) } + squareSize, params.minMaxHeight,
+				params.scaleFactor, params.ampFactor, params.frequencyFactor,
+				params.numOctaves, perm, permIndexCap);
+			TerrainVertex vertex;
+			vertex.position = getVec3(squareSize * xCoord, height, squareSize * yCoord);
+			vertex.texCoords.x = vertexCoordinates.x;
+			vertex.texCoords.y = vertexCoordinates.y;
+			vertex.texCoords.z = static_cast<float>(classifyTerrain(height, params.minMaxHeight));
+			vertices.add(vertex);
             vertexCoordinates.x += portionOfTexturePerVertex;
         }
 
@@ -185,26 +142,42 @@ void Terrain::initialize(const GenerationParameters& params) {
         vertexCoordinates.y += portionOfTexturePerVertex;
     }
 
+	// Add all of the indices
+	numIndices = 6 * ((params.granularity - 1) * (params.granularity - 1));
+	List<GLuint> indices;
+	indices.growDynamically = false;
+	indices.allocate(numIndices);
+	for (int row = 0; row < params.granularity - 1; row++) {
+		for (int col = 0; col < params.granularity - 1; col++) {
+			int vertexIdx = (row * params.granularity) + col;
+			if (vertexIdx >= vertices.numElements) {
+				printf("We're in trouble! row: %d, col: %d, %d\n", row, col, vertexIdx);
+			}
+			indices.add(vertexIdx);
+			indices.add(vertexIdx + 1);
+			indices.add(vertexIdx + params.granularity);
+			indices.add(vertexIdx + params.granularity);
+			indices.add(vertexIdx + params.granularity + 1);
+			indices.add(vertexIdx + 1);
+		}
+	}
+
     // Calculate normals, tangents, and bitangents
     for (size_t indexIndex = 0; indexIndex < numIndices; indexIndex += 3) {
         if (indexIndex + 2 >= numIndices) {
             break;
         }
 
-        GLint thirdIndex = indicies[indexIndex + 2];
-        if (static_cast<size_t>(thirdIndex) >= numVertices) {
-            break;
-		}
+        GLint firstIndex = indices[indexIndex];
+        GLint secondIndex = indices[indexIndex + 1];
+		GLint thirdIndex = indices[indexIndex + 2];
 
-        GLint firstIndex = indicies[indexIndex];
-        GLint secondIndex = indicies[indexIndex + 1];
+        TerrainVertex& firstVertex = vertices[firstIndex];
+        TerrainVertex& secondVertex = vertices[secondIndex];
+        TerrainVertex& thirdVertex = vertices[thirdIndex];
 
-        Vertex& firstVertex = vertices[firstIndex];
-        Vertex& secondVertex = vertices[secondIndex];
-        Vertex& thirdVertex = vertices[thirdIndex];
-
-        Vector3f normal = normalize(cross(vertices[firstIndex].position - vertices[secondIndex].position, 
-			vertices[thirdIndex].position - vertices[secondIndex].position));
+        Vector3f normal = normalize(cross(firstVertex.position - secondVertex.position, 
+		    thirdVertex.position - secondVertex.position));
         firstVertex.normal = normal;
         secondVertex.normal = normal;
         thirdVertex.normal = normal;
@@ -214,8 +187,14 @@ void Terrain::initialize(const GenerationParameters& params) {
         Vector3f deltaPosition1 = secondVertex.position - firstVertex.position;
         Vector3f deltaPosition2 = thirdVertex.position - firstVertex.position;
 
-        Vector2f deltaUV1 = secondVertex.texCoords - firstVertex.texCoords;
-        Vector2f deltaUV2 = thirdVertex.texCoords - firstVertex.texCoords;
+        Vector2f deltaUV1 = {
+			secondVertex.texCoords.x - firstVertex.texCoords.x,
+			secondVertex.texCoords.y - firstVertex.texCoords.y
+		};
+		Vector2f deltaUV2 = {
+			thirdVertex.texCoords.x - firstVertex.texCoords.x,
+			thirdVertex.texCoords.y - firstVertex.texCoords.y
+		};
 
         float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
         Vector3f tangent = (deltaPosition1 * deltaUV2.y - deltaPosition2 * deltaUV1.y) * r;
@@ -233,42 +212,99 @@ void Terrain::initialize(const GenerationParameters& params) {
 
     logger_info("Finished generating terrain!");
 
-    // Set up the material
-    LoadMaterial material;
-    material.diffuse = Vector3f { 0, 0.0, 0 };
-    material.ambient = Vector3f { 0, 0.0, 0 };
-    material.specular = Vector3f { 0, 0.0, 0 };
-    mMesh.initialize(vertices, numVertices, indicies, numIndices, material);
-
-    for (int textureIndex = 0; textureIndex < 4; textureIndex++) {
-        mMesh.material.textureList.add(TextureType::DIFFUSE, textures[textureIndex].textures[0]);
-        mMesh.material.textureList.add(TextureType::SPECULAR, textures[textureIndex].textures[1]);
-        mMesh.material.textureList.add(TextureType::NORMAL, textures[textureIndex].textures[2]);
-    }
-
     float halfMapSize = squareSize * (params.granularity / 2);
 	model = Matrix4x4f { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
     model = translateMatrix(model, getVec3(-halfMapSize, 0, -halfMapSize));
-    delete []vertices;
-    delete []indicies;
+
+	// Now, let's generate the OpenGL buffers needed here
+	glGenVertexArrays(1, &mVao);
+	glGenBuffers(1, &mVbo);
+	glGenBuffers(1, &mEbo);
+
+	glBindVertexArray(mVao);
+	glBindBuffer(GL_ARRAY_BUFFER, mVbo);
+	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(TerrainVertex), vertices.data, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEbo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(GLuint), indices.data, GL_STATIC_DRAW);
+	
+	// Position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)0);
+
+	// Normal
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, normal));
+
+	// Texture Coords
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, texCoords));
+	
+	// Tangent
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, tangent));
+
+	// Bitangent
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, bitangent));
+
+	glBindVertexArray(0);
+
+	vertices.deallocate();
+	indices.deallocate();
 
     mParams = params;
     isInitialized = true;
 }
 
-void Terrain::render(const ModelUniformMapping& mapping, bool withMaterial) const {
+void Terrain::render(const Camera* camera, const LightSystem* lightSystem) const {
     if (!isInitialized) {
         return;
     }
 
-	setShaderMat4(mapping.MODEL, model);
-	setShaderBool(mapping.DISABLE_BONES, true);
-	mMesh.render(mapping.materialUniformMapping, withMaterial);
+	useShader(ShaderUniformMapping::GlobalTerrainShaderMapping.shader);
+	camera->render(ShaderUniformMapping::GlobalTerrainShaderMapping.cameraUniformMapping);
+	setShaderMat4(ShaderUniformMapping::GlobalTerrainShaderMapping.UNIFORM_MODEL, model);
+
+	lightSystem->render(&ShaderUniformMapping::GlobalTerrainShaderMapping.lightUniformMapping);
+
+	for (int textureIndex = 0; textureIndex < 3; textureIndex++) {
+	    setShaderInt(ShaderUniformMapping::GlobalTerrainShaderMapping.UNIFORM_DIFFUSE[textureIndex], textureIndex);
+		glActiveTexture(GL_TEXTURE0 + textureIndex);
+		glBindTexture(GL_TEXTURE_2D, textureList[textureIndex].diffuse);
+
+		setShaderInt(ShaderUniformMapping::GlobalTerrainShaderMapping.UNIFORM_SPECULAR[textureIndex], (textureIndex + 3));
+		glActiveTexture(GL_TEXTURE0 + (textureIndex + 3));
+		glBindTexture(GL_TEXTURE_2D, textureList[textureIndex].specular);
+
+		setShaderInt(ShaderUniformMapping::GlobalTerrainShaderMapping.UNIFORM_NORMAL[textureIndex], (textureIndex + 6));
+		glActiveTexture(GL_TEXTURE0 + (textureIndex + 6));
+		glBindTexture(GL_TEXTURE_2D, textureList[textureIndex].normal);
+	}
+
+	glBindVertexArray(mVao);
+	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 
 }
 
 void Terrain::free() {
-    mMesh.free();
     isInitialized = false;
-    glDeleteTextures(9, textures->textures);
+
+	for (int idx = 0; idx < 3; idx++) {
+		glDeleteTextures(1, &textureList[idx].diffuse);
+		textureList[idx].diffuse = 0;
+		glDeleteTextures(1, &textureList[idx].specular);
+		textureList[idx].specular = 0;
+		glDeleteTextures(1, &textureList[idx].normal);
+		textureList[idx].normal = 0;
+	}
+	
+	if (mVao) glDeleteVertexArrays(1, &mVao);
+	if (mVbo) glDeleteBuffers(1, &mVbo);
+    if (mEbo) glDeleteBuffers(1, &mEbo);
+
+	mVao = 0;
+	mVbo = 0;
+	mEbo = 0;
 }

@@ -9,6 +9,9 @@
 #include "Constants.h"
 #include <GL/glew.h>
 
+struct Camera;
+struct LightSystem;
+
 struct GenerationParameters {
     int size = 1000;
     int granularity = 100;
@@ -22,19 +25,24 @@ struct GenerationParameters {
 };
 
 struct TerrainTexture {
-    GLuint textures[3] = { 0, 0, 0 }; // Diffuse, specular, normal
+	GLuint diffuse = 0;
+	GLuint specular = 0;
+	GLuint normal = 0;
 };
 
 struct Terrain {
+	GLuint mVao = 0;
+	GLuint mVbo = 0;
+	GLuint mEbo = 0;
+	int numIndices = 0;
     Matrix4x4f model;
-    Mesh mMesh;
-    GenerationParameters mParams;
+    GenerationParameters mParams; // @TODO: This doesn't really have to be here
     bool isInitialized = false;
-    TerrainTexture textures[4] = {0, 0, 0, 0}; // Grass, dirt, snow, sand
+    TerrainTexture textureList[3] = {0, 0, 0}; // Grass, dirt, snow
 
     void initialize(const GenerationParameters& params);
     void loadTextures(const GenerationParameters& params);
-    void render(const ModelUniformMapping& mapping, bool withMaterial = true) const;
+    void render(const Camera* camera, const LightSystem* lightSystem) const;
     void free();
 };
 

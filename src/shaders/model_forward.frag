@@ -13,7 +13,6 @@ in vec3 oNormal;
 in vec2 oTexCoords;
 in vec3 vertexViewDir;
 in mat3 vertexTBN;
-in vec3 vertexDebugColor;
 
 // Uniform variables
 uniform Material uMaterial;
@@ -30,21 +29,11 @@ uniform sampler2DShadow uDirShadow[MAX_LIGHTS];
 
 void main() {
     vec3 normal = oNormal;
-    vec3 diffuse = uMaterial.useTexture[0] ? vec3(0, 0, 0) : uMaterial.diffuse;
-    vec3 specular = uMaterial.useTexture[1] ? vec3(0, 0, 0) : uMaterial.specular;
+    vec3 diffuse = uMaterial.useTexture[0] ? texture(uDiffuse, oTexCoords).rgb : uMaterial.diffuse;
+    vec3 specular = uMaterial.useTexture[1] ? texture(uSpecular, oTexCoords).rgb : uMaterial.specular;
     vec3 emissive = uMaterial.emissive;
-    vec3 ambient = uAmbient;
-	ambient = ambient + (uMaterial.useTexture[2] ? vec3(0, 0, 0) : uMaterial.ambient);
-
-    if (uMaterial.useTexture[0]) {
-	   diffuse = texture(uDiffuse, oTexCoords).rgb;
-    }
-	if (uMaterial.useTexture[1]) {
-	   specular = texture(uSpecular, oTexCoords).rgb;
-	}
-	if (uMaterial.useTexture[2]) {
-	   ambient = texture(uAmbientMap, oTexCoords).rgb;
-	}
+    vec3 ambient = uAmbient + (uMaterial.useTexture[2] ? texture(uAmbientMap, oTexCoords).rgb : uMaterial.ambient);
+	
 	if (uMaterial.useTexture[3]) {
 	   normal = texture(uNormalMap, vec2(oTexCoords.x, oTexCoords.y)).rgb;
 	   normal = normal * 2.0 - 1.0;
@@ -66,11 +55,9 @@ void main() {
         }
 
         finalColor += visibility * getColorFromLight(uLights[lightIndex], 
-            uMaterial, normal, vertexViewDir, diffuse, specular, oFragPos);
+           	normal, vertexViewDir, diffuse, uMaterial.diffuseProperty,
+			specular, uMaterial.shininess, oFragPos);
     }
 
     Color = vec4(finalColor, uMaterial.opacity);
-    
-    // @Info @NoCheckin: Uncomment this if you want to output the vertexDebugColor
-    // Color = vec4(vertexDebugColor, uMaterial.opacity);
 }

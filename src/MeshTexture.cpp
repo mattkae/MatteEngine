@@ -1,4 +1,3 @@
-#pragma once
 #include "MeshTexture.h"
 #include "MyString.h"
 #include "TextureUniformConstants.h"

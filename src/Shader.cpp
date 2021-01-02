@@ -138,6 +138,7 @@ void attachShaders(Shader& retVal, const GLchar* vertexPath, const GLchar* fragm
 }
 
 Shader loadShader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geomPath) {
+	logger_info("Loading shader: VERT=%s, FRAG=%s", vertexPath, fragmentPath);
     Shader retVal;
     retVal = glCreateProgram();
 

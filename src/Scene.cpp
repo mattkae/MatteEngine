@@ -58,7 +58,6 @@ void Scene::renderParticles() {
 }
 
 void Scene::renderModels(const ModelUniformMapping& mapping, bool withMaterial) const {
-    mTerrain.render(mapping, withMaterial);
 	systemEngine.mRenderSystem.render(mapping, withMaterial);
 }
 
@@ -79,6 +78,8 @@ void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {
 	// water.render(lights, numLightsUsed);
 
 	renderParticles();
+
+	mTerrain.render(camera, &systemEngine.mLightSystem);
 
 	useShader(ShaderUniformMapping::GlobalModelShaderMapping.shader);
     camera->render(ShaderUniformMapping::GlobalModelShaderMapping.cameraUniformMapping);

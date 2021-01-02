@@ -13,6 +13,7 @@ TextShaderMapping ShaderUniformMapping::GlobalTextShaderMapping;
 ParticleShaderMapping ShaderUniformMapping::GlobalParticleShaderMapping;
 WaterShaderMapping ShaderUniformMapping::GlobalWaterShaderMapping;
 DomeSkyShaderMapping ShaderUniformMapping::GlobalDomeSkyShaderMapping;
+TerrainShaderMapping ShaderUniformMapping::GlobalTerrainShaderMapping;
 
 void ShaderUniformMapping::initialize() {
 	GlobalModelShaderMapping.initialize();
@@ -24,6 +25,7 @@ void ShaderUniformMapping::initialize() {
 	GlobalParticleShaderMapping.initialize();
 	GlobalWaterShaderMapping.initialize();
 	GlobalDomeSkyShaderMapping.initialize();
+	GlobalTerrainShaderMapping.initialize();
 }
 
 void ShaderUniformMapping::free() {
@@ -35,6 +37,7 @@ void ShaderUniformMapping::free() {
 	glDeleteShader(GlobalTextShaderMapping.shader);
 	glDeleteShader(GlobalParticleShaderMapping.shader);
 	glDeleteShader(GlobalWaterShaderMapping.shader);
+	glDeleteShader(GlobalTerrainShaderMapping.shader);
 }
 
 inline int getArrayUniform(const Shader& shader, const int index, const char *attribute, const char *property = nullptr) {
@@ -198,4 +201,27 @@ void WaterShaderMapping::initialize() {
 	UNIFORM_NORMAL_MAP = getShaderUniform(shader, "uNormalMap");
 	materialUniformMapping.initialize(shader);
 	lightUniformMapping.initialize(shader);
+}
+
+void TerrainShaderMapping::initialize() {
+	const char* VERTEX = "src/shaders/Terrain.vert";
+	const char* FRAG = "src/shaders/Terrain.frag";
+	shader = loadShader(VERTEX, FRAG);
+	useShader(shader);
+
+	lightUniformMapping.initialize(shader);
+	cameraUniformMapping.initialize(shader, true);
+	UNIFORM_MODEL = getShaderUniform(shader, "uModel");
+	
+	UNIFORM_DIFFUSE[0] = getShaderUniform(shader, "uDiffuse[0]");
+	UNIFORM_DIFFUSE[1] = getShaderUniform(shader, "uDiffuse[1]");	
+	UNIFORM_DIFFUSE[2] = getShaderUniform(shader, "uDiffuse[2]");
+
+	UNIFORM_SPECULAR[0] = getShaderUniform(shader, "uSpecular[0]");
+	UNIFORM_SPECULAR[1] = getShaderUniform(shader, "uSpecular[1]");	
+	UNIFORM_SPECULAR[2] = getShaderUniform(shader, "uSpecular[2]");
+
+	UNIFORM_NORMAL[0] = getShaderUniform(shader, "uNormal[0]");
+	UNIFORM_NORMAL[1] = getShaderUniform(shader, "uNormal[1]");	
+	UNIFORM_NORMAL[2] = getShaderUniform(shader, "uNormal[2]");
 }

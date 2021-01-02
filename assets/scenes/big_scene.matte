@@ -24,14 +24,6 @@ textures                assets/texture-info.mattl
 	;;
 	::
 		::renderable
-			path		assets/models/Floor/floor.mattl
-			translation 0 -20 0
-			scale		20 20 20
-			rotation	0 0 0
-		;;
-	;;
-	::
-		::renderable
 			path		assets/models/Astroboy/astroBoy_walk.mattl
 			translation 0 0 0
 			scale 		1 1 1

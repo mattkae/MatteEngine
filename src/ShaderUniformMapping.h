@@ -151,6 +151,21 @@ struct PostProcessorShaderMapping {
 	void initialize();
 };
 
+struct TerrainShaderMapping {
+	Shader shader;
+
+	LightUniformMapping lightUniformMapping;
+	CameraUniformMapping cameraUniformMapping;
+	int UNIFORM_MODEL;
+	int UNIFORM_CLIP_PLANE;
+	int UNIFORM_DIFFUSE[3];
+	int UNIFORM_SPECULAR[3];
+	int UNIFORM_NORMAL[3];
+
+	void initialize();
+	
+};
+
 namespace ShaderUniformMapping {
 	extern ModelShaderMapping GlobalModelShaderMapping;
 	extern PostProcessorShaderMapping GlobalPostProcessorShaderMapping;
@@ -161,6 +176,7 @@ namespace ShaderUniformMapping {
 	extern ParticleShaderMapping GlobalParticleShaderMapping;
 	extern WaterShaderMapping GlobalWaterShaderMapping;
 	extern DomeSkyShaderMapping GlobalDomeSkyShaderMapping;
+	extern TerrainShaderMapping GlobalTerrainShaderMapping;
 	void initialize();
 	void free(); // @TODO: Implement this
 };

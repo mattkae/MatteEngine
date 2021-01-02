@@ -52,7 +52,8 @@ void main() {
         }*/
 
         vec3 lightColor = getColorFromLight(uLights[lightIndex], 
-            uMaterial, normal, vViewDir, uMaterial.diffuse, uMaterial.specular, vFragPos);
+            normal, vViewDir, uMaterial.diffuse, uMaterial.diffuseProperty,
+			uMaterial.specular, uMaterial.shininess, vFragPos);
         
         finalColor += vec4(lightColor.x, lightColor.y, lightColor.z, 0.0);
     }

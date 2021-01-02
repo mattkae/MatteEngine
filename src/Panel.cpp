@@ -1,4 +1,3 @@
-#pragma once
 #include "Panel.h"
 #include "Input.h"
 #include "App.h"

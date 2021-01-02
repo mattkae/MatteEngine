@@ -11,18 +11,18 @@ struct Light {
     mat4 shadowMatrix;
 };
 
-vec3 getDiffuse(const in Material material, 
+vec3 getDiffuse(vec3 diffuseProperty, 
     vec3 normal, 
     vec3 lightDir, 
     vec3 color, 
     vec3 diffuse) 
 {
     float cosTheta = clamp(dot(normal, lightDir), 0, 1);
-    vec3 diffuseFactor = diffuse * material.diffuseProperty * cosTheta;
+    vec3 diffuseFactor = diffuse * diffuseProperty * cosTheta;
     return color * diffuseFactor;
 }
 
-vec3 getSpecular(const in Material material, 
+vec3 getSpecular(float shininess, 
     vec3 normal, 
     vec3 lightDir, 
     vec3 viewDir, 
@@ -30,17 +30,18 @@ vec3 getSpecular(const in Material material,
     vec3 specular) 
 {
     vec3 reflection = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflection), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflection), 0.0), shininess);
 	vec3 specularFactor = specular * spec;
     return color * spec;
 }
 
 vec3 getColorFromLight(const in Light light,
-    const in Material material, 
     vec3 normal, 
     vec3 viewDir, 
-    vec3 diffuse, 
-    vec3 specular, 
+    vec3 diffuse,
+	vec3 diffuseProperty,
+    vec3 specular,
+	float shininess,
     vec4 fragPos) 
 {
     // Calculate the direction, and early out at certain points
@@ -69,8 +70,8 @@ vec3 getColorFromLight(const in Light light,
     vec3 intensity = (light.color * pow(angleBetween, light.dropOff)) / attenuation;
 
     // Calculate diffuse and specular
-    vec3 diffuseOut = getDiffuse(material, normal, direction, intensity, diffuse);
-    vec3 specularOut = getSpecular(material, normal, direction, viewDir, intensity, specular);
+    vec3 diffuseOut = getDiffuse(diffuseProperty, normal, direction, intensity, diffuse);
+    vec3 specularOut = getSpecular(shininess, normal, direction, viewDir, intensity, specular);
 
     return diffuseOut + specularOut;
 }

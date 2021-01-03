@@ -8,6 +8,7 @@
 
 struct SystemEngine;
 struct Camera;
+struct ModelUniformMapping;
 
 struct MouseInteractableEntity {
 	u8 mId = 0;
@@ -20,10 +21,11 @@ struct MouseInteractableSystem {
 	SystemEngine* mSystemEngine;
 
 	FixedArray<MouseInteractableEntity, MAX_ENTITIES> mEntities;
+	MouseInteractableEntity* mSelectedEntity = NULL;
 
-	u8 castRayToModel();
+	MouseInteractableEntity* castRayToModel();
 	void initialize(SystemEngine* systemEngine, Camera* camera);
 	void update(float dtMs);
-	void render() const;
+	void render(const ModelUniformMapping& mapping, bool withMaterial) const;
 	void free();
 };

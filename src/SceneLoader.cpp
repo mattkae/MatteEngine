@@ -97,6 +97,7 @@ Light SceneLoader::loadLight() {
 
 void SceneLoader::loadEntity() {
     u8 eId = mScene->systemEngine.registerEntity();
+	logger_info("Creating new entity with id=%d", eId);
     Box3D foundBoundingBox;
 
     char* ptr;
@@ -145,7 +146,10 @@ void SceneLoader::loadEntity() {
                 le.mLight = loadLight();
                 mScene->systemEngine.mLightSystem.mEntites.add(le);
             }
-        }
+        } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
+			logger_info("Completed loading entity");
+			break;
+		}
     }
 }
 

@@ -30,6 +30,11 @@ struct List {
 	T* getValue(int index) const;
 	T& operator[](int idx) const;
 	void binarySort(int (*f)(T *first, T* second));
+	void setFromArray(T* arry, int size) {
+	    allocate(size);
+		memcpy(data, arry, size * sizeof(T));
+		numElements = size;
+	}
 };
 
 template <typename T>

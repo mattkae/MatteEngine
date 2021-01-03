@@ -63,9 +63,21 @@ def main():
     os.chdir(dirName)
 
     if not os.path.exists(vcpkgDir):
-        print('TODO: Install vcpkg and all dependencies')
-        pass
+        print('Installing packges from vcpkg...')
+        os.system('git clone https://github.com/microsoft/vcpkg')
+        os.chdir('./vcpkg')
+        os.system('./bootstrap-vcpkg.sh')
+        os.system('./vcpkg install assimp')
+        os.system('./vcpkg install glfw3')
+        os.system('./vcpkg install freetype')
+        os.chdir('../')
 
+        print('Installing soil...')
+        os.system('git clone https://github.com/kbranigan/Simple-OpenGL-Image-Library')
+        os.chdir('./Simple-OpenGL-Image-Library')
+        os.system('make && sudo make install')
+        os.chdir('../')
+    
     runCmake('Matte', './src', vcpkgDir)
     runCmake('ModelTransformTool', './tool', vcpkgDir)
 

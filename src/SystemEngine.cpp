@@ -45,7 +45,7 @@ void SystemEngine::update(float dtMs) {
 }
 
 void SystemEngine::render() const {
-
+	
 }
 
 void SystemEngine::free() {

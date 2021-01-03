@@ -16,6 +16,7 @@ struct Vector3f {
 	GLfloat operator [](int index);
 	Vector3f interpolate(const Vector3f& other, const GLfloat factor);
 	Vector3f reflect(const Vector3f& other);
+	void printDebug(const char* name = "") const;
 };
 
 // Creation

@@ -1,6 +1,8 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <cstring>
+
 enum LogLevel {
     LogLevel_Debug = 0,
     LogLevel_Info = 1,

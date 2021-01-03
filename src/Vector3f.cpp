@@ -1,4 +1,5 @@
 #include "Vector3f.h"
+#include "Logger.h"
 
 Vector3f getVec3(GLfloat value) {
 	return { value, value, value };
@@ -128,4 +129,9 @@ GLfloat Vector3f::operator [](int index) {
 	default:
 		return 0;
 	}
+}
+
+
+void Vector3f::printDebug(const char* name) const {
+	logger_info("%s: (%f, %f, %f)", name, x, y, z);
 }

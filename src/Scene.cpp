@@ -59,6 +59,7 @@ void Scene::renderParticles() {
 
 void Scene::renderModels(const ModelUniformMapping& mapping, bool withMaterial) const {
 	systemEngine.mRenderSystem.render(mapping, withMaterial);
+	systemEngine.mMouseInteractionSystem.render(mapping, withMaterial);
 }
 
 void Scene::renderDirect(const Camera* camera, Vector4f clipPlane) {

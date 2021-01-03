@@ -6,12 +6,18 @@
 #include "System/EntitySystemConstants.h"
 #include "System/LightSystem.h"
 #include "Vector3f.h"
+#include "Matrix4x4f.h"
 #include "FixedArray.h"
 
 struct Entity {
 	u8 mId = 0;
 	bool mIsActive = false;
+
+	// @TODO: We need to use this instead of the various
+	// attributes in Model and Light etc for these universal
+	// values
 	Vector3f mPosition = { 0, 0, 0 };
+    Matrix4x4f mModel;
 };
 
 struct SystemEngine {

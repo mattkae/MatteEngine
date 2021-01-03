@@ -78,6 +78,7 @@ void Mesh::initialize(Vertex* vertices,
 
 void Mesh::initializeFromVertices(List<Vertex>* vertices, List<GLint>* indices) {
     enableVertexData(vertices->data, vertices->numElements, indices->data, indices->numElements);
+	numIndices = indices->numElements;
 }
 
 void Mesh::free() {

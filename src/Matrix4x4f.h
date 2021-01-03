@@ -2,7 +2,7 @@
 #include "Vector3f.h"
 #include "Vector4f.h"
 #include <GL/glew.h>
-#include <cstring>
+#include "Logger.h"
 
 constexpr int DIM_OF_MAT = 4;
 constexpr int SIZE_OF_4_X_4 = DIM_OF_MAT * DIM_OF_MAT;
@@ -21,6 +21,12 @@ struct Matrix4x4f {
 
 	inline Vector3f getScale() const {
 		return { values[0], values[5], values[10] };
+	}
+
+	void printDebug(const char* name = "") const {
+		logger_debug("%s: [\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f,\n\t%f, %f, %f, %f\n]", name,
+					 values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7],
+					 values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15]);
 	}
 };
 

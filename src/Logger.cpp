@@ -46,6 +46,7 @@ namespace Logger {
             return;
         }
 
+	
         const char* levelStr;
         switch (level) {
         case LogLevel_Debug:
@@ -65,15 +66,17 @@ namespace Logger {
             break;
         }
 
+	if (gFilePointer != NULL) {
+	    va_list fileArgs;
+	    va_copy(fileArgs, args);
+	    vfprintf(gFilePointer, format, fileArgs);
+	    fprintf(gFilePointer, "\n");
+	}
+
         printHeader(levelStr, file, lineNumber);
 
         vprintf(format, args);
         printf("\n");
-
-        if (gFilePointer != NULL) {
-		  //vfprintf(gFilePointer, format, args);
-		  //fprintf(gFilePointer, "\n");
-        }
     }
 
     void doLog(const char* file, int lineNumber,LogLevel level, const char* format, ...) {
@@ -114,6 +117,7 @@ namespace Logger {
     void free() {
         if (gFilePointer) {
             fclose(gFilePointer);
+	    gFilePointer = NULL;
         }
     }
 }

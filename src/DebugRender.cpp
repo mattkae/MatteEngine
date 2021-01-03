@@ -50,7 +50,7 @@ void DebugArrow::render(const ModelUniformMapping& mapping) const {
 
 void DebugModel::update(Matrix4x4f& model, const Camera& camera) {
 	model = copyMatrix(model);
-	updateBox(debugBox, model);
+	updateBox(debugBox);
 	xArrow.update(debugBox, model);
 	yArrow.update(debugBox, model);
 	zArrow.update(debugBox, model);
@@ -146,15 +146,16 @@ void DebugModel::render( const Matrix4x4f& model, const ModelUniformMapping& map
 	xArrow.render(mapping);
 	yArrow.render(mapping);
 	zArrow.render(mapping);
-	renderBoxOutline(debugBox, model, mapping);
+	renderBoxOutline(debugBox, model, mapping, true);
 }
 
 void DebugModel::free() {
 	xArrow.model.free();
 	yArrow.model.free();
 	zArrow.model.free();
-	
+	/*
 	if (debugBox.vao) glDeleteVertexArrays(1, &debugBox.vao);
 	if (debugBox.vbo) glDeleteBuffers(1, &debugBox.vbo);
     if (debugBox.ebo) glDeleteBuffers(1, &debugBox.ebo);
+	*/
 }

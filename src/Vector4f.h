@@ -1,7 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <cmath>
-#include <string>
+#include "Logger.h"
 
 struct Vector4f {
 	GLfloat x = 0;
@@ -29,6 +29,10 @@ struct Vector4f {
 		x = ((hexValue >> 16) & 0xFF) / 255.f;  // Extract the RR byte
 		y = ((hexValue >> 8) & 0xFF) / 255.f;   // Extract the GG byte
 		z = ((hexValue) & 0xFF) / 255.f;        // Extract the BB byte
+	}
+
+	void printDebug(const char* name = "") const {
+		logger_info("%s: (%f, %f, %f, %f)", name, x, y, z, w);
 	}
 };
 

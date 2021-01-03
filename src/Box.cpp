@@ -2,56 +2,71 @@
 #include "Box.h"
 #include "DebugRender.h"
 #include "Camera.h"
+#include "List.h"
+#include "Vertex.h"
 #include <cmath>
 
 inline void initializeRenderableBox(Box3D& box) {
-	static const GLfloat cubeVertices[] = {
-		box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z,
-		box.upperRight.x, box.lowerLeft.y, box.upperRight.z,
-		box.lowerLeft.x,  box.upperRight.y,  box.upperRight.z,
-		box.upperRight.x,  box.upperRight.y,  box.upperRight.z,
-		box.lowerLeft.x, box.lowerLeft.y, box.lowerLeft.z,
-		box.upperRight.x, box.lowerLeft.y, box.lowerLeft.z,
-		box.lowerLeft.x,  box.upperRight.y, box.lowerLeft.z,
-		box.upperRight.x,  box.upperRight.y, box.lowerLeft.z
+	Vertex cubeVertices[8];
+	cubeVertices[0].position = { box.upperRight.x, box.upperRight.y, box.upperRight.z };
+	cubeVertices[0].normal = {  };
+	cubeVertices[1].position = { box.lowerLeft.x, box.upperRight.y, box.upperRight.z };
+	cubeVertices[1].normal = {  };
+	cubeVertices[2].position = { box.lowerLeft.x, box.upperRight.y, box.lowerLeft.z };
+	cubeVertices[2].normal = {  };
+	cubeVertices[3].position = { box.upperRight.x, box.upperRight.y, box.lowerLeft.z };
+	cubeVertices[3].normal = {  };
+
+	cubeVertices[4].position = { box.upperRight.x, box.lowerLeft.y, box.upperRight.z };
+	cubeVertices[4].normal = {  };
+	cubeVertices[5].position = { box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z };
+	cubeVertices[5].normal = {  };
+	cubeVertices[6].position = { box.lowerLeft.x, box.lowerLeft.y, box.lowerLeft.z };
+	cubeVertices[6].normal = {  };
+	cubeVertices[7].position = { box.upperRight.x, box.lowerLeft.y, box.lowerLeft.z };
+	cubeVertices[7].normal = {  };
+
+    GLint cubeIndices[] = {
+	    0, 1, 3, //top 1
+		3, 1, 2, //top 2
+		2, 6, 7, //front 1
+		7, 3, 2, //front 2
+		7, 6, 5, //bottom 1
+		5, 4, 7, //bottom 2
+		5, 1, 4, //back 1
+		4, 1, 0, //back 2
+		4, 3, 7, //right 1
+		3, 4, 0, //right 2
+		5, 6, 2, //left 1
+		5, 1, 2  //left 2
 	};
 
-	static const GLuint cubeIndices[] = {
-		0, 1, 2, 3, 7, 1, 5, 4, 7, 6, 2, 4, 0, 1
-	};
+	List<Vertex> vertices;
+	vertices.growDynamically = false;
+	vertices.setFromArray(cubeVertices, 8);
 
-	glGenVertexArrays(1, &box.vao);
-	glGenBuffers(1, &box.vbo);
-	glGenBuffers(1, &box.ebo);
+	List<GLint> indices;
+	indices.growDynamically = false;
+	indices.setFromArray(cubeIndices, 36);
+	box.mMesh.initializeFromVertices(&vertices, &indices);
 
-	glBindVertexArray(box.vao);
+	box.mMesh.material.diffuse = Vector3f{1.f, 1.f, 1.f};
+	box.mMesh.material.ambient = Vector3f{1.f, 0.f, 0.f};
 
-	glBindBuffer(GL_ARRAY_BUFFER, box.vbo);
-	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), cubeVertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box.ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 14 * sizeof(GLuint), cubeIndices, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	box.material.transparency = 0.5f;
-	box.material.ambient = Vector3f{1.f, 0.f, 0.f};
+    vertices.deallocate();
+	indices.deallocate();
 }
 
-void updateBox(Box3D& box, const Matrix4x4f& model) {
-	if (box.vao == 0) {
+void updateBox(Box3D& box) {
+	if (box.mMesh.vao == 0) {
 		initializeRenderableBox(box);
 	}
 }
 
-void renderBoxOutline(const Box3D& box, const Matrix4x4f& model, const ModelUniformMapping& mapping) {
+void renderBoxOutline(const Box3D& box, const Matrix4x4f& model, const ModelUniformMapping& mapping, bool withMaterial) {
 	setShaderMat4(mapping.MODEL, model);
-	box.material.render(mapping.materialUniformMapping);
-
-	glBindVertexArray(box.vao);
-    glDrawElements(GL_TRIANGLE_STRIP, 14, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    setShaderBool(mapping.DISABLE_BONES, true);
+	box.mMesh.render(mapping.materialUniformMapping, withMaterial);
 }
 
 GLfloat getDistanceFromCamera(const Box3D& box, const Camera& camera, const Matrix4x4f& model) {

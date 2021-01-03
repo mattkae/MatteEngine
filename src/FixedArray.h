@@ -30,4 +30,8 @@ struct FixedArray {
 	T& operator[](int idx) {
 		return data[idx];
 	}
+
+	const T& operator[](int idx) const {
+		return data[idx];
+	}
 };

@@ -6,6 +6,7 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define CLAMP(x, upper, lower) (MIN(upper, MAX(x, lower)))
 #define DTOR (PI / 180.0f)
+#define SWAP(x, y, T) do { T SWAP = x; x = y; y = SWAP; } while (0)
 
 namespace MathHelper {
 	inline float radiansToDegrees(float radians) {

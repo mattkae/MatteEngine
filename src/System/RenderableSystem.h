@@ -20,4 +20,13 @@ struct RenderableSystem {
 	void update(float dtMs);
 	void render(const ModelUniformMapping& mapping, bool withMaterial = true) const;
 	void free();
+	RenderableEntity* getEntity(s8 id) {
+		FOREACH_FIXED(mEntities) {
+			if (value->mEntityId == id) {
+				return value;
+			}
+		}
+
+		return NULL;
+	};
 };

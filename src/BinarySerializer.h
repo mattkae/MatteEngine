@@ -5,6 +5,7 @@
 #include "Quaternion.h"
 #include "Matrix4x4f.h"
 #include "MyString.h"
+#include <cstdio>
 
 enum SerializationMode {
 	READ = 0,

@@ -3,9 +3,9 @@
 #include "Vector4f.h"
 #include "Matrix4x4f.h"
 #include "Ray.h"
-#include "Material.h"
-#include <algorithm>
+#include "MathHelper.h"
 #include "ShaderUniformMapping.h"
+#include "Mesh.h"
 #include <GL/glew.h>
 
 struct Camera;
@@ -13,10 +13,7 @@ struct Camera;
 struct Box3D {
 	Vector4f lowerLeft;
 	Vector4f upperRight;
-	GLuint vao = 0;
-	GLuint vbo = 0;
-	GLuint ebo = 0;
-	Material material;
+    Mesh mMesh;
 };
 
 inline bool isInBox(const Box3D& box, const Vector4f& v, const Matrix4x4f& model) {
@@ -39,22 +36,38 @@ inline bool isBoxInRayPath(const Box3D& box, const Matrix4x4f& model, const Ray&
 	const Vector3f& modelRayDirection = ray.direction;
 	const Vector3f& rayPosition = ray.position;
 
-	float xMin = (lowerLeft.x - rayPosition.x) / (modelRayDirection.x);
-	float xMax = (upperRight.x - rayPosition.x) / (modelRayDirection.x);
-	float min = std::min(xMin, xMax);
-	float max = std::max(xMin, xMax);
+	float min = (lowerLeft.x - rayPosition.x) / (modelRayDirection.x);
+	float max = (upperRight.x - rayPosition.x) / (modelRayDirection.x);
+	if (min > max) {
+		SWAP(min, max, float);
+	}
 
 	float yMin = (lowerLeft.y - rayPosition.y) / (modelRayDirection.y);
 	float yMax = (upperRight.y - rayPosition.y) / (modelRayDirection.y);
-	min = std::max(min, std::min(yMin, yMax));
-	max = std::min(max, std::max(yMin, yMax));
+	if (yMin > yMax) {
+		SWAP(yMin, yMax, float);
+	}
+
+	if (min > yMax || yMin > max) {
+		return false;
+	}
+	
+	min = MAX(min, yMin);
+	max = MIN(max, yMax);
 
 	float zMin = (lowerLeft.z - rayPosition.z) / (modelRayDirection.z);
 	float zMax = (upperRight.z - rayPosition.z) / (modelRayDirection.z);
-	min = std::max(min, std::min(zMin, zMax));
-	max = std::min(max, std::max(zMin, zMax));
+	if (zMin > zMax) {
+		SWAP(zMin, zMax, float);
+	}
 
-	return max >= std::max(min, 0.f);
+	if (min > zMax || zMin > max) {
+		return false;
+	}
+	
+	min = MAX(min, zMin);
+	max = MIN(max, zMax);
+	return max >= MAX(min, 0.f);
 }
 
 inline Vector4f getCenter(const Box3D& box) {
@@ -69,6 +82,6 @@ inline Vector4f getCenter(const Box3D& box) {
 	};
 }
 
-void updateBox(Box3D& box, const Matrix4x4f& model);
-void renderBoxOutline(const Box3D& box, const Matrix4x4f& model, const ModelUniformMapping& mapping);
+void updateBox(Box3D& box);
+void renderBoxOutline(const Box3D& box, const Matrix4x4f& model, const ModelUniformMapping& mapping, bool withMaterial);
 GLfloat getDistanceFromCamera(const Box3D& box, const Camera& camera, const Matrix4x4f& model);

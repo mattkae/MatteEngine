@@ -6,48 +6,104 @@
 #include "Vertex.h"
 #include <cmath>
 
+
+
 inline void initializeRenderableBox(Box3D& box) {
-	Vertex cubeVertices[8];
-	cubeVertices[0].position = { box.upperRight.x, box.upperRight.y, box.upperRight.z };
-	cubeVertices[0].normal = {  };
-	cubeVertices[1].position = { box.lowerLeft.x, box.upperRight.y, box.upperRight.z };
-	cubeVertices[1].normal = {  };
-	cubeVertices[2].position = { box.lowerLeft.x, box.upperRight.y, box.lowerLeft.z };
-	cubeVertices[2].normal = {  };
-	cubeVertices[3].position = { box.upperRight.x, box.upperRight.y, box.lowerLeft.z };
-	cubeVertices[3].normal = {  };
-
-	cubeVertices[4].position = { box.upperRight.x, box.lowerLeft.y, box.upperRight.z };
-	cubeVertices[4].normal = {  };
-	cubeVertices[5].position = { box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z };
-	cubeVertices[5].normal = {  };
-	cubeVertices[6].position = { box.lowerLeft.x, box.lowerLeft.y, box.lowerLeft.z };
-	cubeVertices[6].normal = {  };
-	cubeVertices[7].position = { box.upperRight.x, box.lowerLeft.y, box.lowerLeft.z };
-	cubeVertices[7].normal = {  };
-
-    GLint cubeIndices[] = {
-	    0, 1, 3, //top 1
-		3, 1, 2, //top 2
-		2, 6, 7, //front 1
-		7, 3, 2, //front 2
-		7, 6, 5, //bottom 1
-		5, 4, 7, //bottom 2
-		5, 1, 4, //back 1
-		4, 1, 0, //back 2
-		4, 3, 7, //right 1
-		3, 4, 0, //right 2
-		5, 6, 2, //left 1
-		5, 1, 2  //left 2
+	// Top
+	Vector3f topVertices[4] = {
+		{ box.lowerLeft.x, box.upperRight.y, box.lowerLeft.z },
+		{ box.upperRight.x, box.upperRight.y, box.lowerLeft.z },
+		{ box.upperRight.x, box.upperRight.y, box.upperRight.z },
+		{ box.lowerLeft.x, box.upperRight.y, box.upperRight.z },
 	};
 
+	// Back
+	Vector3f backVertices[4] = {
+		{ box.lowerLeft.x, box.upperRight.y, box.upperRight.z },
+		{ box.upperRight.x, box.upperRight.y, box.upperRight.z },
+		{ box.upperRight.x, box.lowerLeft.y, box.upperRight.z },
+		{ box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z },
+	};
+
+	// Bottom
+	Vector3f bottomVertices[4] = {
+		{ box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z },
+		{ box.upperRight.x, box.lowerLeft.y, box.upperRight.z },
+		{ box.upperRight.x, box.lowerLeft.y, box.lowerLeft.z },
+		{ box.lowerLeft.x, box.lowerLeft.y, box.lowerLeft.z }
+	};
+
+	// Left
+	Vector3f leftVertices[4] = {
+		{ box.lowerLeft.x, box.lowerLeft.y, box.lowerLeft.z },
+		{ box.lowerLeft.x, box.upperRight.y, box.lowerLeft.z },
+		{ box.lowerLeft.x, box.upperRight.y, box.upperRight.z },
+		{ box.lowerLeft.x, box.lowerLeft.y, box.upperRight.z }
+	};
+
+	// Front
+	Vector3f frontVertices[4] = {
+		{ box.lowerLeft.x, box.lowerLeft.y, box.lowerLeft.z },
+		{ box.upperRight.x, box.lowerLeft.y, box.lowerLeft.z },
+		{ box.upperRight.x, box.upperRight.y, box.lowerLeft.z },
+		{ box.lowerLeft.x, box.upperRight.y, box.lowerLeft.z }
+	};
+
+	// Right
+	Vector3f rightVertices[4] = {
+		{ box.upperRight.x, box.lowerLeft.y, box.lowerLeft.z },
+		{ box.upperRight.x, box.upperRight.y, box.lowerLeft.z },
+		{ box.upperRight.x, box.upperRight.y, box.upperRight.z },
+		{ box.upperRight.x, box.lowerLeft.y, box.upperRight.z }
+	};
+	
 	List<Vertex> vertices;
 	vertices.growDynamically = false;
-	vertices.setFromArray(cubeVertices, 8);
+	vertices.allocate(24);
 
 	List<GLint> indices;
 	indices.growDynamically = false;
-	indices.setFromArray(cubeIndices, 36);
+	indices.allocate(1.5 * 24);
+
+	for (int idx = 0; idx < 6; idx++) {
+		Vector3f* faceVertices;
+		Vector3f normal;
+		if (idx == 0) {
+			faceVertices = topVertices;
+			normal = { 0, 1, 0 };
+		} else if (idx == 1) {
+			faceVertices = backVertices;
+			normal = { 0, 0, -1 };
+		} else if (idx == 2) {
+			faceVertices = bottomVertices;
+			normal = { 0, -1, 0 };
+		}  else if (idx == 3) {
+			faceVertices = leftVertices;
+			normal = { 0, -1, 0 };
+		} else if (idx == 4) {
+			faceVertices = frontVertices;
+			normal = { 0, 0, 1 };
+		} else if (idx == 5) {
+			faceVertices = rightVertices;
+			normal = { 0, 1, 0 };
+		}
+
+		for (int vertexIdx = 0; vertexIdx < 4; vertexIdx++) {
+			Vertex newVertex;
+			newVertex.position = faceVertices[vertexIdx];
+			newVertex.normal = normal;
+			vertices.add(newVertex);
+		}
+
+		int vertexStart = idx * 4;
+		indices.add(vertexStart);
+		indices.add(vertexStart + 1);
+		indices.add(vertexStart + 2);
+		indices.add(vertexStart + 2);
+		indices.add(vertexStart + 3);
+		indices.add(vertexStart);
+	}
+
 	box.mMesh.initializeFromVertices(&vertices, &indices);
 
 	box.mMesh.material.diffuse = Vector3f{1.f, 1.f, 1.f};

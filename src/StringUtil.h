@@ -5,6 +5,8 @@
 #include "Vector2f.h"
 #include "Vector3f.h"
 #include "Vector4f.h"
+#include "Quaternion.h"
+#include <climits>
 
 namespace StringUtil {
 	constexpr int DEFAULT_BUFFER_SIZE = 512;
@@ -75,7 +77,10 @@ namespace StringUtil {
 	inline bool processLine(FILE* file, char buffer[DEFAULT_BUFFER_SIZE], char*& ptr) {
 		if (fgets(buffer, DEFAULT_BUFFER_SIZE * sizeof(char), file) != NULL) {
 			size_t bufferSize = strlen(buffer);
-			buffer[bufferSize - 1] = '\0';
+			if (buffer[bufferSize - 1] == '\n') {
+				buffer[bufferSize - 1] = '\0';
+			}
+			
 
 			ptr = &buffer[0];
 			trimLeft(ptr);

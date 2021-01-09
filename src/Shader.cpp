@@ -17,9 +17,19 @@
 #include <thread>
 #include "List.h"
 #include "MyString.h"
+#include "StringUtil.h"
 #include "Logger.h"
 
 const char* INCLUDE_STRING = "#include ";
+
+enum GlslPreprocessorToken {
+	GlslPreprocessorToken_NONE,
+	GlslPreprocessorToken_VERSION,
+	GlslPreprocessorToken_DEFINE,
+	GlslPreprocessorToken_INCLUDE,
+	GlslPreprocessorToken_IFDEF,
+	GlslPreprocessorToken_ENDIF
+};
 
 enum ShaderDependencyType {
     VERTEX,
@@ -42,50 +52,118 @@ void freeGlobalShaderRegistry() {
     GlobalShaderRegistry.deallocate();
 }
 
-std::string readGlslFile(const GLchar* path) {
-    std::string shaderCode = "";
-    std::ifstream shaderFile;
+inline GlslPreprocessorToken getPreprocessorToken(char* ptr) {
+	if (StringUtil::ifEqualWalkToValue(ptr, "#include")) {
+		return GlslPreprocessorToken_INCLUDE;
+	} else if (StringUtil::ifEqualWalkToValue(ptr, "#define")) {
+		return GlslPreprocessorToken_DEFINE;
+	} else if (StringUtil::ifEqualWalkToValue(ptr, "#ifdef")) {
+		return GlslPreprocessorToken_IFDEF;
+	} else if (StringUtil::ifEqualWalkToValue(ptr, "#endif")) {
+		return GlslPreprocessorToken_ENDIF;
+	} else if (StringUtil::ifEqualWalkToValue(ptr, "#version")) {
+		return GlslPreprocessorToken_VERSION;
+	} else {
+		return GlslPreprocessorToken_NONE;
+	}
+}
 
-    shaderFile.exceptions(std::ifstream::badbit);
-    try {
-        shaderFile.open(path);
+bool tryReadGlslFile(const GLchar* path, String* result) {
+	StringBuilder sb;
+	FILE* file = fopen(path, "r");
+	if (file == NULL) {
+		result = NULL;
+		logger_error("Failed to open file: %s", path);
+		return false;
+	}
 
-        std::string line;
-        while (std::getline(shaderFile, line)) {
-            std::stringstream shaderStream(line);
+	logger_info("Compiling Glsl file at path: %s", path);
 
-            if (line.length() > strlen(INCLUDE_STRING) && line.substr(0, strlen(INCLUDE_STRING)) == INCLUDE_STRING) {
-                line = readGlslFile((getEnclosingFolder(path) + "/" + line.substr(strlen(INCLUDE_STRING))).c_str());
-            }
+	int lineNumber = 0;
+	const int bufferLength = 256;
+	char buffer[bufferLength];
+	while(fgets(buffer, bufferLength, file)) {
+		lineNumber++;
+		char* ptr = &buffer[0];
+		int length = strlen(buffer);
+		if (buffer[length - 1] == '\n') {
+			buffer[length - 1] = '\0';
+		}
+		
+		StringUtil::trimLeft(ptr);
 
-            shaderCode += line + "\n";
-        }
-        shaderFile.close();
-    } catch (std::exception e) {
-        logger_error("Error: Shader not successfuly read from file: %s", path);
-        return "";
-    }
+		if (ptr[0] == '\n' || ptr[0] == '\0') {
+			continue;
+		}
 
-    return shaderCode;
+		if (ptr[0] == '#') { // Came across a preprocessor statement.
+			auto preprocessorToken = getPreprocessorToken(ptr);
+			switch (preprocessorToken) {
+			case GlslPreprocessorToken_INCLUDE: {
+				char includeFilePath[256] = "src/shaders/";
+				char includeFileName[128];
+				int tokenSize = strlen("#include ");
+				StringUtil::substring(includeFileName, buffer, length - tokenSize, tokenSize);
+				strcat(includeFilePath, includeFileName);
+				
+				logger_info("Including file: %s", includeFilePath);
+				String includeStr;
+				tryReadGlslFile(includeFilePath, &includeStr);
+				sb.addStr(&includeStr);
+				includeStr.free();
+				break;
+			}
+			case GlslPreprocessorToken_DEFINE: {
+				sb.addStr(buffer);
+				break;
+			}
+			case GlslPreprocessorToken_IFDEF: {
+				break;
+			}
+			case GlslPreprocessorToken_ENDIF: {
+				break;
+			}
+			case GlslPreprocessorToken_VERSION: {
+				sb.addStr(buffer);
+				break;
+			}
+			case GlslPreprocessorToken_NONE: {
+				logger_error("[%s: %d]: Unknown preprocessor statement", path, lineNumber);
+				break;
+			}
+			}
+		} else {
+			sb.addStr(buffer);
+		}
+		sb.addChar('\n');
+	}
+
+	*result = sb.toString();
+	sb.free();
+    return true;
 }
 
 GLuint loadIndividualShader(GLenum shaderType, const GLchar* path) {
-    const std::string glShaderCode = readGlslFile(path);
-    const char* glShaderCodeCStr = glShaderCode.c_str();
+    String glShaderCode;
+	if (!tryReadGlslFile(path, &glShaderCode)) {
+		return 0;
+	}
     GLuint shader;
+	const char* cCode = glShaderCode.getValue();
 
     shader = glCreateShader(shaderType);
-    glShaderSource(shader, 1, &glShaderCodeCStr, 0);
+    glShaderSource(shader, 1, &cCode, 0);
     glCompileShader(shader);
     GLint success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, 0, infoLog);
-        logger_error("Vertex shader failed to comipile, path: %s, reason: %s", path, infoLog);
+        logger_error("Vertex shader failed to compile, path: %s, reason: %s", path, infoLog);
         return 0;
     }
 
+	glShaderCode.free();
     return shader;
 }
 

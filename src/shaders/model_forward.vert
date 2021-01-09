@@ -26,6 +26,8 @@ uniform vec4 uClipPlane;
 void main() {
   vec4 bonePosition = vec4(position, 1.0f);
   vec3 outNormal = normal;
+
+#ifdef WITH_BONES
   if (uDisableBones == false) {
     mat4 boneTransform = uBones[boneIndices[0]] * boneWeights[0];
     boneTransform += uBones[boneIndices[1]] * boneWeights[1];
@@ -34,6 +36,7 @@ void main() {
     bonePosition = boneTransform * bonePosition;
     outNormal = (boneTransform * vec4(normal, 0)).xyz;
   }
+#endif
 
   vec4 fragPos = uModel * bonePosition;
   gl_Position = uProjection * uView * fragPos;

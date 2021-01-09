@@ -1,12 +1,16 @@
 #version 410
+#define WITH_BONES
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec3 tangent;
 layout (location = 3) in vec3 bitangent;
 layout (location = 4) in vec2 texCoords;
+
+#ifdef WITH_BONES
 layout (location = 5) in vec4 boneWeights;
 layout (location = 6) in ivec4 boneIndices;
+#endif
 
 out vec4 oFragPos;
 out vec3 oNormal;

@@ -1,11 +1,6 @@
 #include "Shader.h"
 #include "DirectoryUtil.h"
 #include "Logger.h"
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
 #ifdef __WIN32
 #include <tchar.h>
 #include <windows.h>
@@ -68,7 +63,12 @@ inline GlslPreprocessorToken getPreprocessorToken(char* ptr) {
 	}
 }
 
-bool tryReadGlslFile(const GLchar* path, String* result) {
+struct GlslFileCompileData {
+	List<char[16]> mDefineList;
+	List<char[16]> ifDefStack;
+};
+
+bool tryReadGlslFile(const GLchar* path, GlslFileCompileData* glslData, String* result) {
 	StringBuilder sb;
 	FILE* file = fopen(path, "r");
 	if (file == NULL) {
@@ -79,6 +79,8 @@ bool tryReadGlslFile(const GLchar* path, String* result) {
 
 	logger_info("Compiling Glsl file at path: %s", path);
 
+	bool isInIfDef = false;
+	bool hasCurrentIfDef = false;
 	int lineNumber = 0;
 	const int bufferLength = 256;
 	char buffer[bufferLength];
@@ -100,6 +102,10 @@ bool tryReadGlslFile(const GLchar* path, String* result) {
 			auto preprocessorToken = getPreprocessorToken(ptr);
 			switch (preprocessorToken) {
 			case GlslPreprocessorToken_INCLUDE: {
+				if (isInIfDef && !hasCurrentIfDef) {
+					break;
+				}
+				
 				char includeFilePath[256] = "src/shaders/";
 				char includeFileName[128];
 				int tokenSize = strlen("#include ");
@@ -108,19 +114,48 @@ bool tryReadGlslFile(const GLchar* path, String* result) {
 				
 				logger_info("Including file: %s", includeFilePath);
 				String includeStr;
-				tryReadGlslFile(includeFilePath, &includeStr);
+				tryReadGlslFile(includeFilePath, glslData, &includeStr);
 				sb.addStr(&includeStr);
 				includeStr.free();
 				break;
 			}
 			case GlslPreprocessorToken_DEFINE: {
+			    if (isInIfDef && !hasCurrentIfDef) {
+					break;
+				}
+				
 				sb.addStr(buffer);
+				char definedVariable[16];
+				int tokenSize = strlen("#define ");
+				StringUtil::substring(definedVariable, buffer, length - tokenSize, tokenSize);
+				glslData->mDefineList.add(definedVariable);			    
 				break;
 			}
 			case GlslPreprocessorToken_IFDEF: {
+				if (isInIfDef) {
+					logger_error("[%s: %s] Cannot nest ifdef yet", path, lineNumber);
+					break;
+				}
+				
+				isInIfDef = true;
+				hasCurrentIfDef = false;
+				int tokenSize = strlen("#ifdef ");
+				char definedVariable[16];
+				StringUtil::substring(definedVariable, buffer, length - tokenSize, tokenSize);
+				FOREACH(glslData->mDefineList) {
+					if (strcmp(*value, definedVariable) == 0) {
+						hasCurrentIfDef = true;
+						break;
+					}
+				}
 				break;
 			}
 			case GlslPreprocessorToken_ENDIF: {
+				if (!isInIfDef) {
+					logger_error("[%s: %d] Encountered endif without an ifdef", path, lineNumber);
+					break;
+				}
+				isInIfDef = false;
 				break;
 			}
 			case GlslPreprocessorToken_VERSION: {
@@ -133,6 +168,9 @@ bool tryReadGlslFile(const GLchar* path, String* result) {
 			}
 			}
 		} else {
+			if (isInIfDef && !hasCurrentIfDef) {
+			    continue;
+			}
 			sb.addStr(buffer);
 		}
 		sb.addChar('\n');
@@ -145,7 +183,8 @@ bool tryReadGlslFile(const GLchar* path, String* result) {
 
 GLuint loadIndividualShader(GLenum shaderType, const GLchar* path) {
     String glShaderCode;
-	if (!tryReadGlslFile(path, &glShaderCode)) {
+	GlslFileCompileData glslData;
+	if (!tryReadGlslFile(path, &glslData, &glShaderCode)) {
 		return 0;
 	}
     GLuint shader;

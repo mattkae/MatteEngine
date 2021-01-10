@@ -19,4 +19,5 @@ void RenderableSystem::free() {
 	FOREACH_FIXED(mEntities) {
 		value->mModel.free();
 	}
+	mEntities.clear();
 }

@@ -27,17 +27,20 @@ void Model::free() {
             meshes[meshIdx].free();
         }
         delete[] meshes;
+		meshes = nullptr;
         numMeshes = 0;
     }
 
     if (bones != nullptr) {
         delete[] bones;
+		bones = nullptr;
         numBones = 0;
     }
 
     if (rootNode) {
         rootNode->free();
         delete rootNode;
+		rootNode = nullptr;
     }
 
     animationController.free();

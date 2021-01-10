@@ -1,6 +1,10 @@
 #include "Bone.h"
 
 void BoneTreeNode::update(Bone* bones, Matrix4x4f* matrices, Matrix4x4f currentMatrix, Matrix4x4f inverseRootNode) {
+	if (children == nullptr) {
+		return;
+	}
+	
 	if (boneIndex > -1) {
 		currentMatrix = bones[boneIndex].localTransform * currentMatrix;
 		matrices[boneIndex] = bones[boneIndex].offsetMatrix * currentMatrix * inverseRootNode;
@@ -20,6 +24,7 @@ void BoneTreeNode::free() {
 
 	if (children != nullptr) {
 		delete []children;
+		children = nullptr;
 	}
 
 	numChildren = 0;

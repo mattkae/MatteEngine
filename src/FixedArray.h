@@ -34,4 +34,8 @@ struct FixedArray {
 	const T& operator[](int idx) const {
 		return data[idx];
 	}
+
+	void clear() {
+		mNumElements = 0;
+	}
 };

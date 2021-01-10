@@ -28,4 +28,5 @@ void LightSystem::free() {
 	FOREACH_FIXED(mEntites) {
 		value->mLight.free();
 	}
+	mEntites.clear();
 }

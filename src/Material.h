@@ -12,7 +12,6 @@ struct LoadMaterial;
 struct MaterialUniformMapping;
 
 struct Material {
-    std::string name;
 	Vector3f emissive = { 0.f, 0.f, 0.f };
     Vector3f ambient = { 1.f, 1.f, 1.f };
     Vector3f diffuse = { 1.f, 1.f, 1.f };

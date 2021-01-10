@@ -60,6 +60,7 @@ void MouseInteractableSystem::update(float dtMs) {
 }
 
 void MouseInteractableSystem::free() {
+	mEntities.clear();
 }
 
 void MouseInteractableSystem::render(const ModelUniformMapping& mapping, bool withMaterial) const {

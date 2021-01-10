@@ -49,6 +49,8 @@ void SystemEngine::render() const {
 }
 
 void SystemEngine::free() {
+	mEntities.clear();
+	mEntityPtr = 0;
 	mRenderSystem.free();
 	mMouseInteractionSystem.free();
 	mLightSystem.free();

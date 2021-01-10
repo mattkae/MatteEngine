@@ -43,6 +43,10 @@ Quaternion AnimationNode::getInterpolatedRotation(GLdouble currentAnimTime) {
 }
 
 void AnimationController::update(float dt, Bone* bones, unsigned int numBones, Matrix4x4f* boneMatrices, Matrix4x4f inverseRootNode, BoneTreeNode* rootNode) {
+	if (animationList == nullptr) {
+		return;
+	}
+	
 	for (unsigned int animIndex = 0; animIndex < numAnimations; animIndex++) {
 		Animation& animation = animationList[animIndex];
 		if (!animation.isRunning) {
@@ -90,6 +94,7 @@ void AnimationController::free() {
 	}
 
 	delete animationList;
+	animationList = nullptr;
 }
 
 // ***************************************

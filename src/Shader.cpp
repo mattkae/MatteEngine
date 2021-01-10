@@ -65,11 +65,10 @@ inline GlslPreprocessorToken getPreprocessorToken(char* ptr) {
 
 struct GlslFileCompileData {
 	List<char[16]> mDefineList;
-	List<char[16]> ifDefStack;
+	int currentLayer = 0;
 };
 
 bool tryReadGlslFile(const GLchar* path, GlslFileCompileData* glslData, String* result) {
-	StringBuilder sb;
 	FILE* file = fopen(path, "r");
 	if (file == NULL) {
 		result = NULL;
@@ -79,6 +78,9 @@ bool tryReadGlslFile(const GLchar* path, GlslFileCompileData* glslData, String* 
 
 	logger_info("Compiling Glsl file at path: %s", path);
 
+	StringBuilder generalSb;
+
+	bool isInMainDef = false;
 	bool isInIfDef = false;
 	bool hasCurrentIfDef = false;
 	int lineNumber = 0;
@@ -114,8 +116,10 @@ bool tryReadGlslFile(const GLchar* path, GlslFileCompileData* glslData, String* 
 				
 				logger_info("Including file: %s", includeFilePath);
 				String includeStr;
+				glslData->currentLayer++;
 				tryReadGlslFile(includeFilePath, glslData, &includeStr);
-				sb.addStr(&includeStr);
+				glslData->currentLayer--;
+			    generalSb.addStr(&includeStr);
 				includeStr.free();
 				break;
 			}
@@ -124,7 +128,7 @@ bool tryReadGlslFile(const GLchar* path, GlslFileCompileData* glslData, String* 
 					break;
 				}
 				
-				sb.addStr(buffer);
+				generalSb.addStr(buffer);
 				char definedVariable[16];
 				int tokenSize = strlen("#define ");
 				StringUtil::substring(definedVariable, buffer, length - tokenSize, tokenSize);
@@ -159,7 +163,7 @@ bool tryReadGlslFile(const GLchar* path, GlslFileCompileData* glslData, String* 
 				break;
 			}
 			case GlslPreprocessorToken_VERSION: {
-				sb.addStr(buffer);
+				generalSb.addStr(buffer);
 				break;
 			}
 			case GlslPreprocessorToken_NONE: {
@@ -171,13 +175,13 @@ bool tryReadGlslFile(const GLchar* path, GlslFileCompileData* glslData, String* 
 			if (isInIfDef && !hasCurrentIfDef) {
 			    continue;
 			}
-			sb.addStr(buffer);
+			generalSb.addStr(buffer);
 		}
-		sb.addChar('\n');
+		generalSb.addChar('\n');
 	}
 
-	*result = sb.toString();
-	sb.free();
+	*result = generalSb.toString();
+	generalSb.free();
     return true;
 }
 
@@ -199,6 +203,7 @@ GLuint loadIndividualShader(GLenum shaderType, const GLchar* path) {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, 0, infoLog);
         logger_error("Vertex shader failed to compile, path: %s, reason: %s", path, infoLog);
+		printf(cCode);
         return 0;
     }
 

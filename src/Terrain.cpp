@@ -7,17 +7,18 @@
 #include "List.h"
 
 enum class TerrainClassification {
-    DIRT = 0,
-    GRASS = 1,
+	GRASS = 0,
+    DIRT = 1,
     SNOW = 2
 };
 
 struct TerrainVertex {
 	Vector3f position;
 	Vector3f normal;
-	Vector3f texCoords;
+	Vector2f texCoords;
 	Vector3f tangent;
 	Vector3f bitangent;
+	float layer;
 };
 
 inline static float randomFloat(float min, float max) {
@@ -84,13 +85,13 @@ static inline GLfloat calculateTextureCoordinate(int coord, float portionOfTextu
 TerrainClassification classifyTerrain(float height, float maxHeight) {
     if (height < 0) {
         height = -height;
-        if (height > maxHeight * (2.f / 3.f)) {
+        if (height > maxHeight * (1.f / 3.f)) {
             return TerrainClassification::DIRT;
         } else {
             return TerrainClassification::GRASS;
         }
     } else {
-        if (height > maxHeight * (2.f / 3.f)) {
+        if (height > maxHeight * (1.f / 3.f)) {
             return TerrainClassification::SNOW;
         } else {
             return TerrainClassification::GRASS;
@@ -133,7 +134,7 @@ void Terrain::initialize(const GenerationParameters& params) {
 			vertex.position = getVec3(squareSize * xCoord, height, squareSize * yCoord);
 			vertex.texCoords.x = vertexCoordinates.x;
 			vertex.texCoords.y = vertexCoordinates.y;
-			vertex.texCoords.z = static_cast<float>(classifyTerrain(height, params.minMaxHeight));
+			vertex.layer = static_cast<float>(classifyTerrain(height, params.minMaxHeight));
 			vertices.add(vertex);
             vertexCoordinates.x += portionOfTexturePerVertex;
         }
@@ -235,18 +236,22 @@ void Terrain::initialize(const GenerationParameters& params) {
 	// Normal
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, normal));
-
-	// Texture Coords
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, texCoords));
 	
 	// Tangent
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, tangent));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, tangent));
 
 	// Bitangent
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, bitangent));
+
+	// Texture Coords
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, bitangent));
+	glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, texCoords));
+
+	// Layer
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(TerrainVertex), (GLvoid*)offsetof(TerrainVertex, layer));
 
 	glBindVertexArray(0);
 

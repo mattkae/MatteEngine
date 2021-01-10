@@ -1,38 +1,27 @@
 #version 410
 
-#include Light.shared.cpp
-#include Light.glsl
+#include MaterialOut.glsl
 
-in vec3 vertexNormal;
-in vec4 vertexFragPos;
 flat in int vertexLayer;
-in vec2 vertexTexCoords;
-in vec3 vertexViewDir;
-in mat3 vertexTBN;
+
+#include primary.frag
 
 uniform sampler2D uDiffuse[3];
 uniform sampler2D uSpecular[3];
 uniform sampler2D uNormal[3];
-uniform vec3 uAmbient;
-uniform vec2 uFarNear;
-uniform int uNumLights;
-uniform Light uLights[MAX_LIGHTS];
 
-out vec4 Color;
+MaterialOut getMaterialOut() {
+	MaterialOut result;
 
-void main() {
-	 vec3 diffuse = texture(uDiffuse[vertexLayer], vertexTexCoords).rgb;
-	 vec3 specular = texture(uSpecular[vertexLayer], vertexTexCoords).rgb;
-	 vec3 normal = texture(uNormal[vertexLayer], vertexTexCoords).rgb;
-	 normal = normalize(vertexTBN * normal);
+	result.ambient = vec3(0.5, 0.5, 0.5);
+	result.diffuse = texture(uDiffuse[vertexLayer], vertexTexCoords).rgb;
+	result.diffuseProperty = vec3(0.1, 0.1, 0.1);
+	result.shininess = 96;
+	result.opacity = 1;
+	result.specular = texture(uSpecular[vertexLayer], vertexTexCoords).rgb;
+	result.normal = texture(uNormal[vertexLayer], vertexTexCoords).rgb;
+	result.normal = result.normal * 2.0 - 1.0;
+	result.normal = normalize(vertexTBN * result.normal);
 
-	 vec3 finalColor = vec3(0.0, 0.0, 0.0);
-	 for (int lightIndex = 0; lightIndex < uNumLights; lightIndex++) {
-	 	finalColor += getColorFromLight(uLights[lightIndex],
-				   	normal, vertexViewDir,
-					diffuse, vec3(0.1, 0.1, 0.1),
-					specular, 96, vertexFragPos);
-	 }
-
-	 Color = vec4(finalColor, 1.0);
+	return result;
 }

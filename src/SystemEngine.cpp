@@ -2,18 +2,18 @@
 #include "Logger.h"
 #include "App.h"
 
-u8 SystemEngine::registerEntity() {
+Entity* SystemEngine::registerEntity() {
 	if (mEntityPtr >= MAX_ENTITIES) {
 		for (u8 idx = 0; idx < mEntityPtr; idx++) {
 			if (!mEntities[idx].mIsActive) {
 				mEntities[idx].mIsActive = true;
 				mEntities[idx].mId = idx;
-				return idx;
+				return mEntities.getValue(idx);
 			}
 		}
 
 		logger_error("Unable to register a new entity");
-		return 0;
+		return nullptr;
 	}
 
 	Entity newEntity;
@@ -21,7 +21,7 @@ u8 SystemEngine::registerEntity() {
 	newEntity.mIsActive = true;
 	mEntities.add(newEntity);
 	mEntityPtr++;
-	return newEntity.mId;
+	return mEntities.getValue(mEntityPtr - 1);
 }
 
 bool SystemEngine::unregisterEntity(u8 ptr) {
@@ -34,14 +34,21 @@ bool SystemEngine::unregisterEntity(u8 ptr) {
 }
 
 void SystemEngine::initialize() {
-	mRenderSystem.initialize();
+	mRenderSystem.initialize(this);
 	mMouseInteractionSystem.initialize(this, &GlobalApp.scene.mCamera);
+	mPhysicsSystem.initialize(this);
 }
 
 void SystemEngine::update(float dtMs) {
 	mLightSystem.update(dtMs);
-	mRenderSystem.update(dtMs);
+	mPhysicsSystem.update(dtMs);
 	mMouseInteractionSystem.update(dtMs);
+
+	FOREACH_FIXED(mEntities) {
+		value->update(dtMs);
+	}
+	
+	mRenderSystem.update(dtMs);
 }
 
 void SystemEngine::render() const {

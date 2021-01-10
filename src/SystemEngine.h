@@ -5,7 +5,9 @@
 #include "System/MouseInteractable.h"
 #include "System/EntitySystemConstants.h"
 #include "System/LightSystem.h"
+#include "System/PhysicsSystem.h"
 #include "Vector3f.h"
+#include "Quaternion.h"
 #include "Matrix4x4f.h"
 #include "FixedArray.h"
 
@@ -16,8 +18,17 @@ struct Entity {
 	// @TODO: We need to use this instead of the various
 	// attributes in Model and Light etc for these universal
 	// values
-	Vector3f mPosition = { 0, 0, 0 };
+	Vector3f mTranslation = { 0, 0, 0 };
+	Vector3f mScale = { 1.f, 1.f, 1.f };
+	Quaternion mRotation;
     Matrix4x4f mModel;
+
+	void update(float dtMs) {
+		 Matrix4x4f translationMatrix = setTranslation(Matrix4x4f(), mTranslation);
+		 Matrix4x4f rotationMatrix = mRotation.normalize().toMatrix();
+		 Matrix4x4f scalingMatrix = setScale(Matrix4x4f(), mScale);
+		 mModel = scalingMatrix * rotationMatrix * translationMatrix;// TODO: What's this - defaultModel;
+	}
 };
 
 struct SystemEngine {
@@ -27,15 +38,18 @@ struct SystemEngine {
 	LightSystem mLightSystem;
 	RenderableSystem mRenderSystem;
 	MouseInteractableSystem mMouseInteractionSystem;
+	PhysicsSystem mPhysicsSystem;
 
-	u8 registerEntity();
+	Entity* registerEntity();
 	bool unregisterEntity(u8 ptr);
 	inline Entity* getEntity(u8 id) {
 		if (id >= mEntityPtr) {
+			logger_error("Entity exceeded mEntityPtr: %u > %u", id, mEntityPtr);
 			return nullptr;
 		}
 
 		if (!mEntities[id].mIsActive) {
+			logger_error("Entity is no longer active: %u", id);
 			return nullptr;
 		}
 

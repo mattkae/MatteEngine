@@ -32,6 +32,9 @@ textures                assets/texture-info.mattl
 		::mouse_interactable
 			isSelectable true
 		;;
+		::physics
+			initialVelocity	0
+		;;
 	;;
 	::
 		::lightable

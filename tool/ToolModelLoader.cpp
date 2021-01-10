@@ -42,6 +42,7 @@ int lastIndexOf(char* str, char c) {
 }
 
 void ToolModelLoader::processNode(char* fullPath, const aiNode* node, const aiScene* scene, LoadModel& model) {
+	logger_info("Found %u meshes for path %s", node->mNumMeshes, fullPath);
     for (unsigned int meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++) {
         LoadMesh mesh;
         const aiMesh* assimpMesh = scene->mMeshes[node->mMeshes[meshIndex]];

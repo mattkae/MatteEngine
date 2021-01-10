@@ -23,6 +23,7 @@ inline void initArrow(DebugArrow& arrow) {
 }
 
 void DebugArrow::update(Box3D& box, const Matrix4x4f& inModel) {
+	/*
 	model.model = getIdentity();
 	if (model.numMeshes == 0) {
 		initArrow(*this);
@@ -42,13 +43,15 @@ void DebugArrow::update(Box3D& box, const Matrix4x4f& inModel) {
 	Vector4f boxLowerLeft = mult(inModel, box.lowerLeft);
 	Vector3f centerOfBox = Vector3f{ 0, fabsf(boxUpperRight.y - boxLowerLeft.y) / 2.f, 0 };
 	model.model = translateMatrix(model.model, centerOfBox);
+	*/
 }
 
 void DebugArrow::render(const ModelUniformMapping& mapping) const {
-	model.render(mapping);
+	//model.render(mapping);
 }
 
 void DebugModel::update(Matrix4x4f& model, const Camera& camera) {
+	/*
 	model = copyMatrix(model);
 	updateBox(debugBox);
 	xArrow.update(debugBox, model);
@@ -140,6 +143,7 @@ void DebugModel::update(Matrix4x4f& model, const Camera& camera) {
 			break;
 		}
 	}
+	*/
 }
 
 void DebugModel::render( const Matrix4x4f& model, const ModelUniformMapping& mapping) const {

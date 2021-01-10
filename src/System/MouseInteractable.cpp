@@ -20,14 +20,13 @@ MouseInteractableEntity* MouseInteractableSystem::castRayToModel() {
 
 		const Box3D& box = value->mBox;
 
-		auto renderableEntity = mSystemEngine->mRenderSystem.getEntity(value->mId);
-		if (!renderableEntity) {
+		auto entity = mSystemEngine->getEntity(value->mId);
+		if (!entity) {
 			continue;
 		}
 		
-		const Model& model = renderableEntity->mModel;
-		if (isBoxInRayPath(box, model.model, rayWorld)) {
-			GLfloat nextDistanceFromEye = getDistanceFromCamera(box, *mCamera, model.model);
+		if (isBoxInRayPath(box, entity->mModel, rayWorld)) {
+			GLfloat nextDistanceFromEye = getDistanceFromCamera(box, *mCamera, entity->mModel);
 			if (distanceFromEye < 0 || nextDistanceFromEye < distanceFromEye) {
 				distanceFromEye = nextDistanceFromEye;
 				retval = value;
@@ -65,7 +64,7 @@ void MouseInteractableSystem::free() {
 
 void MouseInteractableSystem::render(const ModelUniformMapping& mapping, bool withMaterial) const {
 	if (mSelectedEntity != NULL) {
-		Matrix4x4f model = mSystemEngine->mRenderSystem.getEntity(mSelectedEntity->mId)->mModel.model;
+		Matrix4x4f model = mSystemEngine->getEntity(mSelectedEntity->mId)->mModel;
 		renderBoxOutline(mSelectedEntity->mBox, model, mapping, withMaterial);
 	}
 }

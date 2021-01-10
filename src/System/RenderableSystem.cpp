@@ -1,11 +1,19 @@
 #include "RenderableSystem.h"
+#include "../SystemEngine.h"
 
-void RenderableSystem::initialize() {
+void RenderableSystem::initialize(SystemEngine* systemEngine) {
+	mSystemEngine = systemEngine;
 }
 
 void RenderableSystem::update(float dtMs) {
 	FOREACH_FIXED(mEntities) {
-		value->mModel.update(dtMs);
+		Entity* entity = mSystemEngine->getEntity(value->mEntityId);
+		if (entity == nullptr) {
+			logger_error("Failed to find entity with id=%u", value->mEntityId);
+			continue;
+		}
+		
+		value->mModel.update(dtMs, entity->mModel);
 	}
 }
 

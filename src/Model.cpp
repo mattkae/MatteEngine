@@ -4,16 +4,13 @@
 #include "ShaderUniformMapping.h"
 #include <GL/glew.h>
 
-void Model::update(float dt) {
+void Model::update(float dt, Matrix4x4f model) {
     animationController.update(dt, bones, numBones, boneModels, inverseRootNode, rootNode);
-    Matrix4x4f translationMatrix = setTranslation(Matrix4x4f(), translation);
-	Matrix4x4f rotationMatrix = rotation.normalize().toMatrix();
-	Matrix4x4f scalingMatrix = setScale(Matrix4x4f(), scale);
-    model = scalingMatrix * rotationMatrix * translationMatrix * defaultModel;
+	mModel = model;
 }
 
 void Model::render(const ModelUniformMapping& mapping, bool withMaterial) const {
-    setShaderMat4(mapping.MODEL, model);
+    setShaderMat4(mapping.MODEL, mModel);
     setShaderBool(mapping.DISABLE_BONES, numBones <= 0);
     setShaderMat4Multiple(mapping.BONES, numBones, boneModels);
 	for (int meshIdx = 0; meshIdx < numMeshes; meshIdx++) {

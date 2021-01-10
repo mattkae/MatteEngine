@@ -55,7 +55,7 @@ void initializeSphere(const Sphere& sphere, Model& model, Box3D& box) {
         }
     }
 
-	model.model = sphere.model;
+	model.mModel = sphere.model;
     model.meshes = new Mesh[1];
     model.numMeshes = 1;
     model.meshes[0].initializeFromVertices(&vertices, &indices);

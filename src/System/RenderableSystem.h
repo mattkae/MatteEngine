@@ -8,6 +8,8 @@
 #include "EntitySystemConstants.h"
 #include "../FixedArray.h"
 
+struct SystemEngine;
+
 struct RenderableEntity {
 	u8 mEntityId = 0;
 	bool mShouldRender = true;
@@ -16,7 +18,8 @@ struct RenderableEntity {
 
 struct RenderableSystem {
 	FixedArray<RenderableEntity, MAX_ENTITIES> mEntities;
-	void initialize();
+	SystemEngine* mSystemEngine;
+	void initialize(SystemEngine* systemEngine);
 	void update(float dtMs);
 	void render(const ModelUniformMapping& mapping, bool withMaterial = true) const;
 	void free();

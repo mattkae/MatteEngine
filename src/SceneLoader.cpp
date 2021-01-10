@@ -96,8 +96,8 @@ Light SceneLoader::loadLight() {
 }
 
 void SceneLoader::loadEntity() {
-    u8 eId = mScene->systemEngine.registerEntity();
-	logger_info("Creating new entity with id=%d", eId);
+    Entity* entity = mScene->systemEngine.registerEntity();
+	logger_info("Creating new entity with id=%d", entity->mId);
     Box3D foundBoundingBox;
 
     char* ptr;
@@ -114,13 +114,13 @@ void SceneLoader::loadEntity() {
                         re.mModel = retval.model;
                         foundBoundingBox = retval.box;
                     } else if (StringUtil::ifEqualWalkToValue(ptr, "translation")) {
-                        StringUtil::strToVec3(ptr, re.mModel.translation);
+                        StringUtil::strToVec3(ptr, entity->mTranslation);
                     } else if (StringUtil::ifEqualWalkToValue(ptr, "scale")) {
-                        StringUtil::strToVec3(ptr, re.mModel.scale);
+                        StringUtil::strToVec3(ptr, entity->mScale);
                     } else if (StringUtil::ifEqualWalkToValue(ptr, "rotation")) {
-                        StringUtil::strToQuaternion(ptr, re.mModel.rotation);
+                        StringUtil::strToQuaternion(ptr, entity->mRotation);
                     } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
-                        re.mEntityId = eId;
+                        re.mEntityId = entity->mId;
                         re.mShouldRender = true;
                         mScene->systemEngine.mRenderSystem.mEntities.add(re);
                         break;
@@ -128,7 +128,7 @@ void SceneLoader::loadEntity() {
                 }
             } else if (StringUtil::ifEqualWalkToValue(ptr, "mouse_interactable")) {
                 MouseInteractableEntity mie;
-                mie.mId = eId;
+                mie.mId = entity->mId;
                 mie.mBox = foundBoundingBox;
 
                 while (StringUtil::processLine(mFile, buffer, ptr)) {
@@ -141,11 +141,23 @@ void SceneLoader::loadEntity() {
                 }
             } else if (StringUtil::ifEqualWalkToValue(ptr, "lightable")) {
                 LightEntity le;
-                le.mId = eId;
+                le.mId = entity->mId;
                 le.mIsActive = true;
                 le.mLight = loadLight();
                 mScene->systemEngine.mLightSystem.mEntites.add(le);
-            }
+            } else if (StringUtil::ifEqualWalkToValue(ptr, "physics")) {
+				PhysicsEntity pe;
+				pe.mId = entity->mId;
+
+				while (StringUtil::processLine(mFile, buffer, ptr)) {
+                    if (StringUtil::ifEqualWalkToValue(ptr, "initialVelocity")) {
+                        StringUtil::strToFloat(ptr, pe.currentSpeed);
+                    } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
+                        mScene->systemEngine.mPhysicsSystem.mEntities.add(pe);
+                        break;
+                    }
+                }
+			}
         } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
 			logger_info("Completed loading entity");
 			break;

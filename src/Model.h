@@ -18,11 +18,7 @@ constexpr unsigned int MAX_BONES = 64;
 
 // @TODO Break this up into ModelRender and ModelUpdate
 struct Model {
-    Vector3f translation;
-    Vector3f scale = Vector3f{ 1.f, 1.f, 1.f };
-    Quaternion rotation;
-    Matrix4x4f defaultModel;
-    Matrix4x4f model;
+	Matrix4x4f mModel;
     Matrix4x4f inverseRootNode;
 
     Matrix4x4f boneModels[MAX_BONES];
@@ -35,7 +31,7 @@ struct Model {
 
     AnimationController animationController;
 
-    void update(float dt);
+    void update(float dt, Matrix4x4f model);
     void render(const ModelUniformMapping& mapping, bool withMaterial = true) const;
     void free();
 };

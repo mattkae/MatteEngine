@@ -13,6 +13,9 @@ textures                assets/texture-info.mattl
 			scale 		10 10 10
 			rotation 	0 0 0
 		;;
+		::physics
+			mass		5
+		;;
 	;;
 	::
 		::renderable
@@ -20,6 +23,9 @@ textures                assets/texture-info.mattl
 			translation -20 0 0
 			scale 		10 10 10
 			rotation 	0 0 0
+		;;
+		::physics
+			mass		1
 		;;
 	;;
 	::
@@ -33,7 +39,19 @@ textures                assets/texture-info.mattl
 			isSelectable true
 		;;
 		::physics
-			initialVelocity	0
+			mass		10
+		;;
+	;;
+	::
+		::renderable
+			path		assets/models/Floor/floor.mattl
+			translation 0 -20 0
+			scale       10 10 10
+			rotation	0 0 0
+		;;
+		::physics
+			mass		1000
+			static		true
 		;;
 	;;
 	::

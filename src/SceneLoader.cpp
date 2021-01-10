@@ -148,10 +148,13 @@ void SceneLoader::loadEntity() {
             } else if (StringUtil::ifEqualWalkToValue(ptr, "physics")) {
 				PhysicsEntity pe;
 				pe.mId = entity->mId;
+				pe.mBox = foundBoundingBox;
 
 				while (StringUtil::processLine(mFile, buffer, ptr)) {
-                    if (StringUtil::ifEqualWalkToValue(ptr, "initialVelocity")) {
-                        StringUtil::strToFloat(ptr, pe.currentSpeed);
+                    if (StringUtil::ifEqualWalkToValue(ptr, "mass")) {
+                        StringUtil::strToFloat(ptr, pe.mass);
+                    } else if (StringUtil::ifEqualWalkToValue(ptr, "static")) {
+                        StringUtil::strToBool(ptr, pe.isStatic);
                     } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
                         mScene->systemEngine.mPhysicsSystem.mEntities.add(pe);
                         break;

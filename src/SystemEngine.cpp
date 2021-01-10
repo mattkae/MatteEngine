@@ -61,4 +61,5 @@ void SystemEngine::free() {
 	mRenderSystem.free();
 	mMouseInteractionSystem.free();
 	mLightSystem.free();
+	mPhysicsSystem.free();
 }

@@ -1,7 +1,7 @@
 textures                assets/texture-info.mattl
 
 ::camera
-    position    0.0 40.0 80.0
+    position    0.0 10.0 50.0
     pitch       -30
 ;;
 
@@ -14,7 +14,8 @@ textures                assets/texture-info.mattl
 			rotation 	0 0 0
 		;;
 		::physics
-			mass		5
+			mass		15
+			elasticity	0.9
 		;;
 	;;
 	::
@@ -25,7 +26,8 @@ textures                assets/texture-info.mattl
 			rotation 	0 0 0
 		;;
 		::physics
-			mass		1
+			mass		25
+			elasticity	0.75
 		;;
 	;;
 	::
@@ -39,7 +41,8 @@ textures                assets/texture-info.mattl
 			isSelectable true
 		;;
 		::physics
-			mass		10
+			mass		50
+			elasticity	0
 		;;
 	;;
 	::
@@ -50,7 +53,7 @@ textures                assets/texture-info.mattl
 			rotation	0 0 0
 		;;
 		::physics
-			mass		1000
+			mass		10000
 			static		true
 		;;
 	;;

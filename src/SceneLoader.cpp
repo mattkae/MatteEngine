@@ -155,6 +155,8 @@ void SceneLoader::loadEntity() {
                         StringUtil::strToFloat(ptr, pe.mass);
                     } else if (StringUtil::ifEqualWalkToValue(ptr, "static")) {
                         StringUtil::strToBool(ptr, pe.isStatic);
+                    } else if (StringUtil::ifEqualWalkToValue(ptr, "elasticity")) {
+                        StringUtil::strToFloat(ptr, pe.elasticity);
                     } else if (StringUtil::startsWith(ptr, END_OBJECT_TOKEN)) {
                         mScene->systemEngine.mPhysicsSystem.mEntities.add(pe);
                         break;

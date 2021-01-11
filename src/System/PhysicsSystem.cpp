@@ -77,7 +77,18 @@ void PhysicsSystem::update(float dt) {
 			switch (intersectionResult) {
 			case IntersectionResult_UP: {
 				outerValue->mLastIntersection = value->mId;
-				outerValue->applyForceTo(value->mass * gravity, { 0, 1, 0 });
+				float currentDownwardForce = outerValue->mass * (outerValue->velocity.y / dt);
+				float forceToApply = value->mass * gravity;
+
+				if (forceToApply >= currentDownwardForce) {
+					// We're not going to break through the other mass
+					outerValue->velocity.y = 0;
+					outerValue->applyForceTo(outerValue->mass * gravity, { 0, 1, 0 });
+					outerValue->applyForceTo(-currentDownwardForce * outerValue->elasticity, { 0, 1, 0 });
+				} else {
+					outerValue->applyForceTo(forceToApply, { 0, 1, 0 });
+				}
+			    
 				break;
 			}
 			default: {
@@ -100,10 +111,6 @@ void PhysicsSystem::update(float dt) {
 			acceleration.y * dt,
 			acceleration.z * dt
 		};
-
-		if (value->velocity.y >= 0) {
-			value->velocity.y = 0; // @TODO: Assuming zero elasticity here
-		}
 
 		entity->mTranslation = entity->mTranslation + (value->velocity * dt);
 		value->force = { 0, 0, 0 };

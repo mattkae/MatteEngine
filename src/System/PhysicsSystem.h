@@ -16,6 +16,7 @@ struct PhysicsEntity {
 	Vector3f velocity = { 0.f, 0.f, 0.f };
 	float mass = 100.f;
 	bool isStatic = false;
+	float elasticity = 0.f;
 	Box3D mBox;
 
 	s8 mLastIntersection = -1;

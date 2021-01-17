@@ -97,9 +97,6 @@ struct OrthographicShaderMapping {
 	Shader shader;
 
 	int PROJECTION;
-	int COLOR;
-	int TEXTURE;
-	int USE_TEXTURE;
 
 	void initialize();
 };
@@ -108,8 +105,6 @@ struct TextShaderMapping {
 	Shader shader;
 
 	int PROJECTION;
-	int SCROLL_X;
-	int COLOR;
 	int GLYPH_TEXTURE;
 
 	void initialize();

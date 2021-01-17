@@ -1,15 +1,12 @@
 #version 410
 layout (location = 0) in vec2 position;
-layout (location = 1) in vec2 texCoord;
+layout (location = 1) in vec4 color;
 
 uniform mat4 uProjection;
-uniform vec4 uColor;
 
-out vec4 oColor;
-out vec2 oTexCoord;
+out vec4 vertexColor;
 
 void main() {
     gl_Position = uProjection * vec4(position.x, position.y, 0, 1);
-    oColor = uColor;
-    oTexCoord = texCoord;
+    vertexColor = color;
 }

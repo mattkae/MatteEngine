@@ -1,7 +1,7 @@
 textures                assets/texture-info.mattl
 
 ::camera
-    position    0.0 10.0 50.0
+    position    0.0 50.0 50.0
     pitch       -30
 ;;
 

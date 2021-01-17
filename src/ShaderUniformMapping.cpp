@@ -159,9 +159,6 @@ void OrthographicShaderMapping::initialize() {
 	const char* FRAG = "src/shaders/Orthographic.frag";
 	shader = loadShader(VERTEX, FRAG);
 	PROJECTION = getShaderUniform(shader, "uProjection");
-	COLOR = getShaderUniform(shader, "uColor");
-	TEXTURE = getShaderUniform(shader, "uTexture");
-	USE_TEXTURE = getShaderUniform(shader, "uUseTexture");
 }
 
 void TextShaderMapping::initialize() {
@@ -169,8 +166,6 @@ void TextShaderMapping::initialize() {
 	const char* FRAG = "src/shaders/Text.frag";
 	shader = loadShader(VERTEX, FRAG);
 	PROJECTION = getShaderUniform(shader, "uProjection");
-	SCROLL_X = getShaderUniform(shader, "uScrollX");
-	COLOR = getShaderUniform(shader, "uColor");
 	GLYPH_TEXTURE = getShaderUniform(shader, "uGlyphTexture");
 }
 

@@ -6,6 +6,5 @@ out vec4 Color;
 uniform sampler2D uGlyphTexture;
 
 void main() {
-    vec4 sampled = vec4(1, 1, 1, texture(uGlyphTexture, oTexCoords).r);
-    Color = oColor * sampled;
+	Color = vec4(oColor.x, oColor.y, oColor.z, texture(uGlyphTexture, oTexCoords).r);
 }

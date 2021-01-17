@@ -35,6 +35,21 @@ struct List {
 		memcpy(data, arry, size * sizeof(T));
 		numElements = size;
 	}
+	void remove(int index) {
+		if (index >= numElements) {
+			logger_error("Cannot remove element at index: %d", index);
+			return;
+		}
+
+		
+		if (index == numElements - 1) {
+			numElements--;
+			return;
+		}
+		
+		memmove(data[index], data[index + 1], sizeof(T) * (numElements - index));
+		numElements--;
+	}
 };
 
 template <typename T>

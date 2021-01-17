@@ -2,14 +2,86 @@
 #include "Input.h"
 #include "Scene.h"
 
+List<UI::CreateElementAttribute> getPrimaryElements() {
+	List<UI::CreateElementAttribute> retval;
+
+	UI::CreateElementAttribute topLabel = {
+		UI::ElementAttribute {
+			2.f,
+			UI::ElementType_CONTAINER,
+			{
+				UI::DimensionAttribute {
+					UI::Positioning_CENTER,
+					UI::Sizing_DYNAMIC,
+					0.f, 300.f, 0.5f
+				},
+				UI::DimensionAttribute {
+					UI::Positioning_CENTER,
+					UI::Sizing_DYNAMIC,
+					0.f, 500.f, 0.5f
+				}
+			},
+			UI::Alignment_LEFT,
+			Vector4f { 1.f, 1.f, 1.f, 0.5f },
+			Vector4f(),
+			UI::FlowType_VERTICAL,
+			UI::TextInputType_NONE,
+			NULL,
+			NULL,
+			NULL
+		}
+	};
+	retval.add(topLabel);
+
+	return retval;
+}
+
+List<UI::Context> createEditorUI() {
+	List<UI::Context> retval;
+	retval.add(UI::Context());
+
+	auto primaryElements = getPrimaryElements();
+
+	UI::CreateUI(&retval[0], UI::CreateElementAttribute {
+			UI::ElementAttribute {
+				2.f, UI::ElementType_CONTAINER,
+				{
+					UI::DimensionAttribute {
+						UI::Positioning_MIN,
+						UI::Sizing_STATIC,
+						0.f, 300.f, 0.f
+					},
+					UI::DimensionAttribute {
+						UI::Positioning_CENTER,
+						UI::Sizing_STATIC,
+						0.f, 400.f, 0.f
+					}
+				},
+				UI::Alignment_LEFT,
+				Vector4f { 0.3f, 0.1, 0.1, 0.8f },
+				Vector4f(),
+				UI::FlowType_VERTICAL,
+				UI::TextInputType_NONE,
+				NULL,
+				NULL,
+				NULL
+			},
+			primaryElements
+		});
+
+	primaryElements.deallocate();
+	return retval;
+}
+
 void Editor::initialize(Scene* inScene) {
 	mScene = inScene;
-	editorUI.initialize(mScene);
+	context.initialize();
+	context.contextList = createEditorUI();
 }
 
 void Editor::free() {	
-	editorUI.free();
 	mDebugModel.free();
+	context.free();
 }
 
 int Editor::castRayToModel() {
@@ -52,11 +124,12 @@ void Editor::update(double dtMs) {
 	}
 	*/
 
-	editorUI.ui.update(dtMs);
 
 	if (mSelectedModelIdx >= 0) {
 		// @TODO: Do something with the selected model
 	}
+
+	context.update(dtMs);
 }
 
 void Editor::render() const {
@@ -64,9 +137,9 @@ void Editor::render() const {
 		return;
 	}
 
-	editorUI.ui.render();
-
 	if (mSelectedModelIdx >= 0) {
 		// @TODO: Do something with the selected model
 	}
+
+	context.render();
 }

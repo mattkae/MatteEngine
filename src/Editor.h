@@ -2,8 +2,8 @@
 
 #include "List.h"
 #include "Light.h"
-#include "EditorUI.h"
 #include "DebugRender.h"
+#include "UI/UI.h"
 
 struct Scene;
 
@@ -18,10 +18,10 @@ struct Editor {
 	void toSceneFile(const char* outFile);
 	void fromSceneFile(const char* inFile);
 
-	EditorUI editorUI;
 	Scene* mScene;
 	DebugModel mDebugModel;
 	int mSelectedModelIdx = -1;
+	UI::PrimaryContext context;
 
 	bool isEnabled = false;
 };

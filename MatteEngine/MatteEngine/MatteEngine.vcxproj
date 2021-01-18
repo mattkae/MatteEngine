@@ -23,13 +23,10 @@
     <ClCompile Include="..\..\src\App.cpp" />
     <ClCompile Include="..\..\src\BinarySerializer.cpp" />
     <ClCompile Include="..\..\src\Bone.cpp" />
-    <ClCompile Include="..\..\src\BoundText.cpp" />
     <ClCompile Include="..\..\src\Box.cpp" />
-    <ClCompile Include="..\..\src\Button.cpp" />
     <ClCompile Include="..\..\src\Camera.cpp" />
     <ClCompile Include="..\..\src\DebugRender.cpp" />
     <ClCompile Include="..\..\src\Editor.cpp" />
-    <ClCompile Include="..\..\src\EditorUI.cpp" />
     <ClCompile Include="..\..\src\FrameBuffer.cpp" />
     <ClCompile Include="..\..\src\Functional.cpp" />
     <ClCompile Include="..\..\src\GlobalLoaders.cpp" />
@@ -37,7 +34,6 @@
     <ClCompile Include="..\..\src\GridHelper.cpp" />
     <ClCompile Include="..\..\src\ImageUtil.cpp" />
     <ClCompile Include="..\..\src\Input.cpp" />
-    <ClCompile Include="..\..\src\Label.cpp" />
     <ClCompile Include="..\..\src\Light.cpp" />
     <ClCompile Include="..\..\src\LoadModel.cpp" />
     <ClCompile Include="..\..\src\Logger.cpp" />
@@ -48,7 +44,6 @@
     <ClCompile Include="..\..\src\Mesh.cpp" />
     <ClCompile Include="..\..\src\MeshTexture.cpp" />
     <ClCompile Include="..\..\src\Model.cpp" />
-    <ClCompile Include="..\..\src\Panel.cpp" />
     <ClCompile Include="..\..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\..\src\Quaternion.cpp" />
     <ClCompile Include="..\..\src\Randomizable.cpp" />
@@ -66,15 +61,13 @@
     <ClCompile Include="..\..\src\SystemEngine.cpp" />
     <ClCompile Include="..\..\src\System\LightSystem.cpp" />
     <ClCompile Include="..\..\src\System\MouseInteractable.cpp" />
+    <ClCompile Include="..\..\src\System\PhysicsSystem.cpp" />
     <ClCompile Include="..\..\src\System\RenderableSystem.cpp" />
     <ClCompile Include="..\..\src\Terrain.cpp" />
-    <ClCompile Include="..\..\src\TextInput.cpp" />
-    <ClCompile Include="..\..\src\TextRenderer.cpp" />
     <ClCompile Include="..\..\src\TextureInfo.cpp" />
     <ClCompile Include="..\..\src\TextureLoader.cpp" />
-    <ClCompile Include="..\..\src\UI.cpp" />
-    <ClCompile Include="..\..\src\UIContext.cpp" />
-    <ClCompile Include="..\..\src\UIElement.cpp" />
+    <ClCompile Include="..\..\src\UI\UI.cpp" />
+    <ClCompile Include="..\..\src\UI\UIRenderer.cpp" />
     <ClCompile Include="..\..\src\Vector2f.cpp" />
     <ClCompile Include="..\..\src\Vector3f.cpp" />
     <ClCompile Include="..\..\src\Vector4f.cpp" />
@@ -85,28 +78,25 @@
     <ClInclude Include="..\..\src\App.h" />
     <ClInclude Include="..\..\src\BinarySerializer.h" />
     <ClInclude Include="..\..\src\Bone.h" />
-    <ClInclude Include="..\..\src\BoundText.h" />
     <ClInclude Include="..\..\src\Box.h" />
-    <ClInclude Include="..\..\src\Button.h" />
     <ClInclude Include="..\..\src\Camera.h" />
     <ClInclude Include="..\..\src\Constants.h" />
     <ClInclude Include="..\..\src\DebugRender.h" />
     <ClInclude Include="..\..\src\DirectoryUtil.h" />
     <ClInclude Include="..\..\src\Editor.h" />
-    <ClInclude Include="..\..\src\EditorUI.h" />
     <ClInclude Include="..\..\src\FixedArray.h" />
     <ClInclude Include="..\..\src\FrameBuffer.h" />
     <ClInclude Include="..\..\src\GradientSky.h" />
     <ClInclude Include="..\..\src\GridHelper.h" />
     <ClInclude Include="..\..\src\GlobalLoaders.h" />
     <ClInclude Include="..\..\src\MeshTexture.h" />
+    <ClInclude Include="..\..\src\Ray.h" />
     <ClInclude Include="..\..\src\ShaderUniformMapping.h" />
     <ClInclude Include="..\..\src\MyString.h" />
     <ClInclude Include="..\..\src\FileHelper.h" />
     <ClInclude Include="..\..\src\Functional.h" />
     <ClInclude Include="..\..\src\ImageUtil.h" />
     <ClInclude Include="..\..\src\Input.h" />
-    <ClInclude Include="..\..\src\Label.h" />
     <ClInclude Include="..\..\src\Light.h" />
     <ClInclude Include="..\..\src\List.h" />
     <ClInclude Include="..\..\src\LoadModel.h" />
@@ -116,7 +106,6 @@
     <ClInclude Include="..\..\src\Matrix3x3f.h" />
     <ClInclude Include="..\..\src\Matrix4x4f.h" />
     <ClInclude Include="..\..\src\OpenGLUtil.h" />
-    <ClInclude Include="..\..\src\Panel.h" />
     <ClInclude Include="..\..\src\Plane.h" />
     <ClInclude Include="..\..\src\Quad.h" />
     <ClInclude Include="..\..\src\Quaternion.h" />
@@ -128,16 +117,16 @@
     <ClInclude Include="..\..\src\System\EntitySystemConstants.h" />
     <ClInclude Include="..\..\src\System\LightSystem.h" />
     <ClInclude Include="..\..\src\System\MouseInteractable.h" />
+    <ClInclude Include="..\..\src\System\PhysicsSystem.h" />
     <ClInclude Include="..\..\src\System\RenderableSystem.h" />
-    <ClInclude Include="..\..\src\TextInput.h" />
     <ClInclude Include="..\..\src\TextureInfo.h" />
     <ClInclude Include="..\..\src\GeneratedTexture.h" />
     <ClInclude Include="..\..\src\TextureLoader.h" />
     <ClInclude Include="..\..\src\TextureUniformConstants.h" />
     <ClInclude Include="..\..\src\Types.h" />
-    <ClInclude Include="..\..\src\UI.h" />
-    <ClInclude Include="..\..\src\UIContext.h" />
-    <ClInclude Include="..\..\src\UIElement.h" />
+    <ClInclude Include="..\..\src\UI\Elements.h" />
+    <ClInclude Include="..\..\src\UI\UI.h" />
+    <ClInclude Include="..\..\src\UI\UIRenderer.h" />
     <ClInclude Include="..\..\src\Vector2f.h" />
     <ClInclude Include="..\..\src\Vector3f.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
@@ -151,10 +140,12 @@
     <ClInclude Include="..\..\src\Skybox.h" />
     <ClInclude Include="..\..\src\Sphere.h" />
     <ClInclude Include="..\..\src\Terrain.h" />
-    <ClInclude Include="..\..\src\TextRenderer.h" />
     <ClInclude Include="..\..\src\Vector4f.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
     <ClInclude Include="..\..\src\Water.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\Editor.cpp~" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -228,7 +219,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>

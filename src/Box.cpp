@@ -66,7 +66,7 @@ inline void initializeRenderableBox(Box3D& box) {
 	indices.allocate(1.5 * 24);
 
 	for (int idx = 0; idx < 6; idx++) {
-		Vector3f* faceVertices;
+		Vector3f* faceVertices = NULL;
 		Vector3f normal;
 		if (idx == 0) {
 			faceVertices = topVertices;
@@ -86,6 +86,9 @@ inline void initializeRenderableBox(Box3D& box) {
 		} else if (idx == 5) {
 			faceVertices = rightVertices;
 			normal = { 0, 1, 0 };
+		} else {
+			logger_error("Unable to find face vertices");
+			continue;
 		}
 
 		for (int vertexIdx = 0; vertexIdx < 4; vertexIdx++) {

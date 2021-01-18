@@ -150,7 +150,7 @@ void Terrain::initialize(const GenerationParameters& params) {
 	indices.allocate(numIndices);
 	for (int row = 0; row < params.granularity - 1; row++) {
 		for (int col = 0; col < params.granularity - 1; col++) {
-			int vertexIdx = (row * params.granularity) + col;
+			GLuint vertexIdx = (row * params.granularity) + col;
 			if (vertexIdx >= vertices.numElements) {
 				printf("We're in trouble! row: %d, col: %d, %d\n", row, col, vertexIdx);
 			}

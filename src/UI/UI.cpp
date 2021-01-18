@@ -4,10 +4,11 @@
 
 namespace UI {
 	String baseString = "Hello World";
+	char* FONT_FILE = (char*)"assets/fonts/consola.ttf";
 
 	void PrimaryContext::initialize() {
 		uiRenderer.initialize();
-		textRenderer.initialize(36, "assets/fonts/consola.ttf");
+		textRenderer.initialize(36, FONT_FILE);
 	}
 
 	void PrimaryContext::update(float dt) {

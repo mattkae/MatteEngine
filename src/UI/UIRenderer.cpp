@@ -56,6 +56,12 @@ namespace UI {
 		useShader(0);
 	}
 
+	void UIRenderer::free() {
+		glDeleteVertexArrays(1, &mVao);
+		glDeleteBuffers(1, &mVbo);
+		flush();
+	}
+
 	void TextRenderer::initialize(GLint size, GLchar* path) {
 		int libInitResult = FT_Init_FreeType(&mLib);
 		if (libInitResult > 0) {
@@ -148,6 +154,10 @@ namespace UI {
 		// Color
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(TextBatchVertex), (GLvoid*)offsetof(TextBatchVertex, color));
+
+		// Clip Plane
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(TextBatchVertex), (GLvoid*)offsetof(TextBatchVertex, clip));
 		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -173,40 +183,51 @@ namespace UI {
 			position.x += renderInfo.mAdvance.x * scale;
 			position.y += renderInfo.mAdvance.y * scale;
 
+			if (numVerticesUsed + 6 > MAX_TEXT_RENDERER_VERTICES) {
+				logger_error("Failed to add character! Not enough space.");
+				return;
+			}
+
 			vertices[numVerticesUsed++] = {
 				Vector2f { renderInfo.mTextureOffset, 0 },
 				Vector2f { xStart, -yStart },
-				text->color
+				text->color,
+				text->clip
 			};
 
 			vertices[numVerticesUsed++] = {
 				Vector2f { renderInfo.mTextureOffset + renderInfo.mSize.x / mAtlasWidth, 0 },
 				Vector2f { xStart + w, -yStart },
-				text->color
+				text->color,
+				text->clip
 			};
 
 			vertices[numVerticesUsed++] = {
 				Vector2f { renderInfo.mTextureOffset, renderInfo.mSize.y / mAtlasHeight },
 				Vector2f { xStart , -yStart - h },
-				text->color
+				text->color,
+				text->clip
 			};
 
 			vertices[numVerticesUsed++] = {
 				Vector2f { renderInfo.mTextureOffset + renderInfo.mSize.x / mAtlasWidth, 0 },
 				Vector2f { xStart + w, -yStart },
-				text->color
+				text->color,
+				text->clip
 			};
 
 			vertices[numVerticesUsed++] = {
 				Vector2f { renderInfo.mTextureOffset, renderInfo.mSize.y / mAtlasHeight },
 				Vector2f { xStart, -yStart - h },
-				text->color
+				text->color,
+				text->clip
 			};
 
 			vertices[numVerticesUsed++] = {
 				Vector2f { renderInfo.mTextureOffset + renderInfo.mSize.x / mAtlasWidth, renderInfo.mSize.y / mAtlasHeight },
 				Vector2f { xStart + w, -yStart - h },
-				text->color
+				text->color,
+				text->clip
 			};
 		}
 	}
@@ -242,5 +263,37 @@ namespace UI {
 
 		glDeleteVertexArrays(1, &mVao);
 		glDeleteBuffers(1, &mVbo);
+	}
+
+	float TextRenderer::getStringWidth(String* str, GLfloat scale, int length) const {
+		float width = 0;
+
+		const char* strValue = str->getValue();
+		for (size_t strIdx = 0; strIdx < (length < 0 ? str->length : length); strIdx++) {
+			width += getCharWidth(strValue[strIdx], scale);
+		}
+
+		return width;
+	}
+
+	float TextRenderer::getCharWidth(char c, GLfloat scale) const {
+		CharacterRenderInfo renderInfo = mCharRenderInfo[c];
+		return (renderInfo.mAdvance.x) * scale;
+	}
+
+	float TextRenderer::getStringHeight(String* str, GLfloat scale) const {
+		float height = 0;
+		
+		const char* strValue = str->getValue();
+		for (size_t strIdx = 0; strIdx < str->length; strIdx++) {
+			height = MAX(getCharHeight(strValue[strIdx], scale), height);
+		}
+
+		return height;
+	}
+	
+	float TextRenderer::getCharHeight(char c, GLfloat scale) const {
+		CharacterRenderInfo renderInfo = mCharRenderInfo[c];
+		return (renderInfo.mAdvance.y) * scale;
 	}
 }

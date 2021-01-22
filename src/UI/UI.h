@@ -2,12 +2,11 @@
 #include "../Vector2f.h"
 #include "../Vector4f.h"
 #include "../List.h"
+#include "../MyString.h"
 #include "UIRenderer.h"
 
 namespace UI {
 
-	struct Rectangle;
-	struct Button;
 	struct Context;
 
 	enum Alignment {
@@ -25,8 +24,8 @@ namespace UI {
 	};
 
 	enum FlowType {
-		FlowType_VERTICAL,
-		FlowType_HORIZONTAL
+		FlowType_NONE,
+		FlowType_IN_FLOW
 	};
 
 	enum Sizing {
@@ -51,6 +50,7 @@ namespace UI {
 	struct DimensionAttribute {
 		Positioning positioning = Positioning_ABSOLUTE;
 		Sizing sizing = Sizing_STATIC;
+		Alignment alignment = Alignment_LEFT;
 		float position = 0;
 		float fixedSize = 0;
 		float percentageSize = 0;
@@ -60,19 +60,21 @@ namespace UI {
 		float padding;
 		ElementType type;
 	    DimensionAttribute dimensionAttrList[2];
-		Alignment alignment = Alignment_LEFT;
 		Vector4f backgroundColor;
 		Vector4f textColor;
 		FlowType flowType;
 		TextInputType textInputType;
 
 		void (*onChange)(Context* context) = NULL;
+		void (*onMouseenter)(Context* context) = NULL;
+		void (*onMouseleave)(Context* context) = NULL;
 		void (*onMousedown)(Context* context) = NULL;
 		void (*onMouseup)(Context* context) = NULL;
 	};
 
 	struct CreateElementAttribute {
 		ElementAttribute attr;
+		char* defaultContent;
 		List<CreateElementAttribute> subElements;
 	};
 
@@ -87,9 +89,17 @@ namespace UI {
 		Vector2f dimension;
 
 		BatchedBox box;
-		bool show = true;
+		int cursorCharPosition = 0;
 
-		void update(float dt, UIRenderer* uiRenderer);
+		bool show = true;
+		bool mIsHovered = false;
+		bool mIsClicked = false;
+		bool mHasFocus = false;
+
+		String content;
+		int focusToken  = -1;
+
+		void update(float dt, UIRenderer* uiRenderer, TextRenderer* textRenderer, StringBuilder* sb);
 		void render() const;
 		void free();
 	};
@@ -98,6 +108,7 @@ namespace UI {
 		UIRenderer uiRenderer;
 		TextRenderer textRenderer;
 		List<Context> contextList;
+		StringBuilder sb;
 
 		void initialize();
 		void update(float dt);

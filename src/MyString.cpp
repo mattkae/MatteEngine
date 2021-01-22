@@ -101,6 +101,37 @@ String StringBuilder::toString() {
 	return retval;
 }
 
+void StringBuilder::copyTo(String* str) {
+	int strSize = (bufferPointer + 1) * StringBuffer::BUFFER_SIZE;
+
+	if (str == nullptr) {
+		logger_error("String uninitialized");
+		return;
+	}
+
+	if (strSize > String::SSO_SIZE) {
+		if (str->capacity < strSize + 1) { // Needed to reallocate
+			int newSize =  MathHelper::nearestPowerOfTwo(strSize + 1);
+			str->free();
+			str->dynamicBuffer = new char[newSize];
+			str->capacity = newSize;
+		}
+
+		str->dynamicBuffer[0] = '\0';
+		memcpy(&str->dynamicBuffer[0], defaultBuffer.buffer, sizeof(char) * defaultBuffer.pointer);
+		FOREACH(dynamicBuffer) {
+			memcpy(&str->dynamicBuffer[(idx + 1) * StringBuffer::BUFFER_SIZE], value->buffer, sizeof(char) * value->pointer);
+		}
+		str->isSSO = false;
+	} else {
+		memcpy(str->defaultBuffer, defaultBuffer.buffer, sizeof(char) * strSize);
+		str->isSSO = true;
+	}
+
+	str->length = length;
+	str->getValue()[str->length] = '\0';
+}
+
 void StringBuilder::addStr(String* str) {
 	addStr(str->getValue());
 }
@@ -156,7 +187,7 @@ int StringBuilder::indexOf(const char* str) {
 
 void StringBuilder::removeAt(int index, int count) {
 	if (index >= length) {
-		printf("Index is larger than the length");
+		logger_error("Index is larger than the length");
 		return;
 	}
 
@@ -348,6 +379,7 @@ void String::free() {
 	isSSO = true;
 	if (dynamicBuffer != nullptr) {
 		delete dynamicBuffer;
+		dynamicBuffer = nullptr;
 	}
 
 	defaultBuffer[0] = '\0';

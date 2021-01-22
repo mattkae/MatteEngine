@@ -124,7 +124,6 @@
     <ClInclude Include="..\..\src\TextureLoader.h" />
     <ClInclude Include="..\..\src\TextureUniformConstants.h" />
     <ClInclude Include="..\..\src\Types.h" />
-    <ClInclude Include="..\..\src\UI\Elements.h" />
     <ClInclude Include="..\..\src\UI\UI.h" />
     <ClInclude Include="..\..\src\UI\UIRenderer.h" />
     <ClInclude Include="..\..\src\Vector2f.h" />
@@ -143,9 +142,6 @@
     <ClInclude Include="..\..\src\Vector4f.h" />
     <ClInclude Include="..\..\src\Vertex.h" />
     <ClInclude Include="..\..\src\Water.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\src\Editor.cpp~" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

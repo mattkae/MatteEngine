@@ -69,6 +69,7 @@ struct StringBuilder {
 	int indexOf(char c);
 	int indexOf(const char* str);
 	String toString();
+	void copyTo(String* str);
 	void clear();
 	char getCharAtIdx(int index) const;
 	void insert(char c, int index);

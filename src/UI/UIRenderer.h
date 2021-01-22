@@ -22,10 +22,8 @@ namespace UI {
 	};
 
 	struct BatchedText {
-		bool isUsed = false;
 		Vector2f position;
-		Vector2f boundingDimension;
-		float size;
+		Vector4f clip;
 		Vector4f color;
 		String* content;
 	};
@@ -35,7 +33,7 @@ namespace UI {
 		BatchedText text;
 	};
 
-	const int MAX_BATCH_VERTICES = 3 * 128; // 128 Triangles
+	const int MAX_BATCH_VERTICES = 6 * 128; // 128 Triangles
 
 	struct UIBatchVertex {
 		// @TODO: Maybe add a layer to this position as well
@@ -54,12 +52,14 @@ namespace UI {
 	    void add(BatchedBox* box);
 		void flush();
 		void render() const;
+		void free();
 	};
 
 	struct TextBatchVertex {
 		Vector2f texCoord;
 		Vector2f position;
 		Vector4f color;
+		Vector4f clip;
 	};
 
 	struct CharacterRenderInfo {
@@ -70,6 +70,7 @@ namespace UI {
 	};
 
 	const int MAX_SUPPORTED_CHARS = 128;
+	const int MAX_TEXT_RENDERER_VERTICES = 6 * 256; // Able to render 256 characters at a time
 
 	struct TextRenderer {
 		void initialize(GLint size, GLchar* path);
@@ -77,6 +78,10 @@ namespace UI {
 		void flush();
 		void render() const;
 		void free();
+		float getStringWidth(String* str, GLfloat scale, int length = -1) const;
+		float getCharWidth(char c, GLfloat scale) const;
+		float getStringHeight(String* str, GLfloat scale) const;
+		float getCharHeight(char c, GLfloat scale) const;
 
 		// @TODO: Might want to consider freeing these immediately after load, seems unnessary
 		FT_Library mLib;
@@ -90,7 +95,7 @@ namespace UI {
 		CharacterRenderInfo mCharRenderInfo[MAX_SUPPORTED_CHARS];
 
 		int numVerticesUsed = 0;
-		TextBatchVertex vertices[MAX_BATCH_VERTICES];
+		TextBatchVertex vertices[MAX_TEXT_RENDERER_VERTICES];
 	};
 
 }

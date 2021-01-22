@@ -2,6 +2,16 @@
 #include "Input.h"
 #include "Scene.h"
 
+void turnGreen(UI::Context* context) {
+	context->attr.backgroundColor = Vector4f { 0, 1, 0, 1 };
+	context->attr.textColor = Vector4f { 1, 0, 0, 1 };
+}
+
+void turnRed(UI::Context* context) {
+	context->attr.backgroundColor = Vector4f { 1, 0, 0, 1 };
+	context->attr.textColor = Vector4f { 0, 1, 0, 1 };
+}
+
 List<UI::CreateElementAttribute> getPrimaryElements() {
 	List<UI::CreateElementAttribute> retval;
 
@@ -13,25 +23,51 @@ List<UI::CreateElementAttribute> getPrimaryElements() {
 				UI::DimensionAttribute {
 					UI::Positioning_CENTER,
 					UI::Sizing_DYNAMIC,
-					0.f, 300.f, 0.5f
+					UI::Alignment_CENTER,
+					0.f, 300.f, 0.9f
 				},
+				UI::DimensionAttribute {
+					UI::Positioning_FLOW,
+					UI::Sizing_DYNAMIC,
+					UI::Alignment_CENTER,
+					0.f, 500.f, 0.1f
+				}
+			},
+			Vector4f { 1.f, 1.f, 1.f, 0.5f },
+			Vector4f(),
+			UI::FlowType_NONE,
+			UI::TextInputType_NONE
+		},
+		(char*)"Hello World"
+	};
+	retval.add(topLabel);
+
+	UI::CreateElementAttribute firstButton = {
+		UI::ElementAttribute {
+			2.f,
+			UI::ElementType_INPUT,
+			{
 				UI::DimensionAttribute {
 					UI::Positioning_CENTER,
 					UI::Sizing_DYNAMIC,
-					0.f, 500.f, 0.5f
+					UI::Alignment_CENTER,
+					0.f, 300.f, 0.9f
+				},
+				UI::DimensionAttribute {
+					UI::Positioning_FLOW,
+					UI::Sizing_DYNAMIC,
+					UI::Alignment_CENTER,
+					0.f, 500.f, 0.1f
 				}
 			},
-			UI::Alignment_LEFT,
 			Vector4f { 1.f, 1.f, 1.f, 0.5f },
 			Vector4f(),
-			UI::FlowType_VERTICAL,
-			UI::TextInputType_NONE,
-			NULL,
-			NULL,
-			NULL
-		}
+			UI::FlowType_NONE,
+			UI::TextInputType_NONE
+		},
+		(char*)"Hello World"
 	};
-	retval.add(topLabel);
+	retval.add(firstButton);
 
 	return retval;
 }
@@ -49,23 +85,22 @@ List<UI::Context> createEditorUI() {
 					UI::DimensionAttribute {
 						UI::Positioning_MIN,
 						UI::Sizing_STATIC,
+						UI::Alignment_CENTER,
 						0.f, 300.f, 0.f
 					},
 					UI::DimensionAttribute {
 						UI::Positioning_CENTER,
 						UI::Sizing_STATIC,
+						UI::Alignment_CENTER,
 						0.f, 400.f, 0.f
 					}
 				},
-				UI::Alignment_LEFT,
 				Vector4f { 0.3f, 0.1, 0.1, 0.8f },
 				Vector4f(),
-				UI::FlowType_VERTICAL,
-				UI::TextInputType_NONE,
-				NULL,
-				NULL,
-				NULL
+				UI::FlowType_IN_FLOW,
+				UI::TextInputType_NONE
 			},
+			NULL,
 			primaryElements
 		});
 

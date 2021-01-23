@@ -21,7 +21,8 @@ struct Editor {
 	Scene* mScene;
 	DebugModel mDebugModel;
 	int mSelectedModelIdx = -1;
-	UI::PrimaryContext context;
+	UI::PrimaryContext mainContext;
+	UI::PrimaryContext terminalContext;
 
 	bool isEnabled = false;
 };

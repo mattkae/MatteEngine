@@ -54,10 +54,11 @@ namespace UI {
 		float position = 0;
 		float fixedSize = 0;
 		float percentageSize = 0;
+		float margin = 0.f;
 	};
 
 	struct ElementAttribute {
-		float padding;
+		float padding = 0;
 		ElementType type;
 	    DimensionAttribute dimensionAttrList[2];
 		Vector4f backgroundColor;

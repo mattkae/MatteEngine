@@ -1,6 +1,7 @@
 #include "Editor.h"
 #include "Input.h"
 #include "Scene.h"
+#include "App.h"
 
 void turnGreen(UI::Context* context) {
 	context->attr.backgroundColor = Vector4f { 0, 1, 0, 1 };
@@ -108,15 +109,93 @@ List<UI::Context> createEditorUI() {
 	return retval;
 }
 
+void onTerminalTextChanged(UI::Context* context) {
+	printf("%s\n", context->content.getValue());
+}
+
+List<UI::CreateElementAttribute> getTerminalElements() {
+	List<UI::CreateElementAttribute> retval;
+
+	UI::CreateElementAttribute input = {
+		UI::ElementAttribute {
+			2.f,
+			UI::ElementType_INPUT,
+			{
+				UI::DimensionAttribute {
+					UI::Positioning_CENTER,
+					UI::Sizing_DYNAMIC,
+					UI::Alignment_LEFT,
+					0.f, 0.f, 0.9f
+				},
+				UI::DimensionAttribute {
+					UI::Positioning_MIN,
+					UI::Sizing_STATIC,
+					UI::Alignment_CENTER,
+					0.f, 16.f, 0.f
+				}
+			},
+			Vector4f { 1.f, 1.f, 1.f, 0.5f },
+			Vector4f(),
+			UI::FlowType_NONE,
+			UI::TextInputType_STRING,
+			onTerminalTextChanged
+		},
+		(char*)"Enter a Terminal Command"
+	};
+	retval.add(input);
+
+	return retval;
+}
+
+List<UI::Context> createTerminal() {
+	List<UI::Context> retval;
+	retval.add(UI::Context());
+
+	auto elements = getTerminalElements();
+
+	UI::CreateUI(&retval[0], UI::CreateElementAttribute {
+			UI::ElementAttribute {
+				2.f, UI::ElementType_CONTAINER,
+				{
+					UI::DimensionAttribute {
+						UI::Positioning_CENTER,
+						UI::Sizing_DYNAMIC,
+						UI::Alignment_CENTER,
+						0.f, 0.f, 0.75f
+					},
+					UI::DimensionAttribute {
+						UI::Positioning_MAX,
+						UI::Sizing_STATIC,
+						UI::Alignment_CENTER,
+						0.f, 250.f, 0.f
+					}
+				},
+				Vector4f { 0.3f, 0.3f, 0.3f, 0.5f },
+				Vector4f(),
+				UI::FlowType_IN_FLOW,
+				UI::TextInputType_NONE
+			},
+			NULL,
+			elements
+		});
+
+	elements.deallocate();
+	return retval;
+}
+
 void Editor::initialize(Scene* inScene) {
 	mScene = inScene;
-	context.initialize();
-	context.contextList = createEditorUI();
+	mainContext.initialize();
+	mainContext.contextList = createEditorUI();
+
+	terminalContext.initialize();
+	terminalContext.contextList = createTerminal();
 }
 
 void Editor::free() {	
 	mDebugModel.free();
-	context.free();
+	mainContext.free();
+	terminalContext.free();
 }
 
 int Editor::castRayToModel() {
@@ -164,7 +243,8 @@ void Editor::update(double dtMs) {
 		// @TODO: Do something with the selected model
 	}
 
-	context.update(dtMs);
+	mainContext.update(dtMs);
+	terminalContext.update(dtMs);
 }
 
 void Editor::render() const {
@@ -176,5 +256,6 @@ void Editor::render() const {
 		// @TODO: Do something with the selected model
 	}
 
-	context.render();
+	mainContext.render();
+	terminalContext.render();
 }

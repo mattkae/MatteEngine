@@ -223,6 +223,7 @@ namespace UI {
 				resetFocus();
 				focusToken = -1;
 				mHasFocus = false;
+				transition = ContextTransition_UNCLICK;
 			}
 		}
 
@@ -248,6 +249,10 @@ namespace UI {
 					offset += textRenderer->getCharWidth(value[charIdx], 1.f);
 				}
 				cursorCharPosition = charIdx;
+			} else if (transition == ContextTransition_UNCLICK) {
+				if (attr.onChange != NULL) {
+					attr.onChange(this);
+				}
 			}
 
 			if (mHasFocus) {
@@ -262,7 +267,11 @@ namespace UI {
 					isUpperCase = true;
 				}
 
-				if (isKeyJustDown(GLFW_KEY_RIGHT, focusToken)) {
+				if (isKeyJustDown(GLFW_KEY_ENTER, focusToken)) {
+					if (attr.onChange != NULL) {
+						attr.onChange(this);
+					}
+				} else if (isKeyJustDown(GLFW_KEY_RIGHT, focusToken)) {
 					cursorCharPosition++;
 					if (cursorCharPosition > content.length) {
 						cursorCharPosition = content.length;

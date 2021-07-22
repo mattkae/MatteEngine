@@ -1,4 +1,7 @@
 # Building out a 3D engine in OpenGL/GLFW/C++ from Scratch
+
+**Note**: This project is currently on hold, as I am in the process of investigating 2D and 3D physics in games engines. I have not made this code public as of yet, but I will do so in the future, at which time I will return to this project in some capacity
+
 I've been working on this project for a while now in order to investigate how difficult it is to build a fairly verbose 3D engine in C++ with OpenGL and GLFW. My goal is to eventually strip out any need for third party libraries (other than GLFW and OpenGL). The third party libraries currently in use are:
 
 - Freetype (for reading in .ttf files)
